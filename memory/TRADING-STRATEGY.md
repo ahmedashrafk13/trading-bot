@@ -179,12 +179,31 @@ TACTICAL (hourly bars):
 If a coin fails its screen, it is NOT tradeable this run no matter how good the
 news is. Log the failure reason.
 
-## Known limitation: no OCO on crypto
-Alpaca has no bracket/OCO for crypto, so a position cannot carry an automatic
-stop AND an automatic target. The resting `stop_limit` covers the downside; the
-+14% tactical target is taken by whichever run next observes it. With runs 6h
-apart a target can be hit and given back unseen. This is the accepted cost of
-the platform, and it caps how precisely the tactical sleeve can capture gains.
+## Profit is protected by the RESTING STOP, not by a target check
+VERIFIED 2026-09-10: Alpaca has no OCO/bracket for crypto AND a resting
+stop_limit reserves the whole position, so a take-profit limit cannot rest
+alongside a stop (rejected: available 0). The exchange can hold one sell order,
+and it must be the stop.
+
+So a fixed "+14% target" is only observed when a run happens. At 6h spacing a
+move to +20% that retraces to +3% is invisible — the run sees +3% and the gain
+is gone with no record it existed. Relying on a target check to capture upside
+is therefore structurally broken, and the fix is NOT a faster target check but a
+stop that follows price up, because the stop is the thing that actually sits at
+the broker 24/7.
+
+TACTICAL exit ladder (each step re-places the resting stop_limit higher):
+- at +6%  -> stop to BREAKEVEN (entry). Worst case becomes a scratch, not -6%.
+- at +10% -> stop to entry +4% (locks a profit no matter what happens next)
+- at +14% -> stop to entry +8%, and CLOSE at market if a run observes >= +14%
+- above +14% -> trail the stop 5% below the high-water mark
+The +14% target still exists as an opportunistic exit when a run sees it, but it
+is no longer what protects the gain. After the first ratchet the position cannot
+round-trip to a loss even if no run happens for a day.
+
+WHY THIS MATTERS MORE THAN RUN FREQUENCY: more frequent runs capture more of a
+spike, but only a resting order captures a spike NOBODY IS AWAKE FOR. Ratcheting
+converts run frequency from a safety requirement into an optimisation.
 
 ## Stops — how they actually work here (READ THIS)
 Alpaca REJECTS `trailing_stop` and `stop` for crypto:
@@ -259,8 +278,10 @@ CORE:
 
 TACTICAL:
 - Unrealized <= -6% -> close at market, cancel the resting stop
-- Up >= +14% -> close at market, take the target
-- Up >= +6% -> raise the stop to breakeven (entry price), never lower
+- Up >= +14% -> close at market if observed; and ratchet the stop to entry +8%
+- Up >= +10% -> ratchet the resting stop to entry +4% (locks in profit)
+- Up >= +6% -> ratchet the resting stop to BREAKEVEN (entry), never lower
+- Above +14% -> trail the resting stop 5% below the high-water mark
 - Open > ~48h without hitting target or stop -> reassess; close unless the
   hourly screen still PASSES
 - Thesis broken -> close immediately

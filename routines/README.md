@@ -61,7 +61,7 @@ leaking credentials. Every prompt here carries an explicit "do not create a .env
 
 | File | Cron | UTC | Role |
 |---|---|---|---|
-| `scan.md` | `7 0 * * *` | 00:07 | overnight safety sweep only |
+| `scan.md` | `7 * * * *` | every hour :07 | ratchet stops + safety sweep |
 | `research.md` | `7 6 * * *` | 06:07 | research + write the day's plan |
 | `execute.md` | `7 12 * * *` | 12:07 | run the gate, place entries + stops |
 | `summary.md` | `7 18 * * *` | 18:07 | daily snapshot, P&L vs BTC |
@@ -70,6 +70,13 @@ leaking credentials. Every prompt here carries an explicit "do not create a .env
 Every day of the week, including weekends — crypto never closes. The `:07` and
 `:37` offsets keep these off the `:00` minute that everyone else schedules on,
 and keep the Sunday weekly review from colliding with that day's summary.
+
+`scan` runs HOURLY, not daily. It is cheap (a positions call, an orders call and
+at most a stop re-placement) and it is the only thing standing between a spike
+and a round trip: a take-profit limit cannot rest alongside a stop on Alpaca
+crypto, so profit is locked in by ratcheting the resting stop, and a ratchet only
+happens when a run happens. Hourly means at most ~1h of a favourable move goes
+uncaptured, instead of up to 6h.
 
 Every routine begins with the same STEP A invariants: reconcile positions,
 verify every position has a resting `stop_limit`, force-close anything past -15%

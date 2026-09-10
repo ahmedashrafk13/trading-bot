@@ -35,7 +35,7 @@ See `routines/README.md`. Summary:
 
    | Routine | Cron | UTC |
    |---------|------|-----|
-   | scan | `7 0 * * *` | 00:07 |
+   | scan | `7 * * * *` | hourly at :07 |
    | research | `7 6 * * *` | 06:07 |
    | execute | `7 12 * * *` | 12:07 |
    | summary | `7 18 * * *` | 18:07 |

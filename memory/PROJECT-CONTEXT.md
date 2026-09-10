@@ -69,6 +69,16 @@
   (from `alpaca.sh assets crypto`) — they are ~$1 equivalent, not 1 coin.
 - FEES ARE REAL. `crypto_tier: 0` is the highest band, ~0.5% per market round
   trip. Stocks were commission-free; crypto is not. Churn is expensive at $200.
+- ONE RESTING SELL PER POSITION (verified 2026-09-10 on the live DOT position):
+  a resting stop_limit reserves the ENTIRE position, so a second sell order is
+  rejected — `{"available":"0","balance":"17.972955","code":40310000,
+  "message":"insufficient balance for DOT"}`. You therefore CANNOT rest a stop
+  and a take-profit limit at the same time. Combined with no OCO/bracket for
+  crypto, this means the exchange can protect the downside OR chase the upside,
+  never both. Downside wins: never leave a position without its stop.
+  CONSEQUENCE: a fixed take-profit target is only ever checked when a run
+  happens, so a spike between runs is invisible and unrecoverable. Profit must
+  be protected by RATCHETING THE RESTING STOP upward, not by a target check.
 - NO SHORTING crypto on Alpaca. Long only.
 - NO PDT and NO T+1 settlement. Sale proceeds are instantly reusable, so the
   cash-account settlement discipline from the stocks era does not apply.
