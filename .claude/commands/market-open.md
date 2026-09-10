@@ -23,8 +23,11 @@ STEP 3 — Hard-check rules BEFORE every order. Skip any trade that fails and lo
 the reason:
 - Total positions after trade <= 6
 - Trades this week <= 3
-- Position cost <= 20% of equity
+- Position cost <= 20% of equity (~$40 at $200)
 - Position cost <= available cash
+- qty is a WHOLE number >= 1. Never fractional: Alpaca rejects stops and GTC
+  on fractional qty, so a fractional position cannot carry its mandatory stop.
+  If 1 whole share costs more than 20% of equity, SKIP and log the reason.
 - Catalyst documented in today's RESEARCH-LOG
 - daytrade_count leaves room (PDT: 3/5 rolling business days)
 

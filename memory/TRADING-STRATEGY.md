@@ -4,10 +4,26 @@
 Beat the S&P 500 over the challenge window. Stocks only — no options, ever.
 
 ## Capital & Constraints
-- Starting capital: ~$10,000
+- Starting capital: ~$200
 - Platform: Alpaca
 - Instruments: Stocks ONLY
 - PDT limit: 3 day trades per 5 rolling days (account < $25k)
+- Max position size: 20% of equity = ~$40 at $200 equity
+
+### Share-price ceiling (consequence of the $200 account)
+WHOLE SHARES ONLY. Alpaca does not accept `stop`, `stop_limit` or
+`trailing_stop` orders for fractional quantities, and fractional orders
+cannot use `time_in_force: gtc` — they are market/limit + day only. So a
+fractional position CANNOT carry the mandatory stop from Core Rule 4.
+
+Therefore: only trade tickers where at least 1 whole share fits inside the
+20% cap. At $200 equity that means a share price of **<= ~$40**. If a
+candidate trades above that, SKIP IT and log "share price exceeds 20% cap".
+Do NOT buy a fractional share and do NOT hold any position without a stop.
+
+Practical shape of the book at $200: 4 positions of ~$40 each = 80% deployed,
+which sits inside the 75-85% target. Under $40/share, 5-6 smaller positions
+also work.
 
 ## Core Rules
 1. NO OPTIONS — ever
@@ -31,8 +47,11 @@ Beat the S&P 500 over the challenge window. Stocks only — no options, ever.
 ## Buy-Side Gate (all must pass, else skip and log the reason)
 - Total positions after this fill <= 6
 - Trades placed this week (including this one) <= 3
-- Position cost <= 20% of account equity
+- Position cost <= 20% of account equity (~$40 at $200)
 - Position cost <= available cash
+- qty is a WHOLE number >= 1 (never fractional — a fractional position cannot
+  carry the mandatory GTC stop)
+- Share price <= 20% of equity, so 1 whole share fits the cap
 - daytrade_count leaves room (< 3 on a sub-$25k account)
 - A specific catalyst is documented in today's RESEARCH-LOG entry
 - The instrument is a stock

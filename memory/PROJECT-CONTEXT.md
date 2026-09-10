@@ -2,7 +2,7 @@
 
 ## Overview
 - What: Autonomous trading bot challenge
-- Starting capital: ~$10,000
+- Starting capital: ~$200
 - Platform: Alpaca
 - Duration: [your challenge window]
 - Strategy: Swing trading stocks, no options
@@ -24,6 +24,11 @@
   Same-day stops on same-day buys sometimes get rejected. Fallback ladder:
   trailing_stop -> fixed stop -> queue for tomorrow morning.
 - `trail_percent` and `qty` are STRINGS in the order JSON. Use "10", not 10.
+- FRACTIONAL SHARES ARE UNUSABLE HERE. Alpaca rejects stop / stop_limit /
+  trailing_stop on fractional qty, and fractional orders cannot be GTC
+  (market/limit + day only). A fractional position therefore cannot carry the
+  mandatory 10% stop. Whole shares only; skip tickers priced above 20% of
+  equity (~$40 at $200).
 - Market data uses a different base URL: data.alpaca.markets for quotes, api.alpaca.markets
   for everything else.
 - Quote shape: quote.ap = ask, quote.bp = bid. Wide spread or zero = halted/illiquid, skip.
