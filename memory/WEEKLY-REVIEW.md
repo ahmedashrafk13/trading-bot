@@ -105,8 +105,11 @@ none. Deployed 0% against a 75-85% target.
 
 ### Rule changes applied
 None. Nothing has been observed for long enough to justify changing a rule, and
-proposals require evidence. (Note: strategy edits are proposal-only pending your
-approval — the agent cannot amend TRADING-STRATEGY.md itself.)
+proposals require evidence. (Note added 2026-09-10, after this review was written: self-amendment was
+subsequently ENABLED. The review may now edit TRADING-STRATEGY.md directly
+within the limits in that file's Self-amendment section. The sentence originally
+here said edits were proposal-only; that is no longer true and would otherwise
+be read as current policy.)
 
 ### Overall Grade: C
 The machine is built, verified against the live API, and behaved correctly — but
