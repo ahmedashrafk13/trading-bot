@@ -169,3 +169,43 @@ tactical positions here would be three bets on the same bounce.
    Fed; that is not a catalyst, it is hope.
 3. Tactical entries only once hourly 30-period momentum turns positive for the
    candidate, so the bounce is confirmed rather than assumed.
+
+### 2026-09-10 20:20 UTC — Intraday addendum (execute run, tactical origination attempted)
+
+First run with tactical origination authority. Outcome: **NO TRADE**, blocked by
+the gate — and the blocking rule exposed a defect in the strategy itself.
+
+State: flat, equity $199.92, fee budget $0.00/$3.00 used, breaker clear,
+0 of 3 tactical slots filled. Nothing structural prevented a trade.
+
+Tactical shortlist (12): UNI SKY POL DOT ETH TRUMP RENDER AAVE SHIB SOL DOGE YFI
+Best candidate: DOT — on the shortlist, spread 0.21%, and the only coin in the
+universe with a specific documented catalyst (OpenGov Referendum 1944 for a
+native dotUSD stablecoin at ~97.5% in favour, 150% transaction spike, record XCM
+throughput).
+
+It failed on R:R after fees:
+- notional $20.00, round-trip fee at measured 0.65% = $0.13
+- risk if the 6% stop fills: $1.20 + $0.13 = $1.33
+- reward if the 12% target fills: $2.40 - $0.13 = $2.27
+- R:R = **1.71 : 1**, against a required 2:1 -> FAIL
+
+**DEFECT: the tactical sleeve's own parameters cannot satisfy the gate's own R:R
+rule.** A 6% stop with a 12% target is 2:1 gross, but fees are charged on both
+legs, so after friction it is 1.71:1. This is not specific to DOT — EVERY
+tactical trade fails this check by construction, at any notional, because the
+ratio is set by the parameters and not by the candidate. The tactical sleeve as
+specified could never have placed a single trade.
+
+To satisfy 2:1 after fees, one of:
+- target 14.0% instead of 12% (keeps the 6% stop, needs a bigger move), or
+- stop 5.0% instead of 6% (keeps the 12% target, tighter and more whipsaw-prone)
+
+Not self-amending this: the weekly review is the amendment path and it requires
+3+ closed trades as evidence, of which there are zero. Flagged for human decision.
+
+Note also that the fee budget worked as intended in the opposite direction: it
+was NOT the binding constraint. $0.13 of a $3.00 weekly budget is trivially
+affordable — the trade was refused on edge quality, not on cost, which is the
+correct order of priority.
+
