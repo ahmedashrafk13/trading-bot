@@ -24,7 +24,7 @@ e.g. BTC/USD. CRYPTO ONLY — refuse any stock or option outright.
 5. On confirm (time_in_force MUST be gtc — `day` is rejected for crypto):
    bash scripts/alpaca.sh order '{"symbol":"PAIR","qty":"QTY","side":"buy|sell","type":"market","time_in_force":"gtc"}'
 6. For BUYs, immediately place the resting stop 20% below the ACTUAL fill:
-   bash scripts/alpaca.sh order '{"symbol":"PAIR","qty":"QTY","side":"sell","type":"stop_limit","stop_price":"<fill*0.80>","limit_price":"<fill*0.80*0.98>","time_in_force":"gtc"}'
+   bash scripts/alpaca.sh order '{"symbol":"PAIR","qty":"QTY","side":"sell","type":"stop_limit","stop_price":"<fill*0.80>","limit_price":"<fill*0.80*0.95>","time_in_force":"gtc"}'
    trailing_stop and stop are REJECTED for crypto. If the stop_limit fails twice,
    CLOSE the position and say so — never leave crypto unstopped.
 7. Log to memory/TRADE-LOG.md: fill price, notional, -15% cut, stop trigger/limit,

@@ -245,9 +245,15 @@ Only `stop_limit` is accepted. So Core Rule 5 is implemented as:
     {"symbol":"BTC/USD","qty":"<frac>","side":"sell","type":"stop_limit",
      "stop_price":"<trigger>","limit_price":"<trigger * 0.98>","time_in_force":"gtc"}
 
-- `limit_price` is set 2% BELOW `stop_price` so it can still fill while price is
+- `limit_price` is set 5% BELOW `stop_price` so it can still fill while price is
   falling. A limit equal to the stop will often not fill at all.
-- KNOWN RISK: a stop_limit can be gapped through. In a violent drop price can
+- The limit sits 5% below the trigger, not 2%. A stop_limit only fills if price
+  trades between the trigger and the limit; in a crypto flush 2% of room is
+  routinely jumped, which converts the stop into a no-op and leaves the position
+  riding down. 5% accepts a worse fill price in exchange for actually filling.
+  This is the correct trade: a bad fill is a cost, an unfilled stop is a loss of
+  unbounded size.
+- KNOWN RISK: a stop_limit can still be gapped through. In a violent drop price can
   pass the limit without filling, leaving the position open and unprotected.
   This is the price of crypto having no stop-market order. Every run must
   therefore verify the stop actually exists and force-close anything that

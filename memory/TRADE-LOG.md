@@ -148,3 +148,15 @@ The split structure now applies only from +6% onward, once the stop has been
 ratcheted to breakeven, at which point the unstopped half can only give back an
 unrealised gain rather than take a loss. Strategy and all prompts updated.
 
+### 2026-09-10 21:05 UTC — DOT stop re-placed with a wider limit gap
+
+Cancelled the stop and re-placed it with the limit 5% below the trigger instead
+of 2%: trigger $1.04340 unchanged, limit $1.02253 -> $0.99123.
+
+Reason: a stop_limit only fills if price trades between the trigger and the
+limit. In a crypto flush 2% of room is routinely jumped, which turns the stop
+into a no-op and leaves the position riding down with nothing watching until the
+next run. 5% accepts a worse fill in exchange for actually filling — a bad fill
+is a known cost, an unfilled stop is an unbounded loss. Applied to the strategy
+and all prompts, not just this position.
+

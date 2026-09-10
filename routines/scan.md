@@ -36,13 +36,21 @@ STEP 1 — Read memory:
 
 STEP A — EVERY-RUN INVARIANTS (do these before anything else, every run).
 Crypto trades 24/7 and runs are 6h apart, so nothing watches between runs.
+  bash scripts/state.sh
+This one call gives you: UTC time FROM THE BROKER CLOCK (never trust the local
+machine clock), equity/cash/deployment, every position with its age and its exact
+stop coverage percentage, the weekly fee-budget state, the circuit-breaker state,
+and the amendment-trigger count. Use these numbers. Do NOT re-derive them by
+adding up markdown rows — that is how the budget and the breaker drift.
+A position flagged *** NAKED *** or PARTIAL is the highest-priority item in the run.
+Then, if you need the raw detail:
   bash scripts/alpaca.sh positions
   bash scripts/alpaca.sh orders
 1. RECONCILE: compare live positions to the tail of memory/TRADE-LOG.md. A stop
    may have filled, or a fill may have landed, between runs. Log any drift.
 2. STOP COVERAGE: every position MUST have a resting stop_limit sell. If one is
    missing (or its qty no longer matches the position), place it now:
-     bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.98>","time_in_force":"gtc"}'
+     bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.95>","time_in_force":"gtc"}'
    NOTE: trailing_stop and stop are REJECTED for crypto. stop_limit only.
 3. HARD CUT: any position at unrealized_plpc <= -0.15 -> cancel its stop, then
    close at market. The stop_limit may have been gapped through without filling,

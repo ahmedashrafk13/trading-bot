@@ -34,7 +34,7 @@
 - ORDER TYPES: `trailing_stop` and `stop` are REJECTED for crypto —
   `{"code":40010001,"message":"invalid order type for crypto order"}`.
   Only `market`, `limit` and `stop_limit` work. All protective stops are
-  therefore `stop_limit` GTC, with the limit ~2% below the trigger.
+  therefore `stop_limit` GTC, with the limit ~5% below the trigger.
 - TIME IN FORCE: `day` is REJECTED —
   `{"code":42210000,"message":"invalid crypto time_in_force"}`.
   Use `gtc` (or `ioc` for immediate-or-cancel). This differs from stocks.
