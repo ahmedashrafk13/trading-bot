@@ -20,7 +20,11 @@
 - memory/WEEKLY-REVIEW.md
 
 ## Platform Gotchas (Alpaca)
-- PDT: 3 day trades per 5 rolling business days under $25k. Check daytrade_count before buying.
+- THIS ACCOUNT IS A CASH ACCOUNT (multiplier 1). PDT does not apply and the
+  account does not return `daytrade_count` or `pattern_day_trader` at all —
+  code that assumes those fields exist will KeyError or silently read None.
+  The real constraint is T+1 settlement: buy only with settled `cash`.
+- PDT (margin accounts only): 3 day trades per 5 rolling business days under $25k.
   Same-day stops on same-day buys sometimes get rejected. Fallback ladder:
   trailing_stop -> fixed stop -> queue for tomorrow morning.
 - `trail_percent` and `qty` are STRINGS in the order JSON. Use "10", not 10.

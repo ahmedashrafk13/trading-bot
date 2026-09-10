@@ -24,12 +24,14 @@ the reason:
 - Total positions after trade <= 6
 - Trades this week <= 3
 - Position cost <= 20% of equity (~$40 at $200)
-- Position cost <= available cash
+- Position cost <= SETTLED `cash` (== buying_power here). T+1: never spend
+  unsettled sale proceeds.
 - qty is a WHOLE number >= 1. Never fractional: Alpaca rejects stops and GTC
   on fractional qty, so a fractional position cannot carry its mandatory stop.
   If 1 whole share costs more than 20% of equity, SKIP and log the reason.
 - Catalyst documented in today's RESEARCH-LOG
-- daytrade_count leaves room (PDT: 3/5 rolling business days)
+- `daytrade_count` is ABSENT on this account. If the field is missing, skip the
+  PDT check; only enforce daytrade_count < 3 when the API actually returns it.
 
 STEP 4 — Execute the buys (market orders, day TIF):
   bash scripts/alpaca.sh order '{"symbol":"SYM","qty":"N","side":"buy","type":"market","time_in_force":"day"}'
@@ -37,7 +39,8 @@ Wait for fill confirmation before placing the stop.
 
 STEP 5 — Immediately place 10% trailing stop GTC for each new position:
   bash scripts/alpaca.sh order '{"symbol":"SYM","qty":"N","side":"sell","type":"trailing_stop","trail_percent":"10","time_in_force":"gtc"}'
-On PDT rejection, fall back to a fixed stop 10% below entry:
+If the trailing stop is rejected for ANY reason, fall back to a fixed stop 10%
+below entry:
   bash scripts/alpaca.sh order '{"symbol":"SYM","qty":"N","side":"sell","type":"stop","stop_price":"X.XX","time_in_force":"gtc"}'
 If also blocked, queue the stop in TRADE-LOG as "PDT-blocked, set tomorrow AM".
 

@@ -7,8 +7,11 @@ Beat the S&P 500 over the challenge window. Stocks only — no options, ever.
 - Starting capital: ~$200
 - Platform: Alpaca
 - Instruments: Stocks ONLY
-- PDT limit: 3 day trades per 5 rolling days (account < $25k)
+- Account type: CASH account (multiplier 1, buying_power == cash, no margin,
+  shorting disabled). Confirmed live on PA3VFI9O4EPS.
 - Max position size: 20% of equity = ~$40 at $200 equity
+- PDT does NOT apply to a cash account, and this account does not even return
+  `daytrade_count`. The binding constraint is SETTLEMENT, not day-trade count.
 
 ### Share-price ceiling (consequence of the $200 account)
 WHOLE SHARES ONLY. Alpaca does not accept `stop`, `stop_limit` or
@@ -48,13 +51,25 @@ also work.
 - Total positions after this fill <= 6
 - Trades placed this week (including this one) <= 3
 - Position cost <= 20% of account equity (~$40 at $200)
-- Position cost <= available cash
+- Position cost <= SETTLED `cash` from the account call (== `buying_power` on
+  this cash account). Never spend unsettled sale proceeds — T+1.
 - qty is a WHOLE number >= 1 (never fractional — a fractional position cannot
   carry the mandatory GTC stop)
 - Share price <= 20% of equity, so 1 whole share fits the cap
-- daytrade_count leaves room (< 3 on a sub-$25k account)
+- If the account DOES report `daytrade_count` (i.e. it is a margin account),
+  additionally require daytrade_count < 3. If the field is absent, skip this
+  check — do NOT treat an absent field as a failure or as zero-risk.
 - A specific catalyst is documented in today's RESEARCH-LOG entry
 - The instrument is a stock
+
+## Settlement (cash-account rule, replaces PDT)
+Stock sales settle T+1. In a cash account you may only buy with SETTLED funds.
+- Buying with unsettled proceeds = good-faith violation.
+- Buying and then selling before the purchase settles = free-riding.
+Repeated violations get the account restricted to settled-cash-only trading.
+Practical rule: after closing a position, treat those proceeds as unavailable
+until the next business day. Read `cash` from the API rather than assuming
+yesterday's number, and size the next entry against that.
 
 ## Sell-Side Rules
 - Unrealized P&L <= -7% -> close immediately

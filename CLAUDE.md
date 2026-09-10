@@ -36,6 +36,8 @@ runs per trading day plus two ad-hoc helpers.
 - Never within 3% of current price. Never move a stop down.
 - Follow sector momentum. Exit a sector after 2 failed trades.
 - Patience > activity.
+- CASH account: buy only with SETTLED cash (T+1). No PDT rule, and
+  `daytrade_count` is not returned — don't treat its absence as a failure.
 
 ## API Wrappers
 
