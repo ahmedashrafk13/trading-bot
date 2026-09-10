@@ -12,9 +12,14 @@ IMPORTANT — ENVIRONMENT VARIABLES:
   CLICKUP_WORKSPACE_ID, CLICKUP_CHANNEL_ID.
 - There is NO .env file in this repo and you MUST NOT create, write, or
   source one. The wrapper scripts read directly from the process env.
-- If a wrapper prints "KEY not set in environment" -> STOP, send one
-  ClickUp alert naming the missing var, and exit. Do NOT try to create a
-  .env as a workaround.
+- Only ALPACA_API_KEY and ALPACA_SECRET_KEY are REQUIRED. If either is
+  missing -> STOP, report which one, and exit. Do NOT try to create a .env
+  as a workaround.
+- PERPLEXITY_* and CLICKUP_* are OPTIONAL and may legitimately be absent.
+  Do NOT stop for those: perplexity.sh exits 3 (fall back to native
+  WebSearch and note it in the log) and clickup.sh appends the message to a
+  local file and exits 0. Seeing them as MISSING in the check below is
+  expected, not an error.
 - Verify env vars BEFORE any wrapper call:
     for v in ALPACA_API_KEY ALPACA_SECRET_KEY PERPLEXITY_API_KEY \
              CLICKUP_API_KEY CLICKUP_WORKSPACE_ID CLICKUP_CHANNEL_ID; do
