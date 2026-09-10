@@ -34,7 +34,7 @@ Crypto trades 24/7 and runs are 6h apart, so nothing watches between runs.
 4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
    CORE: trail 20% below high-water; 14% once up +30%; 10% once up +40%.
    TACTICAL: stop 6% below entry; raise to BREAKEVEN once up +6%; close at
-   market once up +12% (no OCO on crypto, so the target is taken by whichever
+   market once up +14% (no OCO on crypto, so the target is taken by whichever
    run sees it); reassess and close if open >48h without target or stop.
    Never move any stop down. Never place one within 5% of price (2% tactical).
 Log every action taken to memory/TRADE-LOG.md.

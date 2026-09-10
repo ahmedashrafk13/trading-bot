@@ -80,7 +80,7 @@ trades a day implies hour-long holds. They cannot be the same position.
 | Max positions | 3 | 3 |
 | New trades | agent's judgement | agent's judgement |
 | Stop | 20% below high-water, ratcheted | 6% below entry, to breakeven at +6% |
-| Target | none — let winners run, no time limit | +12% (2:1 after fees) |
+| Target | none — let winners run, no time limit | +14% (2:1 AFTER fees) |
 | Screen timeframe | daily bars | hourly bars |
 | Hold horizon | weeks to months | hours to ~2 days |
 
@@ -115,6 +115,19 @@ round trip in a thin alt, and it is the dollars that compound against you.
 At $20 tactical positions, 1.5%/week is roughly 23 round trips — more than the
 3/day this replaced, and it flexes with what you actually trade.
 
+## Why the tactical target is 14% and not 12%
+Set 2026-09-10 after the gate refused every tactical trade. A 6% stop with a 12%
+target is 2:1 GROSS, but the 0.65% round-trip fee is charged on both legs, so the
+real ratio was 1.71:1 against a required 2:1 — a failure produced by the
+parameters themselves, so no candidate at any size could ever pass.
+  risk  = notional*0.06 + fee      reward = notional*0.14 - fee
+  at $20: risk $1.33, reward $2.67 -> 2.01:1  PASS (was 1.71:1 FAIL)
+The stop stayed at 6% rather than tightening to 5% because 5% is barely outside
+normal crypto session noise, and being shaken out of winners by too-tight stops
+is the documented failure of the previous iteration of this strategy.
+LESSON: state R:R requirements NET of fees, or the parameters silently
+contradict the gate.
+
 ## Daily circuit breaker (required once frequency is unbounded)
 Unbounded frequency plus a losing streak is how a small account dies in a day.
 - If REALIZED losses today reach 3% of equity (~$6.00), open NO new positions
@@ -135,7 +148,7 @@ each individual trade can look reasonable while the sequence is ruinous.
 6. CORE: hard cut at -15%; trail 20% below high-water, ratcheted UP only;
    tighten to 14% at +30% and 10% at +40%
 7. TACTICAL: hard stop 6% below entry; raise to breakeven once +6%; exit at
-   +12% target; never widen a tactical stop
+   +14% target; never widen a tactical stop
 8. Never place a stop within 5% of current price (2% for tactical); NEVER move
    any stop down
 9. Never hold a stablecoin as a position
@@ -169,7 +182,7 @@ news is. Log the failure reason.
 ## Known limitation: no OCO on crypto
 Alpaca has no bracket/OCO for crypto, so a position cannot carry an automatic
 stop AND an automatic target. The resting `stop_limit` covers the downside; the
-+12% tactical target is taken by whichever run next observes it. With runs 6h
++14% tactical target is taken by whichever run next observes it. With runs 6h
 apart a target can be hit and given back unseen. This is the accepted cost of
 the platform, and it caps how precisely the tactical sleeve can capture gains.
 
@@ -246,7 +259,7 @@ CORE:
 
 TACTICAL:
 - Unrealized <= -6% -> close at market, cancel the resting stop
-- Up >= +12% -> close at market, take the target
+- Up >= +14% -> close at market, take the target
 - Up >= +6% -> raise the stop to breakeven (entry price), never lower
 - Open > ~48h without hitting target or stop -> reassess; close unless the
   hourly screen still PASSES

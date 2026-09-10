@@ -10,7 +10,7 @@ benchmarked against BTC/USD buy-and-hold.
 
 Two sleeves: **CORE** (~$120, 3 positions, 20% ratcheted trail, no time limit,
 3 trades/week) for letting good trades run, and **TACTICAL** (~$80, 3 positions
-of $20, 6% stop, +12% target, 3 trades/day) for frequency. Entries must clear a
+of $20, 6% stop, +14% target, frequency bounded by a 1.5%/week fee budget). Entries must clear a
 technical screen over all 33 pairs, not just a news catalyst.
 
 ## Quickstart (local mode)
