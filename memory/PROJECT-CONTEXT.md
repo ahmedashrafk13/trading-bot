@@ -3,7 +3,14 @@
 ## Overview
 - What: Autonomous CRYPTO trading bot
 - Starting capital: ~$200
-- Platform: Alpaca crypto (paper account PA3VFI9O4EPS)
+- Platform: Alpaca crypto — **PAPER account PA3VFI9O4EPS**, endpoint
+  https://paper-api.alpaca.markets/v2. Keys are PK-prefixed (paper). No real
+  money is at risk and P&L is simulated.
+- BEFORE GOING LIVE: the endpoint changes to api.alpaca.markets, keys become
+  AK-prefixed, and the account is funded with real money. Treat that switch as a
+  separate decision, not a config tweak. Nothing in this repo should describe the
+  account as LIVE until it actually is — an agent reading "LIVE" may reason
+  differently about risk than one reading "PAPER".
 - Duration: [your challenge window]
 - Strategy: Swing trading crypto USD pairs. CRYPTO ONLY — no stocks, no options.
 - Benchmark: BTC/USD buy-and-hold
