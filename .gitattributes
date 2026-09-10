@@ -1,0 +1,5 @@
+# The cloud routine containers are Linux. CRLF in a shebang line means
+# "bad interpreter", so normalize everything to LF in the repository.
+* text=auto eol=lf
+*.sh text eol=lf
+*.md text eol=lf
