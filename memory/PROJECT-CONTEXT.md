@@ -69,16 +69,20 @@
   (from `alpaca.sh assets crypto`) — they are ~$1 equivalent, not 1 coin.
 - FEES ARE REAL. `crypto_tier: 0` is the highest band, ~0.5% per market round
   trip. Stocks were commission-free; crypto is not. Churn is expensive at $200.
-- ONE RESTING SELL PER POSITION (verified 2026-09-10 on the live DOT position):
-  a resting stop_limit reserves the ENTIRE position, so a second sell order is
-  rejected — `{"available":"0","balance":"17.972955","code":40310000,
-  "message":"insufficient balance for DOT"}`. You therefore CANNOT rest a stop
-  and a take-profit limit at the same time. Combined with no OCO/bracket for
-  crypto, this means the exchange can protect the downside OR chase the upside,
-  never both. Downside wins: never leave a position without its stop.
-  CONSEQUENCE: a fixed take-profit target is only ever checked when a run
-  happens, so a spike between runs is invisible and unrecoverable. Profit must
-  be protected by RATCHETING THE RESTING STOP upward, not by a target check.
+- ORDER_CLASS OCO/BRACKET ARE REJECTED FOR CRYPTO (verified 2026-09-10):
+  `{"code":42210000,"message":"crypto orders not allowed for advanced
+  order_class: oco"}`. So no single order can carry both a stop and a target.
+- BUT MULTIPLE RESTING SELLS ARE ALLOWED — they just cannot overlap the same
+  UNITS (verified 2026-09-10 on the live DOT position). A resting order reserves
+  the qty it names, not the whole position:
+  * stop_limit for the FULL position -> a second sell is rejected
+    (`available: 0`), because nothing is left unreserved
+  * stop_limit on 8.98 + limit on 8.99 of a 17.97 position -> BOTH REST FINE
+  This is how a stop and a take-profit coexist on Alpaca crypto: split the qty.
+  The cost is that whichever slice carries the take-profit has NO stop, so that
+  slice is unprotected on the downside until a run notices.
+- SELL orders are not subject to the $10 minimum (that message says "cost
+  basis", i.e. buys). Sells of ~$9.97 were accepted, so scaling out is possible.
 - NO SHORTING crypto on Alpaca. Long only.
 - NO PDT and NO T+1 settlement. Sale proceeds are instantly reusable, so the
   cash-account settlement discipline from the stocks era does not apply.

@@ -35,14 +35,19 @@ Crypto trades 24/7 and runs are 6h apart, so nothing watches between runs.
      bash scripts/alpaca.sh close SYM/USD
 4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
    CORE: trail 20% below high-water; 14% once up +30%; 10% once up +40%.
-   TACTICAL ratchet ladder — re-place the resting stop_limit higher at each step,
-   because a take-profit limit CANNOT rest alongside a stop (verified: the stop
-   reserves the whole position). This is what protects profit between runs:
-     +6%  -> stop to BREAKEVEN (entry)
-     +10% -> stop to entry +4%
-     +14% -> stop to entry +8%, and close at market if this run sees >= +14%
-     >14% -> trail the stop 5% below the high-water mark
-   Reassess and close if open >48h without target or stop.
+   TACTICAL ladder. A resting order reserves only the qty it names, so a stop and
+   a take-profit CAN coexist by SPLITTING the quantity (oco/bracket are rejected
+   for crypto; a full-size stop leaves nothing unreserved).
+     in loss / flat -> FULL-SIZE stop, no target. Protection outranks upside.
+     +6%  -> stop to BREAKEVEN, then split: ~half on the stop, ~half on a resting
+             `limit` sell at the +14% target so the EXCHANGE enforces the upside
+             with no run required
+     +10% -> move the stop leg to entry +4%
+     +14% -> the resting limit fills itself; close at market only if this run sees
+             >= +14% and the limit has not filled
+     >14% -> trail the stop leg 5% below the high-water mark
+   ORPHAN CHECK: if one leg filled, CANCEL the other and re-place a full-size stop
+   on whatever qty remains. Reassess and close if open >48h.
    Never move any stop down. Never place one within 5% of price (2% tactical).
 Log every action taken to memory/TRADE-LOG.md.
 

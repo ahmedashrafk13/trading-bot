@@ -179,31 +179,39 @@ TACTICAL (hourly bars):
 If a coin fails its screen, it is NOT tradeable this run no matter how good the
 news is. Log the failure reason.
 
-## Profit is protected by the RESTING STOP, not by a target check
-VERIFIED 2026-09-10: Alpaca has no OCO/bracket for crypto AND a resting
-stop_limit reserves the whole position, so a take-profit limit cannot rest
-alongside a stop (rejected: available 0). The exchange can hold one sell order,
-and it must be the stop.
+## Stop + take-profit: split the quantity (state-dependent)
+VERIFIED 2026-09-10:
+- `order_class: oco` and bracket are REJECTED for crypto, so one order cannot
+  carry both legs.
+- A resting order reserves only the QTY IT NAMES. A full-size stop leaves
+  nothing unreserved, so a second sell fails with `available: 0` — but a
+  stop_limit on part of the position and a limit on the rest BOTH REST FINE.
+So a stop and a take-profit CAN coexist. The price is that the slice carrying
+the take-profit has no stop and is unprotected on the downside.
 
-So a fixed "+14% target" is only observed when a run happens. At 6h spacing a
-move to +20% that retraces to +3% is invisible — the run sees +3% and the gain
-is gone with no record it existed. Relying on a target check to capture upside
-is therefore structurally broken, and the fix is NOT a faster target check but a
-stop that follows price up, because the stop is the thing that actually sits at
-the broker 24/7.
+Which structure applies depends on whether the position is in profit:
 
-TACTICAL exit ladder (each step re-places the resting stop_limit higher):
-- at +6%  -> stop to BREAKEVEN (entry). Worst case becomes a scratch, not -6%.
-- at +10% -> stop to entry +4% (locks a profit no matter what happens next)
-- at +14% -> stop to entry +8%, and CLOSE at market if a run observes >= +14%
-- above +14% -> trail the stop 5% below the high-water mark
-The +14% target still exists as an opportunistic exit when a run sees it, but it
-is no longer what protects the gain. After the first ratchet the position cannot
-round-trip to a loss even if no run happens for a day.
+**While flat or at a loss -> FULL-SIZE STOP, no take-profit.**
+100% of the position is covered. Protection outranks upside capture; there is no
+gain to bank and an unstopped slice could ride a drop all the way down.
 
-WHY THIS MATTERS MORE THAN RUN FREQUENCY: more frequent runs capture more of a
-spike, but only a resting order captures a spike NOBODY IS AWAKE FOR. Ratcheting
-converts run frequency from a safety requirement into an optimisation.
+**Once ratcheted to breakeven or better (i.e. at +6% or more) -> SPLIT:**
+- ~50% carries the stop_limit at the ratchet level
+- ~50% carries a resting `limit` sell at the +14% target
+Now the target is enforced by the EXCHANGE, 24/7, with no run required — which
+is the whole point, since a spike that reverses between runs was otherwise
+invisible. The unstopped half is acceptable here ONLY because the ratchet has
+already moved the exit to entry or above: the worst case on that half is giving
+back an unrealised gain, not taking a loss.
+- Every run must check for an ORPHANED leg: if one side filled, cancel the other
+  and re-place a full-size stop on whatever qty remains.
+
+TACTICAL ratchet ladder (each step re-places the resting stop_limit higher):
+- at +6%  -> stop to BREAKEVEN, and SPLIT: half stop / half limit at +14%
+- at +10% -> stop leg to entry +4%
+- at +14% -> the resting limit should fill on its own; if a run sees >= +14% and
+  the limit has not filled, close at market
+- above +14% -> trail the stop leg 5% below the high-water mark
 
 ## Stops — how they actually work here (READ THIS)
 Alpaca REJECTS `trailing_stop` and `stop` for crypto:
@@ -278,10 +286,14 @@ CORE:
 
 TACTICAL:
 - Unrealized <= -6% -> close at market, cancel the resting stop
-- Up >= +14% -> close at market if observed; and ratchet the stop to entry +8%
-- Up >= +10% -> ratchet the resting stop to entry +4% (locks in profit)
-- Up >= +6% -> ratchet the resting stop to BREAKEVEN (entry), never lower
-- Above +14% -> trail the resting stop 5% below the high-water mark
+- Up >= +6% -> ratchet stop to BREAKEVEN, then SPLIT the qty: half on the stop,
+  half on a resting limit sell at the +14% target (exchange-enforced upside)
+- Up >= +10% -> move the stop leg to entry +4%
+- Up >= +14% -> the resting limit fills itself; close at market only if a run
+  sees >= +14% with the limit unfilled
+- Above +14% -> trail the stop leg 5% below the high-water mark
+- ORPHAN CHECK every run: if one leg filled, cancel the other and re-place a
+  full-size stop on the remaining qty
 - Open > ~48h without hitting target or stop -> reassess; close unless the
   hourly screen still PASSES
 - Thesis broken -> close immediately

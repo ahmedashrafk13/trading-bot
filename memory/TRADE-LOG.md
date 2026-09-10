@@ -127,3 +127,23 @@ first exercise of intraday tactical origination authority.
 is gapped through without filling), raise the stop to breakeven at +6%, close at
 market at +14%, reassess if open beyond ~48h.
 
+### 2026-09-10 — DOT position: stop management correction
+
+Tested whether a take-profit could rest alongside the stop, after asserting it
+could not. Result: the assertion was WRONG in an important way.
+- `order_class: oco` IS rejected for crypto (verified).
+- But two resting sells DO coexist if they name different units: stop_limit on
+  8.98 + limit on 8.99 of the 17.972955 position both rested fine. A resting
+  order reserves only the qty it names; a FULL-SIZE stop is what leaves nothing
+  available for a second order.
+
+Position state during the test: -0.52%, i.e. at a small loss. Both split legs
+were therefore CANCELLED and a full-size stop_limit restored (order a4b80584,
+qty 17.972955, trigger $1.04340, limit $1.02253). Rationale: while a position is
+flat or losing, the take-profit slice would be carrying no stop, and there is no
+gain to bank — protection outranks upside capture.
+
+The split structure now applies only from +6% onward, once the stop has been
+ratcheted to breakeven, at which point the unstopped half can only give back an
+unrealised gain rather than take a loss. Strategy and all prompts updated.
+
