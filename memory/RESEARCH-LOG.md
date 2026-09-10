@@ -98,3 +98,74 @@ AFTER the CPI print is known. Patience > activity.
 The entry above (HAL/KMI/RIG energy screen) is from the stocks era — historical
 only, do not act on it. The account now trades crypto USD pairs exclusively.
 Next research run screens crypto pairs against the new gate.
+
+---
+## 2026-09-10 — Crypto Research (local run, 19:39 UTC)
+
+> Perplexity unconfigured -> native WebSearch fallback, no Perplexity citations.
+> Date from the Alpaca clock (19:39 UTC); the machine clock is 12h fast.
+> First run under the two-sleeve model.
+
+### Account
+- Equity: $200.00 | Cash: $200.00 | Deployed: 0%
+- Positions: none. Open orders: none. Stop coverage: N/A.
+- Capacity: CORE 3 slots ($120), TACTICAL 3 slots ($80). Trades used: 0/3 wk, 0/3 day.
+
+### Market Context
+- BTC $77,155 (screen) / ~$78,039 earlier, -1% on 24h. ETH $2,464, -0.7%.
+- Global market cap -0.9% to $2.76T. Both majors opened at week lows.
+- **FOMC starts Tuesday with a 62.2% implied chance of a RATE HIKE.** Higher
+  rates are directly negative for crypto.
+- **CPI tomorrow (2026-09-11) 08:30 ET**, after today's PPI. Last inflation
+  reads before the Fed decides.
+- Macro backdrop from the equity session: Brent >$100 on Iran/Hormuz, Treasury
+  yields at 52-week highs. Risk-off, not risk-on.
+
+### Universe screen (all 33 pairs — scripts/screen.sh)
+CORE shortlist, daily bars (5): DOT XTZ SUSHI GRT UNI
+TACTICAL shortlist, hourly bars (19): SKY UNI POL ETH RENDER LDO TRUMP SOL AAVE
+CRV SHIB DOT GRT YFI ADA ARB FIL DOGE LINK
+
+Read the tactical list carefully: the hourly 30-period momentum is NEGATIVE for
+every single one of the 33 coins (-0.4% to -11.9%). All 19 "passes" are a ~7-hour
+bounce inside a 30-hour downtrend, driven by one macro move. They are not 19
+independent setups — they are one correlated setup wearing 19 tickers. Taking 3
+tactical positions here would be three bets on the same bounce.
+
+### Candidate notes
+- DOT — the only strong catalyst in the universe: OpenGov Referendum 1944 for a
+  native stablecoin (dotUSD) at ~97.5% in favour, a 150% transaction spike and
+  record XCM throughput on 9/7, plus a short-liquidation squeeze. But +24% on
+  the week and +18.1% over SMA20 — it barely clears the <=20% extension filter,
+  and a squeeze-driven leg is exactly the kind that retraces.
+- XTZ — Tezos X mainnet targeted for summer 2026, named an altseason contender
+  on 8/23. Real but vague; no dated near-term catalyst.
+- SUSHI / GRT / UNI — pass on trend mechanics with no specific catalyst found.
+  Gate requires a documented catalyst, so none are entry-eligible today.
+
+### Risk Factors
+- A 62% probability of a rate hike is the single most important fact here, and
+  it lands 2 trading days out. CORE holds are weeks-long by design; opening one
+  into that is choosing the worst entry window available.
+- CPI tomorrow pre-open. A tactical 6% stop is well inside a normal CPI-day
+  range for alts, so a stop-out is likelier than a 12% target being reached.
+- Everything is correlated to the same macro driver, so position count would
+  overstate diversification.
+- Fees: 3 tactical round trips cost ~1.05%/wk of the account. Paying that to
+  express one macro guess is poor value.
+
+### Decision
+**HOLD both sleeves. No orders.**
+- CORE: HOLD. Only DOT has a real catalyst and it is extended after a squeeze,
+  two days before a probable hike. Waiting costs nothing; the dotUSD narrative
+  is not a one-day event.
+- TACTICAL: HOLD. 19 nominal passes are one correlated bounce, and CPI tomorrow
+  makes a 6% stop a coin flip.
+
+### Triggers for the next run (2026-09-11, post-CPI)
+1. CPI printing at or below expectations AND hike odds falling below ~50%
+   -> re-screen; DOT becomes CORE-eligible if it has cooled to <=12% over SMA20.
+2. CPI hot / hike odds rising -> stay flat. Do not "buy the dip" into a hiking
+   Fed; that is not a catalyst, it is hope.
+3. Tactical entries only once hourly 30-period momentum turns positive for the
+   candidate, so the bounce is confirmed rather than assumed.
