@@ -71,12 +71,28 @@ Every day of the week, including weekends — crypto never closes. The `:07` and
 `:37` offsets keep these off the `:00` minute that everyone else schedules on,
 and keep the Sunday weekly review from colliding with that day's summary.
 
+### Helper scripts the prompts rely on
+- `scripts/state.sh` — ONE call giving broker-clock UTC, equity/cash/deployment,
+  every position with age + exact stop-coverage % (with a NAKED flag), the weekly
+  fee-budget state, the circuit-breaker state and the amendment trigger. Every
+  run uses it instead of doing arithmetic over markdown, which is where the
+  guardrail numbers used to drift.
+- `scripts/screen.sh` — ranks all 33 tradable pairs; CORE on daily bars,
+  TACTICAL on hourly. Hard-fails rather than truncating if pagination overruns.
+- `scripts/rotate-logs.sh` — archives log entries older than 14 days into
+  memory/archive/. Run by the weekly review. Without it, per-run context (and
+  cost) grows forever at hourly scan cadence.
+
 `scan` runs HOURLY, not daily. It is cheap (a positions call, an orders call and
 at most a stop re-placement) and it is the only thing standing between a spike
 and a round trip: a take-profit limit cannot rest alongside a stop on Alpaca
 crypto, so profit is locked in by ratcheting the resting stop, and a ratchet only
 happens when a run happens. Hourly means at most ~1h of a favourable move goes
 uncaptured, instead of up to 6h.
+
+`scan` is deliberately LEAN (~1,100 tokens, self-contained, reads no memory
+files) because it runs ~720x/month. The other four read memory and are ~1,700-2,500
+tokens each but run only once a day.
 
 Every routine begins with the same STEP A invariants: reconcile positions,
 verify every position has a resting `stop_limit`, force-close anything past -15%

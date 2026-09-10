@@ -133,6 +133,12 @@ results justify it. Read that file's "Self-amendment" section first and obey it:
   demonstrably BROKEN rule (always rejected by the API, or arithmetically
   unsatisfiable), which may be fixed immediately.
 
+STEP F0 — Rotate the logs so per-run context stops growing:
+  bash scripts/rotate-logs.sh 14
+Entries older than 14 days move to memory/archive/. Nothing is deleted and git
+retains everything; this only keeps what each run must READ bounded. At hourly
+scans an unbounded log means per-run cost climbing forever.
+
 STEP F — Send ONE ClickUp message, <= 15 lines:
   bash scripts/clickup.sh "Crypto week ending YYYY-MM-DD
   Portfolio: \$X (±X% week, ±X% total)
@@ -144,7 +150,7 @@ STEP F — Send ONE ClickUp message, <= 15 lines:
   Grade: <letter>"
 
 STEP 7 — COMMIT AND PUSH:
-  git add memory/WEEKLY-REVIEW.md memory/TRADE-LOG.md memory/TRADING-STRATEGY.md
+  git add memory/WEEKLY-REVIEW.md memory/TRADE-LOG.md memory/TRADING-STRATEGY.md memory/RESEARCH-LOG.md memory/archive
   git commit -m "weekly review $DATE"
   git push origin main
 On push failure: git pull --rebase origin main, then push again.
