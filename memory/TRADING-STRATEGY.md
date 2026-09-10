@@ -24,6 +24,47 @@ whether the trade wins or loses. Consequences that are part of the strategy:
 - The 3-trades-per-week cap is a FEE control, not just a discipline rule.
 - Require a minimum 2:1 reward:risk AFTER assuming 0.5% friction.
 
+## Self-amendment (the weekly review MAY change this document)
+The Friday/Sunday weekly review is authorised to EDIT this file directly based
+on observed trade results. It does not need human approval. Rules changed this
+way must be recorded in WEEKLY-REVIEW.md with the evidence, the before value and
+the after value, and committed together with the review so `git log` shows
+exactly what changed and why. Any bad change is recoverable with `git revert`.
+
+### TUNABLE — the review may change these
+- Stop distances and trail percentages, and the ratchet thresholds
+- Hard-cut levels (-15% core, -6% tactical) and the tactical target
+- Position counts, position sizes and sleeve allocation
+- Trade caps (3/week core, 3/day tactical)
+- Deployment band (75-85%)
+- Screen filter thresholds (momentum, SMA20 distance, vol band, spread limits)
+- Screen timeframes (daily / hourly)
+- Narrative groupings
+- Minimum R:R
+
+### IMMUTABLE — the review may NEVER change these
+These are not preferences, they are verified facts about the platform or the
+mandate. A "rule improvement" that violates one produces orders the API rejects,
+or changes what this bot is:
+1. CRYPTO ONLY. No stocks, no options, ever.
+2. Long only — Alpaca does not support shorting crypto.
+3. Stops are `stop_limit` only. `trailing_stop` and `stop` are REJECTED for crypto.
+4. Orders use `time_in_force: gtc` (or ioc). `day` is REJECTED for crypto.
+5. Order notional >= $10. Hard API floor.
+6. Stops are sized from the ACTUAL held qty (buy fees are taken in kind).
+7. Every position must carry a resting stop. The review may change the stop
+   DISTANCE; it may never remove the requirement or allow a naked position.
+8. Never move a stop down, and never widen a stop on an open losing position.
+9. No stablecoins as positions.
+10. This section itself, and the requirement to log amendments with evidence.
+
+### Amendment limits (so the experiment stays legible)
+- At most 2 tunable rules changed per review. Changing everything at once makes
+  it impossible to attribute the next week's result to anything.
+- Each change needs stated evidence from the logs, not a hunch.
+- A parameter may not move more than 50% of its current value in one step.
+- If a change is reverted twice, stop proposing it and record that it was tried.
+
 ## Two sleeves
 Capital is split so that "more trades" and "let good trades run" can coexist
 without fighting each other. A 20% trailing stop implies week-long holds; 2-3

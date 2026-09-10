@@ -103,7 +103,7 @@ none. Deployed 0% against a 75-85% target.
 - Re-screen after CPI; apply the logged triggers rather than re-deciding freehand.
 - Record a BTC mark in every daily snapshot from now on, not just the baseline.
 
-### Proposed rule changes
+### Rule changes applied
 None. Nothing has been observed for long enough to justify changing a rule, and
 proposals require evidence. (Note: strategy edits are proposal-only pending your
 approval — the agent cannot amend TRADING-STRATEGY.md itself.)

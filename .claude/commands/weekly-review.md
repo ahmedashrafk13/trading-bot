@@ -71,9 +71,21 @@ STEP D — Append a full review to memory/WEEKLY-REVIEW.md:
 - Adjustments for next week
 - Overall letter grade (A-F)
 
-STEP E — Strategy changes are PROPOSALS ONLY. If a rule looks wrong, write a
-"Proposed rule change" block into WEEKLY-REVIEW.md with the evidence and wait for
-human approval. Do NOT edit memory/TRADING-STRATEGY.md yourself.
+STEP E — AMEND THE STRATEGY. You are authorised to edit
+memory/TRADING-STRATEGY.md directly, without human approval, when the week's
+results justify it. Read that file's "Self-amendment" section first and obey it:
+- Only the TUNABLE list may change. The IMMUTABLE list must never change — those
+  are verified platform facts (stop_limit only, gtc only, $10 notional floor,
+  stops sized from held qty, always-stopped, crypto only, long only). A change
+  that violates one produces orders Alpaca rejects.
+- At most 2 rules per review. No parameter moves more than 50% in one step.
+- Every change needs evidence from THIS week's TRADE-LOG or RESEARCH-LOG, not a
+  hunch. State the rule, the before value, the after value, and the evidence.
+- Record each change in WEEKLY-REVIEW.md under "### Rule changes applied", and
+  commit the strategy edit together with the review so the diff and the reason
+  land in one commit.
+- If the week produced fewer than 3 closed trades, DO NOT change risk
+  parameters — that is noise, not evidence. Say so and change nothing.
 
 STEP F — Send ONE ClickUp message, <= 15 lines:
   bash scripts/clickup.sh "Crypto week ending YYYY-MM-DD
