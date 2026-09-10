@@ -36,6 +36,12 @@
 - Market data uses a different base URL: data.alpaca.markets for quotes, api.alpaca.markets
   for everything else.
 - Quote shape: quote.ap = ask, quote.bp = bid. Wide spread or zero = halted/illiquid, skip.
+- FREE DATA FEED = IEX ONLY. The default data plan quotes IEX, not the full SIP
+  consolidated tape, so thin names can show absurd spreads that are an artifact of
+  the feed rather than real illiquidity (seen 2026-09-10: CTRA 11.3% and OKE 3.9%
+  while HAL/KMI printed 0.03% on the same call). Still skip wide spreads per the
+  rule, but do not conclude the stock is untradeable — cross-check before
+  permanently blacklisting a ticker.
 - Trailing stops only work during market hours. Overnight gaps can blow through them.
 - Env var is ALPACA_API_KEY; the HTTP header is APCA-API-KEY-ID. The wrapper translates.
 - Alpaca timestamps are UTC. Crons are in the routine's timezone. Convert carefully.
