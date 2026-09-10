@@ -130,6 +130,9 @@ contradict the gate.
 
 ## Daily circuit breaker (required once frequency is unbounded)
 Unbounded frequency plus a losing streak is how a small account dies in a day.
+- Computed by summing the `REALIZED P&L` values on today's exit rows in
+  TRADE-LOG (UTC day). Do NOT infer it from equity change — that includes
+  unrealized moves on open positions and will trip or miss the breaker wrongly.
 - If REALIZED losses today reach 3% of equity (~$6.00), open NO new positions
   for the rest of the UTC day. Management and exits continue.
 - If 3 consecutive tactical trades close at a loss, stop opening tactical for

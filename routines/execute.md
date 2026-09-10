@@ -65,7 +65,11 @@ Crypto trades 24/7 and runs are 6h apart, so nothing watches between runs.
    ORPHAN CHECK: if one leg filled, CANCEL the other and re-place a full-size stop
    on whatever qty remains. Reassess and close if open >48h.
    Never move any stop down. Never place one within 5% of price (2% tactical).
-Log every action taken to memory/TRADE-LOG.md.
+Log every action to memory/TRADE-LOG.md. Any EXIT row MUST record:
+  `Exit time (UTC)`, `Exit price`, `REALIZED P&L $X`, `fees $X`, and the reason.
+Without an explicit realized figure the 3%-daily-loss circuit breaker cannot be
+computed — equity deltas mix in unrealized moves and would trip or miss the
+breaker wrongly. Sum today's REALIZED rows to evaluate the breaker.
 
 STEP B — Read TODAY's entry in memory/RESEARCH-LOG.md. If it is missing, run the
 research workflow's STEP B-D inline first. NEVER trade without documented research.
@@ -139,8 +143,10 @@ once, and if it still fails, CLOSE the position at market and log why. An
 unstopped crypto position over a 6h gap is not acceptable.
 
 STEP H — Append each trade to memory/TRADE-LOG.md, TAGGED WITH ITS SLEEVE:
-date, SLEEVE, pair, side, qty, fill price, notional, hard-cut level, stop
-trigger/limit, thesis, target (CORE: "none - let run"), R:R, est. fees.
+date, **ENTRY TIME in UTC as YYYY-MM-DDTHH:MM** (the 48h reassess rule has
+nothing to measure against without it), SLEEVE, pair, side, qty, fill price,
+notional, hard-cut level, stop trigger/limit, thesis, target (CORE: "none - let
+run"), R:R, est. fees.
 The sleeve tag is load-bearing: later runs use it to choose which stop and exit
 rules apply. Never log a position without it.
 

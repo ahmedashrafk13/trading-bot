@@ -76,7 +76,15 @@ import json,sys
 print(json.load(open(sys.argv[1],encoding='utf-8')).get('next_page_token') or '')
 " "$TMP/page.json")"
   n=$((n+1))
-  [[ -z "$page" || $n -ge 40 ]] && break
+  # 1H over 33 symbols already needs ~29 pages; 15Min would need ~112. A silent
+  # break here reproduces the original bug (a partial universe that looks fine),
+  # so the cap is generous AND exceeding it is a hard error, never a truncation.
+  if [[ $n -ge 200 ]]; then
+    echo "SCREEN ERROR: pagination exceeded 200 pages and next_page_token is still set." >&2
+    echo "  The universe would be INCOMPLETE. Shorten the window or the symbol list." >&2
+    exit 1
+  fi
+  [[ -z "$page" ]] && break
 done
 python -c "
 import json,sys
@@ -139,6 +147,15 @@ for sym, b in bars.items():
                      spread=spread, sma20_rising=sma20 > prev_sma20,
                      core_pass=core_ok, core_fail=core_why,
                      tactical_pass=tac_ok, tactical_fail=tac_why))
+
+dropped = [sym for sym, b in bars.items() if len([x['c'] for x in b]) < 21]
+if dropped:
+    print(f'WARNING: {len(dropped)} coin(s) skipped for <21 periods of history: '
+          + ' '.join(sorted(s.replace('/USD','') for s in dropped)), file=sys.stderr)
+expected = len(bars)
+if expected and len(rows) < expected * 0.8:
+    print(f'WARNING: only {len(rows)} of {expected} symbols scored — the screen may be '
+          'working from incomplete data. Check pagination before trusting it.', file=sys.stderr)
 
 rows.sort(key=lambda r: (r['m7'] if r['m7'] == r['m7'] else -999), reverse=True)
 

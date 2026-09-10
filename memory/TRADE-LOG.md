@@ -96,6 +96,7 @@ that impossible, so it ran at $12.31 — still well under the $20 tactical size.
 | Ordered qty | 18.018 |
 | Filled qty | 17.972955 (0.25% fee taken in kind) |
 | Entry | $1.11 |
+| Entry time (UTC) | 2026-09-10T20:22 (backfilled — the format did not require it at the time) |
 | Notional | $19.85 |
 | Hard cut (-6%) | $1.0434 |
 | Stop order | stop_limit GTC, trigger $1.04340, limit $1.02253, order cbaf290f |

@@ -48,7 +48,11 @@ Crypto trades 24/7 and runs are 6h apart, so nothing watches between runs.
    ORPHAN CHECK: if one leg filled, CANCEL the other and re-place a full-size stop
    on whatever qty remains. Reassess and close if open >48h.
    Never move any stop down. Never place one within 5% of price (2% tactical).
-Log every action taken to memory/TRADE-LOG.md.
+Log every action to memory/TRADE-LOG.md. Any EXIT row MUST record:
+  `Exit time (UTC)`, `Exit price`, `REALIZED P&L $X`, `fees $X`, and the reason.
+Without an explicit realized figure the 3%-daily-loss circuit breaker cannot be
+computed — equity deltas mix in unrealized moves and would trip or miss the
+breaker wrongly. Sum today's REALIZED rows to evaluate the breaker.
 
 STEP B — This run is the overnight/inter-run safety sweep. STEP A *is* the work.
 Do NOT open new positions in this run — entries happen only in the execute run.
