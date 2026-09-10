@@ -15,6 +15,16 @@ if [[ -f "$ENV_FILE" ]]; then
   set +a
 fi
 
+# env.template ships "your_..._here" placeholders. They are NON-EMPTY, so a naive
+# -z check would pass them through to the API and produce a 401 instead of the
+# intended graceful fallback. Normalize any placeholder value to empty.
+for _v in ALPACA_API_KEY ALPACA_SECRET_KEY PERPLEXITY_API_KEY PERPLEXITY_MODEL           CLICKUP_API_KEY CLICKUP_WORKSPACE_ID CLICKUP_CHANNEL_ID; do
+  case "${!_v:-}" in
+    your_*_here) unset "$_v" ;;
+  esac
+done
+unset _v
+
 query="${1:-}"
 if [[ -z "$query" ]]; then
   echo "usage: bash scripts/perplexity.sh \"<query>\"" >&2
