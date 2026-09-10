@@ -1,6 +1,6 @@
 # Cloud Routines
 
-These five prompts are the production path. Each is pasted **verbatim** into its own Claude Code
+These five prompts are the production path (crypto, 24/7). Each is pasted **verbatim** into its own Claude Code
 cloud routine. Do not paraphrase — the env-var check block and the commit-and-push step are
 load-bearing.
 
@@ -30,13 +30,13 @@ Mental model: the runner is stateless. Git is the memory. If it isn't in `main`,
    |---|---|
    | `ALPACA_API_KEY` | required |
    | `ALPACA_SECRET_KEY` | required |
-   | `ALPACA_ENDPOINT` | optional (defaults to live trading URL) |
+   | `ALPACA_ENDPOINT` | set to `https://paper-api.alpaca.markets/v2` for paper |
    | `ALPACA_DATA_ENDPOINT` | optional (defaults to data URL) |
-   | `PERPLEXITY_API_KEY` | required for research workflows |
+   | `PERPLEXITY_API_KEY` | optional — falls back to WebSearch |
    | `PERPLEXITY_MODEL` | optional (defaults to `sonar`) |
-   | `CLICKUP_API_KEY` | required for notifications |
-   | `CLICKUP_WORKSPACE_ID` | required (numeric) |
-   | `CLICKUP_CHANNEL_ID` | required (format `4-XXXXXXX-X`) |
+   | `CLICKUP_API_KEY` | optional — falls back to a local file |
+   | `CLICKUP_WORKSPACE_ID` | optional (numeric; needed only with the API key) |
+   | `CLICKUP_CHANNEL_ID` | optional (format `4-XXXXXXX-X`) |
 
 ### Why the "no .env file" rule matters
 
@@ -48,34 +48,40 @@ leaking credentials. Every prompt here carries an explicit "do not create a .env
 ## Creating a routine
 
 1. Routines -> New Routine.
-2. Name it, e.g. "Trading bot pre-market".
+2. Name it, e.g. "Crypto bot research".
 3. Select this repository, branch `main`.
 4. Add all env vars above.
 5. Toggle on **Allow unrestricted branch pushes**.
-6. Set the cron and timezone.
+6. Set the cron and set the timezone to **UTC**.
 7. Paste the matching `routines/*.md` file verbatim into the prompt field.
 8. Save, then hit **Run now** once to test — don't wait until tomorrow morning to find out it
    is broken.
 
-## Schedules (America/Chicago)
+## Schedules (UTC — crypto has no trading day, and UTC avoids DST entirely)
 
-| File | Cron | Local time |
-|---|---|---|
-| `pre-market.md` | `0 6 * * 1-5` | 6:00 AM weekdays |
-| `market-open.md` | `30 8 * * 1-5` | 8:30 AM weekdays (open) |
-| `midday.md` | `0 12 * * 1-5` | noon weekdays |
-| `daily-summary.md` | `0 15 * * 1-5` | 3:00 PM weekdays (close) |
-| `weekly-review.md` | `0 16 * * 5` | 4:00 PM Fridays only |
+| File | Cron | UTC | Role |
+|---|---|---|---|
+| `scan.md` | `7 0 * * *` | 00:07 | overnight safety sweep only |
+| `research.md` | `7 6 * * *` | 06:07 | research + write the day's plan |
+| `execute.md` | `7 12 * * *` | 12:07 | run the gate, place entries + stops |
+| `summary.md` | `7 18 * * *` | 18:07 | daily snapshot, P&L vs BTC |
+| `weekly-review.md` | `37 18 * * 0` | Sun 18:37 | graded weekly recap |
 
-Keep the routines hours apart. Two runs scheduled seconds apart is the one scenario where
-memory-in-git breaks down.
+Every day of the week, including weekends — crypto never closes. The `:07` and
+`:37` offsets keep these off the `:00` minute that everyone else schedules on,
+and keep the Sunday weekly review from colliding with that day's summary.
+
+Every routine begins with the same STEP A invariants: reconcile positions,
+verify every position has a resting `stop_limit`, force-close anything past -15%
+that the stop missed, and ratchet stops upward. That repetition is deliberate —
+runs are 6h apart and nothing else is watching a 24/7 market.
 
 ## Notification philosophy
 
-- pre-market: silent unless genuinely urgent
-- market-open: only if a trade was placed
-- midday: only if action was taken
-- daily-summary: always, one message, under 15 lines
+- scan: only if it acted (a cut, a stop placed, a ratchet)
+- research: silent unless urgent (stop gapped, exploit/depeg on a holding, macro shock)
+- execute: only if a trade was placed
+- summary: always, one message, under 15 lines
 - weekly-review: always, one message, headline numbers
 
 A missed notification is cheap. A chatty bot is expensive — you stop reading, then you miss the
@@ -93,4 +99,6 @@ one that mattered.
 | Push fails "fetch first" / non-fast-forward | Another run pushed between clone and push | Prompts handle it with `git pull --rebase`; if looping, look for a real conflict |
 | ClickUp message never arrived | One of the three `CLICKUP_*` vars is missing | Script silently falls back to a local file — add the missing var |
 | Perplexity calls did not happen | `PERPLEXITY_API_KEY` missing | Script exits 3 and the agent falls back to WebSearch — add the key or accept the fallback |
-| Alpaca rejects the stop with a PDT error | Same-day stop on a same-day buy | The fallback ladder handles it; if it is not cascading, re-paste STEP 5 verbatim |
+| `invalid order type for crypto order` | Prompt used `trailing_stop` or `stop` | Crypto supports `stop_limit` only — re-paste the prompt |
+| `invalid crypto time_in_force` | Order used `time_in_force: day` | Crypto requires `gtc` (or `ioc`) |
+| A position has no resting stop | Stop was rejected after the buy filled | STEP A of every run re-places it; if it fails twice the prompt closes the position |

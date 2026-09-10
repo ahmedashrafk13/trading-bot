@@ -1,11 +1,15 @@
 # Project Context
 
 ## Overview
-- What: Autonomous trading bot challenge
+- What: Autonomous CRYPTO trading bot
 - Starting capital: ~$200
-- Platform: Alpaca
+- Platform: Alpaca crypto (paper account PA3VFI9O4EPS)
 - Duration: [your challenge window]
-- Strategy: Swing trading stocks, no options
+- Strategy: Swing trading crypto USD pairs. CRYPTO ONLY — no stocks, no options.
+- Benchmark: BTC/USD buy-and-hold
+- Pivoted from a stocks strategy on 2026-09-10. Entries in RESEARCH-LOG and
+  TRADE-LOG dated on or before that are from the stocks era — historical only,
+  do not treat their tickers or rules as current.
 
 ## Rules
 - NEVER share API keys, positions, or P&L externally
@@ -19,29 +23,31 @@
 - memory/RESEARCH-LOG.md
 - memory/WEEKLY-REVIEW.md
 
-## Platform Gotchas (Alpaca)
-- THIS ACCOUNT IS A CASH ACCOUNT (multiplier 1). PDT does not apply and the
-  account does not return `daytrade_count` or `pattern_day_trader` at all —
-  code that assumes those fields exist will KeyError or silently read None.
-  The real constraint is T+1 settlement: buy only with settled `cash`.
-- PDT (margin accounts only): 3 day trades per 5 rolling business days under $25k.
-  Same-day stops on same-day buys sometimes get rejected. Fallback ladder:
-  trailing_stop -> fixed stop -> queue for tomorrow morning.
-- `trail_percent` and `qty` are STRINGS in the order JSON. Use "10", not 10.
-- FRACTIONAL SHARES ARE UNUSABLE HERE. Alpaca rejects stop / stop_limit /
-  trailing_stop on fractional qty, and fractional orders cannot be GTC
-  (market/limit + day only). A fractional position therefore cannot carry the
-  mandatory 10% stop. Whole shares only; skip tickers priced above 20% of
-  equity (~$40 at $200).
-- Market data uses a different base URL: data.alpaca.markets for quotes, api.alpaca.markets
-  for everything else.
-- Quote shape: quote.ap = ask, quote.bp = bid. Wide spread or zero = halted/illiquid, skip.
-- FREE DATA FEED = IEX ONLY. The default data plan quotes IEX, not the full SIP
-  consolidated tape, so thin names can show absurd spreads that are an artifact of
-  the feed rather than real illiquidity (seen 2026-09-10: CTRA 11.3% and OKE 3.9%
-  while HAL/KMI printed 0.03% on the same call). Still skip wide spreads per the
-  rule, but do not conclude the stock is untradeable — cross-check before
-  permanently blacklisting a ticker.
-- Trailing stops only work during market hours. Overnight gaps can blow through them.
-- Env var is ALPACA_API_KEY; the HTTP header is APCA-API-KEY-ID. The wrapper translates.
-- Alpaca timestamps are UTC. Crons are in the routine's timezone. Convert carefully.
+## Alpaca crypto gotchas (VERIFIED against the live API 2026-09-10)
+- ORDER TYPES: `trailing_stop` and `stop` are REJECTED for crypto —
+  `{"code":40010001,"message":"invalid order type for crypto order"}`.
+  Only `market`, `limit` and `stop_limit` work. All protective stops are
+  therefore `stop_limit` GTC, with the limit ~2% below the trigger.
+- TIME IN FORCE: `day` is REJECTED —
+  `{"code":42210000,"message":"invalid crypto time_in_force"}`.
+  Use `gtc` (or `ioc` for immediate-or-cancel). This differs from stocks.
+- MAX NOTIONAL: single order capped at $200,000 notional.
+- SYMBOL FORMAT: pairs are slash-formatted for orders and v1beta3 quotes
+  (`BTC/USD`). Positions may report the unslashed form (`BTCUSD`) — normalize
+  before matching a position to its stop order. VERIFY on the first real fill.
+- QUOTES USE A THIRD BASE PATH: `v1beta3/crypto/us/latest/quotes?symbols=...`,
+  not the `v2/stocks/...` path. Use `alpaca.sh crypto-quote`.
+- `qty` is a fractional decimal STRING. Respect each pair's `min_order_size`
+  (from `alpaca.sh assets crypto`) — they are ~$1 equivalent, not 1 coin.
+- FEES ARE REAL. `crypto_tier: 0` is the highest band, ~0.5% per market round
+  trip. Stocks were commission-free; crypto is not. Churn is expensive at $200.
+- NO SHORTING crypto on Alpaca. Long only.
+- NO PDT and NO T+1 settlement. Sale proceeds are instantly reusable, so the
+  cash-account settlement discipline from the stocks era does not apply.
+- 24/7 MARKET: `alpaca.sh clock` describes the STOCK market and is irrelevant to
+  crypto. There is no open, close, or weekend halt. Overnight and weekend moves
+  happen with nobody watching, which is why the resting stop_limit matters.
+- FREE DATA FEED: quotes come from Alpaca's own crypto feed. Spreads on thin alts
+  can be wide; treat >1% spread as a skip signal.
+- Env var is ALPACA_API_KEY; the HTTP header is APCA-API-KEY-ID. Wrapper translates.
+- Alpaca timestamps are UTC. Crypto routines are scheduled in UTC to match.

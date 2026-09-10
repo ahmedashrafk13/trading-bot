@@ -92,3 +92,9 @@ TRADE or HOLD (default HOLD if no edge)
 minutes left in the session, CPI lands tomorrow pre-open, and the leading sector is
 mid-spike rather than early. Re-evaluate at the 06:00 CT pre-market run tomorrow
 AFTER the CPI print is known. Patience > activity.
+
+---
+## 2026-09-10 — PIVOT: stocks -> crypto
+The entry above (HAL/KMI/RIG energy screen) is from the stocks era — historical
+only, do not act on it. The account now trades crypto USD pairs exclusively.
+Next research run screens crypto pairs against the new gate.
