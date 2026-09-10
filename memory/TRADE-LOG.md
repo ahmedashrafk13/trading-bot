@@ -160,3 +160,29 @@ next run. 5% accepts a worse fill in exchange for actually filling — a bad fil
 is a known cost, an unfilled stop is an unbounded loss. Applied to the strategy
 and all prompts, not just this position.
 
+### 2026-09-10 21:15 UTC — DOT split into stop + target legs (rule deviation, documented)
+
+Position was +1.23%, i.e. BELOW the +6% rung that normally earns a target leg.
+Split anyway, deliberately.
+
+Reason: the +6% rung assumes an hourly scan exists to move it. No routine is
+scheduled yet, so the rung would never have fired and this position would have
+carried downside protection with permanently ZERO upside capture — a resting
+stop and nothing else. The strategy clause has been amended to make the split
+unconditional at entry whenever no scan cadence is running.
+
+| Leg | Type | Qty | Level | Order |
+|---|---|---|---|---|
+| protection | stop_limit GTC | 8.986478 | trigger $1.04340 / limit $0.99123 | 5da2e7a3 |
+| target | limit GTC | 8.986477 | $1.26540 (+14% on $1.11 entry) | 96e0e83d |
+
+Total reserved 17.972955 = the full position. Both legs confirmed resting.
+
+Accepted risk: the 8.986477 target slice carries NO stop. If DOT falls hard,
+roughly $10 of exposure rides down until a run notices. Bounded and acceptable
+against the certainty of capturing no upside at all. The +14% target is now
+enforced by the EXCHANGE and needs no run to fire.
+
+Orphan rule applies: whichever leg fills, the next run must cancel the other and
+re-place a full-size stop on the remaining qty.
+

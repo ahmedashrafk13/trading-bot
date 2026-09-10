@@ -215,7 +215,16 @@ the take-profit has no stop and is unprotected on the downside.
 
 Which structure applies depends on whether the position is in profit:
 
-**While flat or at a loss -> FULL-SIZE STOP, no take-profit.**
+**IF NO SCAN CADENCE IS RUNNING -> SPLIT AT ENTRY, regardless of P&L.**
+The rungs below assume an hourly scan exists to move them. When no routine is
+scheduled (as of 2026-09-10 none is — the org GitHub entitlement is still
+blocking), a position that waits for +6% to gain its target leg will NEVER get
+one, so upside capture is permanently zero while downside is covered. In that
+state, split at entry: half stop, half resting limit at the target. The cost is
+an unstopped half; the alternative is a guaranteed-zero upside, which is worse.
+Re-evaluate this clause the moment routines are live.
+
+**While flat or at a loss AND a scan cadence is running -> FULL-SIZE STOP, no take-profit.**
 100% of the position is covered. Protection outranks upside capture; there is no
 gain to bank and an unstopped slice could ride a drop all the way down.
 
