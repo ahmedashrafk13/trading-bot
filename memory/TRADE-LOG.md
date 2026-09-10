@@ -85,3 +85,45 @@ having been a signalled entry.
 **Deviation from plan:** the approved test was ~$1-2. The $10 API floor made
 that impossible, so it ran at $12.31 — still well under the $20 tactical size.
 
+---
+## 2026-09-10 — TACTICAL entry: DOT/USD (first real strategy trade)
+
+| Field | Value |
+|---|---|
+| Sleeve | **TACTICAL** |
+| Pair | DOT/USD |
+| Side | buy |
+| Ordered qty | 18.018 |
+| Filled qty | 17.972955 (0.25% fee taken in kind) |
+| Entry | $1.11 |
+| Notional | $19.85 |
+| Hard cut (-6%) | $1.0434 |
+| Stop order | stop_limit GTC, trigger $1.04340, limit $1.02253, order cbaf290f |
+| Stop verified resting | yes — status `new`, qty matches position exactly |
+| Target (+14%) | $1.26540 |
+| R:R after fees | 2.01 : 1 (risk $1.33, reward $2.67) |
+| Est. round-trip fee | $0.13 |
+| Fee budget after | $0.13 / $3.00 used this week |
+| Equity after entry | $199.77 (cash $179.92) |
+
+**Thesis / catalyst:** Polkadot OpenGov Referendum 1944 to create a native
+stablecoin (dotUSD) is passing with ~97.5% in favour, alongside a 150%
+transaction spike and record XCM throughput on 2026-09-07. DOT was the only coin
+in the 33-pair universe with a specific, dated, verifiable catalyst.
+
+**Screen at entry (hourly):** mom7 +1.7%, vsSMA20 +0.7%, vol 0.7%, spread 0.18%
+— PASS. Notably DOT had cooled from +18.1% over its daily SMA20 earlier today to
++0.7% over the hourly SMA20, so the extension concern that blocked it as a CORE
+candidate this morning no longer applied to a tactical-horizon entry.
+
+**Origination:** originated by the EXECUTE run, not planned by morning research,
+which had recorded a tactical HOLD. Override justified as follows: the tactical
+HOLD was explicitly a recommendation rather than binding; the coin passed the
+current screen; the catalyst is documented and dated; and the R:R defect that had
+blocked all tactical trades was fixed first (target 12% -> 14%). This is the
+first exercise of intraday tactical origination authority.
+
+**Management rules now in force:** close at market on -6% (or if the stop_limit
+is gapped through without filling), raise the stop to breakeven at +6%, close at
+market at +14%, reassess if open beyond ~48h.
+
