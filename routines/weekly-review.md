@@ -119,8 +119,11 @@ results justify it. Read that file's "Self-amendment" section first and obey it:
 - Record each change in WEEKLY-REVIEW.md under "### Rule changes applied", and
   commit the strategy edit together with the review so the diff and the reason
   land in one commit.
-- If the week produced fewer than 3 closed trades, DO NOT change risk
-  parameters — that is noise, not evidence. Say so and change nothing.
+- EVIDENCE GATE: at least 10 closed trades since the last applied amendment.
+  Fewer than that means change nothing and say so — 3 trades is noise, and
+  tuning on noise thrashes rules that were working. The exception is a
+  demonstrably BROKEN rule (always rejected by the API, or arithmetically
+  unsatisfiable), which may be fixed immediately.
 
 STEP F — Send ONE ClickUp message, <= 15 lines:
   bash scripts/clickup.sh "Crypto week ending YYYY-MM-DD

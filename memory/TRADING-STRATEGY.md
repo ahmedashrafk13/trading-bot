@@ -61,8 +61,29 @@ or changes what this bot is:
 11. The daily circuit breaker must EXIST. Thresholds are tunable; removal is not.
 12. This section itself, and the requirement to log amendments with evidence.
 
+### When amendment may happen — EVIDENCE, not the calendar
+Amendment is NOT tied to the weekly review. It may happen in ANY run that
+computes the trigger, including daily, because with unbounded tactical frequency
+a week is an arbitrary unit — 15 trades can happen in two days or in a month.
+
+TRIGGER: at least **10 closed trades since the last amendment**. Below that,
+change nothing and say so.
+- 10, not 3. Three closed trades cannot distinguish a real effect from noise, and
+  tuning on noise produces thrash: tighten a stop one day, loosen it the next,
+  learn nothing, and destroy a rule that was working.
+- The counter resets on every applied amendment, so two changes cannot ride on
+  the same 10 trades.
+- EXCEPTION — a single rule may be amended immediately, on fewer trades, if it is
+  demonstrably BROKEN rather than underperforming: it produced an API rejection
+  every time it was applied, or it is arithmetically unsatisfiable (as the 12%
+  target was against a 2:1-after-fees requirement). A broken rule is a defect,
+  not a hypothesis, and waiting for 10 trades to fix it is pointless when it
+  blocks all 10.
+- The weekly review still ALWAYS runs and always reports. It just may conclude
+  "insufficient evidence, nothing changed", which is a valid and common outcome.
+
 ### Amendment limits (so the experiment stays legible)
-- At most 2 tunable rules changed per review. Changing everything at once makes
+- At most 2 tunable rules changed per amendment. Changing everything at once makes
   it impossible to attribute the next week's result to anything.
 - Each change needs stated evidence from the logs, not a hunch.
 - A parameter may not move more than 50% of its current value in one step.

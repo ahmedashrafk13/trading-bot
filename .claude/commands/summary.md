@@ -67,6 +67,11 @@ STEP C — Pull final state and compute:
   so performance is measured against the real benchmark, not zero
 - Trades today by sleeve, and FEE BUDGET: "fees used this week $X / $3.00"
 - Whether the circuit breaker tripped today (and at what time)
+- AMENDMENT TRIGGER: count closed trades since the last applied amendment
+  (search TRADE-LOG/WEEKLY-REVIEW for the last "Rule changes applied" entry).
+  If >= 10, you MAY amend memory/TRADING-STRATEGY.md in THIS run under the rules
+  in its Self-amendment section — do not wait for Sunday. If < 10, state the
+  count and change nothing.
 - Estimated fees paid today
 
 STEP D — Append a snapshot to memory/TRADE-LOG.md:

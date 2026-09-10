@@ -44,8 +44,10 @@ runs per trading day plus two ad-hoc helpers.
   Exit a narrative after 2 consecutive failed trades.
 - Patience > activity.
 - The weekly review MAY rewrite memory/TRADING-STRATEGY.md based on results,
-  without asking. It may only change the TUNABLE list there, never the IMMUTABLE
-  platform facts, max 2 rules per review, and never on <3 closed trades.
+  without asking — and so may ANY run, including the daily summary. The trigger
+  is EVIDENCE not the calendar: >= 10 closed trades since the last amendment.
+  Only the TUNABLE list, never the IMMUTABLE platform facts, max 2 rules at a
+  time. A demonstrably broken rule may be fixed immediately.
 - EVERY run: reconcile positions, verify each has a stop, cut anything past
   -15% the stop missed, ratchet winners. Crypto trades 24/7 and runs are 6h
   apart — nothing else is watching.

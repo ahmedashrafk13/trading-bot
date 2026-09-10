@@ -84,6 +84,11 @@ STEP C — Pull final state and compute:
   so performance is measured against the real benchmark, not zero
 - Trades today by sleeve, and FEE BUDGET: "fees used this week $X / $3.00"
 - Whether the circuit breaker tripped today (and at what time)
+- AMENDMENT TRIGGER: count closed trades since the last applied amendment
+  (search TRADE-LOG/WEEKLY-REVIEW for the last "Rule changes applied" entry).
+  If >= 10, you MAY amend memory/TRADING-STRATEGY.md in THIS run under the rules
+  in its Self-amendment section — do not wait for Sunday. If < 10, state the
+  count and change nothing.
 - Estimated fees paid today
 
 STEP D — Append a snapshot to memory/TRADE-LOG.md:
@@ -103,7 +108,7 @@ STEP E — Send ONE ClickUp message (always, even on no-trade days), <= 15 lines
   Next 6h: <one-line plan>"
 
 STEP 6 — COMMIT AND PUSH:
-  git add memory/TRADE-LOG.md
+  git add memory/TRADE-LOG.md memory/TRADING-STRATEGY.md memory/WEEKLY-REVIEW.md
   git commit -m "daily snapshot $DATE"
   git push origin main
 On push failure: git pull --rebase origin main, then push again.
