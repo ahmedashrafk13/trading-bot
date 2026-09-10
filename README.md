@@ -8,6 +8,11 @@ clones this repo, reads `memory/`, pulls live Alpaca state, acts, writes memory,
 **Crypto only. No stocks, no options, ever. Long only.** ~$200 on Alpaca crypto,
 benchmarked against BTC/USD buy-and-hold.
 
+Two sleeves: **CORE** (~$120, 3 positions, 20% ratcheted trail, no time limit,
+3 trades/week) for letting good trades run, and **TACTICAL** (~$80, 3 positions
+of $20, 6% stop, +12% target, 3 trades/day) for frequency. Entries must clear a
+technical screen over all 33 pairs, not just a news catalyst.
+
 ## Quickstart (local mode)
 
 1. `cp env.template .env` and fill in your Alpaca / Perplexity / ClickUp credentials.
@@ -42,6 +47,9 @@ See `routines/README.md`. Summary:
 
 - `CLAUDE.md` — agent rulebook, auto-loaded every session
 - `scripts/` — the only way the agent touches the outside world
+  - `alpaca.sh` — account, positions, orders, quotes, bars, assets
+  - `screen.sh` — ranks all 33 tradable pairs; CORE (daily) + TACTICAL (hourly)
+    shortlists with PASS/fail reasons. Read-only.
 - `routines/` — cloud routine prompts (production path)
 - `.claude/commands/` — local slash commands (testing / ad-hoc)
 - `memory/` — the agent's entire persistent state, committed to `main`

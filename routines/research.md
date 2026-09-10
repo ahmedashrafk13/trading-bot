@@ -50,9 +50,12 @@ Crypto trades 24/7 and runs are 6h apart, so nothing watches between runs.
    so never assume the resting order handled it.
      bash scripts/alpaca.sh cancel ORDER_ID
      bash scripts/alpaca.sh close SYM/USD
-4. RATCHET: where the high-water mark has risen, cancel the old stop_limit and
-   re-place it higher. Trail 20% below high-water; 14% once up +30%; 10% once up
-   +40%. Never within 5% of current price. NEVER move a stop down.
+4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
+   CORE: trail 20% below high-water; 14% once up +30%; 10% once up +40%.
+   TACTICAL: stop 6% below entry; raise to BREAKEVEN once up +6%; close at
+   market once up +12% (no OCO on crypto, so the target is taken by whichever
+   run sees it); reassess and close if open >48h without target or stop.
+   Never move any stop down. Never place one within 5% of price (2% tactical).
 Log every action taken to memory/TRADE-LOG.md.
 
 STEP B — Research crypto catalysts. Run bash scripts/perplexity.sh "<query>" for each
@@ -66,17 +69,24 @@ STEP B — Research crypto catalysts. Run bash scripts/perplexity.sh "<query>" f
 - "which crypto narratives are leading: L1s, DeFi, memes, AI/infra"
 - News on any currently-held pair
 
-STEP C — Screen candidates against the gate. For each idea:
-  bash scripts/alpaca.sh assets crypto        # confirm the pair is tradable
-  bash scripts/alpaca.sh crypto-quote SYM/USD # confirm spread <= 1%
-Reject and log: pairs not on Alpaca, stablecoins, spread > 1%, or cost > $40.
+STEP C — SCREEN THE WHOLE UNIVERSE FIRST, then apply news judgment. Run:
+  bash scripts/screen.sh
+This ranks all 33 tradable non-stablecoin pairs and prints a CORE shortlist
+(daily bars) and a TACTICAL shortlist (hourly bars) with PASS/fail reasons.
+Work FROM the shortlists. Do not pick coins the news mentioned and then look for
+justification — news concentrates on what has already moved, which is how a
+news-only bot buys tops. A coin that fails its sleeve screen is not tradeable
+this run regardless of how good the story is; log the failure reason.
 
 STEP D — Write a dated entry to memory/RESEARCH-LOG.md:
 - Account snapshot (equity, cash, positions, stop coverage)
 - Market context (BTC, ETH, dominance, macro, ETF flows)
 - Leading vs rolling-over narratives
-- 2-3 actionable ideas WITH catalyst, entry, -15% cut level, stop_limit trigger
-  and limit, target, and R:R computed AFTER 0.5% round-trip fees
+- The CORE and TACTICAL shortlists from scripts/screen.sh (coins + key metrics)
+- Ideas TAGGED BY SLEEVE. For each: sleeve, catalyst, entry, stop trigger and
+  limit, target (CORE: none, let it run), and R:R AFTER ~0.5% round-trip fees
+  * CORE ideas: $40, only from the CORE shortlist, max 3 new per week
+  * TACTICAL ideas: $20, only from the TACTICAL shortlist, max 3 new per day
 - Risk factors
 - Decision: TRADE or HOLD (default HOLD — patience > activity, fees punish churn)
 

@@ -48,9 +48,12 @@ Crypto trades 24/7 and runs are 6h apart, so nothing watches between runs.
    so never assume the resting order handled it.
      bash scripts/alpaca.sh cancel ORDER_ID
      bash scripts/alpaca.sh close SYM/USD
-4. RATCHET: where the high-water mark has risen, cancel the old stop_limit and
-   re-place it higher. Trail 20% below high-water; 14% once up +30%; 10% once up
-   +40%. Never within 5% of current price. NEVER move a stop down.
+4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
+   CORE: trail 20% below high-water; 14% once up +30%; 10% once up +40%.
+   TACTICAL: stop 6% below entry; raise to BREAKEVEN once up +6%; close at
+   market once up +12% (no OCO on crypto, so the target is taken by whichever
+   run sees it); reassess and close if open >48h without target or stop.
+   Never move any stop down. Never place one within 5% of price (2% tactical).
 Log every action taken to memory/TRADE-LOG.md.
 
 STEP B — Read the full week for context:
@@ -65,7 +68,12 @@ STEP C — Compute the week's metrics:
   not success; state plainly whether active trading beat simply holding BTC.
 - Total fees paid this week, and fees as a % of the week's P&L. If fees exceeded
   gross profit, say so in one blunt sentence.
-- Trades taken (W/L/open), win rate on closed trades
+- Trades taken (W/L/open) and win rate, SPLIT BY SLEEVE. Core and tactical have
+  different holding periods, stops and fee loads; a blended number hides which
+  sleeve is actually working.
+- TACTICAL fee check: total tactical fees vs tactical gross profit. If fees
+  exceeded gross profit, say so in one blunt sentence. If that has now happened
+  two weeks running, propose cutting tactical frequency.
 - Best and worst trade, profit factor
 - Stop integrity: how many stops filled as intended vs were gapped through vs
   were missing when a run checked

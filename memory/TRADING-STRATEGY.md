@@ -24,21 +24,82 @@ whether the trade wins or loses. Consequences that are part of the strategy:
 - The 3-trades-per-week cap is a FEE control, not just a discipline rule.
 - Require a minimum 2:1 reward:risk AFTER assuming 0.5% friction.
 
+## Two sleeves
+Capital is split so that "more trades" and "let good trades run" can coexist
+without fighting each other. A 20% trailing stop implies week-long holds; 2-3
+trades a day implies hour-long holds. They cannot be the same position.
+
+| | CORE | TACTICAL |
+|---|---|---|
+| Allocation | ~$120 (60%) | ~$80 (40%) |
+| Position size | $40 (20% of equity) | $20 (10% of equity) |
+| Max positions | 3 | 3 |
+| New trades | max 3 per WEEK | max 3 per DAY |
+| Stop | 20% below high-water, ratcheted | 6% below entry, to breakeven at +6% |
+| Target | none — let winners run, no time limit | +12% (2:1 after fees) |
+| Screen timeframe | daily bars | hourly bars |
+| Hold horizon | weeks to months | hours to ~2 days |
+
+- Combined cap: 6 positions, and total deployment stays in the 75-85% band
+  (e.g. 3 core + 2 tactical = $160 = 80%).
+- CORE is where "long trades if it is good" lives: there is NO time limit and NO
+  profit target. A core winner is held until its ratcheted stop takes it out.
+- TACTICAL positions that have neither hit target nor stop within ~48h are
+  reassessed and closed unless the setup is still valid. Dead money pays fees.
+
+## Fee reality for the tactical sleeve
+3 tactical trades/day at $20 = ~$0.30/day = ~$2.10/week = ~1.05% of the account
+PER WEEK, or roughly 55%/yr in fees alone. That is the accepted cost of trading
+this frequently on a $200 account at tier-0 pricing. It means:
+- The tactical sleeve must clear ~1% per week gross just to break even.
+- A tactical setup that is not clearly better than 2:1 after fees is a PASS.
+- If the weekly review shows fees exceeded tactical gross profit two weeks
+  running, propose cutting tactical frequency. Do not silently keep churning.
+
 ## Core Rules
 1. CRYPTO ONLY — no stocks, no options, ever
 2. Long only — never attempt a short
-3. 75-85% deployed
-4. Max 5 positions at a time, max 20% each (~$40)
-5. Every position carries a resting `stop_limit` GTC sell order at the broker
-6. Hard cut at -15% from entry
-7. Trailing stop = 20% below the high-water mark, ratcheted UP only
-8. Tighten the trail to 14% once up +30%; to 10% once up +40%
-9. Never place a stop within 5% of current price; NEVER move a stop down
-10. Max 3 new trades per week
-11. Follow narrative momentum (see below); exit a narrative after 2 consecutive
-    failed trades in it
-12. Never hold a stablecoin as a position (USDC/USDT have no upside)
-13. Patience > activity. A week with zero trades is often correct.
+3. 75-85% deployed across both sleeves
+4. Respect each sleeve's position count, size and trade cap (table above)
+5. EVERY position carries a resting `stop_limit` GTC sell at the broker
+6. CORE: hard cut at -15%; trail 20% below high-water, ratcheted UP only;
+   tighten to 14% at +30% and 10% at +40%
+7. TACTICAL: hard stop 6% below entry; raise to breakeven once +6%; exit at
+   +12% target; never widen a tactical stop
+8. Never place a stop within 5% of current price (2% for tactical); NEVER move
+   any stop down
+9. Never hold a stablecoin as a position
+10. Follow narrative momentum; exit a narrative after 2 consecutive failed
+    trades in it (counted per sleeve)
+11. Patience > activity. Zero trades is a valid day, especially in CORE.
+
+## Technical entry filters (run `bash scripts/screen.sh`)
+Catalyst alone is not enough — news concentrates on coins that have ALREADY
+moved, so a news-only bot buys strength late. Every entry must also clear its
+sleeve's technical screen. The screener ranks all 33 tradable non-stablecoin
+pairs and prints a PASS/fail with reasons.
+
+CORE (daily bars):
+- 30-period momentum > 0
+- price ABOVE SMA20 and SMA20 RISING
+- price <= 20% above SMA20 (not extended)
+- spread <= 1%
+
+TACTICAL (hourly bars):
+- 7-period momentum > 0
+- price within +/-8% of SMA20
+- realized vol between 0.4% and 6% hourly (needs movement, not chaos)
+- spread <= 0.5% (fees already cost ~0.5% round trip)
+
+If a coin fails its screen, it is NOT tradeable this run no matter how good the
+news is. Log the failure reason.
+
+## Known limitation: no OCO on crypto
+Alpaca has no bracket/OCO for crypto, so a position cannot carry an automatic
+stop AND an automatic target. The resting `stop_limit` covers the downside; the
++12% tactical target is taken by whichever run next observes it. With runs 6h
+apart a target can be hit and given back unseen. This is the accepted cost of
+the platform, and it caps how precisely the tactical sleeve can capture gains.
 
 ## Stops — how they actually work here (READ THIS)
 Alpaca REJECTS `trailing_stop` and `stop` for crypto:
@@ -80,9 +141,10 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - What is the target, minimum 2:1 R:R after 0.5% fees?
 
 ## Buy-Side Gate (ALL must pass, else skip and log the reason)
-- Total positions after this fill <= 5
-- Trades placed this week (including this one) <= 3
-- Position cost <= 20% of equity (~$40 at $200)
+- The sleeve is stated explicitly (CORE or TACTICAL) before sizing
+- CORE: positions after fill <= 3, cost ~$40, new CORE trades this WEEK <= 3
+- TACTICAL: positions after fill <= 3, cost ~$20, new TACTICAL trades TODAY <= 3
+- Combined positions after fill <= 6, total deployment <= 85% of equity
 - Position cost <= available cash
 - Pair is in the Alpaca tradable crypto USD list (`alpaca.sh assets crypto`)
 - Pair is NOT a stablecoin
@@ -91,15 +153,28 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - `time_in_force` is `gtc` — `day` is REJECTED for crypto
   (`{"code":42210000,"message":"invalid crypto time_in_force"}`)
 - A specific catalyst is documented in today's RESEARCH-LOG entry
+- The coin PASSES its sleeve's technical screen (scripts/screen.sh)
 - The instrument is crypto (never a stock, never an option)
 
 ## Sell-Side Rules
-- Unrealized P&L <= -15% -> close immediately at market, cancel the resting stop
-- Thesis broken (catalyst invalidated, narrative rolling over, exploit/depeg/
-  delisting news) -> close, even if not yet at -15%
-- Up >= +40% -> ratchet the stop to 10% below the high-water mark
-- Up >= +30% -> ratchet the stop to 14% below the high-water mark
-- Otherwise -> keep the stop 20% below the high-water mark
+CORE:
+- Unrealized <= -15% -> close at market, cancel the resting stop
+- Thesis broken (catalyst dead, narrative rolling over, exploit/depeg/delisting)
+  -> close even if not at -15%
+- Up >= +40% -> ratchet stop to 10% below high-water
+- Up >= +30% -> ratchet stop to 14% below high-water
+- Otherwise -> keep stop 20% below high-water
+- NO profit target. Let it run; the ratchet decides the exit.
+
+TACTICAL:
+- Unrealized <= -6% -> close at market, cancel the resting stop
+- Up >= +12% -> close at market, take the target
+- Up >= +6% -> raise the stop to breakeven (entry price), never lower
+- Open > ~48h without hitting target or stop -> reassess; close unless the
+  hourly screen still PASSES
+- Thesis broken -> close immediately
+
+BOTH:
 - Narrative with 2 consecutive failed trades -> exit all positions in it
 - Any position found WITHOUT a resting stop_limit -> place one immediately
 
@@ -109,4 +184,8 @@ them) must:
 1. Reconcile live positions against TRADE-LOG (a fill may have happened between runs)
 2. Verify every position has a resting stop_limit; place one if missing
 3. Close anything at or below -15% that the stop failed to catch
-4. Ratchet stops upward where the high-water mark has risen
+4. Ratchet stops upward where the high-water mark has risen (CORE), and raise
+   tactical stops to breakeven once +6%
+5. Tag every position in TRADE-LOG with its sleeve. An untagged position cannot
+   be managed by the right rules — if the tag is missing, infer it from position
+   size ($40 = CORE, $20 = TACTICAL) and record it.

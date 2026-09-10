@@ -48,9 +48,12 @@ Crypto trades 24/7 and runs are 6h apart, so nothing watches between runs.
    so never assume the resting order handled it.
      bash scripts/alpaca.sh cancel ORDER_ID
      bash scripts/alpaca.sh close SYM/USD
-4. RATCHET: where the high-water mark has risen, cancel the old stop_limit and
-   re-place it higher. Trail 20% below high-water; 14% once up +30%; 10% once up
-   +40%. Never within 5% of current price. NEVER move a stop down.
+4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
+   CORE: trail 20% below high-water; 14% once up +30%; 10% once up +40%.
+   TACTICAL: stop 6% below entry; raise to BREAKEVEN once up +6%; close at
+   market once up +12% (no OCO on crypto, so the target is taken by whichever
+   run sees it); reassess and close if open >48h without target or stop.
+   Never move any stop down. Never place one within 5% of price (2% tactical).
 Log every action taken to memory/TRADE-LOG.md.
 
 STEP B — Read the tail of memory/TRADE-LOG.md for the most recent daily snapshot
@@ -63,14 +66,14 @@ STEP C — Pull final state and compute:
 - Cumulative P&L ($ and %) vs $200 starting equity
 - BTC/USD over the same window (bash scripts/alpaca.sh crypto-quote BTC/USD),
   so performance is measured against the real benchmark, not zero
-- Trades today (list or "none"), trades this week
+- Trades today by sleeve (CORE x/3 this week, TACTICAL x/3 today)
 - Estimated fees paid today
 
 STEP D — Append a snapshot to memory/TRADE-LOG.md:
 ### YYYY-MM-DD — Daily Snapshot (Day N, UTC)
 **Portfolio:** $X | **Cash:** $X (X%) | **Day P&L:** ±$X (±X%) | **Cumulative:** ±$X (±X%)
 **vs BTC:** ±X% | **Fees today:** $X
-| Pair | Qty | Entry | Last | Unrealized | Stop trigger | Stop present? |
+| Sleeve | Pair | Qty | Entry | Last | Unrealized | Stop trigger | Stop present? |
 **Notes:** one-paragraph plain-english summary.
 
 STEP E — Send ONE ClickUp message (always, even on no-trade days), <= 15 lines:

@@ -59,6 +59,19 @@ case "$cmd" in
     sym="${1:?usage: crypto-quote BTC/USD}"
     curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC"       --get --data-urlencode "symbols=$sym"       "${ALPACA_CRYPTO_DATA_ENDPOINT:-https://data.alpaca.markets/v1beta3/crypto/us}/latest/quotes"
     ;;
+  crypto-bars)
+    # NOTE: `limit` is a TOTAL across all requested symbols, not per symbol, AND
+    # the response is PAGINATED regardless of limit. A multi-symbol request
+    # returns only the first page (symbols are filled in order, so later symbols
+    # come back short or empty) plus a next_page_token. Callers MUST follow the
+    # token or they will silently score an incomplete universe.
+    sym="${1:?usage: crypto-bars 'BTC/USD[,ETH/USD]' [timeframe] [start] [limit] [page_token]}"
+    tf="${2:-1D}"; start="${3:-}"; lim="${4:-10000}"; page="${5:-}"
+    if [[ -z "$start" ]]; then
+      start="$(python -c "import datetime;print((datetime.datetime.now(datetime.timezone.utc)-datetime.timedelta(days=45)).strftime('%Y-%m-%d'))")"
+    fi
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC"       --get --data-urlencode "symbols=$sym"             --data-urlencode "timeframe=$tf"             --data-urlencode "start=$start"             --data-urlencode "limit=$lim"             ${page:+--data-urlencode "page_token=$page"}       "${ALPACA_CRYPTO_DATA_ENDPOINT:-https://data.alpaca.markets/v1beta3/crypto/us}/bars"
+    ;;
   clock)
     curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" "$API/clock"
     ;;
@@ -86,7 +99,7 @@ case "$cmd" in
     curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" -X DELETE "$API/positions"
     ;;
   *)
-    echo "Usage: bash scripts/alpaca.sh <account|positions|position|quote|crypto-quote|assets|clock|orders|order|cancel|cancel-all|close|close-all> [args]" >&2
+    echo "Usage: bash scripts/alpaca.sh <account|positions|position|quote|crypto-quote|crypto-bars|assets|clock|orders|order|cancel|cancel-all|close|close-all> [args]" >&2
     exit 1
     ;;
 esac

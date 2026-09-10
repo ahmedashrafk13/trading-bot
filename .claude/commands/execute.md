@@ -32,9 +32,12 @@ Crypto trades 24/7 and runs are 6h apart, so nothing watches between runs.
    so never assume the resting order handled it.
      bash scripts/alpaca.sh cancel ORDER_ID
      bash scripts/alpaca.sh close SYM/USD
-4. RATCHET: where the high-water mark has risen, cancel the old stop_limit and
-   re-place it higher. Trail 20% below high-water; 14% once up +30%; 10% once up
-   +40%. Never within 5% of current price. NEVER move a stop down.
+4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
+   CORE: trail 20% below high-water; 14% once up +30%; 10% once up +40%.
+   TACTICAL: stop 6% below entry; raise to BREAKEVEN once up +6%; close at
+   market once up +12% (no OCO on crypto, so the target is taken by whichever
+   run sees it); reassess and close if open >48h without target or stop.
+   Never move any stop down. Never place one within 5% of price (2% tactical).
 Log every action taken to memory/TRADE-LOG.md.
 
 STEP B — Read TODAY's entry in memory/RESEARCH-LOG.md. If it is missing, run the
@@ -46,32 +49,46 @@ STEP C — Re-validate each planned entry with live data:
 Skip anything whose spread now exceeds 1%, or whose thesis moved more than the
 planned entry allows.
 
-STEP D — Run the FULL buy-side gate on each planned order. Skip and log any failure:
-- Total positions after fill <= 5
-- Trades this week <= 3
-- Cost <= 20% of equity (~$40 at $200)
+STEP D — Re-run the screen, because it is now hours old:
+  bash scripts/screen.sh
+A planned idea whose coin has dropped off its sleeve shortlist is DEAD. Skip it
+and log "no longer passes <sleeve> screen".
+
+STEP E — Run the FULL buy-side gate per order. State the SLEEVE first, then:
+- CORE: positions after fill <= 3, cost ~$40, new CORE trades this WEEK <= 3,
+  coin on the CORE shortlist
+- TACTICAL: positions after fill <= 3, cost ~$20, new TACTICAL trades TODAY <= 3,
+  coin on the TACTICAL shortlist
+- Combined positions after fill <= 6, total deployment <= 85%
 - Cost <= available cash
 - Pair is Alpaca-tradable and NOT a stablecoin
 - qty >= that pair's min_order_size
 - Spread <= 1%
 - Catalyst documented in today's RESEARCH-LOG
-- R:R >= 2:1 after 0.5% round-trip fees
+- R:R >= 2:1 after ~0.5% round-trip fees (CORE has no target: require instead
+  that the ratcheted 20% stop leaves a sane risk in dollars)
 - It is crypto (never a stock, never an option)
 
-STEP E — Execute approved buys. time_in_force MUST be gtc — `day` is REJECTED
+STEP F — Execute approved buys. time_in_force MUST be gtc — `day` is REJECTED
 for crypto ({"code":42210000,"message":"invalid crypto time_in_force"}):
   bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"buy","type":"market","time_in_force":"gtc"}'
 Wait for the fill and read the actual fill price before sizing the stop.
 
-STEP F — IMMEDIATELY place the resting stop_limit for each new position, 20%
-below the fill price:
-  bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"stop_limit","stop_price":"<fill*0.80>","limit_price":"<fill*0.80*0.98>","time_in_force":"gtc"}'
+STEP G — IMMEDIATELY place the resting stop_limit for each new position, at the
+distance its SLEEVE requires:
+  CORE     -> stop 20% below fill:  stop_price = fill * 0.80
+  TACTICAL -> stop  6% below fill:  stop_price = fill * 0.94
+  limit_price = stop_price * 0.98 in both cases
+  bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.98>","time_in_force":"gtc"}'
 If the stop is REJECTED for any reason, do not leave the position naked: retry
 once, and if it still fails, CLOSE the position at market and log why. An
 unstopped crypto position over a 6h gap is not acceptable.
 
-STEP G — Append each trade to memory/TRADE-LOG.md: date, pair, side, qty, fill
-price, notional, -15% cut level, stop trigger/limit, thesis, target, R:R, fees.
+STEP H — Append each trade to memory/TRADE-LOG.md, TAGGED WITH ITS SLEEVE:
+date, SLEEVE, pair, side, qty, fill price, notional, hard-cut level, stop
+trigger/limit, thesis, target (CORE: "none - let run"), R:R, est. fees.
+The sleeve tag is load-bearing: later runs use it to choose which stop and exit
+rules apply. Never log a position without it.
 
-STEP H — Notification: only if a trade was placed.
+STEP I — Notification: only if a trade was placed.
   bash scripts/clickup.sh "<pairs, qty, fill prices, stop levels, one-line why>"
