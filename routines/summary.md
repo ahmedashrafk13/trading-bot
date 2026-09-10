@@ -58,7 +58,9 @@ Log every action taken to memory/TRADE-LOG.md.
 
 STEP B — Read the tail of memory/TRADE-LOG.md for the most recent daily snapshot
 (that is yesterday's equity, needed for the day-over-day figure). Count trades
-dated today, and trades so far this week (Mon-today, UTC) for the 3/week cap.
+dated today, and ALL trades this week (Mon 00:00 UTC onwards) so you can total
+the fees they cost — that running total is what the 1.5% (~$3.00) weekly fee
+budget is measured against. There is no trade-count cap any more.
 
 STEP C — Pull final state and compute:
   bash scripts/alpaca.sh account
