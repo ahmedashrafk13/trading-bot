@@ -60,13 +60,17 @@ Only `stop_limit` is accepted. So Core Rule 5 is implemented as:
   Never re-place lower.
 
 ## Narrative momentum (the crypto analogue of sectors)
-Group holdings by narrative, and apply the 2-consecutive-failures rule per group:
+Group holdings by narrative and apply the 2-consecutive-failures rule per group.
+This covers ALL 33 non-stablecoin tradable pairs — every position must map to a
+group, or the failure rule silently does not apply to it.
 - Majors: BTC, ETH
-- L1/L2: SOL, AVAX, DOT, ADA, ARB, POL
-- DeFi: UNI, AAVE, LINK, CRV, LDO, SUSHI, ONDO, SKY
-- Memes: DOGE, SHIB, PEPE, BONK, TRUMP
+- Payments/legacy: XRP, LTC, BCH
+- L1/L2: SOL, AVAX, DOT, ADA, ARB, POL, XTZ
+- DeFi: UNI, AAVE, LINK, CRV, LDO, SUSHI, ONDO, SKY, YFI
+- Memes: DOGE, SHIB, PEPE, BONK, TRUMP, WIF
 - Infra/AI: RENDER, GRT, FIL, HYPE, BAT
 - Commodity-backed: PAXG
+EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 
 ## Entry Checklist (document all before placing)
 - What is the specific catalyst? (unlock, upgrade, listing, ETF flow, macro)
