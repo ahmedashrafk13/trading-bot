@@ -48,10 +48,12 @@ trades a day implies hour-long holds. They cannot be the same position.
   reassessed and closed unless the setup is still valid. Dead money pays fees.
 
 ## Fee reality for the tactical sleeve
-3 tactical trades/day at $20 = ~$0.30/day = ~$2.10/week = ~1.05% of the account
-PER WEEK, or roughly 55%/yr in fees alone. That is the accepted cost of trading
+MEASURED, not assumed: a $12.31 BTC round trip cost $0.08 all-in = 0.65%
+(taker fee both ways plus spread), on the tightest spread in the universe.
+Alts cost more. So 3 tactical trades/day at $20 = ~$0.39/day = ~$2.73/week =
+~1.37% of the account PER WEEK, roughly 71%/yr in friction alone. That is the accepted cost of trading
 this frequently on a $200 account at tier-0 pricing. It means:
-- The tactical sleeve must clear ~1% per week gross just to break even.
+- The tactical sleeve must clear ~1.4% per week gross just to break even.
 - A tactical setup that is not clearly better than 2:1 after fees is a PASS.
 - If the weekly review shows fees exceeded tactical gross profit two weeks
   running, propose cutting tactical frequency. Do not silently keep churning.
@@ -148,7 +150,9 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - Position cost <= available cash
 - Pair is in the Alpaca tradable crypto USD list (`alpaca.sh assets crypto`)
 - Pair is NOT a stablecoin
-- qty >= that pair's `min_order_size`
+- Order notional >= $10 (HARD API floor). `min_order_size` is only a quantity
+  floor and is NOT sufficient — a sub-$10 order is rejected outright.
+- qty >= that pair's `min_order_size` as well
 - Quoted spread <= 1% (BTC/ETH run ~0.02-0.04%; a wide spread means thin book)
 - `time_in_force` is `gtc` — `day` is REJECTED for crypto
   (`{"code":42210000,"message":"invalid crypto time_in_force"}`)

@@ -39,3 +39,49 @@ squeeze) and it sat +18.1% over its SMA20, barely inside the extension limit.
 Held flat deliberately: at 0% deployed the account is below its 75-85% target,
 which is the correct state when no setup clears the gate.
 
+---
+## 2026-09-10 — MECHANICS TEST (not a strategy trade)
+
+**This was NOT a signal.** The strategy decision on record for 2026-09-10 was
+HOLD both sleeves. This round trip was placed deliberately, with the user's
+explicit approval, to validate the buy -> stop_limit -> cancel -> close code path,
+which had never executed. Do not count it in win rate, and do not treat BTC as
+having been a signalled entry.
+
+| Field | Value |
+|---|---|
+| Sleeve | MECHANICS TEST (neither CORE nor TACTICAL) |
+| Pair | BTC/USD |
+| Ordered qty | 0.00016 |
+| Filled qty | 0.0001596 (fee taken in kind) |
+| Avg entry | $77,103.20 |
+| Notional | $12.31 |
+| Stop placed | stop_limit GTC, trigger $72,477.01 (-6%), limit $71,027.47 |
+| Stop verified resting | yes — status `new`, correct qty |
+| Exit | cancelled the stop, closed whole at market |
+| Round-trip cost | $0.08 = 0.65% of the position, 0.04% of the account |
+| Ending equity | $199.92 |
+
+### What this test proved works
+1. Market buy with `time_in_force: gtc` fills.
+2. A `stop_limit` GTC sell is accepted and RESTS at the broker.
+3. `cancel <order_id>` removes it (204).
+4. `close BTCUSD` exits the whole position.
+
+### What it caught that would have broken live trading
+1. **$10 minimum notional per order.** The first attempt at ~$1.54 was rejected
+   outright. Our gate only checked `min_order_size` (a quantity floor of about
+   $1 for BTC), so it would have approved orders the API refuses.
+2. **Buy fees are charged IN KIND.** Ordered 0.00016 BTC, received 0.0001596 —
+   0.25% removed from the asset. Placing the stop for the ORDERED qty would have
+   been rejected for insufficient balance, leaving the position NAKED at exactly
+   the moment the prompt believes it is protected. This was the single most
+   dangerous latent bug in the system.
+3. **Symbol format is endpoint-dependent.** `close BTC/USD` returns 404;
+   `close BTCUSD` works. Previously a guess in PROJECT-CONTEXT, now confirmed.
+4. **Real friction is 0.65%, not 0.5%** — and that is on BTC, the tightest
+   spread available. Tactical fee drag revised from ~1.05%/wk to ~1.37%/wk.
+
+**Deviation from plan:** the approved test was ~$1-2. The $10 API floor made
+that impossible, so it ran at $12.31 — still well under the $20 tactical size.
+

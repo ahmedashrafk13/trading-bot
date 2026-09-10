@@ -79,7 +79,7 @@ STEP E — Run the FULL buy-side gate per order. State the SLEEVE first, then:
 - Combined positions after fill <= 6, total deployment <= 85%
 - Cost <= available cash
 - Pair is Alpaca-tradable and NOT a stablecoin
-- qty >= that pair's min_order_size
+- Order notional >= $10 (hard API floor; min_order_size alone is not enough)
 - Spread <= 1%
 - Catalyst documented in today's RESEARCH-LOG
 - R:R >= 2:1 after ~0.5% round-trip fees (CORE has no target: require instead
@@ -89,7 +89,11 @@ STEP E — Run the FULL buy-side gate per order. State the SLEEVE first, then:
 STEP F — Execute approved buys. time_in_force MUST be gtc — `day` is REJECTED
 for crypto ({"code":42210000,"message":"invalid crypto time_in_force"}):
   bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"buy","type":"market","time_in_force":"gtc"}'
-Wait for the fill and read the actual fill price before sizing the stop.
+Wait for the fill, then read the ACTUAL position back with
+`bash scripts/alpaca.sh positions`. Buy fees are charged IN KIND (~0.25% of the
+asset), so filled qty < ordered qty. Size the stop from the POSITION qty or it
+is rejected for insufficient balance. Note positions report the UNSLASHED symbol
+(BTCUSD) while orders need the slashed form (BTC/USD).
 
 STEP G — IMMEDIATELY place the resting stop_limit for each new position, at the
 distance its SLEEVE requires:

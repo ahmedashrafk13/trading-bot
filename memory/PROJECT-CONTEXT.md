@@ -32,6 +32,27 @@
   `{"code":42210000,"message":"invalid crypto time_in_force"}`.
   Use `gtc` (or `ioc` for immediate-or-cancel). This differs from stocks.
 - MAX NOTIONAL: single order capped at $200,000 notional.
+- MINIMUM NOTIONAL IS $10 PER ORDER (verified 2026-09-10):
+  `{"code":40310000,"message":"cost basis must be >= minimal amount of order 10"}`
+  The `min_order_size` field from /assets is a QUANTITY floor (BTC 0.000012813,
+  about $1) and is NOT the binding constraint. Any gate that only checks
+  min_order_size will happily build a sub-$10 order that the API rejects.
+  Consequence: a $20 tactical position cannot be scaled out of in halves, and a
+  position whose value falls under $10 may not be sellable in parts — close it
+  whole.
+- FEES ARE CHARGED IN KIND ON BUYS (verified): ordered 0.00016 BTC, received
+  0.0001596 — a 0.250% haircut taken out of the ASSET, not the cash. Therefore a
+  protective stop MUST be sized from the ACTUAL position qty, never from the qty
+  you ordered, or it is rejected for insufficient balance.
+- SYMBOL FORMAT DIFFERS BY ENDPOINT (verified, was previously a guess):
+  * orders and v1beta3 quotes/bars -> SLASHED: `BTC/USD`
+  * positions listing reports      -> UNSLASHED: `BTCUSD`
+  * close position requires        -> UNSLASHED: `close BTCUSD`
+    (`close BTC/USD` returns 404 Not Found)
+- MEASURED ROUND-TRIP FRICTION: 0.65% (verified), not the 0.5% originally
+  assumed. A $12.31 BTC round trip cost $0.08 all-in — taker fee both ways plus
+  spread. BTC has the tightest spread in the universe, so 0.65% is a FLOOR;
+  alts will cost more.
 - SYMBOL FORMAT: pairs are slash-formatted for orders and v1beta3 quotes
   (`BTC/USD`). Positions may report the unslashed form (`BTCUSD`) — normalize
   before matching a position to its stop order. VERIFY on the first real fill.
