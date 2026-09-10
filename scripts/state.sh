@@ -46,7 +46,11 @@ stops = {}
 for o in orders:
     if o['side']=='sell' and o['type']=='stop_limit':
         stops.setdefault(norm(o['symbol']), []).append(o)
-limits = {norm(o['symbol']) for o in orders if o['side']=='sell' and o['type']=='limit'}
+limit_orders = {}
+for o in orders:
+    if o['side']=='sell' and o['type']=='limit':
+        limit_orders.setdefault(norm(o['symbol']), []).append(o)
+limits = set(limit_orders)
 
 print(f"OPEN POSITIONS ({len(pos)})")
 if not pos: print("  none")
@@ -54,7 +58,10 @@ for p in pos:
     sym = norm(p['symbol']); qty = float(p['qty'])
     plpc = float(p['unrealized_plpc'])*100
     covered = sum(float(o['qty']) for o in stops.get(sym, []))
+    targeted = sum(float(o['qty']) for o in limit_orders.get(sym, []))
     pct_cov = covered/qty*100 if qty else 0
+    pct_tgt = targeted/qty*100 if qty else 0
+    unreserved = max(0.0, 100 - pct_cov - pct_tgt)
     age = ''
     for k,v in entry_times.items():
         if norm(k+'USD')==sym:
@@ -62,9 +69,17 @@ for p in pos:
                 et = dt.datetime.fromisoformat(v).replace(tzinfo=dt.timezone.utc)
                 age = f"{(now-et).total_seconds()/3600:.1f}h"
             except Exception: age = '?'
-    flag = 'OK' if pct_cov >= 99.5 else ('PARTIAL' if pct_cov > 0 else '*** NAKED ***')
-    print(f"  {sym:9} qty={qty:<12.6f} P&L {plpc:+6.2f}%  stop covers {pct_cov:5.1f}% [{flag}]"
-          f"  age {age or 'unknown'}  target-leg {'yes' if sym in limits else 'no'}")
+    # What matters is UNRESERVED quantity, not stop share. A split position shows
+    # 50% stop / 50% target and is fully accounted for — flagging that as a gap
+    # would make a run "fix" it by cancelling the target leg.
+    if unreserved > 0.5:
+        flag = '*** NAKED ***' if pct_cov < 0.5 else f'*** {unreserved:.0f}% UNRESERVED ***'
+    elif pct_tgt > 0.5:
+        flag = 'SPLIT ok'
+    else:
+        flag = 'OK full stop'
+    print(f"  {sym:9} qty={qty:<12.6f} P&L {plpc:+6.2f}%  stop {pct_cov:5.1f}% / target {pct_tgt:5.1f}%"
+          f" / unreserved {unreserved:4.1f}%  [{flag}]  age {age or 'unknown'}")
     if age and age!='?' and float(age[:-1]) > 48:
         print(f"    !! open >48h — reassess-or-close rule applies")
 print()

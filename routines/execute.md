@@ -42,7 +42,9 @@ machine clock), equity/cash/deployment, every position with its age and its exac
 stop coverage percentage, the weekly fee-budget state, the circuit-breaker state,
 and the amendment-trigger count. Use these numbers. Do NOT re-derive them by
 adding up markdown rows — that is how the budget and the breaker drift.
-A position flagged *** NAKED *** or PARTIAL is the highest-priority item in the run.
+A position with UNRESERVED quantity (*** NAKED *** / *** n% UNRESERVED ***) is
+the highest-priority item in the run. A position marked [SPLIT ok] is healthy —
+stop and target legs together reserve 100% — and must NOT be "fixed".
 Then, if you need the raw detail:
   bash scripts/alpaca.sh positions
   bash scripts/alpaca.sh orders

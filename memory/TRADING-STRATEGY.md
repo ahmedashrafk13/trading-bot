@@ -229,8 +229,20 @@ Re-evaluate this clause the moment routines are live.
 gain to bank and an unstopped slice could ride a drop all the way down.
 
 **Once ratcheted to breakeven or better (i.e. at +6% or more) -> SPLIT:**
-- ~50% carries the stop_limit at the ratchet level
-- ~50% carries a resting `limit` sell at the +14% target
+- the legs must SUM to 100% of the position — a resting order reserves the qty it
+  names, so 100% stop + 100% target is 200% and is rejected. This is a forced
+  trade-off, not a preference.
+- WEIGHT IT STOP-HEAVY (~75% stop / ~25% target). The two failure modes are not
+  symmetric: if the stop fires, the un-stopped slice keeps falling with no
+  protection at all; if the target fires, the un-targeted slice keeps running
+  WITH its stop intact and is still captured later by the ratchet. Under-weighting
+  the stop risks an unprotected position in a falling market; under-weighting the
+  target only costs precision on a winner.
+- The current DOT position is 50/50 because it was split before this reasoning
+  was worked out. Leave it; rebalancing costs fees for a marginal gain.
+- NOTE: a very small target leg may fall under an exchange minimum. Sells appear
+  exempt from the $10 cost-basis floor (~$9.97 sells were accepted) but a ~$5 leg
+  is UNTESTED. Verify before relying on a 25% leg at a $20 notional.
 Now the target is enforced by the EXCHANGE, 24/7, with no run required — which
 is the whole point, since a spike that reverses between runs was otherwise
 invisible. The unstopped half is acceptable here ONLY because the ratchet has

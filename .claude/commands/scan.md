@@ -31,8 +31,13 @@ must never be used), equity/cash/deployment, every position with its P&L, age an
 exact stop-coverage %, the weekly fee budget, and the circuit-breaker state.
 Use those numbers as given. Do NOT recompute them from markdown.
 
-STEP 2 — FIX ANY COVERAGE GAP FIRST. This is the highest priority in the run.
-Any position flagged *** NAKED *** or PARTIAL means real money is unprotected:
+STEP 2 — FIX ANY UNRESERVED QUANTITY FIRST. Highest priority in the run.
+Read the `unreserved` figure from state.sh, NOT the stop percentage. A split
+position correctly shows stop 50% / target 50% / unreserved 0% and is marked
+[SPLIT ok] — that is healthy, LEAVE IT ALONE. Do NOT "restore full stop
+coverage" on a split position; that cancels the target leg and destroys the only
+exchange-enforced upside the position has.
+Act only when unreserved > 0 (flagged *** NAKED *** or *** n% UNRESERVED ***):
   bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<HELD qty>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.95>","time_in_force":"gtc"}'
 If it is rejected twice, CLOSE the position at market rather than leave it naked:
   bash scripts/alpaca.sh close SYMUSD
