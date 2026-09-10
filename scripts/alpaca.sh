@@ -38,47 +38,55 @@ shift || true
 
 case "$cmd" in
   account)
-    curl -fsS -H "$H_KEY" -H "$H_SEC" "$API/account"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" "$API/account"
     ;;
   positions)
-    curl -fsS -H "$H_KEY" -H "$H_SEC" "$API/positions"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" "$API/positions"
     ;;
   position)
     sym="${1:?usage: position SYM}"
-    curl -fsS -H "$H_KEY" -H "$H_SEC" "$API/positions/$sym"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" "$API/positions/$sym"
     ;;
   quote)
     sym="${1:?usage: quote SYM}"
-    curl -fsS -H "$H_KEY" -H "$H_SEC" "$DATA/stocks/$sym/quotes/latest"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" "$DATA/stocks/$sym/quotes/latest"
+    ;;
+  assets)
+    class="${1:-crypto}"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" "$API/assets?asset_class=$class&status=active"
+    ;;
+  crypto-quote)
+    sym="${1:?usage: crypto-quote BTC/USD}"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC"       --get --data-urlencode "symbols=$sym"       "${ALPACA_CRYPTO_DATA_ENDPOINT:-https://data.alpaca.markets/v1beta3/crypto/us}/latest/quotes"
     ;;
   clock)
-    curl -fsS -H "$H_KEY" -H "$H_SEC" "$API/clock"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" "$API/clock"
     ;;
   orders)
     status="${1:-open}"
-    curl -fsS -H "$H_KEY" -H "$H_SEC" "$API/orders?status=$status"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" "$API/orders?status=$status"
     ;;
   order)
     body="${1:?usage: order '<json>'}"
-    curl -fsS -H "$H_KEY" -H "$H_SEC" -H "Content-Type: application/json" \
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" -H "Content-Type: application/json" \
       -X POST -d "$body" "$API/orders"
     ;;
   cancel)
     oid="${1:?usage: cancel ORDER_ID}"
-    curl -fsS -H "$H_KEY" -H "$H_SEC" -X DELETE "$API/orders/$oid"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" -X DELETE "$API/orders/$oid"
     ;;
   cancel-all)
-    curl -fsS -H "$H_KEY" -H "$H_SEC" -X DELETE "$API/orders"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" -X DELETE "$API/orders"
     ;;
   close)
     sym="${1:?usage: close SYM}"
-    curl -fsS -H "$H_KEY" -H "$H_SEC" -X DELETE "$API/positions/$sym"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" -X DELETE "$API/positions/$sym"
     ;;
   close-all)
-    curl -fsS -H "$H_KEY" -H "$H_SEC" -X DELETE "$API/positions"
+    curl --fail-with-body -sS -H "$H_KEY" -H "$H_SEC" -X DELETE "$API/positions"
     ;;
   *)
-    echo "Usage: bash scripts/alpaca.sh <account|positions|position|quote|clock|orders|order|cancel|cancel-all|close|close-all> [args]" >&2
+    echo "Usage: bash scripts/alpaca.sh <account|positions|position|quote|crypto-quote|assets|clock|orders|order|cancel|cancel-all|close|close-all> [args]" >&2
     exit 1
     ;;
 esac
