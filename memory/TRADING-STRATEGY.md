@@ -35,7 +35,7 @@ exactly what changed and why. Any bad change is recoverable with `git revert`.
 - Stop distances and trail percentages, and the ratchet thresholds
 - Hard-cut levels (-15% core, -6% tactical) and the tactical target
 - Position counts, position sizes and sleeve allocation
-- Trade caps (3/week core, 3/day tactical)
+- The weekly fee budget (1.5%) and the circuit-breaker thresholds
 - Deployment band (75-85%)
 - Screen filter thresholds (momentum, SMA20 distance, vol band, spread limits)
 - Screen timeframes (daily / hourly)
@@ -56,7 +56,10 @@ or changes what this bot is:
    DISTANCE; it may never remove the requirement or allow a naked position.
 8. Never move a stop down, and never widen a stop on an open losing position.
 9. No stablecoins as positions.
-10. This section itself, and the requirement to log amendments with evidence.
+10. A weekly fee budget must EXIST and may never exceed 3% of equity. The review
+    may tune it below that; it may not remove it or raise it past the ceiling.
+11. The daily circuit breaker must EXIST. Thresholds are tunable; removal is not.
+12. This section itself, and the requirement to log amendments with evidence.
 
 ### Amendment limits (so the experiment stays legible)
 - At most 2 tunable rules changed per review. Changing everything at once makes
@@ -75,7 +78,7 @@ trades a day implies hour-long holds. They cannot be the same position.
 | Allocation | ~$120 (60%) | ~$80 (40%) |
 | Position size | $40 (20% of equity) | $20 (10% of equity) |
 | Max positions | 3 | 3 |
-| New trades | max 3 per WEEK | max 3 per DAY |
+| New trades | agent's judgement | agent's judgement |
 | Stop | 20% below high-water, ratcheted | 6% below entry, to breakeven at +6% |
 | Target | none — let winners run, no time limit | +12% (2:1 after fees) |
 | Screen timeframe | daily bars | hourly bars |
@@ -88,22 +91,46 @@ trades a day implies hour-long holds. They cannot be the same position.
 - TACTICAL positions that have neither hit target nor stop within ~48h are
   reassessed and closed unless the setup is still valid. Dead money pays fees.
 
-## Fee reality for the tactical sleeve
-MEASURED, not assumed: a $12.31 BTC round trip cost $0.08 all-in = 0.65%
-(taker fee both ways plus spread), on the tightest spread in the universe.
-Alts cost more. So 3 tactical trades/day at $20 = ~$0.39/day = ~$2.73/week =
-~1.37% of the account PER WEEK, roughly 71%/yr in friction alone. That is the accepted cost of trading
-this frequently on a $200 account at tier-0 pricing. It means:
-- The tactical sleeve must clear ~1.4% per week gross just to break even.
-- A tactical setup that is not clearly better than 2:1 after fees is a PASS.
-- If the weekly review shows fees exceeded tactical gross profit two weeks
-  running, propose cutting tactical frequency. Do not silently keep churning.
+## Trade frequency: the agent decides, the FEE BUDGET binds
+There is no fixed trades-per-day or trades-per-week cap. Open as many positions
+as the setups justify. What is capped is the thing that actually does the damage:
+cumulative friction.
+
+MEASURED friction: 0.65% per round trip (verified — a $12.31 BTC round trip cost
+$0.08, taker fee both ways plus spread). BTC has the tightest spread in the
+universe, so 0.65% is a FLOOR and alts cost more.
+
+**WEEKLY FEE BUDGET: 1.5% of equity (~$3.00 at $200).**
+- Estimate the round-trip cost of every entry BEFORE placing it: notional x 0.65%
+  (use more for a wide-spread alt) and add it to the running weekly total.
+- Track the total in each daily snapshot as "fees used this week: $X / $3.00".
+- When the budget is exhausted, STOP OPENING NEW POSITIONS for the rest of the
+  UTC week. Exits are always still allowed — never let a budget trap a loser.
+- The budget resets Monday 00:00 UTC.
+
+Why a budget rather than a trade count: it self-adjusts. Bigger positions and
+wider spreads buy fewer trades; cheap tight-spread entries buy more. A trade
+count cannot tell the difference between a $0.13 BTC round trip and a $0.40
+round trip in a thin alt, and it is the dollars that compound against you.
+At $20 tactical positions, 1.5%/week is roughly 23 round trips — more than the
+3/day this replaced, and it flexes with what you actually trade.
+
+## Daily circuit breaker (required once frequency is unbounded)
+Unbounded frequency plus a losing streak is how a small account dies in a day.
+- If REALIZED losses today reach 3% of equity (~$6.00), open NO new positions
+  for the rest of the UTC day. Management and exits continue.
+- If 3 consecutive tactical trades close at a loss, stop opening tactical for
+  the rest of the UTC day regardless of the budget.
+- Record either trip in TRADE-LOG with the trigger and the time.
+These exist because the agent judging its own frequency has no natural brake:
+each individual trade can look reasonable while the sequence is ruinous.
 
 ## Core Rules
 1. CRYPTO ONLY — no stocks, no options, ever
 2. Long only — never attempt a short
 3. 75-85% deployed across both sleeves
-4. Respect each sleeve's position count, size and trade cap (table above)
+4. Respect each sleeve's position COUNT and SIZE (table above). Trade frequency
+   is the agent's call, bounded by the weekly fee budget and circuit breaker.
 5. EVERY position carries a resting `stop_limit` GTC sell at the broker
 6. CORE: hard cut at -15%; trail 20% below high-water, ratcheted UP only;
    tighten to 14% at +30% and 10% at +40%
@@ -114,7 +141,9 @@ this frequently on a $200 account at tier-0 pricing. It means:
 9. Never hold a stablecoin as a position
 10. Follow narrative momentum; exit a narrative after 2 consecutive failed
     trades in it (counted per sleeve)
-11. Patience > activity. Zero trades is a valid day, especially in CORE.
+11. Patience > activity. Zero trades is a valid day, especially in CORE. "As many
+    trades as the setups justify" is NOT a mandate to trade — an empty screen
+    means no trades, and the fee budget is a ceiling, never a target to spend.
 
 ## Technical entry filters (run `bash scripts/screen.sh`)
 Catalyst alone is not enough — news concentrates on coins that have ALREADY
@@ -185,8 +214,12 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 
 ## Buy-Side Gate (ALL must pass, else skip and log the reason)
 - The sleeve is stated explicitly (CORE or TACTICAL) before sizing
-- CORE: positions after fill <= 3, cost ~$40, new CORE trades this WEEK <= 3
-- TACTICAL: positions after fill <= 3, cost ~$20, new TACTICAL trades TODAY <= 3
+- CORE: positions after fill <= 3, cost ~$40
+- TACTICAL: positions after fill <= 3, cost ~$20
+- Estimated round-trip fee for THIS trade + fees already used this week
+  <= 1.5% of equity (~$3.00). If it would breach, SKIP and log the budget state.
+- Circuit breaker not tripped: realized losses today < 3% of equity, and not
+  3 consecutive tactical losses today
 - Combined positions after fill <= 6, total deployment <= 85% of equity
 - Position cost <= available cash
 - Pair is in the Alpaca tradable crypto USD list (`alpaca.sh assets crypto`)

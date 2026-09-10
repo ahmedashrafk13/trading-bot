@@ -24,7 +24,14 @@ runs per trading day plus two ad-hoc helpers.
 
 - CRYPTO ONLY — no stocks, no options, ever. Long only (no shorting on Alpaca).
 - Max 5 open positions. Max 20% per position (~$40 on $200).
-- Max 3 new trades per week — this is a FEE control (~0.5% per round trip).
+- NO fixed trade cap — frequency is your judgement. What binds instead:
+  WEEKLY FEE BUDGET 1.5% of equity (~$3.00); measured friction is 0.65% per
+  round trip. Budget exhausted -> no new entries until Monday 00:00 UTC.
+  The budget is a ceiling, NOT a target to spend.
+- CIRCUIT BREAKER: realized losses today >= 3% of equity, or 3 consecutive
+  tactical losses -> no new entries for the rest of the UTC day.
+- CORE entries need the morning research plan. TACTICAL may be originated in the
+  execute run if the current screen passes AND a catalyst is documented then.
 - 75-85% capital deployed. Never hold a stablecoin as a position.
 - Every position carries a resting stop_limit GTC sell at the broker.
   `trailing_stop` and `stop` are REJECTED for crypto — stop_limit only,

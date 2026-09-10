@@ -88,7 +88,12 @@ STEP D — Write a dated entry to memory/RESEARCH-LOG.md:
   * CORE ideas: $40, only from the CORE shortlist, max 3 new per week
   * TACTICAL ideas: $20, only from the TACTICAL shortlist, max 3 new per day
 - Risk factors
-- Decision: TRADE or HOLD (default HOLD — patience > activity, fees punish churn)
+- Decision, STATED PER SLEEVE: TRADE or HOLD (default HOLD — patience > activity,
+  and fees punish churn). Note that a CORE HOLD is binding for the day, but a
+  TACTICAL HOLD is only a recommendation: the execute run may originate a
+  tactical entry later if the screen and a fresh catalyst justify it. Say what
+  would have to change for tactical to become worth trading today.
+- Fee budget state: fees used this week so far vs the 1.5% (~$3.00) ceiling
 
 STEP E — Notification: silent unless urgent (a position gapped past -15% without
 its stop filling, an exploit/depeg/delisting on something held, a macro shock).

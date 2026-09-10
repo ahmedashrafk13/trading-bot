@@ -71,6 +71,10 @@ STEP C — Compute the week's metrics:
 - Trades taken (W/L/open) and win rate, SPLIT BY SLEEVE. Core and tactical have
   different holding periods, stops and fee loads; a blended number hides which
   sleeve is actually working.
+- FEE BUDGET: total fees paid vs the 1.5% (~$3.00) weekly ceiling, and how many
+  trades that bought. If the budget was exhausted before Friday, say which day
+  and whether the trades that spent it were worth it.
+- Circuit breaker: how many times it tripped and what followed.
 - TACTICAL fee check: total tactical fees vs tactical gross profit. If fees
   exceeded gross profit, say so in one blunt sentence. If that has now happened
   two weeks running, propose cutting tactical frequency.

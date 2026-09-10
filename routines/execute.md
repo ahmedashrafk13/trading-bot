@@ -60,6 +60,23 @@ Log every action taken to memory/TRADE-LOG.md.
 STEP B — Read TODAY's entry in memory/RESEARCH-LOG.md. If it is missing, run the
 research workflow's STEP B-D inline first. NEVER trade without documented research.
 
+CORE entries require the morning research plan. A weeks-long hold deserves the
+slower decision, so if research did not plan a CORE entry, do not open one.
+
+TACTICAL entries MAY BE ORIGINATED IN THIS RUN even if research said HOLD.
+Crypto moves all day and a 06:07 UTC judgement is stale by noon; the tactical
+sleeve is meant to react. To originate one you must, in this run:
+  a) confirm the coin is on the CURRENT tactical shortlist (STEP D screen), and
+  b) document a specific catalyst now — run
+     bash scripts/perplexity.sh "<coin> news catalyst today"
+     (falls back to WebSearch on exit 3) and write what you found, and
+  c) pass the FULL gate including the fee budget and circuit breaker, and
+  d) append the entry to today's RESEARCH-LOG as an "intraday addendum" giving
+     the catalyst and levels, so the trade is still documented BEFORE execution.
+If research explicitly said HOLD, say why you are overriding it for this
+tactical entry. "The screen passed" alone is NOT a reason — a screen pass with
+no catalyst and no thesis is exactly the churn the fee budget exists to stop.
+
 STEP C — Re-validate each planned entry with live data:
   bash scripts/alpaca.sh account
   bash scripts/alpaca.sh crypto-quote SYM/USD
@@ -72,10 +89,16 @@ A planned idea whose coin has dropped off its sleeve shortlist is DEAD. Skip it
 and log "no longer passes <sleeve> screen".
 
 STEP E — Run the FULL buy-side gate per order. State the SLEEVE first, then:
-- CORE: positions after fill <= 3, cost ~$40, new CORE trades this WEEK <= 3,
-  coin on the CORE shortlist
-- TACTICAL: positions after fill <= 3, cost ~$20, new TACTICAL trades TODAY <= 3,
-  coin on the TACTICAL shortlist
+- CORE: positions after fill <= 3, cost ~$40, coin on the CORE shortlist,
+  and the entry was planned by today's research
+- TACTICAL: positions after fill <= 3, cost ~$20, coin on the CURRENT tactical
+  shortlist, catalyst documented this run
+- FEE BUDGET: est. round-trip cost (notional x 0.65%, more for a wide-spread alt)
+  plus fees already used this week <= 1.5% of equity (~$3.00). Compute the
+  running total from this week's TRADE-LOG rows. If it breaches, SKIP and log
+  the budget state — the budget is a ceiling, not a target.
+- CIRCUIT BREAKER not tripped: realized losses today < 3% of equity (~$6), and
+  not 3 consecutive tactical losses today
 - Combined positions after fill <= 6, total deployment <= 85%
 - Cost <= available cash
 - Pair is Alpaca-tradable and NOT a stablecoin

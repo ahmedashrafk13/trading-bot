@@ -66,13 +66,14 @@ STEP C — Pull final state and compute:
 - Cumulative P&L ($ and %) vs $200 starting equity
 - BTC/USD over the same window (bash scripts/alpaca.sh crypto-quote BTC/USD),
   so performance is measured against the real benchmark, not zero
-- Trades today by sleeve (CORE x/3 this week, TACTICAL x/3 today)
+- Trades today by sleeve, and FEE BUDGET: "fees used this week $X / $3.00"
+- Whether the circuit breaker tripped today (and at what time)
 - Estimated fees paid today
 
 STEP D — Append a snapshot to memory/TRADE-LOG.md:
 ### YYYY-MM-DD — Daily Snapshot (Day N, UTC)
 **Portfolio:** $X | **Cash:** $X (X%) | **Day P&L:** ±$X (±X%) | **Cumulative:** ±$X (±X%)
-**vs BTC:** ±X% | **Fees today:** $X
+**vs BTC:** ±X% | **Fees today:** $X | **Fee budget:** $X / $3.00 used this week
 | Sleeve | Pair | Qty | Entry | Last | Unrealized | Stop trigger | Stop present? |
 **Notes:** one-paragraph plain-english summary.
 
