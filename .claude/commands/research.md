@@ -57,7 +57,8 @@ Then, if you need the raw detail:
              >= +14% and the limit has not filled
      >14% -> trail the stop leg 5% below the high-water mark
    ORPHAN CHECK: if one leg filled, CANCEL the other and re-place a full-size stop
-   on whatever qty remains. Reassess and close if open >48h.
+   on whatever qty remains. Reassess and close if open >48h — TACTICAL ONLY;
+   CORE has NO time limit and is never closed for age.
    Never move any stop down. Never place one within 5% of price (2% tactical).
 Log every action to memory/TRADE-LOG.md. Any EXIT row MUST record:
   `Exit time (UTC)`, `Exit price`, `REALIZED P&L $X`, `fees $X`, and the reason.

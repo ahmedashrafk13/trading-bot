@@ -65,8 +65,13 @@ CORE:
   20% below high-water; 14% once >= +30%; 10% once >= +40%
 ORPHAN CHECK: if one leg of a split filled, CANCEL the other and re-place a
 full-size stop on whatever qty remains.
-AGE: a position open >48h with neither target nor stop hit -> close it unless you
-can state why the setup is still valid.
+AGE — TACTICAL ONLY: a TACTICAL position open >48h with neither target nor stop
+hit -> close it unless you can state why the setup is still valid.
+CORE HAS NO TIME LIMIT. Never close a CORE position for age. Its whole purpose is
+to be held weeks-to-months until its ratcheted stop takes it out; closing it at
+48h would destroy the one sleeve that can actually compound. If you cannot tell
+which sleeve a position is in, infer from size ($40 = CORE, $20 = TACTICAL) and
+leave it alone if still unsure.
 
 STEP 5 — This run NEVER opens a new position. Entries happen in execute only.
 If something looks urgent, note it in memory/TRADE-LOG.md for the next research
