@@ -65,6 +65,14 @@ TACTICAL:
   > +14%   -> trail the stop leg 5% below the high-water mark
 CORE:
   20% below high-water; 14% once >= +30%; 10% once >= +40%
+  CORE MAY BE SPLIT 75% stop / 25% limit at entry*1.30. A CORE position opened
+  while no scan cadence was running carries a target leg, because CORE's ratchet
+  is EMULATED and only moves when a run moves it — with no runs, such a position
+  had a static stop and zero possible upside exit. If you find that split, it is
+  HEALTHY: ratchet the 75% STOP LEG only and leave the 25% limit leg resting.
+  Do NOT cancel the target leg to 'restore' a full-size CORE stop.
+  Now that this scan runs hourly the ratchet is live again, so NEW core entries
+  do not need a target leg — but never retro-strip one off an existing position.
 ORPHAN CHECK: if one leg of a split filled, CANCEL the other and re-place a
 full-size stop on whatever qty remains.
 AGE — TACTICAL ONLY: a TACTICAL position open >48h with neither target nor stop
