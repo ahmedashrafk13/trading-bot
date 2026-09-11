@@ -7,7 +7,8 @@ only result that justifies active trading.
 
 ## Capital & Constraints
 - Starting capital: ~$200
-- Platform: Alpaca crypto (`crypto_status: ACTIVE`, `crypto_tier: 0`)
+- Platform: Alpaca crypto (`crypto_status: ACTIVE`, `crypto_tier: 1` — verified
+  against the live account 2026-09-11; the docs previously said tier 0)
 - Instruments: Alpaca tradable crypto USD pairs ONLY (36 available)
 - Account type: cash, long only. Alpaca does NOT support shorting crypto.
 - Max position size: 20% of equity = ~$40 at $200 equity
@@ -17,8 +18,10 @@ only result that justifies active trading.
   sale are immediately reusable.
 
 ## Fees — the thing that punishes churn
-`crypto_tier: 0` is Alpaca's highest fee band. A market round trip costs roughly
-0.5% of the position. On $40 that is ~$0.20 per round trip, and it is charged
+The account is `crypto_tier: 1` (verified 2026-09-11 — this doc previously said
+tier 0). Do NOT size risk off the nominal tier: the number that governs is the
+MEASURED 0.65% per round trip recorded below, which was observed on this account
+and already supersedes the ~0.5% estimate here. On $40 that is ~$0.20 per round trip, and it is charged
 whether the trade wins or loses. Consequences that are part of the strategy:
 - Every stop-out costs the spread AND the fees. Frequent small stops bleed.
 - The 3-trades-per-week cap is a FEE control, not just a discipline rule.
