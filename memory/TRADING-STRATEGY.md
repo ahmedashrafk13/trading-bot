@@ -236,7 +236,17 @@ So while no cadence is running, a CORE entry ALSO splits at entry:
 +30% is used because it is CORE's own first ratchet threshold — the level at which a
 run WOULD have tightened the trail to 14%. Since no run will, the exchange banks a
 quarter of the position there instead. Stop-heavy per the weighting rule below.
-Reverts to "no target, pure ratchet" the moment routines are live.
+REVERT — who does it, concretely. "Reverts when routines are live" named no
+actor, so nothing would ever have performed it. The rule is:
+- NEW CORE entries stop getting a target leg as soon as the hourly scan is live,
+  because the ratchet works again. The execute run owns this: before placing a
+  CORE stop it must check whether an hourly scan has actually run (look for a
+  recent `scan <timestamp>` commit in `git log`), and if so place a FULL-SIZE
+  stop with no target leg.
+- EXISTING split CORE positions are LEFT ALONE. No run retro-strips a resting
+  target leg. Cancelling it costs fees, and the ratchet will overtake the target
+  anyway if the position runs far enough.
+So the clause expires forward, not retroactively, and a specific run owns it.
 This was caught by the user after the ETH entry was opened with a full-size stop and
 no target — the same defect the DOT clause above already described, missed on CORE
 because CORE's "no target by design" wording hid it.
