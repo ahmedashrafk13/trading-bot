@@ -110,8 +110,11 @@ STEP D — Write a dated entry to memory/RESEARCH-LOG.md:
 - The CORE and TACTICAL shortlists from scripts/screen.sh (coins + key metrics)
 - Ideas TAGGED BY SLEEVE. For each: sleeve, catalyst, entry, stop trigger and
   limit, target (CORE: none, let it run), and R:R AFTER ~0.5% round-trip fees
-  * CORE ideas: $40, only from the CORE shortlist, max 3 new per week
-  * TACTICAL ideas: $20, only from the TACTICAL shortlist, max 3 new per day
+  * CORE ideas: $40, only from the CORE shortlist. NO fixed count cap — what
+    binds is the 3-position sleeve limit and the weekly fee budget.
+  * TACTICAL ideas: $20, only from the TACTICAL shortlist. NO fixed count cap —
+    bounded by the 3-position sleeve limit, the weekly fee budget and the
+    circuit breaker. The budget is a CEILING, never a target to spend.
 - Risk factors
 - Decision, STATED PER SLEEVE: TRADE or HOLD (default HOLD — patience > activity,
   and fees punish churn). Note that a CORE HOLD is binding for the day, but a
