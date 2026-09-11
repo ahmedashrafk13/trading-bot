@@ -281,7 +281,7 @@ Alpaca REJECTS `trailing_stop` and `stop` for crypto:
 Only `stop_limit` is accepted. So Core Rule 5 is implemented as:
 
     {"symbol":"BTC/USD","qty":"<frac>","side":"sell","type":"stop_limit",
-     "stop_price":"<trigger>","limit_price":"<trigger * 0.98>","time_in_force":"gtc"}
+     "stop_price":"<trigger>","limit_price":"<trigger * 0.95>","time_in_force":"gtc"}
 
 - `limit_price` is set 5% BELOW `stop_price` so it can still fill while price is
   falling. A limit equal to the stop will often not fill at all.

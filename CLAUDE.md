@@ -35,7 +35,8 @@ runs per trading day plus two ad-hoc helpers.
 - 75-85% capital deployed. Never hold a stablecoin as a position.
 - Every position carries a resting stop_limit GTC sell at the broker.
   `trailing_stop` and `stop` are REJECTED for crypto — stop_limit only,
-  with limit_price ~2% below stop_price.
+  with limit_price 5% below stop_price (trigger * 0.95). NOT 2% — a 2% gap is
+  routinely jumped in a crypto flush, which turns the stop into a no-op.
 - Buys MUST use time_in_force `gtc`. `day` is rejected for crypto.
 - Hard cut at -15%. Trail 20% below high-water, ratcheted UP only.
 - Tighten trail to 14% at +30%, to 10% at +40%.
