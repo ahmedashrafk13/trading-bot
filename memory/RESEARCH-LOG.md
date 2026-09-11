@@ -209,3 +209,60 @@ was NOT the binding constraint. $0.13 of a $3.00 weekly budget is trivially
 affordable — the trade was refused on edge quality, not on cost, which is the
 correct order of priority.
 
+
+---
+## 2026-09-11 — Crypto Research (UTC 15:13)
+
+**Account:** Equity $198.95 | Cash $179.92 | Deployed 9.6% (target 75-85%)
+Positions: DOT (TACTICAL) -4.59%, age 18.9h, [SPLIT ok] 0% unreserved.
+Fee budget $0.13 / $2.98 used. Breaker clear. Amendment trigger 0/10 — not eligible.
+
+**Market context (WebSearch; PERPLEXITY_API_KEY not set — fallback used, noted per prompt):**
+- BTC $78,605 (Alpaca) — down ~1.6% 24h; global mcap $2.7T, -1.9% 24h
+- BTC dominance 56.8%, ETH 11% — capital rotating INTO the majors, not out the risk curve
+- August PPI +0.4% m/m, +5.4% y/y — hotter than expected, cooled rate-cut hopes
+- BTC spot ETFs -$282.56M, worst outflow since July
+- **CPI prints TODAY (Sep 11); FOMC decision Sep 16** — the two binding near-term events
+- ETH spot ETFs diverging the other way: ~+$863M net YTD vs ~-$1B for BTC; ETH has
+  out-gathered BTC two consecutive months; Sep 4 BlackRock ETHA +23.06K ETH
+
+**Narratives:** Majors leading (ETH specifically, on flows). L1/L2 rolling over — DOT,
+ADA, XTZ, AVAX all failing one or both screens. Memes mixed and macro-fragile.
+
+**CORE shortlist (15):** DOT SUSHI XTZ ARB GRT FIL ETH LTC AVAX BAT UNI LINK SOL CRV LDO
+**TACTICAL shortlist (23):** ETH UNI AAVE PEPE FIL LINK HYPE SOL ARB WIF XRP TRUMP ONDO DOGE SUSHI YFI RENDER LDO POL BTC ADA CRV GRT
+
+ETH is the only pair passing BOTH screens with a top-tier spread:
+  CORE 1D: 7d +6.1%, 30d +38.9%, +5.5% vs rising SMA20 (limit 20% — not extended), spr 0.03%
+  TACTICAL 1H: 7d +5.3%, +5.0% vs SMA20, vol 1.4% (in 0.4-6% band), spr 0.03%
+
+### Ideas by sleeve
+
+**CORE — ETH/USD — TRADE**
+- Catalyst: ETF flow divergence is specific, measurable and sustained — ETH spot ETFs
+  ~+$863M net YTD against ~-$1B for BTC, two straight months of out-gathering BTC,
+  BlackRock ETHA +23.06K ETH on Sep 4. Glamsterdam upgrade proposals ahead.
+- Entry ~$2,609 | Size $40 (20% of equity) | Stop trigger $2,087.60 / limit $1,983.22
+- Target: none — CORE lets it run; the ratcheted 20% trail decides the exit
+- Risk in dollars: $8.00 at the 20% trail; hard cut -15% = $6.00. Sane at this size.
+- Est. round-trip fee $0.26 (0.65% of $40); spread 0.027% is the cheapest in the universe
+
+**TACTICAL — HOLD, no new entries**
+- CPI lands today and FOMC is Sep 16. A tactical position has an hours-to-2-day
+  horizon, which puts the whole thesis on a macro print rather than on the setup.
+  That is a coinflip, not an edge, and it is exactly the churn the fee budget exists
+  to stop. The screen passing is not by itself a reason.
+- What would change it: CPI printing and the tape holding, with a coin on the hourly
+  shortlist carrying its own catalyst rather than borrowing the market's.
+- DOT held, not added to: catalyst (dotUSD referendum, XCM throughput highs) is still
+  intact so the thesis is not broken, but momentum has rolled over and it now FAILS
+  the hourly screen (-5.9% 7d, -4.5% vs SMA20). Age 18.9h is inside the 48h reassess
+  window and the -6% stop is resting. Let the stop do its job; no averaging down.
+
+**Risk factors:** CPI today + FOMC Sep 16 either could break the tape. Hot PPI already
+landed. BTC ETF outflows show majors bid is not uniform. ETH entered into a risk-off
+session — sized and stopped accordingly, and the CORE horizon is weeks-to-months, so a
+single print is noise against a 20% trail.
+
+**Decision:** CORE **TRADE** (ETH $40). TACTICAL **HOLD**.
+**Fee budget after this trade:** $0.39 / $2.98 used this week.

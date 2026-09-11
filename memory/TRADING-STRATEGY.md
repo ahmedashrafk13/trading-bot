@@ -224,6 +224,23 @@ state, split at entry: half stop, half resting limit at the target. The cost is
 an unstopped half; the alternative is a guaranteed-zero upside, which is worse.
 Re-evaluate this clause the moment routines are live.
 
+**THIS APPLIES TO CORE TOO — amended 2026-09-11 under the BROKEN-rule exception.**
+CORE nominally has no profit target because "the ratchet decides the exit". But the
+ratchet is EMULATED: it only moves when a RUN cancels the stop and re-places it
+higher. With no cadence scheduled, no run ever happens, so a CORE position has a
+static stop and NO upside exit mechanism whatsoever — it can run +50%, round-trip
+all the way back through entry to -20%, and the stop never moves once. That is not
+"letting a winner run", it is holding a winner with no way to ever realise it.
+So while no cadence is running, a CORE entry ALSO splits at entry:
+  ~75% on the stop / ~25% on a resting limit at +30% above fill.
++30% is used because it is CORE's own first ratchet threshold — the level at which a
+run WOULD have tightened the trail to 14%. Since no run will, the exchange banks a
+quarter of the position there instead. Stop-heavy per the weighting rule below.
+Reverts to "no target, pure ratchet" the moment routines are live.
+This was caught by the user after the ETH entry was opened with a full-size stop and
+no target — the same defect the DOT clause above already described, missed on CORE
+because CORE's "no target by design" wording hid it.
+
 **While flat or at a loss AND a scan cadence is running -> FULL-SIZE STOP, no take-profit.**
 100% of the position is covered. Protection outranks upside capture; there is no
 gain to bank and an unstopped slice could ride a drop all the way down.

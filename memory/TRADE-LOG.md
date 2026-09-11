@@ -186,3 +186,124 @@ enforced by the EXCHANGE and needs no run to fire.
 Orphan rule applies: whichever leg fills, the next run must cancel the other and
 re-place a full-size stop on the remaining qty.
 
+
+---
+### 2026-09-11T15:16 UTC — ENTRY — CORE — ETH/USD BUY
+
+| Field | Value |
+|---|---|
+| Entry time (UTC) | 2026-09-11T15:16 |
+| Sleeve | **CORE** |
+| Pair | ETH/USD |
+| Side | buy (long) |
+| Qty ordered | 0.015341 |
+| Qty FILLED | 0.015302647 (fee taken in kind, ~$0.10) |
+| Fill price | $2,609.50 |
+| Notional | $39.93 cost basis |
+| Hard cut (-15%) | $2,218.08 |
+| Stop trigger | $2,087.60 (fill x 0.80) |
+| Stop limit | $1,983.22 (trigger x 0.95) |
+| Stop order id | c33ad688-2ff2-4214-a44c-a0c8e6ec2944 (qty 0.015302647 = 100%) |
+| Target | none — CORE, let it run; ratcheted 20% trail decides |
+| R:R | CORE has no target; risk $8.00 at the trail, $6.00 at the hard cut |
+| Est. round-trip fee | $0.26 (0.65% of $40) |
+
+**Thesis:** ETH is the only pair in the 33-coin universe passing BOTH the daily CORE
+and hourly TACTICAL screens, and it does so with the tightest spread available
+(0.027%). Catalyst is the ETF flow divergence — ETH spot ETFs ~+$863M net YTD versus
+~-$1B for BTC, two consecutive months of out-gathering BTC, BlackRock ETHA +23.06K ETH
+on Sep 4 — with Glamsterdam upgrade proposals behind it. 30d +38.9% but only +5.5%
+above a rising SMA20, so it is trending without being extended (limit is 20%).
+
+**Stop structure — FULL-SIZE, no split.** The "split at entry when no scan cadence is
+running" clause exists to get a take-profit enforced by the exchange. CORE has no
+profit target by design, so there is nothing to split to: 100% of the qty sits on the
+stop. state.sh confirms [OK full stop], 0% unreserved.
+
+**Gate:** CORE 1/3, combined 2/6, deployment 29.6% <= 85%, cost $39.93 <= cash $179.92,
+notional >= $10, spread 0.027% <= 1%, tif gtc, crypto, not a stablecoin, on the CORE
+shortlist, catalyst documented in today's RESEARCH-LOG, breaker clear, fee budget
+$0.39/$2.98 after this trade. All pass.
+
+---
+## 2026-09-11 — Daily Snapshot (Day 1 crypto, UTC 15:16)
+**Portfolio:** $198.77 | **Cash:** $139.89 (70.4%) | **Day P&L:** -$1.23 (-0.62%) | **Cumulative:** -$1.23 (-0.62%)
+**vs BTC:** -2.50% | **Fees today:** ~$0.10 | **Fee budget:** $0.39 / $2.98 used this week
+
+BTC/USD $78,605.24 vs the $77,153.29 Day 0 baseline = **+1.88%**. Account -0.62%.
+Underperforming the benchmark by 2.50 pts.
+
+| Sleeve | Pair | Qty | Entry | Last | Unrealized | Stop trigger | Stop present? |
+|--------|------|-----|-------|------|------------|--------------|---------------|
+| TACTICAL | DOT/USD | 17.972955 | $1.1100 | $1.0601 | -4.66% | $1.04340 | yes — [SPLIT ok] 50% stop / 50% target, 0% unreserved |
+| CORE | ETH/USD | 0.015302647 | $2,609.50 | $2,605.00 | -0.17% | $2,087.60 | yes — [OK full stop] 100%, 0% unreserved |
+
+**Trades today:** 1 — CORE ETH/USD buy $40. TACTICAL 0/3, deliberately.
+**Deployed:** 29.6% (target band 75-85%).
+**Circuit breaker:** clear, $0.00 realized losses vs $5.96 limit. Not tripped today.
+**Amendment trigger:** 0 closed trades logged, need >= 10. Not eligible — nothing changed.
+
+**Notes:** Opened the first CORE position of the crypto era. ETH was the single pair
+clearing both screens and it carried the only catalyst in the universe that is not
+just "it already moved" — the ETF flow divergence is a two-month, measurable capital
+shift, and ETH is trending without being extended. Deliberately left TACTICAL flat:
+CPI prints today and FOMC is Sep 16, and an hours-horizon position into a macro print
+is a coinflip rather than an edge, which is what the fee budget exists to prevent.
+Deployment is 29.6%, well under the 75-85% band, and that is the correct state when
+only one setup clears the gate — the band is a target, not a mandate to buy. DOT is
+held rather than cut: its catalyst is intact so the thesis is not broken, but it now
+fails the hourly screen and has rolled over, so it gets no more capital and the -6%
+stop decides it. It is 18.9h old, inside the 48h reassess window. Account trails BTC
+by 2.50 pts, driven entirely by the DOT drawdown.
+
+---
+### 2026-09-11 15:22 UTC — ETH split into stop + target legs (defect fix + rule amendment)
+
+ETH was opened at 15:16 with a FULL-SIZE stop and no target, on the reasoning that
+"CORE has no profit target by design, so there is nothing to split to." That was
+wrong, and the user caught it.
+
+**The defect:** CORE's exit is the ratchet, and the ratchet is EMULATED — it only
+moves when a run cancels the stop and re-places it higher. No routines are scheduled.
+So the position had a static stop at $2,087.60 and NO upside exit mechanism at all:
+it could run +50%, round-trip back through entry to -20%, and that stop would never
+move once. Upside capture was structurally, permanently zero. This is the SAME defect
+the "no scan cadence" clause already documented for DOT; it was missed on CORE because
+the "no profit target by design" wording made it look intentional rather than broken.
+
+**Action — cancelled c33ad688 (full-size stop) and re-split, stop-heavy:**
+
+| Leg | Type | Qty | Level | Order |
+|---|---|---|---|---|
+| protection | stop_limit GTC | 0.011476985 (75%) | trigger $2,087.60 / limit $1,983.22 | 4d0e9729-b5da-4904-bf88-0e9048710a28 |
+| target | limit GTC | 0.003825662 (25%) | $3,392.35 (+30% on $2,609.50 fill) | 97be9328-63d3-426c-8612-4f5c4e9a1ce3 |
+
+Total reserved 0.015302647 = 100% of the position. state.sh confirms [SPLIT ok],
+0.0% unreserved. Stop trigger UNCHANGED at $2,087.60 — re-placed at the same level,
+never moved down.
+
+75/25 not 50/50, per the stop-heavy weighting rule: if the stop fires, the unstopped
+slice keeps falling with no protection; if the target fires, the remainder keeps
+running WITH its stop intact. The failure modes are not symmetric.
+
+Target set at +30% because that is CORE's own first ratchet threshold — the level a
+run WOULD have tightened the trail to 14% at. Since no run will, the exchange banks a
+quarter there instead. Target leg is ~$9.98 of cost basis at entry and ~$12.98 at fill,
+above the ~$9.97 sell that was previously accepted, so it clears the practical floor.
+
+**Accepted risk:** the 0.003825662 target slice carries NO stop — roughly $10 of
+exposure rides down unprotected if ETH falls. Bounded, and the alternative was a
+guaranteed zero upside.
+
+**Rule amendment applied to memory/TRADING-STRATEGY.md** under the Self-amendment
+BROKEN-rule exception (not the 10-closed-trade trigger, which stands at 0/10): the
+"no scan cadence -> split at entry" clause now explicitly covers CORE, at 75/25 with
+the target at +30%. This is 1 tunable rule, within the 2-per-amendment limit, and it
+touches no IMMUTABLE item — every position still carries a resting stop, stops are
+still stop_limit only, and no stop was widened or moved down. Reverts to pure ratchet
+the moment routines are live.
+
+**BEFORE:** CORE = full-size stop, no target, ratchet decides the exit.
+**AFTER:**  CORE while no cadence runs = 75% stop / 25% limit at +30%.
+**EVIDENCE:** ratchet requires a run; zero runs scheduled; therefore zero upside
+exits possible. Arithmetically unsatisfiable, not merely underperforming.
