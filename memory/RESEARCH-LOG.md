@@ -266,3 +266,43 @@ single print is noise against a 20% trail.
 
 **Decision:** CORE **TRADE** (ETH $40). TACTICAL **HOLD**.
 **Fee budget after this trade:** $0.39 / $2.98 used this week.
+
+---
+## 2026-09-14 — Crypto Research (INTRADAY ADDENDUM, execute run, UTC 16:45)
+
+No pre-market research ran today (no cloud cadence). This addendum exists to
+document a TACTICAL origination before execution, per the execute STEP B(d) rule.
+**No CORE entry is considered** — CORE requires the morning research plan, and
+there is none.
+
+### Ideas by sleeve
+
+**TACTICAL — XRP/USD — TRADE**
+- Catalyst: the U.S. Senate holds its first floor test of the **Digital Asset
+  Market Clarity (CLARITY) Act on 2026-09-15**, one day out. The Senate returned
+  2026-09-14 with three weeks of floor time. This is a procedural cloture-style
+  vote on whether to proceed to debate, not final passage. Secondary September
+  catalysts already landed: the XRPL 3.3.0 upgrade and the fixCleanup3_3_0
+  amendment, plus a custodial-fund unlock.
+- Why this is XRP's own catalyst and not a borrowed macro print: the 2026-09-11
+  research refused tactical entries because CPI/FOMC put the thesis on a market-wide
+  coinflip. The CLARITY Act is crypto-legislation-specific and XRP is the highest-beta
+  name to US regulatory clarity, given its litigation history. It is dated, public and
+  lands inside the tactical hours-to-2-day horizon rather than after it.
+- Technicals: PASSES the hourly TACTICAL screen (7d +0.7%, +2.3% vs SMA20, vol 0.4%/h,
+  spread 0.298% live). Trading above EMA20/50/200 on the daily.
+- Entry ~$1.4134 | Size $20 (10% of equity) | Stop trigger $1.3286 / limit $1.2622
+- Target $1.6113 (+14% on fill)
+- Est. round-trip fee $0.13 (0.65% of $20)
+- R:R after fees: risk $20*0.06 + 0.13 = $1.33; reward $20*0.14 - 0.13 = $2.67 -> **2.01:1 PASS**
+
+**CORE — no entry.** No morning research plan exists today, so no CORE origination
+is permitted regardless of the screen. ETH/USD is held, split legs intact.
+
+**Risk factors:** the vote is a BINARY, DATED event inside the holding window. A
+failed motion to proceed is a plausible downside gap and a stop_limit can be gapped
+through. Sized at $20 (10%, half of a CORE position) and stopped at 6% specifically
+because the event risk is known in advance, not discovered later. This is the
+acknowledged cost of trading a scheduled catalyst rather than a drift setup.
+
+**Decision:** TACTICAL **TRADE** (XRP $20). CORE **HOLD**.

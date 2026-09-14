@@ -307,3 +307,109 @@ the moment routines are live.
 **AFTER:**  CORE while no cadence runs = 75% stop / 25% limit at +30%.
 **EVIDENCE:** ratchet requires a run; zero runs scheduled; therefore zero upside
 exits possible. Arithmetically unsatisfiable, not merely underperforming.
+
+---
+### 2026-09-14 16:40 UTC — EXIT — TACTICAL — DOT/USD — position fully closed
+
+**Reconciliation first: an unlogged fill was found.** The stop leg
+`5da2e7a3` FILLED on **2026-09-11T18:05 UTC** and no run recorded it, because no
+cloud cadence is scheduled. The position then sat for **~70h with its entire
+remaining quantity reserved by the target limit and ZERO stop coverage** — the
+exact state the ORPHAN rule exists to prevent ("if one leg filled, cancel the
+other and re-place a full-size stop on whatever qty remains"). The rule was
+correct; there was simply no run to execute it. Caught by an ad-hoc `/portfolio`.
+
+| Leg | Exit time (UTC) | Qty | Exit price | Gross | Fees | REALIZED P&L |
+|---|---|---|---|---|---|---|
+| stop_limit `5da2e7a3` | 2026-09-11T18:05 | 8.986478 | $1.0410 | -$0.620 | ~$0.034 | **-$0.654** |
+| market close `30e42a1e` | 2026-09-14T16:40 | 8.986477 | $1.0130 | -$0.872 | $0.033 | **-$0.905** |
+| buy-side fee in kind | 2026-09-10T20:19 | 0.045045 DOT | $1.11 | — | $0.050 | **-$0.050** |
+
+- **TOTAL REALIZED P&L: -$1.609** on $20.00 deployed = **-8.0%**
+- **REALIZED TODAY (UTC 2026-09-14): -$0.905** (the 09-11 leg belongs to that UTC day)
+- Sell fee measured at **0.36%** of notional (cash +$9.07 on a $9.1033 sale) — above
+  the 0.325% half of the 0.65% round-trip assumption. Worth watching, one sample.
+- Orphan target leg `96e0e83d` cancelled before the close.
+
+**Reason for closing the remainder:** three independent triggers, any one sufficient.
+1. Unrealized **-8.72%**, past the TACTICAL -6% hard cut.
+2. Age **92.3h**, past the 48h reassess window.
+3. **FAILS** the current hourly TACTICAL screen (-0.2% 7d, -0.1% vs SMA20, vol 0.3%/h
+   below the 0.4% floor) — the reassess rule says close unless the screen still passes.
+
+**Post-mortem.** The dotUSD referendum / XCM throughput thesis never converted. DOT
+drifted from entry and the momentum roll-over was already flagged in the 2026-09-11
+research, which chose to "let the stop do its job" — correct, and the stop did fire on
+half. The loss is not the defect. The defect is that the surviving half was unprotected
+for 70h purely because nothing was running, and a -15% gap in that window would have
+been uncapped. **The split-at-entry clause trades an unstopped slice for upside capture
+on the assumption that SOME run will later clean up an orphan. With zero runs scheduled,
+that assumption is false, and the clause is strictly worse than a full-size stop.**
+
+Narrative: L1/L2 — **1** consecutive failed trade. Exit-the-narrative rule needs 2.
+
+**No rule amendment applied.** The amendment trigger stands at 1 closed trade vs the
+required 10, and this is not the BROKEN-rule exception: the orphan rule is not
+defective, it is simply unexecuted. The correct fix is a running cadence, not a rule
+edit. Flagged for the next weekly review if the cadence is still not live.
+
+---
+### 2026-09-14T16:43 UTC — ENTRY — TACTICAL — XRP/USD BUY
+
+| Field | Value |
+|---|---|
+| Entry time (UTC) | 2026-09-14T16:43 |
+| Sleeve | **TACTICAL** |
+| Pair | XRP/USD |
+| Side | buy (long) |
+| Qty ordered | 14.15 |
+| Qty FILLED | 14.114625 (fee taken in kind, 0.035375 XRP ~ $0.05) |
+| Fill price | $1.41184 |
+| Cost basis | $19.93 (10.1% of equity) |
+| Order id | 801b0c56-cd88-4e67-91a9-0603623c6c58 |
+| Hard cut | -6% = $1.32713 |
+| Target | $1.60950 (+14%) |
+| Est. round-trip fee | $0.13 (0.65% of $20) |
+| R:R after fees | risk $1.33 / reward $2.67 = **2.01:1** |
+| Narrative | Payments/legacy (XRP, LTC, BCH) |
+
+**Thesis / catalyst:** the U.S. Senate holds its first floor test of the **Digital
+Asset Market Clarity (CLARITY) Act on 2026-09-15**, one day out; the Senate returned
+2026-09-14 with three weeks of floor time. Procedural motion to proceed, not final
+passage. XRP is the highest-beta name to US regulatory clarity given its litigation
+history. Documented in the RESEARCH-LOG intraday addendum BEFORE execution.
+
+**Screen:** PASSES hourly TACTICAL — 7d +0.7%, +2.3% vs SMA20, vol 0.4%/h, spread
+0.298% live (limit 0.5%). Above daily EMA20/50/200.
+
+**Resting legs — SPLIT 50/50 at entry** (no-scan-cadence clause; `state.sh` confirms
+[SPLIT ok], 0.0% unreserved):
+
+| Leg | Type | Qty | Level | Order |
+|---|---|---|---|---|
+| protection | stop_limit GTC | 7.057312 (50%) | trigger $1.32713 / limit $1.26077 | 1e546303-c41f-46c5-b0fb-9dc8927abc98 |
+| target | limit GTC | 7.057313 (50%) | $1.60950 (+14%) | 6d19a4c9-62e7-4859-bf2c-12655089542a |
+
+**Why 50/50 and not the stop-heavy 75/25:** at a $20 notional a 25% target leg is ~$5,
+and the strategy explicitly records that a ~$5 sell leg is **UNTESTED** against the
+exchange minimum (only ~$9.97 sells are confirmed accepted). 50/50 puts both legs at
+~$10, inside proven territory. The 75/25 weighting applies at the +6% rung on a larger
+position; it is not worth a rejected order here. Matches the DOT precedent.
+
+**Accepted risk — stated plainly.** Two things:
+1. The 7.057313 target slice carries NO stop, so ~$10 rides down unprotected. This is
+   the same exposure that just cost us on DOT, and it is only acceptable because the
+   holding window is ~1 day around a dated event rather than open-ended.
+2. The catalyst is a **BINARY, DATED** event inside the holding window. A failed motion
+   to proceed is a plausible gap-down and a stop_limit can be gapped through. Sized at
+   half a CORE position for exactly this reason.
+
+**Gate:** all pass — tactical positions after fill 1/3, combined 2/6, cost $19.93 <=
+cash $158.28, deployment 29.7% <= 85%, notional >= $10, spread 0.298% <= 0.5%,
+fee budget $0.16 used / $2.95, circuit breaker clear (realized today -$0.905 vs
+-$5.91 limit; 1 consecutive tactical loss vs 3), crypto, long only, not a stablecoin.
+
+**Open item:** deployment is **29.7%**, far below the 75-85% band. Not corrected in
+this run — CORE is where the missing ~$100 belongs and CORE requires a morning
+research plan that does not exist today. Correcting a deployment shortfall is not a
+licence to skip the research gate.
