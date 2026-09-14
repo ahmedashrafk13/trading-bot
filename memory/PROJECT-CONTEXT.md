@@ -2,21 +2,45 @@
 
 ## Overview
 - What: Autonomous CRYPTO trading bot
-- Starting capital: ~$200
-- Platform: Alpaca crypto — **PAPER account PA3VFI9O4EPS**, endpoint
-  https://paper-api.alpaca.markets/v2. Keys are PK-prefixed (paper). No real
-  money is at risk and P&L is simulated.
-- BEFORE GOING LIVE: the endpoint changes to api.alpaca.markets, keys become
-  AK-prefixed, and the account is funded with real money. Treat that switch as a
-  separate decision, not a config tweak. Nothing in this repo should describe the
-  account as LIVE until it actually is — an agent reading "LIVE" may reason
-  differently about risk than one reading "PAPER".
+- Starting capital: a **$200 VIRTUAL BOOK**
+- Platform: Bybit V5 **SPOT**, Demo Trading endpoint https://api-demo.bybit.com
+  No real money is at risk and P&L is simulated.
+- SAFETY CHECK (verified 2026-09-15): these keys are REJECTED by
+  `https://api.bybit.com` with `10003 API key is invalid`. Run
+  `BYBIT_ENDPOINT=https://api.bybit.com bash scripts/bybit.sh account` — it MUST
+  return 10003. If it ever returns OK, the key is a MAINNET key with real funds:
+  stop and replace it.
+- BEFORE GOING LIVE: the endpoint changes to api.bybit.com and the account is
+  funded with real money. Treat that switch as a separate decision, not a config
+  tweak. Nothing in this repo should describe the account as LIVE until it is —
+  an agent reading "LIVE" may reason differently about risk than one reading
+  "DEMO".
 - Duration: [your challenge window]
-- Strategy: Swing trading crypto USD pairs. CRYPTO ONLY — no stocks, no options.
-- Benchmark: BTC/USD buy-and-hold
-- Pivoted from a stocks strategy on 2026-09-10. Entries in RESEARCH-LOG and
-  TRADE-LOG dated on or before that are from the stocks era — historical only,
-  do not treat their tickers or rules as current.
+- Strategy: Swing trading Bybit spot USDT pairs. CRYPTO ONLY — no stocks, no
+  options. SPOT ONLY — no perps, no leverage.
+- Benchmark: BTCUSDT buy-and-hold
+- Pivoted from a stocks strategy on 2026-09-10, and from Alpaca to Bybit on
+  2026-09-15. Entries in RESEARCH-LOG and TRADE-LOG dated before 2026-09-15 are
+  from the Alpaca era — historical only. Their platform mechanics (slashed
+  symbols, `stop_limit`, `time_in_force: gtc`) DO NOT APPLY here.
+
+## THE ACCOUNT IS NOT THE BOOK (most important fact in this file)
+The demo account holds ~$181k equity, leftover coin balances, two stale resting
+spot sell orders (CRVUSDT, 0GUSDT) and an open KITEUSDT **perp** position at
+roughly -$231. None of it is ours. Bybit demo funds can only be ADDED
+(`adjustType: 0`), never withdrawn, so the account can never be shrunk to $200.
+
+Isolation is by TAG: every bot order carries
+`orderLinkId` = `tb-<sleeve>-<SYMBOL>-<epoch_ms>` (`cor` / `tac`), and all
+accounting counts only tagged fills.
+- `bash scripts/pnl.sh` is the ONLY source of truth for performance.
+- NEVER quote raw account equity, and never manage the perp position.
+- An UNTAGGED order is invisible to the book: untracked, unstopped, unaccounted.
+- `memory/LEDGER.json` is the durable fill record and MUST be committed — the
+  execution API has a retention window, and once a fill ages out the ledger is
+  the only thing keeping the book honest.
+- Deleting LEDGER.json does NOT reset the book (fills are re-fetched and
+  reappear). `bash scripts/pnl.sh --reset` moves the epoch and is the real reset.
 
 ## Rules
 - NEVER share API keys, positions, or P&L externally
@@ -30,66 +54,59 @@
 - memory/RESEARCH-LOG.md
 - memory/WEEKLY-REVIEW.md
 
-## Alpaca crypto gotchas (VERIFIED against the live API 2026-09-10)
-- ORDER TYPES: `trailing_stop` and `stop` are REJECTED for crypto —
-  `{"code":40010001,"message":"invalid order type for crypto order"}`.
-  Only `market`, `limit` and `stop_limit` work. All protective stops are
-  therefore `stop_limit` GTC, with the limit ~5% below the trigger.
-- TIME IN FORCE: `day` is REJECTED —
-  `{"code":42210000,"message":"invalid crypto time_in_force"}`.
-  Use `gtc` (or `ioc` for immediate-or-cancel). This differs from stocks.
-- MAX NOTIONAL: single order capped at $200,000 notional.
-- MINIMUM NOTIONAL IS $10 PER ORDER (verified 2026-09-10):
-  `{"code":40310000,"message":"cost basis must be >= minimal amount of order 10"}`
-  The `min_order_size` field from /assets is a QUANTITY floor (BTC 0.000012813,
-  about $1) and is NOT the binding constraint. Any gate that only checks
-  min_order_size will happily build a sub-$10 order that the API rejects.
-  Consequence: a $20 tactical position cannot be scaled out of in halves, and a
-  position whose value falls under $10 may not be sellable in parts — close it
-  whole.
-- FEES ARE CHARGED IN KIND ON BUYS (verified): ordered 0.00016 BTC, received
-  0.0001596 — a 0.250% haircut taken out of the ASSET, not the cash. Therefore a
-  protective stop MUST be sized from the ACTUAL position qty, never from the qty
-  you ordered, or it is rejected for insufficient balance.
-- SYMBOL FORMAT DIFFERS BY ENDPOINT (verified, was previously a guess):
-  * orders and v1beta3 quotes/bars -> SLASHED: `BTC/USD`
-  * positions listing reports      -> UNSLASHED: `BTCUSD`
-  * close position requires        -> UNSLASHED: `close BTCUSD`
-    (`close BTC/USD` returns 404 Not Found)
-- MEASURED ROUND-TRIP FRICTION: 0.65% (verified), not the 0.5% originally
-  assumed. A $12.31 BTC round trip cost $0.08 all-in — taker fee both ways plus
-  spread. BTC has the tightest spread in the universe, so 0.65% is a FLOOR;
-  alts will cost more.
-- SYMBOL FORMAT: pairs are slash-formatted for orders and v1beta3 quotes
-  (`BTC/USD`). Positions may report the unslashed form (`BTCUSD`) — normalize
-  before matching a position to its stop order. VERIFY on the first real fill.
-- QUOTES USE A THIRD BASE PATH: `v1beta3/crypto/us/latest/quotes?symbols=...`,
-  not the `v2/stocks/...` path. Use `alpaca.sh crypto-quote`.
-- `qty` is a fractional decimal STRING. Respect each pair's `min_order_size`
-  (from `alpaca.sh assets crypto`) — they are ~$1 equivalent, not 1 coin.
-- FEES ARE REAL. `crypto_tier: 0` is the highest band, ~0.5% per market round
-  trip. Stocks were commission-free; crypto is not. Churn is expensive at $200.
-- ORDER_CLASS OCO/BRACKET ARE REJECTED FOR CRYPTO (verified 2026-09-10):
-  `{"code":42210000,"message":"crypto orders not allowed for advanced
-  order_class: oco"}`. So no single order can carry both a stop and a target.
-- BUT MULTIPLE RESTING SELLS ARE ALLOWED — they just cannot overlap the same
-  UNITS (verified 2026-09-10 on the live DOT position). A resting order reserves
-  the qty it names, not the whole position:
-  * stop_limit for the FULL position -> a second sell is rejected
-    (`available: 0`), because nothing is left unreserved
-  * stop_limit on 8.98 + limit on 8.99 of a 17.97 position -> BOTH REST FINE
-  This is how a stop and a take-profit coexist on Alpaca crypto: split the qty.
-  The cost is that whichever slice carries the take-profit has NO stop, so that
-  slice is unprotected on the downside until a run notices.
-- SELL orders are not subject to the $10 minimum (that message says "cost
-  basis", i.e. buys). Sells of ~$9.97 were accepted, so scaling out is possible.
-- NO SHORTING crypto on Alpaca. Long only.
-- NO PDT and NO T+1 settlement. Sale proceeds are instantly reusable, so the
-  cash-account settlement discipline from the stocks era does not apply.
-- 24/7 MARKET: `alpaca.sh clock` describes the STOCK market and is irrelevant to
-  crypto. There is no open, close, or weekend halt. Overnight and weekend moves
-  happen with nobody watching, which is why the resting stop_limit matters.
-- FREE DATA FEED: quotes come from Alpaca's own crypto feed. Spreads on thin alts
-  can be wide; treat >1% spread as a skip signal.
-- Env var is ALPACA_API_KEY; the HTTP header is APCA-API-KEY-ID. Wrapper translates.
-- Alpaca timestamps are UTC. Crypto routines are scheduled in UTC to match.
+## Bybit V5 spot gotchas (VERIFIED against the live demo API 2026-09-15)
+- AUTH: `X-BAPI-SIGN` = HMAC_SHA256(timestamp + apiKey + recvWindow + payload),
+  where payload is the raw query string (GET) or the raw JSON body (POST). The
+  signed string must match the request BYTE FOR BYTE. `10003` means the key is
+  not recognized; `10004` means the signature is wrong — they are different
+  problems and diagnosing one as the other wastes a lot of time.
+- SELL QTY COMES FROM THE WALLET, NOT FROM `execQty` (verified): bought
+  6.936737 XRP, the wallet held **6.92980022**, and selling 6.93 was rejected
+  with `170131 Insufficient balance`. Spot BUY fees are deducted in the BASE
+  coin, so the wallet always holds less than was executed. Size every sell and
+  every stop from `bybit.sh balance <COIN>` floored to `basePrecision`.
+- MARKET ORDER UNITS: a market BUY takes qty in the QUOTE coin and requires
+  `marketUnit: "quoteCoin"` (qty = USDT to spend). A market SELL takes qty in
+  the BASE coin with `marketUnit: "baseCoin"`. Getting this backwards silently
+  places an order ~1 price-multiple off.
+- STOPS: there is NO `trailing_stop` order type on spot. A stop is an ordinary
+  order carrying a `triggerPrice`, with `orderFilter: "tpslOrder"`. Raise one
+  with `/v5/order/amend` — NOT cancel-then-replace, which leaves a window where
+  the position is naked.
+- PER-SYMBOL FILTERS: `minOrderQty`, `minOrderAmt` and `basePrecision` differ by
+  symbol (`bybit.sh instruments SYM`). `minOrderAmt` is commonly **5 USDT**.
+  XRPUSDT: basePrecision 0.01, minOrderQty 0.01, minOrderAmt 5, tickSize 0.0001.
+  Violations reject with `170136` / `170140`.
+- KLINES ARE NEWEST-FIRST (the REVERSE of Alpaca). `result.list[0]` is the most
+  recent bar. Reversing is done once in `scripts/lib/klines.py`. Getting it
+  backwards does not error — it silently inverts every momentum number.
+- KLINES ARE ONE SYMBOL PER CALL, capped at limit 1000. There is no multi-symbol
+  bar endpoint, which is why `screen.sh` gates on turnover before fetching bars.
+- `/v5/market/tickers?category=spot` returns the ENTIRE universe (538 pairs, 388
+  tradable USDT after stables/wrappers) with bid/ask/turnover in ONE
+  unauthenticated call. Public endpoints work even when the keys are rejected.
+- SPOT HAS NO POSITIONS AND NO CLOSE ENDPOINT. `/v5/position/list` is
+  derivatives-only. Spot holdings are COIN BALANCES; to exit you place a sell.
+- MEASURED ROUND-TRIP FRICTION: **0.20%** (verified — a $10 XRPUSDT round trip
+  cost $0.02 all-in). Materially cheaper than Alpaca's 0.65%. But XRP has one of
+  the tightest spreads in the universe, so 0.20% is a FLOOR; the long tail of
+  Bybit's 388 pairs is much worse.
+- SPREAD IS NOW THE BIGGER HALF OF FRICTION. Measured: BTC/ETH 0.000%,
+  XRP 0.007%, DOGE 0.012%, PEPE 0.029%, TRUMP 0.049%, POPCAT 0.126%,
+  MOG 0.293%, GOAT 0.307%. The screen's caps (CORE 0.10%, TACTICAL 0.15%) exist
+  because of this spread.
+- MEMES ARE THIN ON SPOT. Of ~30 meme pairs only DOGE clears both >$5M turnover
+  and <0.15% spread. Memes are TACTICAL-only and never CORE.
+- NO SHORTING on spot. Long only.
+- NO PDT and NO T+1 settlement. Sale proceeds are instantly reusable.
+- 24/7 MARKET. There is no open, close, or weekend halt. Bybit has no `/clock`
+  endpoint — every response carries a server `time` field in ms, which is what
+  `state.sh` uses. NEVER trust this machine's local clock.
+- WINDOWS/PYTHON TRAP: `open(path,'w')` writes CRLF by default on this box. A
+  symbol list written that way gives every symbol a trailing `\r`, and curl then
+  fails EVERY request with `curl: (3) Malformed input to a URL function` while
+  the script still exits 0 and prints an empty table. Always pass `newline=''`.
+- `.env` is a FALLBACK in `scripts/bybit.sh`: a value already exported in the
+  environment wins, so `BYBIT_ENDPOINT=... bash scripts/bybit.sh account` works
+  for one-off host checks.
+- Bybit timestamps are UTC ms. Crypto routines are scheduled in UTC to match.

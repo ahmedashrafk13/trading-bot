@@ -1,5 +1,5 @@
 ---
-description: Crypto execution run — runs the buy gate, places buys + resting stop_limit orders
+description: Crypto execution run — runs the buy gate, places buys + resting trigger stops
 ---
 
 Local mode: credentials come from the local .env. No commit-and-push step —
@@ -13,7 +13,7 @@ DATE=$(date -u +%Y-%m-%d) (UTC — crypto has no trading day).
 
 STEP 1 — Read memory:
 - memory/TRADING-STRATEGY.md (rules; read the Stops section)
-- memory/PROJECT-CONTEXT.md (verified Alpaca crypto gotchas)
+- memory/PROJECT-CONTEXT.md (verified Bybit crypto gotchas)
 - tail of memory/TRADE-LOG.md
 - tail of memory/RESEARCH-LOG.md
 
@@ -29,19 +29,24 @@ A position with UNRESERVED quantity (*** NAKED *** / *** n% UNRESERVED ***) is
 the highest-priority item in the run. A position marked [SPLIT ok] is healthy —
 stop and target legs together reserve 100% — and must NOT be "fixed".
 Then, if you need the raw detail:
-  bash scripts/alpaca.sh positions
-  bash scripts/alpaca.sh orders
+  bash scripts/bybit.sh positions
+  bash scripts/bybit.sh orders
 1. RECONCILE: compare live positions to the tail of memory/TRADE-LOG.md. A stop
    may have filled, or a fill may have landed, between runs. Log any drift.
-2. STOP COVERAGE: every position MUST have a resting stop_limit sell. If one is
+2. STOP COVERAGE: every position MUST have a resting trigger sell. If one is
    missing (or its qty no longer matches the position), place it now:
-     bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.95>","time_in_force":"gtc"}'
-   NOTE: trailing_stop and stop are REJECTED for crypto. stop_limit only.
-3. HARD CUT: any position at unrealized_plpc <= -0.15 -> cancel its stop, then
-   close at market. The stop_limit may have been gapped through without filling,
-   so never assume the resting order handled it.
-     bash scripts/alpaca.sh cancel ORDER_ID
-     bash scripts/alpaca.sh close SYM/USD
+     bash scripts/bybit.sh order '{"category":"spot","symbol":"SYMUSDT","side":"Sell","orderType":"Limit","qty":"<wallet bal floored to basePrecision>","triggerPrice":"<trig>","price":"<trig*0.95>","orderFilter":"tpslOrder","timeInForce":"GTC","orderLinkId":"tb-<sleeve>-SYMUSDT-<epoch_ms>"}'
+   NOTE: Bybit spot has NO trailing_stop order type. A stop is an ordinary
+   order carrying a triggerPrice. To RAISE one, use amend — never
+   cancel-then-replace, which leaves a window where the position is naked:
+     bash scripts/bybit.sh amend '{"category":"spot","symbol":"SYMUSDT","orderId":"<id>","triggerPrice":"<higher>","price":"<higher*0.95>"}'
+3. HARD CUT: any book position at <= -15% -> cancel its stop, then sell at
+   market. The trigger order may have been gapped through without filling,
+   so never assume the resting order handled it. Spot has no close-position
+   endpoint: you sell the wallet balance.
+     bash scripts/bybit.sh cancel '{"category":"spot","symbol":"SYMUSDT","orderId":"<id>"}'
+     bash scripts/bybit.sh balance <COIN>   # read the REAL qty first
+     bash scripts/bybit.sh order '{"category":"spot","symbol":"SYMUSDT","side":"Sell","orderType":"Market","qty":"<wallet bal floored>","marketUnit":"baseCoin","timeInForce":"IOC","orderLinkId":"tb-<sleeve>-SYMUSDT-<epoch_ms>"}'
 4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
    CORE: trail 20% below high-water; 14% once up +30%; 10% once up +40%.
    TACTICAL ladder. A resting order reserves only the qty it names, so a stop and
@@ -86,8 +91,8 @@ tactical entry. "The screen passed" alone is NOT a reason — a screen pass with
 no catalyst and no thesis is exactly the churn the fee budget exists to stop.
 
 STEP C — Re-validate each planned entry with live data:
-  bash scripts/alpaca.sh account
-  bash scripts/alpaca.sh crypto-quote SYM/USD
+  bash scripts/bybit.sh account
+  bash scripts/bybit.sh quote SYMUSDT
 Skip anything whose spread now exceeds 1%, or whose thesis moved more than the
 planned entry allows.
 
@@ -109,7 +114,7 @@ STEP E — Run the FULL buy-side gate per order. State the SLEEVE first, then:
   not 3 consecutive tactical losses today
 - Combined positions after fill <= 6, total deployment <= 85%
 - Cost <= available cash
-- Pair is Alpaca-tradable and NOT a stablecoin
+- Pair is Bybit-tradable and NOT a stablecoin
 - Order notional >= $10 (hard API floor; min_order_size alone is not enough)
 - Spread <= 1%
 - Catalyst documented in today's RESEARCH-LOG
@@ -117,21 +122,25 @@ STEP E — Run the FULL buy-side gate per order. State the SLEEVE first, then:
   that the ratcheted 20% stop leaves a sane risk in dollars)
 - It is crypto (never a stock, never an option)
 
-STEP F — Execute approved buys. time_in_force MUST be gtc — `day` is REJECTED
-for crypto ({"code":42210000,"message":"invalid crypto time_in_force"}):
-  bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"buy","type":"market","time_in_force":"gtc"}'
-Wait for the fill, then read the ACTUAL position back with
-`bash scripts/alpaca.sh positions`. Buy fees are charged IN KIND (~0.25% of the
-asset), so filled qty < ordered qty. Size the stop from the POSITION qty or it
-is rejected for insufficient balance. Note positions report the UNSLASHED symbol
-(BTCUSD) while orders need the slashed form (BTC/USD).
+STEP F — Execute approved buys. A spot MARKET BUY takes qty in the QUOTE coin
+and REQUIRES marketUnit:"quoteCoin" — so qty is the USDT you are spending,
+not the coin amount. Check minOrderAmt first (`bash scripts/bybit.sh
+instruments SYMUSDT`); it is commonly 5 USDT. EVERY order must carry the
+orderLinkId tag or the trade is invisible to the $200 book:
+  bash scripts/bybit.sh order '{"category":"spot","symbol":"SYMUSDT","side":"Buy","orderType":"Market","qty":"<USDT>","marketUnit":"quoteCoin","timeInForce":"IOC","orderLinkId":"tb-<sleeve>-SYMUSDT-<epoch_ms>"}'
+Wait for the fill, then read the ACTUAL WALLET BALANCE back with
+`bash scripts/bybit.sh balance <COIN>`. Buy fees are charged IN KIND in the
+BASE coin, so the wallet holds LESS than execQty. Size every sell and stop
+from the wallet balance floored to basePrecision — using execQty fails with
+`170131 Insufficient balance` (measured: bought 6.936737 XRP, wallet held
+6.92980022, selling 6.93 was rejected).
 
-STEP G — IMMEDIATELY place the resting stop_limit for each new position, at the
+STEP G — IMMEDIATELY place the resting trigger sell for each new position, at the
 distance its SLEEVE requires:
-  CORE     -> stop 20% below fill:  stop_price = fill * 0.80
-  TACTICAL -> stop  6% below fill:  stop_price = fill * 0.94
-  limit_price = stop_price * 0.95 in both cases
-  bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.95>","time_in_force":"gtc"}'
+  CORE     -> stop 20% below fill:  triggerPrice = fill * 0.80
+  TACTICAL -> stop  6% below fill:  triggerPrice = fill * 0.94
+  price = triggerPrice * 0.95 in both cases
+  bash scripts/bybit.sh order '{"category":"spot","symbol":"SYMUSDT","side":"Sell","orderType":"Limit","qty":"<wallet bal floored to basePrecision>","triggerPrice":"<trig>","price":"<trig*0.95>","orderFilter":"tpslOrder","timeInForce":"GTC","orderLinkId":"tb-<sleeve>-SYMUSDT-<epoch_ms>"}'
 If the stop is REJECTED for any reason, do not leave the position naked: retry
 once, and if it still fails, CLOSE the position at market and log why. An
 unstopped crypto position over a 6h gap is not acceptable.

@@ -33,7 +33,7 @@ Mental model: the runner is stateless. Git is the memory. If it isn't in `main`,
    the policy explicitly at every push step.
 
 3. **Set network access to Full, or Custom with these hosts allowed:**
-   `paper-api.alpaca.markets`, `data.alpaca.markets`, `api.alpaca.markets`,
+   `api-demo.bybit.com`,
    `api.perplexity.ai`, `api.clickup.com`. The default "Trusted" level is a package-registry
    allowlist — every wrapper call 403s under it, which looks like a broken API key rather
    than a blocked egress.
@@ -41,10 +41,10 @@ Mental model: the runner is stateless. Git is the memory. If it isn't in `main`,
 
    | Variable | Required? |
    |---|---|
-   | `ALPACA_API_KEY` | required |
-   | `ALPACA_SECRET_KEY` | required |
-   | `ALPACA_ENDPOINT` | set to `https://paper-api.alpaca.markets/v2` for paper |
-   | `ALPACA_DATA_ENDPOINT` | optional (defaults to data URL) |
+   | `BYBIT_API_KEY` | required |
+   | `BYBIT_API_SECRET` | required |
+   | `BYBIT_ENDPOINT` | set to `https://api-demo.bybit.com` (Demo Trading) |
+   | `BYBIT_RECV_WINDOW` | optional (defaults to data URL) |
    | `PERPLEXITY_API_KEY` | optional — falls back to WebSearch |
    | `PERPLEXITY_MODEL` | optional (defaults to `sonar`) |
    | `CLICKUP_API_KEY` | optional — falls back to a local file |
@@ -101,8 +101,8 @@ and keep the Sunday weekly review from colliding with that day's summary.
 `scan` runs HOURLY, not daily. It is cheap (a positions call, an orders call and
 at most a stop re-placement) and it is the only thing standing between a spike
 and a round trip. A take-profit CAN rest alongside a stop — `oco`/bracket are
-rejected, but splitting the quantity (stop_limit on one slice, limit on the
-other) works — yet the stop slice is still only ratcheted when a run happens. Hourly means at most ~1h of a favourable move goes
+rejected, but splitting the quantity (a trigger sell on one slice, a plain
+limit on the other) works — yet the stop slice is still only ratcheted when a run happens. Hourly means at most ~1h of a favourable move goes
 uncaptured, instead of up to 6h.
 
 `scan` is deliberately LEAN (~1,100 tokens, self-contained, reads no memory
@@ -110,7 +110,7 @@ files) because it runs ~720x/month. The other four read memory and are ~1,700-2,
 tokens each but run only once a day.
 
 Every routine begins with the same STEP A invariants: reconcile positions,
-verify every position has a resting `stop_limit`, force-close anything past -15%
+verify every book position has a resting trigger sell, sell anything past -15%
 that the stop missed, and ratchet stops upward. That repetition is deliberate —
 runs are 6h apart and nothing else is watching a 24/7 market.
 
@@ -132,12 +132,13 @@ one that mattered.
 | "Repository not accessible" / clone fails | Claude GitHub App not installed | Install it, grant access to this repo |
 | Run opened a PR from a `claude/*` branch instead of pushing to `main` | Prompt was pasted without the BRANCH POLICY block | Re-paste the prompt; merge the stranded PR to recover the work |
 | Every wrapper call fails / 403 | Environment network access is "Trusted" | Set it to Full, or Custom with the five hosts listed above |
-| `ALPACA_API_KEY not set in environment` | Env var missing from routine config | Add it on the routine, not in a repo `.env` |
+| `BYBIT_API_KEY not set in environment` | Env var missing from routine config | Add it on the routine, not in a repo `.env` |
 | Agent creates a `.env` anyway | Prompt was paraphrased, losing the DO-NOT block | Re-paste from `routines/*.md` exactly |
 | Yesterday's trades missing today | Previous run did not commit + push | Check `git log origin/main`, re-verify the final STEP |
 | Push fails "fetch first" / non-fast-forward | Another run pushed between clone and push | Prompts handle it with `git pull --rebase`; if looping, look for a real conflict |
 | ClickUp message never arrived | One of the three `CLICKUP_*` vars is missing | Script silently falls back to a local file — add the missing var |
 | Perplexity calls did not happen | `PERPLEXITY_API_KEY` missing | Script exits 3 and the agent falls back to WebSearch — add the key or accept the fallback |
-| `invalid order type for crypto order` | Prompt used `trailing_stop` or `stop` | Crypto supports `stop_limit` only — re-paste the prompt |
-| `invalid crypto time_in_force` | Order used `time_in_force: day` | Crypto requires `gtc` (or `ioc`) |
+| `10003 API key is invalid` | Demo key sent to `api.bybit.com` | Use `https://api-demo.bybit.com` |
+| `170131 Insufficient balance` | Sell qty came from `execQty` | Buy fees are taken in the BASE coin — size sells from the WALLET BALANCE floored to `basePrecision` |
+| `170136` / `170140` | Order below `minOrderQty` / `minOrderAmt` | Check `bybit.sh instruments SYM` before sizing (minOrderAmt is often 5 USDT) |
 | A position has no resting stop | Stop was rejected after the buy filled | STEP A of every run re-places it; if it fails twice the prompt closes the position |

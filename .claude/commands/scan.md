@@ -13,11 +13,15 @@ does not read the strategy doc or the research log, because everything it needs
 is below or comes from scripts/state.sh. Do not go looking for more context.
 
 PLATFORM FACTS you need (do not re-derive, do not test):
-- Stops are `stop_limit` ONLY. `trailing_stop`, `stop`, and order_class oco/
+- Stops are `orderType: Limit` + `triggerPrice` (orderFilter tpslOrder).
+  There is NO `trailing_stop` on spot; raise a stop with `amend`. oco/
   bracket are all REJECTED for crypto.
-- `time_in_force` must be `gtc`. `day` is rejected.
+- `timeInForce` is `GTC` for resting orders, `IOC` for market entries.
 - limit_price = stop_price * 0.95 (5% gap, so it actually fills in a flush).
-- Orders use the SLASHED symbol (DOT/USD). Positions report UNSLASHED (DOTUSD).
+- Symbols are unslashed and USDT-quoted (DOTUSDT). Spot holdings are COIN
+  BALANCES, not positions — read them with `bybit.sh balance <COIN>`.
+- EVERY order needs orderLinkId `tb-<sleeve>-SYMUSDT-<epoch_ms>` or it is
+  invisible to the $200 book.
   `close` requires UNSLASHED. Normalize before matching a position to its stop.
 - Size every stop from the ACTUALLY HELD qty, never an ordered qty — buy fees are
   taken in kind so filled < ordered, and an oversized stop is REJECTED, which
@@ -38,19 +42,20 @@ position correctly shows stop 50% / target 50% / unreserved 0% and is marked
 coverage" on a split position; that cancels the target leg and destroys the only
 exchange-enforced upside the position has.
 Act only when unreserved > 0 (flagged *** NAKED *** or *** n% UNRESERVED ***):
-  bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<HELD qty>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.95>","time_in_force":"gtc"}'
+bash scripts/bybit.sh order '{"category":"spot","symbol":"SYMUSDT","side":"Sell","orderType":"Limit","qty":"<wallet bal floored>","triggerPrice":"<trig>","price":"<trig*0.95>","orderFilter":"tpslOrder","timeInForce":"GTC","orderLinkId":"tb-<sleeve>-SYMUSDT-<epoch_ms>"}'
 If it is rejected twice, CLOSE the position at market rather than leave it naked:
-  bash scripts/alpaca.sh close SYMUSD
+  bash scripts/bybit.sh close SYMUSD
 
 STEP 3 — HARD CUT anything past its limit that the stop failed to catch. A
-stop_limit can be gapped through without filling, so never assume it worked:
+a trigger order can be gapped through without filling, so never assume it worked:
 - TACTICAL at <= -6%, CORE at <= -15% -> cancel its stop, then close at market
-  bash scripts/alpaca.sh cancel <order_id>
-  bash scripts/alpaca.sh close SYMUSD
+  bash scripts/bybit.sh cancel <order_id>
+  bash scripts/bybit.sh close SYMUSD
 Log the exit with: exit time (UTC), exit price, REALIZED P&L $X, fees, reason.
 The realized figure is mandatory — the circuit breaker is computed from it.
 
-STEP 4 — RATCHET. Cancel the old stop_limit and re-place it higher. Never lower,
+STEP 4 — RATCHET. AMEND the stop's triggerPrice higher (do NOT cancel and
+re-place — that leaves a naked window). Never lower,
 and never within 5% of current price (2% for tactical).
 TACTICAL:
   in loss/flat -> FULL-SIZE stop, no target leg. Protection outranks upside.
