@@ -552,3 +552,50 @@ may still originate if the CLARITY vote passes and a fresh, coin-specific
 setup — not just shared macro lift — clears the hourly screen).
 **Fee budget:** $0.52 / $2.99 used this week, unchanged this run (no trade
 placed).
+
+---
+## 2026-09-14 — Crypto Research (UTC ~22:54, LOCAL clock — broker unreachable, see below)
+
+**RUN ABORTED — Bybit demo API totally unreachable, no trading decisions made.**
+
+- `bash scripts/state.sh` failed immediately: `curl: (22) ... 403`.
+- Root-caused by hand: `curl -i https://api-demo.bybit.com/v5/market/time`
+  (public, unauthenticated, no keys needed) returns HTTP 403 from CloudFront:
+  `"The Amazon CloudFront distribution is configured to block access from
+  your country."` Reproduced 3x on retry, zero successes. This is a network/
+  geo-block at Bybit's CDN edge in this session's execution environment, NOT
+  a credentials problem — confirmed `BYBIT_API_KEY`/`BYBIT_API_SECRET` are
+  real (non-placeholder) values; a public unauthenticated endpoint fails
+  identically before auth is ever checked.
+- No prior occurrence found in git history — first time this environment has
+  hit this block.
+- Consequence: `scripts/state.sh`, `scripts/bybit.sh` (positions/orders/
+  balance/instruments), and `scripts/screen.sh` are ALL unusable this run.
+  STEP A (reconcile, stop-coverage check, hard-cut, ratchet) and STEP C
+  (screen the universe) could NOT be performed. Per project rules, account
+  state, positions, and P&L must come from `state.sh`/`pnl.sh` only — none of
+  that is fabricated or re-derived here.
+- Last KNOWN (unverified this run) state, from the 2026-09-14T20:26 UTC entry:
+  equity $199.13, ETH (CORE) ~-0.05% [SPLIT ok], XRP (TACTICAL) ~+4.97%
+  [SPLIT ok], fee budget $0.52/$2.99 used. **This cycle could NOT confirm
+  either position still has live stop coverage, was not gapped through, or
+  has not breached a hard-cut level.** Treat both positions as unmonitored
+  for this window until the next successful run.
+- `PERPLEXITY_API_KEY` env var holds the template placeholder
+  (`your_perplexity_api_key_here`) — `scripts/perplexity.sh` correctly
+  normalized it to empty and exited 3 as designed. Did not fall back to
+  WebSearch given the run was aborted before STEP B/D (no screen data to
+  pair catalysts with, and no verified account state to size against).
+- `CLICKUP_*` env vars are also template placeholders — `scripts/clickup.sh`
+  would no-op locally (documented behavior), so the urgent notification for
+  this outage was sent out-of-band instead (session-level alert), not via
+  ClickUp.
+- **No orders were placed, no memory files beyond this entry were touched,
+  no CORE/TACTICAL decision is recorded** (there is nothing to decide from —
+  this is neither a HOLD nor a TRADE, it is a failed run).
+
+**Action needed before the next run relies on this bot:** verify Bybit demo
+API reachability from wherever the next scheduled run executes (region/IP
+may differ per session). If the block persists, scan/execute runs will also
+fail, and open positions will accumulate unmonitored 6h+ windows — escalate
+if this repeats.
