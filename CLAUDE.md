@@ -17,13 +17,38 @@ Open these in order before doing anything:
 
 ## Daily Workflows
 
-Defined in .claude/commands/ (local) and routines/ (cloud). Five scheduled
-runs per trading day plus two ad-hoc helpers.
+Defined in .claude/commands/ (local) and routines/ (cloud). Crypto has no
+trading day — everything is UTC, every day of the week:
+
+- scan, hourly (:07) — invariants, ratchets. The only thing watching a 24/7
+  market between the other runs.
+- research, 06:07 — the day's plan. CORE entries require it.
+- execute, every 6h (00:07/06:07/12:07/18:07) — the gate, entries, stops.
+  TACTICAL may be originated here; CORE may not.
+- summary, 18:07 — daily snapshot vs BTC.
+- weekly-review, Sun 18:37 — graded recap, may amend the strategy.
+
+Cloud runs are stateless: git is the memory. Work not pushed to `main` did not
+happen. Push to `main` directly — never a `claude/*` branch or a PR, or the
+next run cannot see it.
 
 ## Strategy Hard Rules (quick reference)
 
 - CRYPTO ONLY — no stocks, no options, ever. Long only (no shorting on Alpaca).
-- Max 5 open positions. Max 20% per position (~$40 on $200).
+- TWO SLEEVES. Capital is split so "more trades" and "let winners run" do not
+  fight each other. Respect each sleeve's COUNT and SIZE:
+
+  |  | CORE | TACTICAL |
+  |---|---|---|
+  | Allocation | ~$120 (60%) | ~$80 (40%) |
+  | Position size | $40 (20%) | $20 (10%) |
+  | Max positions | 3 | 3 |
+  | Stop | 20% below high-water, ratcheted | 6% below entry, breakeven at +6% |
+  | Target | none — let it run | +14% (2:1 AFTER fees) |
+  | Screen bars | daily | hourly |
+  | Hold horizon | weeks to months | hours to ~2 days |
+
+  Combined cap: 6 positions, 75-85% deployed.
 - NO fixed trade cap — frequency is your judgement. What binds instead:
   WEEKLY FEE BUDGET 1.5% of equity (~$3.00); measured friction is 0.65% per
   round trip. Budget exhausted -> no new entries until Monday 00:00 UTC.
@@ -38,9 +63,15 @@ runs per trading day plus two ad-hoc helpers.
   with limit_price 5% below stop_price (trigger * 0.95). NOT 2% — a 2% gap is
   routinely jumped in a crypto flush, which turns the stop into a no-op.
 - Buys MUST use time_in_force `gtc`. `day` is rejected for crypto.
-- Hard cut at -15%. Trail 20% below high-water, ratcheted UP only.
-- Tighten trail to 14% at +30%, to 10% at +40%.
-- Never place a stop within 5% of price. NEVER move a stop down.
+- A stop and a take-profit CAN coexist — `oco`/bracket are rejected, but a
+  stop_limit on part of the qty and a limit on the rest both rest fine. See
+  "Stop + take-profit: split the quantity" in TRADING-STRATEGY.md for WHICH
+  structure applies; it is state-dependent, not automatic.
+- CORE: hard cut at -15%; trail 20% below high-water, ratcheted UP only;
+  tighten to 14% at +30%, to 10% at +40%.
+- TACTICAL: hard stop 6% below entry; raise to breakeven once +6%; exit at the
+  +14% target; never widen a tactical stop.
+- Never place a stop within 5% of price (2% for TACTICAL). NEVER move a stop down.
 - Follow narrative momentum (majors / L1 / DeFi / memes / infra).
   Exit a narrative after 2 consecutive failed trades.
 - Patience > activity.

@@ -21,10 +21,23 @@ Mental model: the runner is stateless. Git is the memory. If it isn't in `main`,
 
 1. **Install the Claude GitHub App** on this repo only (least privilege). This grants clone +
    push. Alternative: run `/web-setup` inside Claude Code to sync your `gh` CLI token.
-2. **Enable "Allow unrestricted branch pushes"** on the routine's environment. Without it,
-   `git push origin main` silently fails with a proxy error. This is the number-one reason
-   first-time setups break.
-3. **Set env vars on the routine — NOT in a `.env` file:**
+2. **Do not look for an "Allow unrestricted branch pushes" toggle — it does not exist.**
+   Branch rules are enforced by the platform: `claude/*` branches are always pushable, and
+   any other branch (including `main`) only if it is unprotected, has no open PR from it, and
+   carries only commits authored by you. `main` on this repo satisfies all three — branch
+   protection is not even available on a private repo without GitHub Pro — so direct pushes
+   to `main` work. Every prompt carries a BRANCH POLICY block saying so, because a run that
+   is left to infer the rule will "play safe", push to a `claude/*` branch and open a PR
+   instead. That looks successful and quietly breaks everything: the next run clones `main`,
+   sees none of it, and the memory stops accumulating. Observed 2026-09-14; fixed by stating
+   the policy explicitly at every push step.
+
+3. **Set network access to Full, or Custom with these hosts allowed:**
+   `paper-api.alpaca.markets`, `data.alpaca.markets`, `api.alpaca.markets`,
+   `api.perplexity.ai`, `api.clickup.com`. The default "Trusted" level is a package-registry
+   allowlist — every wrapper call 403s under it, which looks like a broken API key rather
+   than a blocked egress.
+4. **Set env vars on the routine — NOT in a `.env` file:**
 
    | Variable | Required? |
    |---|---|
@@ -50,9 +63,11 @@ leaking credentials. Every prompt here carries an explicit "do not create a .env
 1. Routines -> New Routine.
 2. Name it, e.g. "Crypto bot research".
 3. Select this repository, branch `main`.
-4. Add all env vars above.
-5. Toggle on **Allow unrestricted branch pushes**.
-6. Set the cron and set the timezone to **UTC**.
+4. Select the shared cloud environment (it carries the env vars and the network
+   allowlist — one environment backs all five routines).
+5. Set the cron. Crons are interpreted as UTC and merely DISPLAYED in your local
+   zone, so enter the UTC expression from the table below and ignore the local
+   time shown back to you.
 7. Paste the matching `routines/*.md` file verbatim into the prompt field.
 8. Save, then hit **Run now** once to test — don't wait until tomorrow morning to find out it
    is broken.
@@ -63,7 +78,7 @@ leaking credentials. Every prompt here carries an explicit "do not create a .env
 |---|---|---|---|
 | `scan.md` | `7 * * * *` | every hour :07 | ratchet stops + safety sweep |
 | `research.md` | `7 6 * * *` | 06:07 | research + write the day's plan |
-| `execute.md` | `7 12 * * *` | 12:07 | run the gate, place entries + stops |
+| `execute.md` | `7 */6 * * *` | 00:07/06:07/12:07/18:07 | run the gate, place entries + stops |
 | `summary.md` | `7 18 * * *` | 18:07 | daily snapshot, P&L vs BTC |
 | `weekly-review.md` | `37 18 * * 0` | Sun 18:37 | graded weekly recap |
 
@@ -85,9 +100,9 @@ and keep the Sunday weekly review from colliding with that day's summary.
 
 `scan` runs HOURLY, not daily. It is cheap (a positions call, an orders call and
 at most a stop re-placement) and it is the only thing standing between a spike
-and a round trip: a take-profit limit cannot rest alongside a stop on Alpaca
-crypto, so profit is locked in by ratcheting the resting stop, and a ratchet only
-happens when a run happens. Hourly means at most ~1h of a favourable move goes
+and a round trip. A take-profit CAN rest alongside a stop — `oco`/bracket are
+rejected, but splitting the quantity (stop_limit on one slice, limit on the
+other) works — yet the stop slice is still only ratcheted when a run happens. Hourly means at most ~1h of a favourable move goes
 uncaptured, instead of up to 6h.
 
 `scan` is deliberately LEAN (~1,100 tokens, self-contained, reads no memory
@@ -115,7 +130,8 @@ one that mattered.
 | Symptom | Cause | Fix |
 |---|---|---|
 | "Repository not accessible" / clone fails | Claude GitHub App not installed | Install it, grant access to this repo |
-| `git push` fails with proxy/permission error | "Allow unrestricted branch pushes" is off | Enable it on the routine's environment |
+| Run opened a PR from a `claude/*` branch instead of pushing to `main` | Prompt was pasted without the BRANCH POLICY block | Re-paste the prompt; merge the stranded PR to recover the work |
+| Every wrapper call fails / 403 | Environment network access is "Trusted" | Set it to Full, or Custom with the five hosts listed above |
 | `ALPACA_API_KEY not set in environment` | Env var missing from routine config | Add it on the routine, not in a repo `.env` |
 | Agent creates a `.env` anyway | Prompt was paraphrased, losing the DO-NOT block | Re-paste from `routines/*.md` exactly |
 | Yesterday's trades missing today | Previous run did not commit + push | Check `git log origin/main`, re-verify the final STEP |

@@ -115,6 +115,23 @@ trades a day implies hour-long holds. They cannot be the same position.
 - TACTICAL positions that have neither hit target nor stop within ~48h are
   reassessed and closed unless the setup is still valid. Dead money pays fees.
 
+## Cadence change 2026-09-14: execute now runs every 6h (NOT a rule change)
+The sleeve design above targets "2-3 trades a day" in TACTICAL, but TACTICAL can
+only be ORIGINATED in an execute run, and execute ran once a day. One entry
+window per day cannot produce 2-3 entries per day no matter what the rules allow,
+so observed frequency sat near zero-to-one while the rulebook was blameless.
+Execute moved from `7 12 * * *` to `7 */6 * * *` (00:07/06:07/12:07/18:07 UTC) —
+four entry windows, matching the hours-to-2-days tactical hold horizon.
+
+NOTHING about the gate, the 2:1-after-fees requirement, the fee budget, the
+circuit breaker or the position caps changed. This buys OPPORTUNITY, not looser
+standards: each run still re-screens on fresh hourly bars and applies the full
+gate. The fee budget still binds at ~23 round trips/week at $20 size.
+
+The weekly review MUST NOT read a rise in trade count as evidence that the
+strategy improved or degraded. Frequency rose because the bot was asked more
+often. Grade expectancy per trade, not volume.
+
 ## Trade frequency: the agent decides, the FEE BUDGET binds
 There is no fixed trades-per-day or trades-per-week cap. Open as many positions
 as the setups justify. What is capped is the thing that actually does the damage:
@@ -249,6 +266,19 @@ actor, so nothing would ever have performed it. The rule is:
 - EXISTING split CORE positions are LEFT ALONE. No run retro-strips a resting
   target leg. Cancelling it costs fees, and the ratchet will overtake the target
   anyway if the position runs far enough.
+- NEW TACTICAL entries likewise stop getting a target leg at entry once the
+  hourly scan is live — added 2026-09-14, the day the cadence actually went
+  live. The CORE revert above named CORE only, which left TACTICAL silently
+  running the no-cadence workaround while the "flat or at a loss AND a scan
+  cadence is running -> FULL-SIZE STOP" rule below said the opposite. That is a
+  contradiction, not a judgement call. A new tactical entry is by definition at
+  0% and below the +6% split threshold, so it takes a FULL-SIZE stop and gains
+  its target leg only when the ratchet reaches breakeven, exactly as the +6%
+  rung specifies. Same actor, same check: the execute run looks for a recent
+  `scan <timestamp>` commit before sizing the stop.
+- EXISTING split TACTICAL positions are LEFT ALONE, for the same reason as CORE:
+  no run retro-strips a resting leg. XRP is 50/50 from before the cadence and
+  stays that way.
 So the clause expires forward, not retroactively, and a specific run owns it.
 This was caught by the user after the ETH entry was opened with a full-size stop and
 no target — the same defect the DOT clause above already described, missed on CORE
