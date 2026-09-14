@@ -413,3 +413,40 @@ fee budget $0.16 used / $2.95, circuit breaker clear (realized today -$0.905 vs
 this run — CORE is where the missing ~$100 belongs and CORE requires a morning
 research plan that does not exist today. Correcting a deployment shortfall is not a
 licence to skip the research gate.
+
+---
+### 2026-09-14T22:58 UTC (local clock — broker clock unreachable, see below) — RUN FAILED — NO ACTION TAKEN
+
+**execute run could not start.** `bash scripts/state.sh` (and `bybit.sh orders`
+underneath it) failed with HTTP 403:
+`The Amazon CloudFront distribution is configured to block access from your
+country.` Confirmed NOT an auth/signature problem: the SAME 403/CloudFront body
+came back from an **unauthenticated public** endpoint
+(`/v5/market/tickers?category=spot&symbol=BTCUSDT`) hit directly with curl, so
+`api-demo.bybit.com` is unreachable from this session's egress network
+entirely, independent of API keys. Proxy status (`__agentproxy/status`) shows
+zero relay failures, so this is Bybit/CloudFront rejecting the egress IP's
+geography, not an org egress-policy block.
+
+**Consequence: zero visibility and zero actions this run.**
+- Could NOT reconcile positions against this log.
+- Could NOT verify stop coverage on any open position (XRP tactical, and
+  whatever CORE/other positions are live — last confirmed state is the
+  2026-09-14T16:43 XRP entry above).
+- Could NOT check for a -15%/-6% hard-cut breach.
+- Could NOT ratchet any stop.
+- Could NOT place any new entry (moot — no research/catalyst work was possible
+  either, and none was attempted).
+- No orders were placed, no stops were touched, nothing was cancelled or
+  amended. This entry is documentation-only; the book is unchanged from the
+  prior entry.
+
+**Not treated as a rule amendment or a strategy defect** — this is an
+infrastructure/network failure, not a trading-logic one. No amendment trigger
+applies.
+
+**Flag for the next run and for the user:** if this 403 persists next run too,
+every open position will have gone stop-unverified across a >=12h gap (2x the
+normal 6h). Whoever/whatever run picks this up next MUST treat stop
+verification as the first priority the moment Bybit is reachable again,
+regardless of how long the gap was.
