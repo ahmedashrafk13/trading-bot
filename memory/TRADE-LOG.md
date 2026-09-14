@@ -470,3 +470,83 @@ state, 2026-09-14T16:43 XRP entry) have now gone stop-unverified for a growing
 gap approaching the normal 6h cadence x2+. Escalating this to the user now
 rather than waiting for a 3rd failure. Not a strategy/rule defect — no
 amendment triggered.
+
+---
+### 2026-09-14T23:30 UTC (broker clock) — EXECUTE — INVARIANTS ONLY, NO NEW ENTRIES
+
+Alpaca reachable again (Bybit revert at 04070e5 already landed before this run
+started). Ran the every-run invariants; no new trade this run.
+
+**bash scripts/state.sh:** EQUITY $197.08 | CASH $138.30 | DEPLOYED 29.8%
+(ceiling 85%, no floor). Fee budget $0.52/$2.96 used this week, headroom
+$2.44. Circuit breaker clear: $0.00 realized losses today vs $9.85 limit, 0
+consecutive losing closes. Amendment trigger: 0/10 closed trades — not
+eligible, changed nothing.
+
+**RECONCILE:** live positions (ETH, XRP) match the tail of this log. No fill
+landed between runs; no drift.
+
+**STOP COVERAGE:** both positions [SPLIT ok] — legs sum to 100%, 0% unreserved,
+no naked qty. ETH 75% stop / 25% target, XRP 50% stop / 50% target — matches
+their original split rationale in this log. Left the XRP and ETH target legs
+alone per "existing split positions are left alone."
+
+**HARD CUT:** ETH -3.26%, XRP +1.14% (was +1.43% pre-fee-adjustment view) —
+neither near the -15%/-6% cuts. No close needed.
+
+**RATCHET — CORE ETH — action taken.** ETH's resting stop was still at
+$2,087.60, i.e. 20% below its $2,609.50 fill (the STEP G initial-placement
+value from entry on 2026-09-11). Strategy Rule 6 requires the STANDING CORE
+stop to sit 15% below the high-water mark, not 20% below fill — this was a
+stale artifact never reconciled after the "hard cut and trail both 15%"
+consolidation. Pulled hourly bars since entry (`crypto-bars ETH/USD 1H
+2026-09-11`): peak high since the 15:16 UTC entry is $2,616.1105 (touched in
+the entry hour, never revisited). Correct stop = 2616.1105 * 0.85 = $2,223.69.
+- Cancelled stop order `4d0e9729-b5da-4904-bf88-0e9048710a28` (stop 2087.60 /
+  limit 1983.22, qty 0.011476985 — the 75% stop leg).
+- Replaced with `a3528027-144f-4a8e-8938-ed4ff891a5b6`: stop_limit sell
+  0.011476985 ETH, stop_price 2223.69, limit_price 2112.51 (5% below trigger),
+  gtc.
+- Direction check: 2223.69 > 2087.60 — tightening, not a downward move. Never
+  moved the stop down.
+- Distance check: current price $2524.367, new stop is 11.9% below price —
+  clear of the 5% minimum.
+- The 25% target leg (limit sell 0.003825662 @ 3392.35, unchanged) was left
+  untouched — existing split target legs are not retro-adjusted.
+- Confirmed via `state.sh` post-trade: ETH still shows `[SPLIT ok]`, 0%
+  unreserved.
+
+**RATCHET — TACTICAL XRP.** +1.14%, below the +6% breakeven/split trigger.
+Already split 50/50 from entry (documented at open); no ladder step due yet.
+No action.
+
+**ORPHAN CHECK:** no leg filled on either position since the last run: order
+book unchanged apart from the ETH stop replacement above. No orphan.
+
+**STEP B (today's research):** RESEARCH-LOG has a 2026-09-14 20:26 UTC entry:
+CORE HOLD (no CORE entry planned), TACTICAL HOLD as a recommendation, with an
+explicit override condition for originating a tactical entry this run: "the
+CLARITY vote passes cloture AND a fresh, coin-specific setup clears the hourly
+screen." The CLARITY cloture vote is scheduled for tomorrow, 2026-09-15
+2:15pm ET — it has not happened yet as of this run (2026-09-14 23:30 UTC), so
+the stated override condition is unmet. No new TACTICAL entry originated this
+run; no CORE entry (none was planned by research). **No buy-side gate run —
+nothing to gate.**
+
+**Fees:** $0 this run (only a stop cancel/replace, no fill). Fee budget
+unchanged at $0.52/$2.96.
+
+**Circuit breaker / amendment trigger:** unchanged — clear / not eligible.
+
+**Notification:** none sent — no trade was placed (ratchet-only run, per
+routines/execute.md STEP I: notify only on a placed trade).
+
+**Flag for a future run (not fixed now, out of this run's scope):**
+`routines/execute.md` STEP G still tells a NEW CORE entry to place its initial
+stop 20% below fill, but `memory/TRADING-STRATEGY.md` Core Rule 6 (the
+authoritative rulebook) has consolidated CORE's hard-cut/trail to 15% since
+before this run. That 20% figure is what let ETH's stop drift stale for 3
+days until this run's ratchet caught it. Whoever next opens a CORE position
+should place its initial stop at 15% below fill, not the 20% the routine
+currently says, and the routine text should be corrected to match the
+strategy doc so this does not recur silently on the next CORE entry.
