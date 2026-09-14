@@ -2,11 +2,11 @@
 
 Autonomous, cloud-scheduled swing-trading agent built on Claude Code. Claude *is* the bot —
 there is no separate Python process. Every scheduled run is a fresh Claude invocation that
-clones this repo, reads `memory/`, pulls live Bybit state, acts, writes memory, and pushes to
+clones this repo, reads `memory/`, pulls live Alpaca state, acts, writes memory, and pushes to
 `main`.
 
-**Crypto only. No stocks, no options, ever. Long only.** ~$200 on Bybit crypto,
-benchmarked against BTCUSDT buy-and-hold.
+**Crypto only. No stocks, no options, ever. Long only.** ~$200 on Alpaca crypto,
+benchmarked against BTC/USD buy-and-hold.
 
 Two sleeves: **CORE** (~$120, 3 positions, 20% ratcheted trail, no time limit,
 no fixed trade count) for letting good trades run, and **TACTICAL** (~$80, 3 positions
@@ -15,12 +15,12 @@ technical screen over all 33 pairs, not just a news catalyst.
 
 ## Quickstart (local mode)
 
-1. `cp env.template .env` and fill in your Bybit / Perplexity / ClickUp credentials.
+1. `cp env.template .env` and fill in your Alpaca / Perplexity / ClickUp credentials.
    `.env` is gitignored — never commit it.
 2. `chmod +x scripts/*.sh`
 3. Open this repo in Claude Code and run `/portfolio`. You should see account and
    positions print cleanly. That's the smoke test.
-4. Other local commands: `/trade BTCUSDT 0.0005 buy`, `/scan`, `/research`,
+4. Other local commands: `/trade BTC/USD 0.0005 buy`, `/scan`, `/research`,
    `/execute`, `/summary`, `/weekly-review`.
 
 ## Production (cloud mode)
@@ -47,7 +47,7 @@ See `routines/README.md`. Summary:
 
 - `CLAUDE.md` — agent rulebook, auto-loaded every session
 - `scripts/` — the only way the agent touches the outside world
-  - `bybit.sh` — account, positions, orders, quotes, bars, assets
+  - `alpaca.sh` — account, positions, orders, quotes, bars, assets
   - `screen.sh` — ranks all 33 tradable pairs; CORE (daily) + TACTICAL (hourly)
     shortlists with PASS/fail reasons. Read-only.
 - `routines/` — cloud routine prompts (production path)
@@ -58,13 +58,8 @@ See `routines/README.md`. Summary:
 
 - Never commit a real `.env`.
 - If it isn't committed and pushed to `main`, it didn't happen.
-- `BYBIT_ENDPOINT` must be `https://api-demo.bybit.com` (Demo Trading). Demo
-  keys are rejected by `api.bybit.com` with 10003 — that rejection is the
-  safety check that the bot cannot touch real funds.
-- Bybit spot has no `trailing_stop` order type. A stop is `orderType: Limit`
-  plus `triggerPrice`, raised with `amend`, and can still be gapped through
-  — see `memory/TRADING-STRATEGY.md`.
-- The $200 is a VIRTUAL BOOK isolated by the `tb-` orderLinkId prefix; the
-  demo account itself holds ~$181k that is NOT ours. Read `scripts/pnl.sh`.
+- `ALPACA_ENDPOINT` must be `https://paper-api.alpaca.markets/v2` for paper trading.
+- Alpaca rejects `trailing_stop` and `stop` on crypto, and rejects `time_in_force: day`.
+  Stops are `stop_limit` GTC and can be gapped through — see `memory/TRADING-STRATEGY.md`.
 - Crypto has fees (~0.5% per round trip). Stocks were free; this is not.
 - Monitor the first week closely. Read every commit the agent makes.

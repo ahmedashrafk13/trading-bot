@@ -16,7 +16,3 @@ Thumbs.db
 # Scratch
 *.log
 tmp/
-
-# Python bytecode
-__pycache__/
-*.pyc

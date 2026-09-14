@@ -1,46 +1,31 @@
 # Trading Strategy — Crypto
 
 ## Mission
-Grow a $200 BOOK on Bybit SPOT. CRYPTO ONLY — no stocks, no options, ever.
-Benchmark is BTCUSDT buy-and-hold, not the S&P 500: beating a rising BTC is the
+Grow a ~$200 Alpaca crypto account. CRYPTO ONLY — no stocks, no options, ever.
+Benchmark is BTC/USD buy-and-hold, not the S&P 500: beating a rising BTC is the
 only result that justifies active trading.
 
 ## Capital & Constraints
-- Starting capital: $200 — a VIRTUAL BOOK, not the account balance.
-- Platform: Bybit V5 SPOT, Demo Trading host `https://api-demo.bybit.com`
-  (verified 2026-09-15: these keys are rejected by `api.bybit.com` with 10003,
-  so the bot CANNOT touch real funds).
-- THE ACCOUNT IS NOT THE BOOK. The demo account carries ~$181k equity, leftover
-  coin balances, stale resting orders and an open KITEUSDT perp position from
-  prior use, and Bybit demo funds can only be ADDED, never withdrawn — so the
-  account can never be shrunk to $200. Every bot order therefore carries an
-  `orderLinkId` prefixed `tb-`, and ALL accounting counts only tagged fills.
-  Read `bash scripts/pnl.sh`, never the raw account equity.
-- Every equity-relative rule (fee budget, circuit breaker, deployment %) is
-  measured against the $200 BOOK. Against account equity the fee budget would be
-  ~$2,700/week and the circuit breaker ~$5,400 — i.e. both would be disabled.
-- Instruments: Bybit SPOT USDT pairs (388 live, vs 36 on Alpaca). Spot only —
-  no perps, no leverage, no liquidation risk.
-- Account type: spot, long only. Shorting would require derivatives, which this
-  strategy does not use.
-- Max position size: 20% of the book = $40.
-- Fractional is native, but each symbol has its OWN `basePrecision`,
-  `minOrderQty` and `minOrderAmt` (`bash scripts/bybit.sh instruments SYM`).
-  `minOrderAmt` is commonly 5 USDT — check before sizing, not after a rejection.
+- Starting capital: ~$200
+- Platform: Alpaca crypto (`crypto_status: ACTIVE`, `crypto_tier: 1` — verified
+  against the live account 2026-09-11; the docs previously said tier 0)
+- Instruments: Alpaca tradable crypto USD pairs ONLY (36 available)
+- Account type: cash, long only. Alpaca does NOT support shorting crypto.
+- Max position size: 20% of equity = ~$40 at $200 equity
+- Fractional is native (min order sizes are ~$1 equivalent), so there is NO
+  whole-share ceiling and any of the 36 pairs is reachable at this size.
+- NO PDT rule and NO T+1 settlement — crypto settles instantly. Proceeds from a
+  sale are immediately reusable.
 
 ## Fees — the thing that punishes churn
-Bybit spot charges ~0.1% per side. MEASURED on this account 2026-09-15: a $10
-XRPUSDT round trip cost $0.02 = **0.20% per round trip**, materially cheaper
-than Alpaca's measured 0.65%. On $40 that is ~$0.08 per round trip, charged
+The account is `crypto_tier: 1` (verified 2026-09-11 — this doc previously said
+tier 0). Do NOT size risk off the nominal tier: the number that governs is the
+MEASURED 0.65% per round trip recorded below, which was observed on this account
+and already supersedes the ~0.5% estimate here. On $40 that is ~$0.20 per round trip, and it is charged
 whether the trade wins or loses. Consequences that are part of the strategy:
 - Every stop-out costs the spread AND the fees. Frequent small stops bleed.
-- The WEEKLY FEE BUDGET is the frequency control, not a trade count.
-- Require a minimum 2:1 reward:risk AFTER friction.
-- Spread is now the bigger half of friction, not fees. Bybit lists 388 USDT
-  pairs and the long tail is where a $200 book quietly bleeds: majors quote
-  0.00-0.01%, but mid-caps run 0.1-0.3%. The screen's spread caps
-  (CORE 0.10%, TACTICAL 0.15%) exist for this and are not negotiable downward
-  without evidence.
+- The 3-trades-per-week cap is a FEE control, not just a discipline rule.
+- Require a minimum 2:1 reward:risk AFTER assuming 0.5% friction.
 
 ## Self-amendment (the weekly review MAY change this document)
 The Friday/Sunday weekly review is authorised to EDIT this file directly based
@@ -65,34 +50,19 @@ These are not preferences, they are verified facts about the platform or the
 mandate. A "rule improvement" that violates one produces orders the API rejects,
 or changes what this bot is:
 1. CRYPTO ONLY. No stocks, no options, ever.
-2. SPOT ONLY, long only. Never `category: linear`/`inverse`, never leverage.
-   The account HAS an open perp position from prior use — it is not ours, do not
-   manage it, do not close it, do not count it.
-3. EVERY order carries `orderLinkId` = `tb-<sleeve>-<SYMBOL>-<epoch_ms>`
-   (`cor`/`tac`). An untagged order is invisible to the book and therefore
-   untracked, unstopped and unaccounted. No exceptions.
-4. The BOOK is $200 and is independent of account equity. Every percentage rule
-   is measured against the book. Read `bash scripts/pnl.sh` for the truth.
-5. Stops are `orderType: Limit` + `triggerPrice` (spot TP/SL). Bybit spot has no
-   `trailing_stop` order type — trailing is done by AMENDING the trigger upward.
-6. Orders use `timeInForce: GTC` for resting orders, `IOC` for market entries.
-7. Respect each symbol's `minOrderAmt` / `minOrderQty` / `basePrecision` from
-   `bash scripts/bybit.sh instruments SYM`. `minOrderAmt` is often 5 USDT.
-8. Sell quantity comes from the ACTUAL WALLET BALANCE floored to
-   `basePrecision`, NEVER from the buy's `execQty`. Spot buy fees are deducted
-   in the BASE coin, so the wallet always holds less than was executed —
-   measured: bought 6.936737 XRP, wallet held 6.92980022, and selling 6.93
-   failed with `170131 Insufficient balance`.
-9. Market BUY qty is in QUOTE currency and needs `marketUnit: "quoteCoin"`;
-   market SELL qty is in BASE and needs `marketUnit: "baseCoin"`.
-10. Every position must carry a resting stop. The review may change the stop
-    DISTANCE; it may never remove the requirement or allow a naked position.
-11. Never move a stop down, and never widen a stop on an open losing position.
-12. No stablecoins as positions. Memes are TACTICAL-only, never CORE.
-13. A weekly fee budget must EXIST and may never exceed 3% of the book. The
-    review may tune it below that; it may not remove it or raise it past that.
-14. The daily circuit breaker must EXIST. Thresholds are tunable; removal is not.
-15. This section itself, and the requirement to log amendments with evidence.
+2. Long only — Alpaca does not support shorting crypto.
+3. Stops are `stop_limit` only. `trailing_stop` and `stop` are REJECTED for crypto.
+4. Orders use `time_in_force: gtc` (or ioc). `day` is REJECTED for crypto.
+5. Order notional >= $10. Hard API floor.
+6. Stops are sized from the ACTUAL held qty (buy fees are taken in kind).
+7. Every position must carry a resting stop. The review may change the stop
+   DISTANCE; it may never remove the requirement or allow a naked position.
+8. Never move a stop down, and never widen a stop on an open losing position.
+9. No stablecoins as positions.
+10. A weekly fee budget must EXIST and may never exceed 3% of equity. The review
+    may tune it below that; it may not remove it or raise it past the ceiling.
+11. The daily circuit breaker must EXIST. Thresholds are tunable; removal is not.
+12. This section itself, and the requirement to log amendments with evidence.
 
 ### When amendment may happen — EVIDENCE, not the calendar
 Amendment is NOT tied to the weekly review. It may happen in ANY run that
@@ -218,8 +188,7 @@ each individual trade can look reasonable while the sequence is ruinous.
 3. 75-85% deployed across both sleeves
 4. Respect each sleeve's position COUNT and SIZE (table above). Trade frequency
    is the agent's call, bounded by the weekly fee budget and circuit breaker.
-5. EVERY position carries a resting trigger sell (`orderType: Limit` +
-   `triggerPrice`, `orderFilter: tpslOrder`) GTC at the broker
+5. EVERY position carries a resting `stop_limit` GTC sell at the broker
 6. CORE: hard cut at -15%; trail 20% below high-water, ratcheted UP only;
    tighten to 14% at +30% and 10% at +40%
 7. TACTICAL: hard stop 6% below entry; raise to breakeven once +6%; exit at
@@ -260,8 +229,7 @@ VERIFIED 2026-09-10:
   carry both legs.
 - A resting order reserves only the QTY IT NAMES. A full-size stop leaves
   nothing unreserved, so a second sell fails with `available: 0` — but a
-  trigger sell on part of the position and a plain limit on the rest both rest
-  fine.
+  stop_limit on part of the position and a limit on the rest BOTH REST FINE.
 So a stop and a take-profit CAN coexist. The price is that the slice carrying
 the take-profit has no stop and is unprotected on the downside.
 
@@ -343,8 +311,7 @@ back an unrealised gain, not taking a loss.
 - Every run must check for an ORPHANED leg: if one side filled, cancel the other
   and re-place a full-size stop on whatever qty remains.
 
-TACTICAL ratchet ladder (each step AMENDS the resting trigger higher — amend,
-not cancel+replace, which leaves a naked window):
+TACTICAL ratchet ladder (each step re-places the resting stop_limit higher):
 - at +6%  -> stop to BREAKEVEN, and SPLIT: half stop / half limit at +14%
 - at +10% -> stop leg to entry +4%
 - at +14% -> the resting limit should fill on its own; if a run sees >= +14% and
@@ -352,32 +319,29 @@ not cancel+replace, which leaves a naked window):
 - above +14% -> trail the stop leg 5% below the high-water mark
 
 ## Stops — how they actually work here (READ THIS)
-Bybit spot implements a stop as an ordinary order carrying a `triggerPrice`.
-There is no `trailing_stop` order type on spot. Core Rule 5 is implemented as:
+Alpaca REJECTS `trailing_stop` and `stop` for crypto:
+`{"code":40010001,"message":"invalid order type for crypto order"}`
+Only `stop_limit` is accepted. So Core Rule 5 is implemented as:
 
-    {"category":"spot","symbol":"XRPUSDT","side":"Sell","orderType":"Limit",
-     "qty":"<wallet balance floored to basePrecision>",
-     "triggerPrice":"<trigger>","price":"<trigger * 0.95>",
-     "orderFilter":"tpslOrder","timeInForce":"GTC",
-     "orderLinkId":"tb-<sleeve>-<SYMBOL>-<epoch_ms>"}
+    {"symbol":"BTC/USD","qty":"<frac>","side":"sell","type":"stop_limit",
+     "stop_price":"<trigger>","limit_price":"<trigger * 0.95>","time_in_force":"gtc"}
 
-- `qty` comes from the WALLET BALANCE, never from the entry's `execQty` — the
-  buy fee was taken in the base coin. See IMMUTABLE #8.
-- `price` sits 5% BELOW `triggerPrice` so it can still fill while price is
-  falling. A limit equal to the trigger will often not fill at all.
-- 5%, not 2%. A triggered limit only fills if price trades between the trigger
-  and the limit; in a crypto flush 2% of room is routinely jumped, which turns
-  the stop into a no-op and leaves the position riding down. 5% accepts a worse
-  fill in exchange for actually filling. A bad fill is a cost; an unfilled stop
-  is a loss of unbounded size.
-- KNOWN RISK: it can still be gapped through. Every run must verify the stop
-  exists and force-close anything that breached -15% without filling.
-- "Trailing" is EMULATED, but BETTER than on Alpaca: Bybit supports
-  `/v5/order/amend`, so raising a stop is ONE amend call
-  (`bash scripts/bybit.sh amend '{...,"triggerPrice":"<higher>"}'`) instead of
-  cancel-then-replace. That matters — cancel/replace has a window where the
-  position is naked, and a run that crashed between the two steps left it
-  unprotected. Amend has no such window. Never amend a trigger downward.
+- `limit_price` is set 5% BELOW `stop_price` so it can still fill while price is
+  falling. A limit equal to the stop will often not fill at all.
+- The limit sits 5% below the trigger, not 2%. A stop_limit only fills if price
+  trades between the trigger and the limit; in a crypto flush 2% of room is
+  routinely jumped, which converts the stop into a no-op and leaves the position
+  riding down. 5% accepts a worse fill price in exchange for actually filling.
+  This is the correct trade: a bad fill is a cost, an unfilled stop is a loss of
+  unbounded size.
+- KNOWN RISK: a stop_limit can still be gapped through. In a violent drop price can
+  pass the limit without filling, leaving the position open and unprotected.
+  This is the price of crypto having no stop-market order. Every run must
+  therefore verify the stop actually exists and force-close anything that
+  breached -15% without filling.
+- "Trailing" is EMULATED. There is no trailing order type, so each run cancels
+  the existing stop_limit and re-places it higher when the high-water mark rises.
+  Never re-place lower.
 
 ## Narrative momentum (the crypto analogue of sectors)
 Group holdings by narrative and apply the 2-consecutive-failures rule per group.
@@ -396,8 +360,8 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - What is the specific catalyst? (unlock, upgrade, listing, ETF flow, macro)
 - Is the narrative in momentum, or is it rolling over?
 - Where is the -15% hard cut in dollars?
-- Where is the initial stop (triggerPrice and limit price)?
-- What is the target, minimum 2:1 R:R after 0.20% measured friction?
+- Where is the initial stop_limit (trigger and limit)?
+- What is the target, minimum 2:1 R:R after 0.5% fees?
 
 ## Buy-Side Gate (ALL must pass, else skip and log the reason)
 - The sleeve is stated explicitly (CORE or TACTICAL) before sizing
@@ -407,20 +371,16 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
   <= 1.5% of equity (~$3.00). If it would breach, SKIP and log the budget state.
 - Circuit breaker not tripped: realized losses today < 3% of equity, and not
   3 consecutive tactical losses today
-- Combined positions after fill <= 6, total deployment <= 85% of the $200 BOOK
+- Combined positions after fill <= 6, total deployment <= 85% of equity
 - Position cost <= available cash
-- Pair is a live Bybit SPOT USDT pair (`bybit.sh instruments SYMUSDT`)
+- Pair is in the Alpaca tradable crypto USD list (`alpaca.sh assets crypto`)
 - Pair is NOT a stablecoin
-- Order notional >= that pair's `minOrderAmt` (commonly 5 USDT) AND
-  qty >= `minOrderQty`, rounded to `basePrecision`. Violations reject with
-  `170136` / `170140`.
-- Quoted spread <= 0.10% CORE / 0.15% TACTICAL. Bybit lists 388 USDT pairs and
-  the long tail is where a $200 book bleeds (BTC/ETH 0.000%, MOG 0.293%).
-- 24h turnover >= $20M CORE / $5M TACTICAL.
-- Memes are TACTICAL-only, never CORE.
-- `timeInForce` is `GTC` for resting orders, `IOC` for market entries
-- `orderLinkId` is set to `tb-<sleeve>-<SYMBOL>-<epoch_ms>` — an untagged order
-  is invisible to the $200 book
+- Order notional >= $10 (HARD API floor). `min_order_size` is only a quantity
+  floor and is NOT sufficient — a sub-$10 order is rejected outright.
+- qty >= that pair's `min_order_size` as well
+- Quoted spread <= 1% (BTC/ETH run ~0.02-0.04%; a wide spread means thin book)
+- `time_in_force` is `gtc` — `day` is REJECTED for crypto
+  (`{"code":42210000,"message":"invalid crypto time_in_force"}`)
 - A specific catalyst is documented in today's RESEARCH-LOG entry
 - The coin PASSES its sleeve's technical screen (scripts/screen.sh)
 - The instrument is crypto (never a stock, never an option)
@@ -451,13 +411,13 @@ TACTICAL:
 
 BOTH:
 - Narrative with 2 consecutive failed trades -> exit all positions in it
-- Any position found WITHOUT a resting trigger sell -> place one immediately
+- Any position found WITHOUT a resting stop_limit -> place one immediately
 
 ## Every-Run Invariants
 Because crypto trades 24/7 and runs are 6h apart, every run (not just one of
 them) must:
 1. Reconcile live positions against TRADE-LOG (a fill may have happened between runs)
-2. Verify every book position has a resting trigger sell; place one if missing
+2. Verify every position has a resting stop_limit; place one if missing
 3. Close anything at or below -15% that the stop failed to catch
 4. Ratchet stops upward where the high-water mark has risen (CORE), and raise
    tactical stops to breakeven once +6%
