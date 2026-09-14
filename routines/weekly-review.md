@@ -158,3 +158,11 @@ STEP 7 — COMMIT AND PUSH:
   git push origin main
 On push failure: git pull --rebase origin main, then push again.
 Never force-push.
+
+BRANCH POLICY — read before you push. `main` is UNPROTECTED on this repository
+and direct pushes to it are EXPECTED. Push to `main` exactly as written above.
+Do NOT push to a `claude/*` branch and do NOT open a pull request instead: the
+next run clones `main`, so work parked on any other branch is invisible to it and
+the memory silently stops accumulating. If the push is genuinely REJECTED by the
+remote, retry once after `git pull --rebase origin main`; if it still fails, say
+so plainly in your summary rather than routing around it.
