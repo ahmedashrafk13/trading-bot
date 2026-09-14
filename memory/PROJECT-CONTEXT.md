@@ -86,7 +86,7 @@
   practice was REMOVED on 2026-09-15 and must not be reintroduced: the slice
   carrying the take-profit has NO stop, and that is exactly how DOT sat naked
   for 70h and closed at -8.0%. The stop now covers 100% of every position and
-  the hourly scan takes the +14% target by closing at market.
+  the 15-minute scan takes the +14% target by closing at market.
 - ORDER TYPES, RE-VERIFIED LIVE 2026-09-15 (all five paths tested):
   * `order_class: bracket` -> 42210000 "advanced order_class: otoco"
   * `order_class: oco`     -> 40010001 "invalid order type for crypto order"

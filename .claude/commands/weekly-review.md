@@ -132,8 +132,8 @@ results justify it. Read that file's "Self-amendment" section first and obey it:
 STEP F0 — Rotate the logs so per-run context stops growing:
   bash scripts/rotate-logs.sh 14
 Entries older than 14 days move to memory/archive/. Nothing is deleted and git
-retains everything; this only keeps what each run must READ bounded. At hourly
-scans an unbounded log means per-run cost climbing forever.
+retains everything; this only keeps what each run must READ bounded. At 96 scans
+a day an unbounded log means per-run cost climbing forever.
 
 STEP F — Send ONE ClickUp message, <= 15 lines:
   bash scripts/clickup.sh "Crypto week ending YYYY-MM-DD

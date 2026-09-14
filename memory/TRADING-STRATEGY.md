@@ -133,6 +133,34 @@ sleeve carried **6.7x** the risk of the fast one, and three CORE positions put
 - TACTICAL positions that have neither hit target nor stop within ~48h are
   reassessed and closed unless the setup is still valid. Dead money pays fees.
 
+## Cadence change 2026-09-15: scan now runs every 15 min (NOT a rule change)
+Scan moved from hourly to every 15 minutes. This changes no rule and no
+threshold — the same invariants run, just more often.
+
+HOW, given the scheduler enforces a 1-HOUR MINIMUM interval: four separate scan
+routines, each on its own hourly cron, offset 15 min apart (`7`, `22`, `37`,
+`52 * * * *`), all running the identical scan prompt. A single `*/15` cron is
+rejected by the platform.
+
+It matters more than a normal cadence tweak because the split was removed the
+same day. With no resting take-profit, the scan is the ONLY mechanism that takes
+the +14% tactical target and the only thing that catches a stop that gapped
+through without filling. Its interval IS the exposure window for both.
+
+Evidence it needed to be shorter: on 2026-09-14 the runner failed twice
+(22:58 execute, 23:10 scan, both unreachable) and nothing ran successfully
+between 20:27 and 23:30 — a ~3h blind window. The resting stop_limit covered
+the downside through it, which is exactly why the stop stays at the EXCHANGE
+and the target does not. A faster scan shrinks the window; it does not remove
+the need for the resting stop.
+
+Not faster than 15 min: a scan with nothing to do places no orders and pays no
+fees, so the only cost is tokens (96 runs/day vs 24). Below ~15 min the added
+protection is marginal and log noise dominates.
+
+This does NOT raise trading frequency. Scan never opens a position — only
+execute does — so the fee budget is untouched by the cadence.
+
 ## Cadence change 2026-09-14: execute now runs every 6h (NOT a rule change)
 The sleeve design above targets "2-3 trades a day" in TACTICAL, but TACTICAL can
 only be ORIGINATED in an execute run, and execute ran once a day. One entry
@@ -281,7 +309,7 @@ EVERY position carries a stop_limit on 100% of the held quantity, at all times,
 in every sleeve, at every P&L. There is no split. There is no state in which
 part of a position rests without a stop.
 
-Take-profit is executed BY THE HOURLY SCAN, not by a resting order: when the
+Take-profit is executed BY THE 15-MINUTE SCAN, not by a resting order: when the
 scan sees a TACTICAL position at or above its +14% target, it cancels the stop
 and closes at market in the same run.
 
@@ -312,7 +340,7 @@ That leaves exactly two options, and only two:
 |---|---|---|
 | Position protected | 50-75% | **100%** |
 | Naked exposure | always, by design | none |
-| Target enforcement | exchange-side, instant | hourly scan, <= 60min lag |
+| Target enforcement | exchange-side, instant | 15-min scan, <= 15min lag |
 | Orphan bug possible | yes | no |
 
 ### Why the split was removed
@@ -327,7 +355,7 @@ That leaves exactly two options, and only two:
    coverage" warnings across ten prompt files, all to service a rule with one
    loss and zero wins.
 
-The accepted cost: a spike that fully round-trips inside 60 minutes is missed.
+The accepted cost: a spike that fully round-trips inside 15 minutes is missed.
 That is smaller and rarer than carrying an unstopped half through every flush,
 24/7.
 
