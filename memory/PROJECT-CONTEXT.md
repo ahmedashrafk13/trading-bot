@@ -44,9 +44,11 @@
   The `min_order_size` field from /assets is a QUANTITY floor (BTC 0.000012813,
   about $1) and is NOT the binding constraint. Any gate that only checks
   min_order_size will happily build a sub-$10 order that the API rejects.
-  Consequence: a $20 tactical position cannot be scaled out of in halves, and a
-  position whose value falls under $10 may not be sellable in parts — close it
-  whole.
+  The $10 floor applies to BUYS only — see the SELL exemption below, which is
+  why a small exit still works. Consequence for ENTRIES: every new position must
+  be >= $10 notional. At the current risk-derived sizing (CORE ~$20, TACTICAL
+  ~$49 at $197 equity) both clear it, but re-check if equity falls: a CORE
+  position is the one that gets close.
 - FEES ARE CHARGED IN KIND ON BUYS (verified): ordered 0.00016 BTC, received
   0.0001596 — a 0.250% haircut taken out of the ASSET, not the cash. Therefore a
   protective stop MUST be sized from the ACTUAL position qty, never from the qty
@@ -67,8 +69,10 @@
   not the `v2/stocks/...` path. Use `alpaca.sh crypto-quote`.
 - `qty` is a fractional decimal STRING. Respect each pair's `min_order_size`
   (from `alpaca.sh assets crypto`) — they are ~$1 equivalent, not 1 coin.
-- FEES ARE REAL. `crypto_tier: 0` is the highest band, ~0.5% per market round
-  trip. Stocks were commission-free; crypto is not. Churn is expensive at $200.
+- FEES ARE REAL. The account is `crypto_tier: 1` (verified 2026-09-11; an older
+  note here said tier 0). Do not size risk off the nominal tier — the governing
+  number is the MEASURED 0.65% per round trip. Stocks were commission-free;
+  crypto is not. Churn is expensive at $200.
 - ORDER_CLASS OCO/BRACKET ARE REJECTED FOR CRYPTO (verified 2026-09-10):
   `{"code":42210000,"message":"crypto orders not allowed for advanced
   order_class: oco"}`. So no single order can carry both a stop and a target.
@@ -78,9 +82,19 @@
   * stop_limit for the FULL position -> a second sell is rejected
     (`available: 0`), because nothing is left unreserved
   * stop_limit on 8.98 + limit on 8.99 of a 17.97 position -> BOTH REST FINE
-  This is how a stop and a take-profit coexist on Alpaca crypto: split the qty.
-  The cost is that whichever slice carries the take-profit has NO stop, so that
-  slice is unprotected on the downside until a run notices.
+  This WAS used to coexist a stop and a take-profit by splitting the qty. That
+  practice was REMOVED on 2026-09-15 and must not be reintroduced: the slice
+  carrying the take-profit has NO stop, and that is exactly how DOT sat naked
+  for 70h and closed at -8.0%. The stop now covers 100% of every position and
+  the hourly scan takes the +14% target by closing at market.
+- ORDER TYPES, RE-VERIFIED LIVE 2026-09-15 (all five paths tested):
+  * `order_class: bracket` -> 42210000 "advanced order_class: otoco"
+  * `order_class: oco`     -> 40010001 "invalid order type for crypto order"
+  * `trailing_stop`        -> 40010001 "invalid order type for crypto order"
+  * `stop` (stop-market)   -> 40010001 "invalid order type for crypto order"
+  * `stop_limit`           -> ACCEPTED, the only usable type
+  Reservation re-confirmed the same day against the live ETH position:
+  balance 0.015302647, an extra 0.001 sell -> `available: 0`.
 - SELL orders are not subject to the $10 minimum (that message says "cost
   basis", i.e. buys). Sells of ~$9.97 were accepted, so scaling out is possible.
 - NO SHORTING crypto on Alpaca. Long only.

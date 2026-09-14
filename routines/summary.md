@@ -56,9 +56,14 @@ Then, if you need the raw detail:
    carries an old resting target leg (cancel that first), place it now:
      bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.95>","time_in_force":"gtc"}'
    NOTE: trailing_stop and stop are REJECTED for crypto. stop_limit only.
-3. HARD CUT: any position at unrealized_plpc <= -0.15 -> cancel its stop, then
-   close at market. The stop_limit may have been gapped through without filling,
-   so never assume the resting order handled it.
+3. HARD CUT — THRESHOLD DEPENDS ON THE SLEEVE. Read the sleeve from TRADE-LOG,
+   or infer it from the stop distance (~15% = CORE, ~6% = TACTICAL). NEVER infer
+   from position size: size is risk-derived since 2026-09-15, so TACTICAL is the
+   LARGER position and a size guess returns the wrong sleeve.
+     CORE     -> cut at unrealized <= -15%
+     TACTICAL -> cut at unrealized <=  -6%
+   A stop_limit can be gapped through without filling, so never assume the
+   resting order handled it. Cancel the stop, then close at market.
      bash scripts/alpaca.sh cancel ORDER_ID
      bash scripts/alpaca.sh close SYM/USD
 4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):

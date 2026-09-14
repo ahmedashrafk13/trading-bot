@@ -97,6 +97,12 @@ next run cannot see it.
 Use bash scripts/alpaca.sh, scripts/perplexity.sh, scripts/clickup.sh.
 Never curl these APIs directly.
 
+- `bash scripts/state.sh` — every guardrail number, including the risk-derived
+  position size. Run it FIRST, every run. Never re-derive these by hand.
+- `bash scripts/screen.sh` — ranked universe + per-sleeve shortlist.
+- `python scripts/audit-rules.py` — after ANY rule change, catches the stale
+  restatements left behind in the other ~12 files.
+
 ## Communication Style
 
 Ultra concise. No preamble. Short bullets. Match existing memory file
