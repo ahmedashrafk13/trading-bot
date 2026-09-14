@@ -26,16 +26,19 @@ machine clock), equity/cash/deployment, every position with its age and its exac
 stop coverage percentage, the weekly fee-budget state, the circuit-breaker state,
 and the amendment-trigger count. Use these numbers. Do NOT re-derive them by
 adding up markdown rows — that is how the budget and the breaker drift.
-A position with UNRESERVED quantity (*** NAKED *** / *** n% UNRESERVED ***) is
-the highest-priority item in the run. A position marked [SPLIT ok] is healthy —
-stop and target legs together reserve 100% — and must NOT be "fixed".
+A position whose stop does not cover 100% of the held quantity (*** NAKED ***
+/ *** n% UNRESERVED ***) is the highest-priority item in the run. Since
+2026-09-15 there is no split: every position carries a FULL-SIZE stop and
+never a resting take-profit leg. If you find a leftover target leg, CANCEL it
+and re-place the stop at the full held quantity.
 Then, if you need the raw detail:
   bash scripts/alpaca.sh positions
   bash scripts/alpaca.sh orders
 1. RECONCILE: compare live positions to the tail of memory/TRADE-LOG.md. A stop
    may have filled, or a fill may have landed, between runs. Log any drift.
-2. STOP COVERAGE: every position MUST have a resting stop_limit sell. If one is
-   missing (or its qty no longer matches the position), place it now:
+2. STOP COVERAGE: every position MUST have a resting stop_limit sell covering
+   100% of the held qty. If it is missing, undersized, or the position still
+   carries an old resting target leg (cancel that first), place it now:
      bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.95>","time_in_force":"gtc"}'
    NOTE: trailing_stop and stop are REJECTED for crypto. stop_limit only.
 3. HARD CUT: any position at unrealized_plpc <= -0.15 -> cancel its stop, then
@@ -45,20 +48,18 @@ Then, if you need the raw detail:
      bash scripts/alpaca.sh close SYM/USD
 4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
    CORE: trail 15% below high-water; 12% once up +30%; 10% once up +40%.
-   TACTICAL ladder. A resting order reserves only the qty it names, so a stop and
-   a take-profit CAN coexist by SPLITTING the quantity (oco/bracket are rejected
-   for crypto; a full-size stop leaves nothing unreserved).
-     in loss / flat -> FULL-SIZE stop, no target. Protection outranks upside.
-     +6%  -> stop to BREAKEVEN, then split: ~half on the stop, ~half on a resting
-             `limit` sell at the +14% target so the EXCHANGE enforces the upside
-             with no run required
-     +10% -> move the stop leg to entry +4%
-     +14% -> the resting limit fills itself; close at market only if this run sees
-             >= +14% and the limit has not filled
-     >14% -> trail the stop leg 5% below the high-water mark
-   ORPHAN CHECK: if one leg filled, CANCEL the other and re-place a full-size stop
-   on whatever qty remains. Reassess and close if open >48h — TACTICAL ONLY;
-   CORE has NO time limit and is never closed for age.
+   TACTICAL ladder. The stop ALWAYS covers 100% of the held qty — Alpaca crypto
+   rejects oco/bracket (verified live 2026-09-15) and a resting sell reserves
+   the qty it names, so a stop and a target cannot both cover the position.
+   The RUN is the exit mechanism for the target, not a resting order.
+     in loss / flat -> full-size stop
+     +6%  -> ratchet the full-size stop to BREAKEVEN
+     +10% -> move the stop to entry +4%
+     +14% -> TARGET HIT: cancel the stop and CLOSE AT MARKET this run
+     >14% -> still close at market; do not chase it higher
+   NEVER place a resting limit sell as a take-profit, and never split the qty.
+   Reassess and close if open >48h — TACTICAL ONLY; CORE has NO time limit and
+   is never closed for age.
    Never move any stop down. Never place one within 5% of price (2% tactical).
 Log every action to memory/TRADE-LOG.md. Any EXIT row MUST record:
   `Exit time (UTC)`, `Exit price`, `REALIZED P&L $X`, `fees $X`, and the reason.

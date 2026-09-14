@@ -550,3 +550,37 @@ days until this run's ratchet caught it. Whoever next opens a CORE position
 should place its initial stop at 15% below fill, not the 20% the routine
 currently says, and the routine text should be corrected to match the
 strategy doc so this does not recur silently on the next CORE entry.
+
+## 2026-09-15 — SPLIT REMOVED, both positions migrated to full-size stops
+
+Rule change, not a trade. No position opened or closed; no realized P&L.
+
+**Why:** Alpaca crypto cannot rest a take-profit alongside a stop. Verified live
+against the account today — `order_class: bracket` -> `42210000 ... otoco`,
+`order_class: oco` / `trailing_stop` / `stop` -> `40010001 invalid order type`,
+only `stop_limit` accepted. And a resting sell RESERVES its qty: with ETH fully
+covered by two legs, an extra 0.001 sell returned
+`insufficient balance for ETH (requested: 0.001, available: 0)`.
+
+So the old "split the quantity" rule was buying exchange-enforced upside by
+running 25-50% of every position with NO stop. That is what killed DOT: one leg
+filled, the remainder sat 70h naked and closed at -8.0% / -$1.61 — the only
+closed trade this account has ever had.
+
+**Migrated (all four legs cancelled, full-size stops re-placed):**
+
+| Pair | Was | Now | Stop trigger | Limit |
+|---|---|---|---|---|
+| ETH/USD | 75% stop + 25% limit @ 3392.35 | 100% stop, qty 0.015302647 | 2223.69 | 2112.51 |
+| XRP/USD | 50% stop + 50% limit @ 1.6095 | 100% stop, qty 14.114625 | 1.32713 | 1.26077 |
+
+Stop triggers were HELD AT THEIR PRIOR LEVELS — neither was moved down. ETH
+2223.69 is its existing CORE trail; XRP 1.32713 is 6% below its 1.41184 entry,
+correct for a TACTICAL position at +0.9% (below the +6% breakeven rung).
+
+Both now read `[OK full stop]`, stop 100.0% / unreserved 0.0%.
+
+**Upside from here is taken by the RUN, not the exchange.** The hourly scan
+closes a TACTICAL position at market once it sees >= +14%. Accepted cost: a
+spike that fully round-trips inside 60 minutes is missed. Accepted because the
+alternative is an unstopped slice through every flush, 24/7.

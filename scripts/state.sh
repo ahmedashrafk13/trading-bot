@@ -73,13 +73,15 @@ for p in pos:
                 et = dt.datetime.fromisoformat(v).replace(tzinfo=dt.timezone.utc)
                 age = f"{(now-et).total_seconds()/3600:.1f}h"
             except Exception: age = '?'
-    # What matters is UNRESERVED quantity, not stop share. A split position shows
-    # 50% stop / 50% target and is fully accounted for — flagging that as a gap
-    # would make a run "fix" it by cancelling the target leg.
-    if unreserved > 0.5:
-        flag = '*** NAKED ***' if pct_cov < 0.5 else f'*** {unreserved:.0f}% UNRESERVED ***'
-    elif pct_tgt > 0.5:
-        flag = 'SPLIT ok'
+    # Since 2026-09-15 the stop must cover 100%. A resting TARGET leg is no longer
+    # healthy — it is a legacy split to be migrated, so it is flagged, not excused.
+    if pct_cov < 99.5:
+        if pct_tgt > 0.5:
+            flag = f'*** LEGACY SPLIT — cancel {pct_tgt:.0f}% target leg, restore full stop ***'
+        elif pct_cov < 0.5:
+            flag = '*** NAKED ***'
+        else:
+            flag = f'*** STOP COVERS ONLY {pct_cov:.0f}% ***'
     else:
         flag = 'OK full stop'
     print(f"  {sym:9} qty={qty:<12.6f} P&L {plpc:+6.2f}%  stop {pct_cov:5.1f}% / target {pct_tgt:5.1f}%"

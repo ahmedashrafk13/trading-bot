@@ -69,10 +69,12 @@ next run cannot see it.
   with limit_price 5% below stop_price (trigger * 0.95). NOT 2% — a 2% gap is
   routinely jumped in a crypto flush, which turns the stop into a no-op.
 - Buys MUST use time_in_force `gtc`. `day` is rejected for crypto.
-- A stop and a take-profit CAN coexist — `oco`/bracket are rejected, but a
-  stop_limit on part of the qty and a limit on the rest both rest fine. See
-  "Stop + take-profit: split the quantity" in TRADING-STRATEGY.md for WHICH
-  structure applies; it is state-dependent, not automatic.
+- A stop and a take-profit CANNOT coexist on Alpaca crypto. Verified live
+  2026-09-15: oco/bracket/trailing_stop/stop are ALL rejected, and a resting
+  sell reserves the qty it names, so a full-size stop leaves nothing over.
+  The stop therefore covers 100% of every position, always, and the HOURLY SCAN
+  takes the +14% target by closing at market. NEVER split the quantity and never
+  rest a limit sell as a take-profit — that is what left DOT naked for 70h.
 - CORE: hard cut and trail are both 15% below high-water, ratcheted UP only;
   tighten to 12% at +30%, to 10% at +40%.
 - TACTICAL: hard stop 6% below entry; raise to breakeven once +6%; exit at the

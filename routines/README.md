@@ -100,9 +100,9 @@ and keep the Sunday weekly review from colliding with that day's summary.
 
 `scan` runs HOURLY, not daily. It is cheap (a positions call, an orders call and
 at most a stop re-placement) and it is the only thing standing between a spike
-and a round trip. A take-profit CAN rest alongside a stop — `oco`/bracket are
-rejected, but splitting the quantity (stop_limit on one slice, limit on the
-other) works — yet the stop slice is still only ratcheted when a run happens. Hourly means at most ~1h of a favourable move goes
+and a round trip. A take-profit CANNOT rest alongside a stop: `oco`/bracket are
+rejected for crypto and a resting sell reserves the qty it names, so the stop
+covers 100% and the hourly scan takes the target instead — yet the stop slice is still only ratcheted when a run happens. Hourly means at most ~1h of a favourable move goes
 uncaptured, instead of up to 6h.
 
 `scan` is deliberately LEAN (~1,100 tokens, self-contained, reads no memory

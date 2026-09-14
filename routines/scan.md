@@ -33,13 +33,12 @@ must never be used), equity/cash/deployment, every position with its P&L, age an
 exact stop-coverage %, the weekly fee budget, and the circuit-breaker state.
 Use those numbers as given. Do NOT recompute them from markdown.
 
-STEP 2 — FIX ANY UNRESERVED QUANTITY FIRST. Highest priority in the run.
-Read the `unreserved` figure from state.sh, NOT the stop percentage. A split
-position correctly shows stop 50% / target 50% / unreserved 0% and is marked
-[SPLIT ok] — that is healthy, LEAVE IT ALONE. Do NOT "restore full stop
-coverage" on a split position; that cancels the target leg and destroys the only
-exchange-enforced upside the position has.
-Act only when unreserved > 0 (flagged *** NAKED *** or *** n% UNRESERVED ***):
+STEP 2 — ENSURE A FULL-SIZE STOP. Highest priority in the run.
+Since 2026-09-15 there is no split: the stop covers 100% of the held qty and no
+position carries a resting take-profit. Act whenever the stop covers less than
+100% (flagged *** NAKED *** or *** n% UNRESERVED ***). If the shortfall is
+because an old resting target leg still holds part of the qty, CANCEL that leg
+first, then place the stop at the full held quantity:
   bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<HELD qty>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.95>","time_in_force":"gtc"}'
 If it is rejected twice, CLOSE the position at market rather than leave it naked:
   bash scripts/alpaca.sh close SYMUSD
@@ -54,27 +53,21 @@ The realized figure is mandatory — the circuit breaker is computed from it.
 
 STEP 4 — RATCHET. Cancel the old stop_limit and re-place it higher. Never lower,
 and never within 5% of current price (2% for tactical).
-TACTICAL:
-  in loss/flat -> FULL-SIZE stop, no target leg. Protection outranks upside.
-  >= +6%   -> stop to BREAKEVEN, then SPLIT: ~half on the stop, ~half on a
-              resting `limit` sell at entry*1.14 so the EXCHANGE enforces the
-              target with no run required
-  >= +10%  -> move the stop leg to entry*1.04
-  >= +14%  -> the resting limit should fill itself; close at market only if you
-              see >= +14% with the limit still unfilled
-  > +14%   -> trail the stop leg 5% below the high-water mark
+TACTICAL (the stop always covers 100%; the RUN takes the target, not a resting
+order — Alpaca crypto rejects oco/bracket, verified live 2026-09-15):
+  in loss/flat -> full-size stop
+  >= +6%   -> ratchet the full-size stop to BREAKEVEN
+  >= +10%  -> move the stop to entry*1.04
+  >= +14%  -> TARGET HIT: cancel the stop and CLOSE AT MARKET this run
+  > +14%   -> still close at market; do not chase it higher
 CORE:
   15% below high-water; 12% once >= +30%; 10% once >= +40%
-  CORE MAY BE SPLIT 75% stop / 25% limit at entry*1.30. A CORE position opened
-  while no scan cadence was running carries a target leg, because CORE's ratchet
-  is EMULATED and only moves when a run moves it — with no runs, such a position
-  had a static stop and zero possible upside exit. If you find that split, it is
-  HEALTHY: ratchet the 75% STOP LEG only and leave the 25% limit leg resting.
-  Do NOT cancel the target leg to 'restore' a full-size CORE stop.
-  Now that this scan runs hourly the ratchet is live again, so NEW core entries
-  do not need a target leg — but never retro-strip one off an existing position.
-ORPHAN CHECK: if one leg of a split filled, CANCEL the other and re-place a
-full-size stop on whatever qty remains.
+  Full-size stop, no target leg, no exceptions. CORE has no profit target: the
+  ratchet is the exit, and this scan runs hourly so the ratchet is live.
+  If you find a legacy CORE position still carrying a 25% resting limit leg,
+  CANCEL that leg and re-place the stop at the full held qty. This IS
+  retroactive as of 2026-09-15 — the old "leave existing splits alone" clause
+  is what let DOT sit 70h naked.
 AGE — TACTICAL ONLY: a TACTICAL position open >48h with neither target nor stop
 hit -> close it unless you can state why the setup is still valid.
 CORE HAS NO TIME LIMIT. Never close a CORE position for age. Its whole purpose is
@@ -91,8 +84,8 @@ STEP 5 — This run NEVER opens a new position. Entries happen in execute only.
 If something looks urgent, note it in memory/TRADE-LOG.md for the next research
 run rather than acting on it.
 
-STEP 6 — Notify only if you acted (a cut, a stop placed, a ratchet, an orphan
-cleaned up). Silence is correct on a quiet hour:
+STEP 6 — Notify only if you acted (a cut, a stop placed, a ratchet, a legacy
+target leg cancelled). Silence is correct on a quiet hour:
   bash scripts/clickup.sh "<what you did>"
 
 STEP 7 — COMMIT AND PUSH, only if a file changed:

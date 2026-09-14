@@ -276,100 +276,70 @@ TACTICAL (hourly bars):
 If a coin fails its screen, it is NOT tradeable this run no matter how good the
 news is. Log the failure reason.
 
-## Stop + take-profit: split the quantity (state-dependent)
-VERIFIED 2026-09-10:
-- `order_class: oco` and bracket are REJECTED for crypto, so one order cannot
-  carry both legs.
-- A resting order reserves only the QTY IT NAMES. A full-size stop leaves
-  nothing unreserved, so a second sell fails with `available: 0` — but a
-  stop_limit on part of the position and a limit on the rest BOTH REST FINE.
-So a stop and a take-profit CAN coexist. The price is that the slice carrying
-the take-profit has no stop and is unprotected on the downside.
+## Take-profit: the stop ALWAYS covers 100% (amended 2026-09-15)
+EVERY position carries a stop_limit on 100% of the held quantity, at all times,
+in every sleeve, at every P&L. There is no split. There is no state in which
+part of a position rests without a stop.
 
-Which structure applies depends on whether the position is in profit:
+Take-profit is executed BY THE HOURLY SCAN, not by a resting order: when the
+scan sees a TACTICAL position at or above its +14% target, it cancels the stop
+and closes at market in the same run.
 
-**IF NO SCAN CADENCE IS RUNNING -> SPLIT AT ENTRY, regardless of P&L.**
-The rungs below assume an hourly scan exists to move them. When no routine is
-scheduled (as of 2026-09-10 none is — the org GitHub entitlement is still
-blocking), a position that waits for +6% to gain its target leg will NEVER get
-one, so upside capture is permanently zero while downside is covered. In that
-state, split at entry: half stop, half resting limit at the target. The cost is
-an unstopped half; the alternative is a guaranteed-zero upside, which is worse.
-Re-evaluate this clause the moment routines are live.
+### Why there is no resting take-profit (VERIFIED LIVE 2026-09-15)
+Alpaca crypto cannot do what every other venue can. Tested against the live
+account, all five order paths:
 
-**THIS APPLIES TO CORE TOO — amended 2026-09-11 under the BROKEN-rule exception.**
-CORE nominally has no profit target because "the ratchet decides the exit". But the
-ratchet is EMULATED: it only moves when a RUN cancels the stop and re-places it
-higher. With no cadence scheduled, no run ever happens, so a CORE position has a
-static stop and NO upside exit mechanism whatsoever — it can run +50%, round-trip
-all the way back through entry to -20%, and the stop never moves once. That is not
-"letting a winner run", it is holding a winner with no way to ever realise it.
-So while no cadence is running, a CORE entry ALSO splits at entry:
-  ~75% on the stop / ~25% on a resting limit at +30% above fill.
-+30% is used because it is CORE's own first ratchet threshold — the level at which a
-run WOULD have tightened the trail to 14%. Since no run will, the exchange banks a
-quarter of the position there instead. Stop-heavy per the weighting rule below.
-REVERT — who does it, concretely. "Reverts when routines are live" named no
-actor, so nothing would ever have performed it. The rule is:
-- NEW CORE entries stop getting a target leg as soon as the hourly scan is live,
-  because the ratchet works again. The execute run owns this: before placing a
-  CORE stop it must check whether an hourly scan has actually run (look for a
-  recent `scan <timestamp>` commit in `git log`), and if so place a FULL-SIZE
-  stop with no target leg.
-- EXISTING split CORE positions are LEFT ALONE. No run retro-strips a resting
-  target leg. Cancelling it costs fees, and the ratchet will overtake the target
-  anyway if the position runs far enough.
-- NEW TACTICAL entries likewise stop getting a target leg at entry once the
-  hourly scan is live — added 2026-09-14, the day the cadence actually went
-  live. The CORE revert above named CORE only, which left TACTICAL silently
-  running the no-cadence workaround while the "flat or at a loss AND a scan
-  cadence is running -> FULL-SIZE STOP" rule below said the opposite. That is a
-  contradiction, not a judgement call. A new tactical entry is by definition at
-  0% and below the +6% split threshold, so it takes a FULL-SIZE stop and gains
-  its target leg only when the ratchet reaches breakeven, exactly as the +6%
-  rung specifies. Same actor, same check: the execute run looks for a recent
-  `scan <timestamp>` commit before sizing the stop.
-- EXISTING split TACTICAL positions are LEFT ALONE, for the same reason as CORE:
-  no run retro-strips a resting leg. XRP is 50/50 from before the cadence and
-  stays that way.
-So the clause expires forward, not retroactively, and a specific run owns it.
-This was caught by the user after the ETH entry was opened with a full-size stop and
-no target — the same defect the DOT clause above already described, missed on CORE
-because CORE's "no target by design" wording hid it.
+| Attempt | Result |
+|---|---|
+| `order_class: bracket` | REJECTED `42210000 ... advanced order_class: otoco` |
+| `order_class: oco` | REJECTED `40010001 invalid order type for crypto order` |
+| `trailing_stop` | REJECTED `40010001 invalid order type for crypto order` |
+| `stop` (stop-market) | REJECTED `40010001 invalid order type for crypto order` |
+| `stop_limit` | ACCEPTED — the only usable type |
 
-**While flat or at a loss AND a scan cadence is running -> FULL-SIZE STOP, no take-profit.**
-100% of the position is covered. Protection outranks upside capture; there is no
-gain to bank and an unstopped slice could ride a drop all the way down.
+And a resting sell RESERVES the quantity it names. Verified on the live ETH
+position (balance 0.015302647, fully covered by two legs):
+`insufficient balance for ETH (requested: 0.001, available: 0)`.
 
-**Once ratcheted to breakeven or better (i.e. at +6% or more) -> SPLIT:**
-- the legs must SUM to 100% of the position — a resting order reserves the qty it
-  names, so 100% stop + 100% target is 200% and is rejected. This is a forced
-  trade-off, not a preference.
-- WEIGHT IT STOP-HEAVY (~75% stop / ~25% target). The two failure modes are not
-  symmetric: if the stop fires, the un-stopped slice keeps falling with no
-  protection at all; if the target fires, the un-targeted slice keeps running
-  WITH its stop intact and is still captured later by the ratchet. Under-weighting
-  the stop risks an unprotected position in a falling market; under-weighting the
-  target only costs precision on a winner.
-- The current DOT position is 50/50 because it was split before this reasoning
-  was worked out. Leave it; rebalancing costs fees for a marginal gain.
-- NOTE: a very small target leg may fall under an exchange minimum. Sells appear
-  exempt from the $10 cost-basis floor (~$9.97 sells were accepted) but a ~$5 leg
-  is UNTESTED. Verify before relying on a 25% leg at a $20 notional.
-Now the target is enforced by the EXCHANGE, 24/7, with no run required — which
-is the whole point, since a spike that reverses between runs was otherwise
-invisible. The unstopped half is acceptable here ONLY because the ratchet has
-already moved the exit to entry or above: the worst case on that half is giving
-back an unrealised gain, not taking a loss.
-- Every run must check for an ORPHANED leg: if one side filled, cancel the other
-  and re-place a full-size stop on whatever qty remains.
+So a full-size stop consumes the whole position and no take-profit can coexist.
+On Alpaca crypto, a stop and a target on 100% of a position is IMPOSSIBLE — not
+a configuration mistake, a platform limitation. Binance, Bybit and Crypto.com
+all support OCO; Alpaca crypto does not.
 
-TACTICAL ratchet ladder (each step re-places the resting stop_limit higher):
-- at +6%  -> stop to BREAKEVEN, and SPLIT: half stop / half limit at +14%
-- at +10% -> stop leg to entry +4%
-- at +14% -> the resting limit should fill on its own; if a run sees >= +14% and
-  the limit has not filled, close at market
-- above +14% -> trail the stop leg 5% below the high-water mark
+That leaves exactly two options, and only two:
+
+| | Split (REMOVED) | Full stop (CURRENT) |
+|---|---|---|
+| Position protected | 50-75% | **100%** |
+| Naked exposure | always, by design | none |
+| Target enforcement | exchange-side, instant | hourly scan, <= 60min lag |
+| Orphan bug possible | yes | no |
+
+### Why the split was removed
+1. It cost real money. DOT — the only closed trade in this account's history —
+   lost $1.61 (-8.0%) because one leg filled and the unstopped remainder sat
+   **70 hours** naked, blowing through its -6% stop unseen.
+2. Its justification had expired. The split was introduced when NO cadence was
+   running and a target could only be captured by an exchange-resting order.
+   The scan now runs HOURLY and can take the target itself.
+3. It generated enormous complexity for negative return: orphan checks,
+   `unreserved` arithmetic, `[SPLIT ok]` special-casing and "do not restore full
+   coverage" warnings across ten prompt files, all to service a rule with one
+   loss and zero wins.
+
+The accepted cost: a spike that fully round-trips inside 60 minutes is missed.
+That is smaller and rarer than carrying an unstopped half through every flush,
+24/7.
+
+### Migration of existing split positions
+Unlike the earlier "leave existing splits alone" clause, this amendment IS
+retroactive — that clause is exactly how DOT stayed naked for 70h. Any position
+found with a resting target leg: cancel the target, then re-place the stop at
+the FULL held quantity. The execute and scan runs both own this.
+
+If a future review wants a resting take-profit back, it needs a platform that
+supports OCO. It cannot be recovered by splitting.
+
 
 ## Stops — how they actually work here (READ THIS)
 Alpaca REJECTS `trailing_stop` and `stop` for crypto:
@@ -446,27 +416,28 @@ CORE:
 - Thesis broken (catalyst dead, narrative rolling over, exploit/depeg/delisting)
   -> close even if not at -15%
 - Up >= +40% -> ratchet stop to 10% below high-water
-- Up >= +30% -> ratchet stop to 14% below high-water
+- Up >= +30% -> ratchet stop to 12% below high-water
 - Otherwise -> keep stop 15% below high-water
 - NO profit target. Let it run; the ratchet decides the exit.
 
 TACTICAL:
 - Unrealized <= -6% -> close at market, cancel the resting stop
-- Up >= +6% -> ratchet stop to BREAKEVEN, then SPLIT the qty: half on the stop,
-  half on a resting limit sell at the +14% target (exchange-enforced upside)
-- Up >= +10% -> move the stop leg to entry +4%
-- Up >= +14% -> the resting limit fills itself; close at market only if a run
-  sees >= +14% with the limit unfilled
-- Above +14% -> trail the stop leg 5% below the high-water mark
-- ORPHAN CHECK every run: if one leg filled, cancel the other and re-place a
-  full-size stop on the remaining qty
+- Up >= +6% -> ratchet the FULL-SIZE stop to BREAKEVEN
+- Up >= +10% -> move the stop to entry +4%
+- Up >= +14% -> TARGET HIT: cancel the stop and close at market, this run.
+  There is no resting limit to fill itself — the run IS the exit mechanism.
+- Above +14% (target overshot between runs) -> still close at market; do not
+  chase it higher. The +14% target is the rule, not a suggestion.
+- The stop always covers 100% of the held qty. Never split, never leave a
+  slice unreserved, and never place a resting take-profit.
 - Open > ~48h without hitting target or stop -> reassess; close unless the
   hourly screen still PASSES
 - Thesis broken -> close immediately
 
 BOTH:
 - Narrative with 2 consecutive failed trades -> exit all positions in it
-- Any position found WITHOUT a resting stop_limit -> place one immediately
+- Any position found WITHOUT a FULL-SIZE resting stop_limit -> fix immediately:
+  cancel any resting target leg first, then place a stop on 100% of held qty
 
 ## Every-Run Invariants
 Because crypto trades 24/7 and runs are 6h apart, every run (not just one of
