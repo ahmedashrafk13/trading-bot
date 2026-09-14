@@ -35,7 +35,11 @@ monday = today - dt.timedelta(days=today.weekday())
 
 eq, cash = float(acct['equity']), float(acct['cash'])
 print(f"UTC NOW (broker clock)   {now:%Y-%m-%d %H:%M} UTC   [local clock is NOT trusted]")
-print(f"EQUITY ${eq:.2f} | CASH ${cash:.2f} | DEPLOYED {(eq-cash)/eq*100:.1f}% (target 75-85%)")
+print(f"EQUITY ${eq:.2f} | CASH ${cash:.2f} | DEPLOYED {(eq-cash)/eq*100:.1f}% (CEILING 85%, no floor)")
+# Size is derived from risk, never fixed in dollars. Printing it here keeps the
+# arithmetic out of the run prompts, where it was previously re-derived by hand.
+risk = eq*0.015
+print(f"SIZE NOW   CORE ${min(risk/0.15, eq*0.15):.2f} (15% stop) | TACTICAL ${min(risk/0.06, eq*0.25):.2f} (6% stop)   risk ${risk:.2f}/trade (1.5%)")
 print()
 
 # --- positions, ages, stop coverage -------------------------------------------
@@ -100,8 +104,8 @@ losses_streak = 0
 for r in reversed(realized):
     if r < 0: losses_streak += 1
     else: break
-limit = eq*0.03
-print(f"CIRCUIT BREAKER  realized losses logged ${abs(today_real):.2f} vs ${limit:.2f} limit (3%)")
+limit = eq*0.05
+print(f"CIRCUIT BREAKER  realized losses logged ${abs(today_real):.2f} vs ${limit:.2f} limit (5% of equity)")
 print(f"                 consecutive losing closes: {losses_streak} (3 stops tactical for the day)")
 print(f"                 status: {'TRIPPED — no new entries' if abs(today_real)>=limit or losses_streak>=3 else 'clear'}")
 print()

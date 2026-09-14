@@ -60,7 +60,7 @@ Then, if you need the raw detail:
      bash scripts/alpaca.sh cancel ORDER_ID
      bash scripts/alpaca.sh close SYM/USD
 4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
-   CORE: trail 20% below high-water; 14% once up +30%; 10% once up +40%.
+   CORE: trail 15% below high-water; 12% once up +30%; 10% once up +40%.
    TACTICAL ladder. A resting order reserves only the qty it names, so a stop and
    a take-profit CAN coexist by SPLITTING the quantity (oco/bracket are rejected
    for crypto; a full-size stop leaves nothing unreserved).
@@ -78,7 +78,7 @@ Then, if you need the raw detail:
    Never move any stop down. Never place one within 5% of price (2% tactical).
 Log every action to memory/TRADE-LOG.md. Any EXIT row MUST record:
   `Exit time (UTC)`, `Exit price`, `REALIZED P&L $X`, `fees $X`, and the reason.
-Without an explicit realized figure the 3%-daily-loss circuit breaker cannot be
+Without an explicit realized figure the 5%-daily-loss circuit breaker cannot be
 computed — equity deltas mix in unrealized moves and would trip or miss the
 breaker wrongly. Sum today's REALIZED rows to evaluate the breaker.
 
@@ -122,9 +122,11 @@ STEP E — Run the FULL buy-side gate per order. State the SLEEVE first, then:
   plus fees already used this week <= 1.5% of equity (~$3.00). Compute the
   running total from this week's TRADE-LOG rows. If it breaches, SKIP and log
   the budget state — the budget is a ceiling, not a target.
-- CIRCUIT BREAKER not tripped: realized losses today < 3% of equity (~$6), and
+- CIRCUIT BREAKER not tripped: realized losses today < 5% of equity (~$10), and
   not 3 consecutive tactical losses today
-- Combined positions after fill <= 6, total deployment <= 85%
+- Combined positions after fill <= 6, total deployment <= 85% (NO floor — never
+  buy to "correct" low deployment)
+- Size == (equity * 0.015) / stop distance, capped 15% CORE / 25% TACTICAL
 - Cost <= available cash
 - Pair is Alpaca-tradable and NOT a stablecoin
 - Order notional >= $10 (hard API floor; min_order_size alone is not enough)

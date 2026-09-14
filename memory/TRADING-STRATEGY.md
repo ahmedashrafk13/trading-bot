@@ -11,7 +11,8 @@ only result that justifies active trading.
   against the live account 2026-09-11; the docs previously said tier 0)
 - Instruments: Alpaca tradable crypto USD pairs ONLY (36 available)
 - Account type: cash, long only. Alpaca does NOT support shorting crypto.
-- Max position size: 20% of equity = ~$40 at $200 equity
+- Max position size: 15% of equity CORE / 25% TACTICAL — and those are CAPS, not
+  targets. Actual size is derived from risk: (equity * 0.015) / stop distance.
 - Fractional is native (min order sizes are ~$1 equivalent), so there is NO
   whole-share ceiling and any of the 36 pairs is reachable at this size.
 - NO PDT rule and NO T+1 settlement — crypto settles instantly. Proceeds from a
@@ -24,8 +25,8 @@ MEASURED 0.65% per round trip recorded below, which was observed on this account
 and already supersedes the ~0.5% estimate here. On $40 that is ~$0.20 per round trip, and it is charged
 whether the trade wins or loses. Consequences that are part of the strategy:
 - Every stop-out costs the spread AND the fees. Frequent small stops bleed.
-- The 3-trades-per-week cap is a FEE control, not just a discipline rule.
-- Require a minimum 2:1 reward:risk AFTER assuming 0.5% friction.
+- The WEEKLY FEE BUDGET is the frequency control. There is no fixed trade cap.
+- Require a minimum 2:1 reward:risk AFTER the measured 0.65% friction.
 
 ## Self-amendment (the weekly review MAY change this document)
 The Friday/Sunday weekly review is authorised to EDIT this file directly based
@@ -39,7 +40,8 @@ exactly what changed and why. Any bad change is recoverable with `git revert`.
 - Hard-cut levels (-15% core, -6% tactical) and the tactical target
 - Position counts, position sizes and sleeve allocation
 - The weekly fee budget (1.5%) and the circuit-breaker thresholds
-- Deployment band (75-85%)
+- Deployment CEILING (85%). The FLOOR is gone and may not return without
+  evidence — see "Cash is a position".
 - Screen filter thresholds (momentum, SMA20 distance, vol band, spread limits)
 - Screen timeframes (daily / hourly)
 - Narrative groupings
@@ -94,22 +96,38 @@ change nothing and say so.
 
 ## Two sleeves
 Capital is split so that "more trades" and "let good trades run" can coexist
-without fighting each other. A 20% trailing stop implies week-long holds; 2-3
+without fighting each other. A 15% trailing stop implies week-long holds; 2-3
 trades a day implies hour-long holds. They cannot be the same position.
 
 | | CORE | TACTICAL |
 |---|---|---|
-| Allocation | ~$120 (60%) | ~$80 (40%) |
-| Position size | $40 (20% of equity) | $20 (10% of equity) |
+| RISK per position | 1.5% of equity | 1.5% of equity |
+| Position size | risk / stop distance (~$20 at $200) | risk / stop distance (~$49 at $200) |
+| Hard cap on size | 15% of equity | 25% of equity |
 | Max positions | 3 | 3 |
 | New trades | agent's judgement | agent's judgement |
-| Stop | 20% below high-water, ratcheted | 6% below entry, to breakeven at +6% |
+| Stop | 15% below high-water, ratcheted | 6% below entry, to breakeven at +6% |
 | Target | none — let winners run, no time limit | +14% (2:1 AFTER fees) |
 | Screen timeframe | daily bars | hourly bars |
 | Hold horizon | weeks to months | hours to ~2 days |
 
-- Combined cap: 6 positions, and total deployment stays in the 75-85% band
-  (e.g. 3 core + 2 tactical = $160 = 80%).
+### Size is DERIVED from risk, never fixed in dollars (amended 2026-09-15)
+`position size = (equity * 0.015) / stop distance`, then capped by the hard cap.
+
+At $197 equity: CORE = $2.96 / 0.15 = ~$20; TACTICAL = $2.96 / 0.06 = ~$49.
+
+This DELIBERATELY inverts the old table, where TACTICAL was the smaller
+position. A tighter stop earns more size for the same risk — that is the whole
+point of a tight stop. CORE's edge is not size, it is TIME: no target, no time
+limit, unlimited runway. TACTICAL gets size but a capped +14%.
+
+Why this replaced fixed $40/$20 sizing: under the old rule CORE risked $8.00 per
+position (4.06% of equity) against TACTICAL's $1.20 (0.61%) — the "patient, safe"
+sleeve carried **6.7x** the risk of the fast one, and three CORE positions put
+12.2% of the account at risk at once against a 1-2% per-trade professional norm.
+
+- Combined cap: 6 positions, and total deployment must stay AT OR BELOW 85%.
+  There is NO minimum deployment. See "Cash is a position" below.
 - CORE is where "long trades if it is good" lives: there is NO time limit and NO
   profit target. A core winner is held until its ratcheted stop takes it out.
 - TACTICAL positions that have neither hit target nor stop within ~48h are
@@ -169,13 +187,46 @@ is the documented failure of the previous iteration of this strategy.
 LESSON: state R:R requirements NET of fees, or the parameters silently
 contradict the gate.
 
+## Cash is a position (the deployment FLOOR was removed 2026-09-15)
+There is a deployment CEILING (85%) and no floor. Being 0% deployed is a valid,
+fully compliant state. Never open a position to "correct" deployment.
+
+The old 75-85% band was a floor as well as a ceiling, and it was dead letter
+from day one. Across its entire life the account sat at 0%, 29.6% and 29.7%
+deployed — never once inside the band — and every run spent a paragraph
+justifying the breach. It generated commentary, never behaviour.
+
+It was also wrong in principle. A minimum-deployment mandate is a PASSIVE
+INDEXING construct: it exists to suppress tracking error when the job is to
+replicate an index. This is an absolute-return strategy that picks spots, so a
+floor manufactures negative-expectancy trades at exactly the moment nothing
+qualifies. Trend-following funds sit flat for long stretches; that is the
+strategy working, not failing.
+
+The one real argument for a floor was the benchmark: the mandate is to beat
+BTC buy-and-hold, and cash guarantees underperformance while BTC rises. But
+that argument proves too much — a book forced 75% long is just a worse BTC
+tracker paying friction for the privilege. The way to beat BTC is asymmetry:
+heavy when the screen offers setups, flat when it does not. Tracking error is
+the price of the mandate, not a violation of it.
+
+If a future review wants to reinstate a floor, it needs EVIDENCE that flat
+periods cost more than the forced trades would have — not the observation that
+deployment is low.
+
 ## Daily circuit breaker (required once frequency is unbounded)
 Unbounded frequency plus a losing streak is how a small account dies in a day.
 - Computed by summing the `REALIZED P&L` values on today's exit rows in
   TRADE-LOG (UTC day). Do NOT infer it from equity change — that includes
   unrealized moves on open positions and will trip or miss the breaker wrongly.
-- If REALIZED losses today reach 3% of equity (~$6.00), open NO new positions
+- If REALIZED losses today reach 5% of equity (~$9.86), open NO new positions
   for the rest of the UTC day. Management and exits continue.
+- 5%, raised from 3% on 2026-09-15, because at 3% (~$5.92) the breaker was
+  UNSATISFIABLE alongside the sizing rules: a single CORE stop-out at -15% lost
+  $6.00 and at -20% lost $8.00, so ANY core stop tripped the day's breaker by
+  itself. A breaker that fires on one ordinary stop is not a circuit breaker,
+  it is an outage. At 1.5% risk per position it now takes ~3.3 stop-outs to
+  trip, which is the intended "today is going badly" signal.
 - If 3 consecutive tactical trades close at a loss, stop opening tactical for
   the rest of the UTC day regardless of the budget.
 - Record either trip in TRADE-LOG with the trigger and the time.
@@ -185,12 +236,14 @@ each individual trade can look reasonable while the sequence is ruinous.
 ## Core Rules
 1. CRYPTO ONLY — no stocks, no options, ever
 2. Long only — never attempt a short
-3. 75-85% deployed across both sleeves
-4. Respect each sleeve's position COUNT and SIZE (table above). Trade frequency
-   is the agent's call, bounded by the weekly fee budget and circuit breaker.
+3. Deployment <= 85%. There is NO deployment floor — see "Cash is a position".
+4. Respect each sleeve's position COUNT and RISK BUDGET (table above). Size is
+   derived from the stop distance, never fixed in dollars. Trade frequency is
+   the agent's call, bounded by the weekly fee budget and circuit breaker.
 5. EVERY position carries a resting `stop_limit` GTC sell at the broker
-6. CORE: hard cut at -15%; trail 20% below high-water, ratcheted UP only;
-   tighten to 14% at +30% and 10% at +40%
+6. CORE: hard cut AND trail are both 15% below high-water, ratcheted UP only;
+   tighten to 12% at +30% and 10% at +40%. (The old 20% trail sat BELOW the
+   -15% hard cut, so the cut always fired first and the trail was decorative.)
 7. TACTICAL: hard stop 6% below entry; raise to breakeven once +6%; exit at
    +14% target; never widen a tactical stop
 8. Never place a stop within 5% of current price (2% for tactical); NEVER move
@@ -369,9 +422,11 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - TACTICAL: positions after fill <= 3, cost ~$20
 - Estimated round-trip fee for THIS trade + fees already used this week
   <= 1.5% of equity (~$3.00). If it would breach, SKIP and log the budget state.
-- Circuit breaker not tripped: realized losses today < 3% of equity, and not
+- Circuit breaker not tripped: realized losses today < 5% of equity, and not
   3 consecutive tactical losses today
 - Combined positions after fill <= 6, total deployment <= 85% of equity
+- Position size == (equity * 0.015) / stop distance, capped at 15% (CORE) /
+  25% (TACTICAL) of equity. NEVER a fixed dollar amount.
 - Position cost <= available cash
 - Pair is in the Alpaca tradable crypto USD list (`alpaca.sh assets crypto`)
 - Pair is NOT a stablecoin
@@ -392,7 +447,7 @@ CORE:
   -> close even if not at -15%
 - Up >= +40% -> ratchet stop to 10% below high-water
 - Up >= +30% -> ratchet stop to 14% below high-water
-- Otherwise -> keep stop 20% below high-water
+- Otherwise -> keep stop 15% below high-water
 - NO profit target. Let it run; the ratchet decides the exit.
 
 TACTICAL:

@@ -59,7 +59,7 @@ Then, if you need the raw detail:
      bash scripts/alpaca.sh cancel ORDER_ID
      bash scripts/alpaca.sh close SYM/USD
 4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
-   CORE: trail 20% below high-water; 14% once up +30%; 10% once up +40%.
+   CORE: trail 15% below high-water; 12% once up +30%; 10% once up +40%.
    TACTICAL ladder. A resting order reserves only the qty it names, so a stop and
    a take-profit CAN coexist by SPLITTING the quantity (oco/bracket are rejected
    for crypto; a full-size stop leaves nothing unreserved).
@@ -77,7 +77,7 @@ Then, if you need the raw detail:
    Never move any stop down. Never place one within 5% of price (2% tactical).
 Log every action to memory/TRADE-LOG.md. Any EXIT row MUST record:
   `Exit time (UTC)`, `Exit price`, `REALIZED P&L $X`, `fees $X`, and the reason.
-Without an explicit realized figure the 3%-daily-loss circuit breaker cannot be
+Without an explicit realized figure the 5%-daily-loss circuit breaker cannot be
 computed — equity deltas mix in unrealized moves and would trip or miss the
 breaker wrongly. Sum today's REALIZED rows to evaluate the breaker.
 

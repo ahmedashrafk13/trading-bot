@@ -62,7 +62,7 @@ TACTICAL:
               see >= +14% with the limit still unfilled
   > +14%   -> trail the stop leg 5% below the high-water mark
 CORE:
-  20% below high-water; 14% once >= +30%; 10% once >= +40%
+  15% below high-water; 12% once >= +30%; 10% once >= +40%
   CORE MAY BE SPLIT 75% stop / 25% limit at entry*1.30. A CORE position opened
   while no scan cadence was running carries a target leg, because CORE's ratchet
   is EMULATED and only moves when a run moves it — with no runs, such a position

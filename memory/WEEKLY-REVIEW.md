@@ -117,3 +117,80 @@ a week with no trades and an untested order path earns no more than a pass. The
 grade reflects execution readiness, not strategy performance, of which there is
 still no evidence.
 
+
+---
+
+## Amendment 2026-09-15 — risk-based sizing, deployment floor removed
+
+Out-of-cycle amendment. Invoked under the BROKEN-RULE exception in
+TRADING-STRATEGY.md ("arithmetically unsatisfiable"), not the 10-closed-trade
+trigger — the account has 1 closed trade. Two of the three changes fix a
+contradiction; the third removes a rule that never bound.
+
+### Evidence
+
+**1. The 75-85% deployment band never bound, in its entire life.**
+
+| Run | Deployed | What the run wrote |
+|---|---|---|
+| 09-11 | 0% | "Held flat deliberately" |
+| 09-13 | 29.6% | "the band is a target, not a mandate to buy" |
+| 09-14 | 29.7% | "Correcting a deployment shortfall is not a reason to buy" |
+
+Never once inside the band. Every run flagged the breach, wrote a paragraph
+justifying it, and correctly ignored it. The rule produced commentary, never
+behaviour, and cost attention on every single run.
+
+**2. Sizing was risk-inconsistent — the "safe" sleeve was the dangerous one.**
+
+At $197.25 equity, under the OLD fixed-dollar sizing:
+
+| Sleeve | Size | Stop | Risk $ | Risk % of equity |
+|---|---|---|---|---|
+| CORE | $40 | 20% | $8.00 | 4.06% |
+| TACTICAL | $20 | 6% | $1.20 | 0.61% |
+
+CORE carried **6.7x** the risk of TACTICAL per position. Three CORE positions
+put 12.2% of the account at risk simultaneously, against a 1-2% per-trade norm.
+
+**3. The circuit breaker was unsatisfiable alongside those sizes.**
+
+Breaker was 3% of equity = $5.92. A single CORE stop-out lost $6.00 at the -15%
+hard cut and $8.00 at the -20% trail. **Any one CORE stop tripped the day's
+breaker by itself**, halting entries for the rest of the UTC day. A breaker that
+fires on one ordinary stop is an outage, not a brake.
+
+**4. The CORE trail was decorative.** The trail sat 20% below high-water while
+the hard cut was -15%, so on any position that had not yet risen, the hard cut
+always fired first and the trail could never be reached.
+
+### Changes applied
+
+| Rule | Before | After |
+|---|---|---|
+| Deployment | 75-85% band (floor + ceiling) | <= 85% ceiling, NO floor |
+| Position size | fixed $40 CORE / $20 TACTICAL | (equity * 0.015) / stop distance |
+| Size caps | 20% of equity | 15% CORE / 25% TACTICAL |
+| CORE trail | 20% -> 14% -> 10% | 15% -> 12% -> 10% |
+| Circuit breaker | 3% of equity (~$5.92) | 5% of equity (~$9.86) |
+
+At $197.25: CORE ~$20 (risk $2.96), TACTICAL ~$49 (risk $2.96). This INVERTS the
+sleeves — TACTICAL is now the larger position. That is intended: a tighter stop
+earns more size at equal risk. CORE's edge is TIME (no target, no time limit),
+not size.
+
+Exceeds the normal "max 2 rules per amendment" limit. Justified because the
+changes are one coherent fix: sizing, the caps and the breaker are the same
+arithmetic, and changing any one alone leaves the contradiction in place.
+
+### Not changed
+- Per-trade risk set at 1.5%, not the 1% "professional standard". At $200 with a
+  15% CORE stop, 1% risk gives a $13 position — close enough to Alpaca's $10
+  notional floor that rounding would distort it. Revisit if equity grows.
+- The 10-closed-trade trigger for ordinary (non-broken-rule) amendments stands.
+
+### Open risk
+The inverted sleeve sizing is UNTESTED against real fills. TACTICAL at ~25% of
+equity is a larger single position than this account has ever held. Watch the
+first three tactical entries and confirm the stop actually rests at the full
+size before trusting the rule.

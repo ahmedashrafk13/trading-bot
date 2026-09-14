@@ -40,24 +40,30 @@ next run cannot see it.
 
   |  | CORE | TACTICAL |
   |---|---|---|
-  | Allocation | ~$120 (60%) | ~$80 (40%) |
-  | Position size | $40 (20%) | $20 (10%) |
+  | RISK per position | 1.5% of equity | 1.5% of equity |
+  | Position size | risk / stop (~$20) | risk / stop (~$49) |
+  | Size cap | 15% of equity | 25% of equity |
   | Max positions | 3 | 3 |
-  | Stop | 20% below high-water, ratcheted | 6% below entry, breakeven at +6% |
+  | Stop | 15% below high-water, ratcheted | 6% below entry, breakeven at +6% |
   | Target | none — let it run | +14% (2:1 AFTER fees) |
   | Screen bars | daily | hourly |
   | Hold horizon | weeks to months | hours to ~2 days |
 
-  Combined cap: 6 positions, 75-85% deployed.
+  Combined cap: 6 positions, deployment <= 85%. NO deployment floor.
+  SIZE IS DERIVED FROM RISK: (equity * 0.015) / stop distance, then capped.
+  Never a fixed dollar amount. A tighter stop earns MORE size, which is why
+  TACTICAL is now the larger position — CORE's edge is time, not size.
 - NO fixed trade cap — frequency is your judgement. What binds instead:
   WEEKLY FEE BUDGET 1.5% of equity (~$3.00); measured friction is 0.65% per
   round trip. Budget exhausted -> no new entries until Monday 00:00 UTC.
   The budget is a ceiling, NOT a target to spend.
-- CIRCUIT BREAKER: realized losses today >= 3% of equity, or 3 consecutive
+- CIRCUIT BREAKER: realized losses today >= 5% of equity (~$10), or 3 consecutive
   tactical losses -> no new entries for the rest of the UTC day.
 - CORE entries need the morning research plan. TACTICAL may be originated in the
   execute run if the current screen passes AND a catalyst is documented then.
-- 75-85% capital deployed. Never hold a stablecoin as a position.
+- Deployment <= 85%, with NO floor. Cash is a position: being 0% deployed is a
+  valid, compliant state. NEVER open a position to "correct" deployment.
+  Never hold a stablecoin as a position.
 - Every position carries a resting stop_limit GTC sell at the broker.
   `trailing_stop` and `stop` are REJECTED for crypto — stop_limit only,
   with limit_price 5% below stop_price (trigger * 0.95). NOT 2% — a 2% gap is
@@ -67,8 +73,8 @@ next run cannot see it.
   stop_limit on part of the qty and a limit on the rest both rest fine. See
   "Stop + take-profit: split the quantity" in TRADING-STRATEGY.md for WHICH
   structure applies; it is state-dependent, not automatic.
-- CORE: hard cut at -15%; trail 20% below high-water, ratcheted UP only;
-  tighten to 14% at +30%, to 10% at +40%.
+- CORE: hard cut and trail are both 15% below high-water, ratcheted UP only;
+  tighten to 12% at +30%, to 10% at +40%.
 - TACTICAL: hard stop 6% below entry; raise to breakeven once +6%; exit at the
   +14% target; never widen a tactical stop.
 - Never place a stop within 5% of price (2% for TACTICAL). NEVER move a stop down.
