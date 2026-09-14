@@ -306,3 +306,116 @@ because the event risk is known in advance, not discovered later. This is the
 acknowledged cost of trading a scheduled catalyst rather than a drift setup.
 
 **Decision:** TACTICAL **TRADE** (XRP $20). CORE **HOLD**.
+
+---
+## 2026-09-14 — Crypto Research (UTC 19:56, broker clock)
+
+**Account:** Equity $197.67 | Cash $138.30 | Deployed 30.0% (target 75-85%)
+Positions: ETH (CORE) -2.79%, [SPLIT ok] 0% unreserved (75% stop / 25% target,
+no-scan-cadence clause still in force — no `scan <timestamp>` commit found in
+`git log`). XRP (TACTICAL) +3.13%, [SPLIT ok] 0% unreserved (50/50, below the
++6% ratchet trigger). Both stops verified resting, no orphans, no hard-cut breach.
+Fee budget $0.52 / $2.97 used this week, headroom $2.45. Breaker clear (realized
+$0.00 vs $5.93 limit, 0 consecutive losses). Amendment trigger 0/10 — not eligible.
+
+**Note on tooling:** `PERPLEXITY_API_KEY` is a template placeholder
+(`your_perplexity_...`), so `scripts/perplexity.sh` correctly exited 3 on every
+query — fell back to native WebSearch per the prompt, as it did on 09-11.
+Also fixed two script bugs blocking this run: `scripts/screen.sh` had lost its
+executable bit (blocked its own `"$0" --sleeve core` self-invocation) and
+contained a same-quote nested f-string (`f'...{os.environ.get('TF', '1D')}...'`)
+that is a syntax error before Python 3.12 — this container runs 3.11. Both fixed
+so the screen would run at all; logged here rather than silently patched.
+
+**Market context (WebSearch fallback):**
+- BTC $79,012 (Alpaca) / ~$77.8-79.0k cross-source — up ~1.9-2% since midnight UTC.
+  Trading above EMA20/50/200, structurally bullish, but daily MACD histogram
+  negative (deceleration) and ATR14 ~$2,077 (elevated 2-way volatility).
+- **BTC dominance 58.88%**, up from 56.8% on 09-11 — capital continuing to
+  concentrate into majors, not rotating out the risk curve.
+- BTC spot ETFs: -$462.7M net for the week (4th straight outflow day, worst
+  single day -$282.7M), but September still net +$307.3M — a weekly wobble
+  inside a positive month, not a trend reversal yet.
+- ETH spot ETFs: +$196.9M net for the week, single-day high +$216.4M on 09-11
+  (BlackRock ETHA +$148.8M) — ETH continues out-gathering BTC on flows, same
+  divergence that justified the 09-11 CORE entry.
+- ETH price ~$2,540, Glamsterdam upgrade mainnet slipped to Q4 2026 (Sepolia
+  testnet fork now Sep 28) — no new near-term ETH-specific catalyst since entry;
+  thesis (ETF flow divergence) intact, unchanged.
+- **FOMC Sep 16 (2 days out): odds of a 25bp HIKE now 80-87%**, up sharply from
+  the 09-11 framing ("hike odds falling below ~50%" was the de-risking trigger).
+  Hot August CPI/PPI and strong payrolls are driving this. This is a bigger
+  near-term risk than 09-11 anticipated, not a smaller one — a hike is a genuine
+  headwind for risk assets, not a coin-flip resolved in crypto's favor.
+- CLARITY Act: Senate cloture vote (motion to proceed to H.R. 3633) is
+  **tomorrow, Sep 15, 2:15pm ET** — still procedural, needs 60 votes, not final
+  passage. This is the exact catalyst behind the held XRP tactical position;
+  no new information changes that thesis, still pending.
+- Token unlocks this week (~$746M, led by LayerZero, Bedrock) don't touch any
+  held or shortlisted pair.
+
+**Narratives:**
+- Leading: Majors (BTC dominance rising). DeFi showing a short-term bounce —
+  UNI/AAVE/LINK/CRV all clear BOTH sleeve screens with real 7d momentum — but
+  against a YTD DeFi TVL decline of ~37% and Aave TVL down ~43% since an April
+  hack; AAVE's cited catalysts (Kalshi AAVE futures listing Sep 4, Ethena USDH
+  stablecoin integration Sep 9) are 5-10 days old and already reflected in its
+  +52% 30d move, not a fresh catalyst — this reads as chasing an extended bounce,
+  not entering early. Payments/legacy alive via the XRP position already held.
+- Rolling over: L1/L2 broadly — ARB shows +93% 30d but -17.2% 7d (already
+  reversing hard despite still clearing the daily filter), DOT -4.5% 7d (just
+  closed a losing tactical trade in this narrative, 1/2 toward the exit-narrative
+  rule), AVAX/SOL/ADA all 7d-negative. Memes and Infra/AI narratives fail both
+  screens almost across the board (RENDER, GRT, FIL, HYPE, BAT, DOGE, SHIB, PEPE,
+  BONK, WIF, TRUMP) despite AI-agent narrative getting heavy financial-media
+  coverage this month — the coverage is not showing up in this universe's price
+  action yet, which is exactly the "news is late" trap the screen exists to catch.
+
+**CORE shortlist (18, daily bars):** XTZ BAT XRP ETH BTC SOL AAVE LTC SHIB UNI
+ADA CRV DOT GRT AVAX SUSHI LINK ARB
+Key metrics (7d% / 30d% / vsSMA20 / spread%): XTZ +17.2/+39.3/+15.5/0.58 (extended),
+XRP +4.5/+45.9/+4.9/0.37, ETH +2.0/+35.0/+2.6/0.03 (held), BTC -0.1/+25.4/+0.6/0.03,
+AAVE -0.8/+52.2/+2.6/0.18, ARB -17.2/+93.0/+7.8/0.35 (rolling over).
+
+**TACTICAL shortlist (15, hourly bars):** UNI XRP ARB AAVE LINK CRV ONDO PEPE
+WIF ADA SUSHI SKY SHIB TRUMP RENDER
+Key metrics (7d% / vsSMA20 / vol%/h / spread%): UNI +6.6/+5.0/1.0/0.17,
+XRP +4.8/+4.6/1.0/0.40 (held), ARB +4.4/+2.6/0.8/0.35, AAVE +4.4/+3.5/0.6/0.23,
+LINK +3.6/+2.6/0.4/0.16.
+
+**Ideas by sleeve**
+
+**CORE — HOLD, no new entry.** ETH is the only position with a specific, live
+catalyst (ETF flow divergence, unchanged). Nothing else on the CORE shortlist
+has a catalyst that is both specific and NOT already priced in days ago (AAVE)
+or already reversing (ARB, XTZ extended). Committing new $40 two days ahead of
+an 80-87%-priced hawkish FOMC surprise, into a name with no catalyst of its own,
+is exactly the market-wide-coinflip pattern the 09-11 research refused for
+TACTICAL — it applies here too, just on CORE's wider stop.
+What would change it: a coin on this shortlist develops its own dated catalyst
+(upgrade, listing, flow data) independent of the Fed outcome, or FOMC resolves
+and the tape holds/rallies through it, removing the two-day overhang.
+
+**TACTICAL — HOLD (recommendation only).** XRP is already held at 1/3 tactical
+slots into the same CLARITY Act catalyst; adding a second position ahead of the
+same binary vote concentrates the sleeve on one event rather than diversifying
+it. No other shortlisted tactical coin (UNI, ARB, AAVE, LINK, CRV, etc.) has a
+dated catalyst of its own today — their moves are DeFi-bounce momentum, not
+event-driven, and the imminent FOMC hike risk argues against adding pure-momentum
+risk in the next 48h regardless.
+What would change it: the CLARITY cloture vote passes tomorrow and a second
+crypto-legislation-sensitive name (also payments/legacy or a name with its own
+regulatory angle) sets up on the hourly screen, or FOMC prices down further and
+a fresh hourly setup with its own catalyst appears post-decision.
+
+**Risk factors:** FOMC Sep 16 hike odds 80-87% (up from ~09-11 framing) is the
+dominant 48h risk for both open positions and any new entry. CLARITY cloture
+vote Sep 15 is binary and can gap XRP either direction; existing stop can be
+gapped through per the documented stop_limit risk. BTC ETF outflows persisting
+a 4th day. DeFi bounce (UNI/AAVE/LINK/CRV) sits on top of a -37% YTD TVL
+decline — treat as short-covering/rotation, not a confirmed reversal, until it
+survives a full week.
+
+**Decision:** CORE **HOLD**. TACTICAL **HOLD** (recommendation; execute run may
+still originate if a fresh catalyst appears and the screen still passes).
+**Fee budget:** $0.52 / $2.97 used this week, unchanged this run (no trade placed).
