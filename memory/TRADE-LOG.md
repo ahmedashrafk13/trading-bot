@@ -450,3 +450,23 @@ every open position will have gone stop-unverified across a >=12h gap (2x the
 normal 6h). Whoever/whatever run picks this up next MUST treat stop
 verification as the first priority the moment Bybit is reachable again,
 regardless of how long the gap was.
+
+---
+### 2026-09-14T23:09 UTC (local clock — broker clock unreachable, see below) — SCAN FAILED — NO ACTION TAKEN
+
+**scan run could not start**, same failure as the prior execute run just above.
+`bash scripts/state.sh` -> `bybit.sh orders` -> HTTP 403,
+`The Amazon CloudFront distribution is configured to block access from your
+country.` Re-confirmed on `bybit.sh tickers` too. Proxy status shows zero
+relay failures, so this is Bybit/CloudFront geo-blocking this session's
+egress IP, not a key/auth problem and not an org egress policy.
+
+**Consequence: zero visibility and zero actions this run**, same as the prior
+failed run. No orders touched. Book unchanged.
+
+**This is now 2 consecutive failed runs (execute 22:58 UTC, scan 23:09 UTC).**
+Open positions (XRP tactical + whatever else was live as of the last confirmed
+state, 2026-09-14T16:43 XRP entry) have now gone stop-unverified for a growing
+gap approaching the normal 6h cadence x2+. Escalating this to the user now
+rather than waiting for a 3rd failure. Not a strategy/rule defect — no
+amendment triggered.
