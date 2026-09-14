@@ -162,7 +162,8 @@ rows.sort(key=lambda r: (r['m7'] if r['m7'] == r['m7'] else -999), reverse=True)
 if fmt == 'json':
     print(json.dumps(rows, indent=2)); raise SystemExit
 
-print(f'UNIVERSE SCREEN [{os.environ.get('TF', '1D')}] — {len(rows)} coins with >=21 periods')
+tf_label = os.environ.get('TF', '1D')
+print(f'UNIVERSE SCREEN [{tf_label}] — {len(rows)} coins with >=21 periods')
 print(f\"{'coin':7}{'last':>12}{'7d%':>8}{'30d%':>8}{'vsSMA20':>9}{'vol%':>7}{'spr%':>7}  {'CORE':<6}{'TACTICAL':<9}\")
 print('-' * 88)
 for r in rows:
