@@ -44,7 +44,9 @@ Mental model: the runner is stateless. Git is the memory. If it isn't in `main`,
    | `BYBIT_API_KEY` | required |
    | `BYBIT_API_SECRET` | required |
    | `BYBIT_ENDPOINT` | set to `https://api-demo.bybit.com` (Demo Trading) |
-   | `BYBIT_RECV_WINDOW` | optional (defaults to data URL) |
+   | `BYBIT_RECV_WINDOW` | optional (defaults to `10000` ms) |
+   | `BOOK_SIZE` | optional (defaults to `200`) — the virtual book, not the account |
+   | `BOT_TAG` | optional (defaults to `tb`) — the orderLinkId prefix |
    | `PERPLEXITY_API_KEY` | optional — falls back to WebSearch |
    | `PERPLEXITY_MODEL` | optional (defaults to `sonar`) |
    | `CLICKUP_API_KEY` | optional — falls back to a local file |
