@@ -78,7 +78,11 @@ hit -> close it unless you can state why the setup is still valid.
 CORE HAS NO TIME LIMIT. Never close a CORE position for age. Its whole purpose is
 to be held weeks-to-months until its ratcheted stop takes it out; closing it at
 48h would destroy the one sleeve that can actually compound. If you cannot tell
-which sleeve a position is in, infer from size ($40 = CORE, $20 = TACTICAL) and
+which sleeve a position is in, infer from its STOP DISTANCE (~15% below
+high-water = CORE, ~6% below entry = TACTICAL). Do NOT infer from position
+SIZE: since the 2026-09-15 amendment size is derived from risk, so TACTICAL
+(~$49) is now LARGER than CORE (~$20) and any size-based guess is backwards.
+Leave it alone if still unsure, and
 leave it alone if still unsure.
 
 STEP 5 — This run NEVER opens a new position. Entries happen in execute only.

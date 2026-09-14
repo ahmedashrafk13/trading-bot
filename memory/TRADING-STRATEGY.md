@@ -478,4 +478,6 @@ them) must:
    tactical stops to breakeven once +6%
 5. Tag every position in TRADE-LOG with its sleeve. An untagged position cannot
    be managed by the right rules — if the tag is missing, infer it from position
-   size ($40 = CORE, $20 = TACTICAL) and record it.
+   its STOP DISTANCE (~15% = CORE, ~6% = TACTICAL) and record it. NEVER infer
+   from size: since 2026-09-15 size is derived from risk, so TACTICAL is the
+   LARGER position and a size-based guess returns the wrong sleeve.
