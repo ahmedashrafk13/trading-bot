@@ -587,3 +587,140 @@ worked example).
 
 **Decision: TACTICAL ENTRY — UNI/USD.** Target +14% (limit rests at exchange),
 stop -6% (logged, enforced by 30-min scan). See TRADE-LOG for fill/order IDs.
+
+---
+## 2026-09-15 — Crypto Research (UTC 06:09, broker clock)
+
+**Account snapshot:** EQUITY $197.31 | CASH $88.98 | DEPLOYED 54.9% (ceiling
+85%, no floor). SIZE NOW: CORE $19.73 (15% stop) | TACTICAL $49.33 (6% stop).
+Positions: ETH (CORE) -4.36%, stop@100% $2223.69 OK. UNI (TACTICAL) +2.12%,
+target@100% $7.480976 OK (restored this run — see TRADE-LOG). XRP (TACTICAL)
+-0.12%, target@100% $1.6095 OK (restored this run). Fee budget $0.52/$2.96
+used, headroom $2.44. Circuit breaker clear ($0.00 realized vs $9.87 limit, 0
+consecutive tactical losses). Amendment trigger 0/10 — not eligible, nothing
+changed.
+
+**Resting-leg conflict resolved this run:** state.sh at run start showed UNI
+and XRP both in stop-resting shape (placed by the 03:37 scan), not the
+owner-directed target-resting shape TRADING-STRATEGY.md specifies. Cancelled
+both stop_limit orders and restored the +14% target limits per policy. Full
+detail and order IDs in TRADE-LOG. This is a recurring scan-vs-policy conflict
+(3rd occurrence today) — the scan-facing prompt content needs correcting to
+match the committed strategy file; flagged there for the account owner.
+
+**Market context (WebSearch, PERPLEXITY_API_KEY still the template placeholder
+-> fallback per design, same as prior runs):**
+- BTC ~$77,624-77,782, dominance 58.88% (flat vs prior entries) — above
+  EMA20/50/200, daily MACD histogram negative (deceleration), ATR14 ~$2,077.
+  Wedged between pivot support $76,780 / resistance $78,392.
+- ETH ~$2,495-2,505. Bullish above $2,438 (target $2,800-2,920); below $2,438
+  risks $2,000. Hegotá upgrade H2 2026; Glamsterdam mainnet slipped to Q4,
+  Sepolia fork Sept 28 — no near-term price impact.
+- ETF flows (week of Sept 8-11): BTC spot ETFs -$462.7M net (4th straight
+  outflow day, Thursday alone -$283M, ARKB -$234M) but September still net
+  +$307.3M. ETH spot ETFs +$196.9M net, 4th straight week of inflows, $216M
+  single-day on Sept 11. Divergence thesis behind the held ETH position is
+  intact and getting stronger, not weaker.
+- **CLARITY Act: cloture vote today, Sept 15, 2:15pm ET.** MATERIAL CHANGE —
+  Polymarket now prices the bill being signed into law in 2026 at **~18-19.5%**,
+  down sharply from a ~90% peak in February. Republicans hold 53 seats, need 9
+  Democrats for the 60-vote threshold; even a "yes" today is only a procedural
+  motion-to-proceed, not passage. This is the exact catalyst the held XRP
+  position was opened on — it has visibly deteriorated, not just "not yet
+  resolved" as framed in the 09-14 entries.
+- **FOMC decision Sept 16, 2pm ET**, dot-plot meeting. Hold at 3.50-3.75% vs a
+  25bp hike both live; hike-implied probability rose above 50% (from ~36%
+  pre-Jackson-Hole) after Fed Chair Warsh's hawkish comments. BOJ meets Sept
+  17-18, adding a third stacked macro event this week.
+- Token unlocks: ARB unlocks 92.65M (~$13.02M, 0.93% of supply) tomorrow Sept
+  16 — the largest dollar unlock this month, a supply overhang directly
+  relevant to ARB's tactical hourly PASS below.
+- Narratives: AI-infra convergence and "real revenue" L1/DeFi rotation cited
+  as 2026 leaders; memes broadly cooling (-30%+ from mid-April levels). Nothing
+  new since the 09-14 entry changes this framing.
+
+**Narrative read:** Majors still leading (dominance flat at 58.88% despite the
+DeFi bounce). DeFi (UNI, CRV, SUSHI, SKY, AAVE) continues to clear both sleeve
+screens but on a decelerating, aging bounce sitting atop a documented -37% YTD
+TVL decline — treat new entries skeptically unless the catalyst is
+idiosyncratic (see UNI, SUSHI below). ARB is a daily rollover (-18.7% 7d) with
+an hourly bounce sitting directly in front of tomorrow's largest unlock of the
+month — a bounce into supply overhang, not a trend change.
+
+**CORE shortlist (12, daily bars):** XTZ FIL AAVE UNI LTC CRV BAT AVAX GRT
+SUSHI ARB DOT
+Key metrics (7d%/30d%/vsSMA20/spread%): XTZ +6.1/+36.0/+10.3/0.64, FIL
++5.4/+33.7/+12.9/0.33, AAVE -0.8/+48.8/+0.2/0.19, UNI -1.0/+104.5/+11.3/0.21
+(held, very extended), ARB -18.7/+82.5/+1.6/0.37 (rolling over, unlock
+tomorrow), DOT -20.1/+31.3/+3.4/0.20 (rolling over).
+
+**TACTICAL shortlist (5, hourly bars):** UNI CRV SKY SUSHI ARB
+Key metrics (7d%/30d%/vsSMA20/vol%h/spread%): UNI +2.4/+7.8/+2.3/1.4/0.21
+(held), CRV +1.7/+1.9/+0.7/0.6/0.18, SKY +1.1/+2.3/0.0/0.8/0.19, SUSHI
++0.5/-1.3/-0.8/0.6/0.18, ARB +0.2/-0.6/-1.1/1.3/0.28.
+XRP fails BOTH screens this run (daily -0.6%/7d momentum negative; hourly
+-1.1%/7d, vsSMA20 -1.1%) — consistent with its catalyst deteriorating (see
+CLARITY odds above).
+
+**Ideas by sleeve**
+
+**CORE — no new entry.** Every CORE-shortlist name is riding the same
+decelerating DeFi/majors bounce with no fresh idiosyncratic catalyst: AAVE's
+catalysts are 10+ days stale, XTZ/UNI already very extended (+10-11% over
+SMA20), ARB/DOT are daily rollovers. Nothing here clears the "own dated
+catalyst, not shared macro" bar. CORE stays at 1/3 (ETH only).
+What would change it: a CORE-shortlist name develops an idiosyncratic catalyst
+independent of the DeFi bounce, or the FOMC/BOJ macro overhang clears without
+damage and a name is still un-extended afterward.
+
+**TACTICAL — TRADE recommendation: SUSHI (execute run to confirm/originate).**
+Catalyst: Sushi's Strategic Reserve weekly SUSHI buybacks began Sept 7 (passed
+DAO vote), with monthly xSUSHI buybacks starting Oct 1 — an ongoing,
+mechanically dated, idiosyncratic buyback program, not the shared DeFi-bounce
+narrative (also expanding into RWA via Sushi Launch on Robinhood Chain, live
+since Aug 1). Screen: hourly TACTICAL PASS — 7d +0.5%, vsSMA20 -0.8%, vol
+0.6%/h, spread 0.18%. At $49.33 size: stop -6% = entry*0.94, target +14% =
+entry*1.14, R:R ~2:1 after fees per the standard worked example. Gate check:
+TACTICAL 2/3 filled (would go to 3/3, at cap); combined 3/6 -> 4/6; deployment
+54.9% -> ~79.7% (<=85% ceiling, OK); fee budget headroom $2.44 covers the
+~$0.37 estimated round trip; circuit breaker clear.
+CRV and SKY also clear the TACTICAL screen but were rejected: CRV's cited
+catalyst (Llamalend V2, the Sept 2 breakout) is 2 weeks old and already
+priced in — current move reads as the same sector bounce. SKY's catalyst
+(Standard Chartered coverage, Sept 11) is a 2028-horizon institutional
+research note, not a near-term dated event suited to a 2-day tactical hold.
+ARB was rejected outright: daily rollover plus the largest token unlock of
+the month (Sept 16, ~$13M/0.93% supply) landing tomorrow — a bounce directly
+in front of a supply overhang, the opposite of a clean setup.
+**Recommendation only — this is not binding; execute (00:07/06:07/12:07/18:07)
+originates if the screen and catalyst still hold then.**
+
+**Flagged: reassess the XRP thesis.** Not a screen failure this run — an
+event-risk deterioration. CLARITY passage odds have collapsed from a ~90%
+February peak to ~18-19.5% ahead of today's vote, and even a "yes" is only a
+procedural cloture motion. XRP now fails both sleeve screens (see above). Per
+TRADING-STRATEGY.md's TACTICAL rule ("thesis broken -> close immediately"),
+this is trending toward thesis-broken territory, though the position is only
+-0.12% and its stop level (-6% at $1.3271) has not been breached. Not closed
+in this research run — no execute mandate here, and no hard trigger (hard cut,
+naked stop, +14% target) fired. **Explicit recommendation for the next scan
+(30-min cadence) and the 06:07 execute run: re-evaluate XRP against the
+thesis-broken rule now that the catalyst odds have cratered, independent of
+whether price has moved.**
+
+**Risk factors:** Three stacked macro/political events in 96h — CLARITY
+cloture today (odds now low, ~18-19.5%), FOMC Sept 16 (hike odds >50%, up from
+~36% pre-Jackson-Hole), BOJ Sept 17-18. ARB's Sept 16 unlock overlaps the FOMC
+decision. BTC ETF outflows now a 4th consecutive day even as ETH ETFs extend
+inflows — a genuine, not yet fully priced, divergence. DeFi bounce (UNI, CRV,
+SUSHI, SKY) continues to sit on a -37% YTD TVL decline; treat strength as
+rotation/short-covering until it survives a full week without a fresh macro
+catalyst.
+
+**Decision:** CORE **HOLD** (binding for the day). TACTICAL **HOLD as the
+formal research decision, with a TRADE recommendation on SUSHI** for the
+execute run to act on if conditions still hold — per policy this recommendation
+is non-binding and does not authorize an entry from this run.
+**Fee budget:** $0.52 / $2.96 used this week, unchanged this run (no new
+entries; only order-type corrections on existing UNI/XRP legs, at no
+incremental fee cost).

@@ -752,3 +752,50 @@ stablecoin, crypto, long only.
 
 **XRP live stop level: $1.3271** (now a resting order `8fbcbac9`). Ratchet levels: breakeven $1.41184 at +6% ($1.49655), +4% at $1.46831.
 **UNI live stop level: $6.1685** (now a resting order `49fce273`). Ratchet levels: breakeven $6.56226 at +6% ($6.955), +4% at $6.82475.
+
+---
+
+### 2026-09-15T06:09 UTC — RESEARCH — resting-leg conflict resolved (UNI, XRP restored to TARGET)
+
+**State at run start:** EQUITY $197.31 | CASH $88.98 | DEPLOYED 54.9%. Fee budget
+$0.52/$2.96. Circuit breaker clear. Amendment trigger 0/10.
+
+**Found:** `state.sh` showed all 3 positions in "stop @100%" shape, including
+UNI and XRP (TACTICAL). This is the SAME recurring conflict flagged by the
+03:37 scan run: the 03:37 scan cancelled both tactical target legs and placed
+stop_limit orders instead, per scan-prompt text that says "no position carries
+a resting take-profit" — text that continues to conflict with the committed
+`memory/TRADING-STRATEGY.md` ("What rests at the exchange, by sleeve" section,
+amended 2026-09-15, revised same day), which is unambiguous that TACTICAL rests
+its +14% TARGET and the -6% stop is enforced by the scan, not a resting order.
+The 03:37 scan explicitly deferred resolution to the next execute run; no
+execute ran between 03:37 and this 06:09 research run, so the conflict was
+still live.
+
+**Action taken (per TRADING-STRATEGY.md, the authoritative rulebook, and this
+run's own STEP A reconciliation):**
+- Cancelled UNIUSD stop_limit `49fce273` (stop $6.1685/limit $5.8601)
+- Cancelled XRPUSD stop_limit `8fbcbac9` (stop $1.3271/limit $1.2607)
+- Placed UNIUSD limit sell `d8c34a47`: qty 7.49691075 @ $7.480976 (entry
+  $6.56226 * 1.14) gtc
+- Placed XRPUSD limit sell `a8401c8e`: qty 14.114625 @ $1.6095 (entry
+  $1.41184 * 1.14) gtc
+No qty or price level changed — only the leg TYPE was restored, matching the
+values used identically in both prior restorations (00:07 execute, and the
+level XRP/UNI were originally opened at).
+
+**Logged stop levels (enforced by scan, not resting orders):**
+- UNI: -6% = $6.1685; breakeven $6.56226 at +6% ($6.955); +4% at $6.82475
+- XRP: -6% = $1.3271; breakeven $1.41184 at +6% ($1.49655); +4% at $1.46831
+
+**Hard-cut / ratchet check this run:** ETH (CORE) -4.36%, above -15% cut, no
+action. UNI (TACTICAL) +2.12%, below +6% breakeven trigger, no ratchet. XRP
+(TACTICAL) -0.12%, above -6% cut, no ratchet.
+
+**Flagged for the account owner / next runs:** this is the THIRD time the
+scan-facing skill/prompt content has contradicted the committed
+`TRADING-STRATEGY.md` on the same rule (00:09 scan, 03:37 scan, now this
+research run). The committed file is being treated as authoritative each time
+by the run that catches it, but the underlying skill/prompt text serving
+`scan` has not been corrected, so this will keep recurring every ~3h until the
+skill content itself is fixed to match the repo's current policy.
