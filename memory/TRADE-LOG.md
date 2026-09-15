@@ -1029,3 +1029,31 @@ and is recorded for the series, not as a judgement.
 **Expectation going in:** fewer trades, most weeks with zero entries, and a
 result that depends entirely on whether one CORE position runs far enough to pay
 for the stop-outs. A quiet scan is the system working.
+
+---
+
+### 2026-09-15T14:11 UTC — SCAN — RATCHET XRP
+
+**State:** EQUITY $194.35 | CASH $88.98 | DEPLOYED 54.2%. Fee budget $0.52/$1.94 used (monthly). Circuit breaker clear. Amendment trigger 0/10.
+
+**Positions (v2 shape — all stop_limit @100%):**
+- ETHUSD (CORE): -6.22%, stop 100% @ $2223.69 ✓ — no action
+- UNIUSD (v1 TACTICAL, 6% trail): -2.54%, stop 100% @ $6.1685 ✓ — no action
+- XRPUSD (v1 TACTICAL, 6% trail): +0.24%, stop 100% @ $1.3271 — RATCHETED
+
+**Gap check:** ETH -6.22% vs CORE -15% ✓, UNI -2.54% vs -6% ✓, XRP +0.24% vs -6% ✓. None triggered.
+
+**RATCHET — XRPUSD:** Current price $1.4152 is above entry $1.41184 → new high-water.
+- Old stop: $1.3271 (6% below entry $1.41184)
+- New stop: $1.3303 (6% below HWM $1.4152; $1.4152 × 0.94 = $1.33029 → $1.3303)
+- New limit: $1.2638 ($1.3303 × 0.95)
+- Cancelled order `e59a3afa`, placed `607e3472` ✓
+- Direction: $1.3303 > $1.3271 — never moved down ✓
+- Distance: $1.4152 − $1.3303 = 6.0% from current — above 5% minimum ✓
+
+**XRP thesis:** CLARITY Act Senate cloture vote ~18:15 UTC (~4h ahead). Price +0.24%, thesis intact. Execute at 18:07 UTC must check the outcome and close XRP at market if the motion to proceed fails.
+
+**ETHUSD CORE ratchet:** HWM $2616.11 (first-hour high), stop $2223.69 = 15% below HWM. Current $2447.12 is below HWM. No new high → no ratchet.
+**UNIUSD ratchet:** Current $6.3954 is below entry $6.56226. No ratchet.
+
+**No new positions opened. No rule edits.**
