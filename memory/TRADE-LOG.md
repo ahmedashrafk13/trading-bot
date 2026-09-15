@@ -909,3 +909,26 @@ No qty or price level changed — same values used in every prior restoration.
 **Flagged for the account owner — infrastructure, not a trading decision:**
 1. This is the 5th thrash cycle today on the CORE-stop/TACTICAL-target vs. stop-only conflict. The in-repo `routines/execute.md` and `.claude/commands/execute.md` are correct and match `TRADING-STRATEGY.md`; the scheduler's *stored* trigger prompt (delivered to this session directly, not sourced from the repo) is the actual stale artifact and needs to be updated at the source, or repointed to just invoke the `execute`/`scan` skill by name instead of embedding a frozen instruction copy that has drifted from the repo's current policy.
 2. The orphaned `claude/*` branch situation flagged at 06:11 is still unresolved (multiple stale branches with no path to `main` other than direct pushes from concurrent sessions) — worth a cleanup pass.
+
+---
+
+### 2026-09-15T12:18 UTC — SCAN — QUIET, NO ACTION
+
+**State:** EQUITY $196.91 | CASH $88.98 | DEPLOYED 54.8%. Fee budget $0.52/$2.95. Circuit breaker clear. Amendment trigger 0/10.
+
+**Positions (12:18 UTC broker clock):**
+- ETHUSD (CORE): -4.96%, stop 100% @ $2223.69 — no action
+- UNIUSD (TACTICAL): +1.99%, target 100% @ $7.480976 — no action
+- XRPUSD (TACTICAL): -0.63%, target 100% @ $1.6095 — no action
+
+**Hard cut:** UNI +1.99% > -6% ✓, XRP -0.63% > -6% ✓, ETH -4.96% > -15% ✓. Nothing triggered.
+
+**Ratchets:** ETH — no new high-water ($2616.11 peak stands, stop $2223.69 = 15% below), UNI and XRP both below +6% rung. No ratchet.
+
+**Target hit:** UNI +1.99% < +14%, XRP -0.63% < +14%. Not triggered.
+
+**Thrash cycle — intentionally NOT repeated.** The stored scan trigger prompt says "no resting take-profit, stop covers 100%"; the 12:11 UTC execute run restored UNI/XRP target legs for the 5th time today per `TRADING-STRATEGY.md` (the authoritative rulebook per CLAUDE.md). This scan deferred to that authoritative source rather than creating a 6th reversal. The conflict remains a stored-prompt infrastructure issue only the account owner can fix. Positions are correctly covered.
+
+**XRP thesis:** CLARITY Act cloture vote still pending (~18:15 UTC, ~6h ahead). Price -0.63%, thesis not yet failed. Next scan/execute after 18:15 UTC must check the outcome and close XRP at market if the motion to proceed fails.
+
+**No action taken. No commit needed beyond this log entry.**
