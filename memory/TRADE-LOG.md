@@ -1133,3 +1133,27 @@ Stop_limit order `3ad1dca9` (placed by 14:11 scan) triggered and filled automati
 **CORE:** No entry — research HOLD is binding and CORE requires the morning research plan to originate.
 
 **No orders placed. No stops cancelled. No clickup notification sent (no trade placed).**
+
+---
+
+## 2026-09-15 — Daily Snapshot (Day 5, UTC ~18:10)
+
+**Portfolio:** $192.23 | **Cash:** $135.05 (70.3%) | **Day P&L:** -$6.54 (-3.29%) | **Cumulative:** -$7.77 (-3.89%)
+**vs BTC:** -3.49pp edge | **Fees today:** ~$0.28 | **Fee budget:** $0.52 / $1.92 used this month (headroom $1.40)
+
+| Sleeve | Pair | Qty | Entry | Last | Unrealized | Stop trigger | Stop present? |
+|--------|------|-----|-------|------|------------|---------------|---------------|
+| CORE | ETH/USD | 0.015302647 | $2,609.50 | $2,437.798 | -6.58% | $2,223.69 | yes — 100% of qty, 0% unreserved |
+| TACTICAL (v1 grandfathered, 6% trail) | XRP/USD | 14.114625 | $1.41184 | $1.4079 | -0.28% | $1.3303 | yes — 100% of qty, 0% unreserved |
+
+**Benchmark:** BTC/USD $76,845.74 (mid) vs $77,153.29 Day-0 baseline (2026-09-10 19:39 UTC) = **-0.40% cumulative**. Bot cumulative -3.89%. **EDGE -3.49pp** — bot is trailing the benchmark.
+
+**Trades today (2026-09-15 UTC):** 1 round trip — TACTICAL UNI/USD entered 00:07 UTC, stopped out 14:51 UTC at -6%, REALIZED P&L -$3.17 (this is the day's only realized fee/loss driver). CORE: no trades. Reconciled against live positions/orders — no drift found.
+
+**Circuit breaker:** realized losses today $3.17 vs $9.61 limit (5% of equity) — CLEAR. Consecutive tactical losses: DOT (09-14) -> UNI (09-15) = 2 of 3 — CLEAR, not tripped.
+
+**Amendment trigger:** 2 closed trades total (DOT -$1.61, UNI -$3.17) since the last applied amendment (none has ever been applied via a weekly-review STEP E — WEEKLY-REVIEW.md's only "Rule changes applied" entry says "None"). 2 < 10 -> **not eligible, nothing amended this run.**
+
+**Invariants this run:** both open positions carry a full-size (100%) resting `stop_limit`, no naked/split legs, no target legs. Neither ETH nor XRP made a new high-water mark since the last ratchet (14:11 UTC), so no ratchet fired. Neither position breached its hard-cut threshold (ETH -6.58% vs -15% CORE; XRP -0.28% vs -6% grandfathered TACTICAL).
+
+**Notes:** Quiet day after the v2 rulebook rewrite — one TACTICAL round trip (UNI) stopped out for a small loss, leaving 2 open positions (1 CORE, 1 grandfathered v1 TACTICAL) both fully stopped and within their hard-cut bands. The bot is underperforming BTC by 3.49pp cumulative, driven mostly by ETH's -6.58% unrealized drawdown plus this account's two realized tactical losses (DOT, UNI) — no CORE trade has closed yet to test the "let winners run" half of the thesis. Two data caveats for the record (also logged to OBSERVATIONS.md): (1) no daily snapshot was written 2026-09-12 through 2026-09-14, so the "Day P&L" above is actually a ~4-day delta versus the 2026-09-11 snapshot, not a true 1-day figure; (2) `scripts/state.sh`'s circuit-breaker/amendment regex does not match the `REALIZED P&L` formats actually used in this log (table-row and inline-colon styles), so it reported $0.00 realized and 0 closed trades this run — the $3.17/2-closed figures above were computed by hand from the log rows and should be treated as authoritative over the script's output until fixed.
