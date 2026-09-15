@@ -22,16 +22,19 @@ import re
 # (label, regex, why it is wrong now)
 BAD = [
     ('old CORE stop at entry', r'fill \* 0\.80|stop 20% below fill', 'CORE stop is 15% below fill'),
-    ('tactical resting stop', r'TACTICAL -> stop\s+6% below fill', 'TACTICAL rests its TARGET, not a stop'),
+    ('v1 tactical 6% stop', r'TACTICAL -> stop\s+6% below fill|stop 6% below entry', 'TACTICAL trails 10% in v2'),
     ('old CORE trail 20%', r'20% below high-water|trail 20%', 'CORE trail is 15% since 2026-09-15'),
     ('old CORE rung 14%', r'14% (?:once|at) \+30', 'CORE tightens to 12% at +30%'),
     ('old circuit breaker 3%', r'3%[- ]daily|3% of equity \(~\$6|<= *-?0?\.?03 of equity', 'breaker is 5%'),
     ('old fixed sizing', r'\$40 \(20%\)|\$40 = CORE|\$20 = TACTICAL|\$40 CORE / \$20', 'size is risk-derived'),
     ('deployment floor', r'75-85%|75%-85%', 'deployment has a ceiling only'),
     ('split machinery', r'\[SPLIT ok\]|SPLIT the qty|split: ~half|ORPHAN CHECK', 'split removed'),
-    ('resting take-profit', r'resting `?limit`? sell at (?:the )?\+?1?4?|exchange-enforced upside',
+    ('resting take-profit', r'entry\s*\*\s*1\.14|fill\s*\*\s*1\.14|rests its \+?14% TARGET|resting LIMIT at the \+14%',
      'no resting take-profit exists'),
-    ('blanket -15% cut', r'any position at unrealized_plpc <= -0\.15', 'TACTICAL cuts at -6%'),
+    ('blanket -15% cut', r'any position at unrealized_plpc <= -0\.15', 'TACTICAL cuts at -10%'),
+    ('v1 weekly fee budget', r'1\.5% of equity \(~?\$3|used this week|resets Monday', 'budget is 1.0% MONTHLY'),
+    ('v1 48h age rule', r'open >\s*~?48h|48h reassess|closed for being 48h', 'no time limit in v2'),
+    ('v1 slot counts', r'after fill <= 3, cost ~\$(?:40|20)|Combined .{0,20}<= 6', 'caps are 4 CORE / 1 TACTICAL / 5 total'),
     ('bybit leftovers', r'bybit|BYBIT|orderLinkId|api-demo', 'reverted to Alpaca'),
 ]
 
@@ -56,7 +59,7 @@ def main():
             continue
         for i, line in enumerate(text.split('\n'), 1):
             # Lines that EXPLAIN the old rule are fine; lines that INSTRUCT are not.
-            if re.search(r'removed|was |old |legacy |since 2026-09-15|NEVER infer|no longer|expired|REJECTED',
+            if re.search(r'removed|was |old |legacy |since 2026-09-15|NEVER infer|no longer|expired|REJECTED|STALE|SUPERSEDED|BANNED|grandfathered|v1 ',
                          line, re.I):
                 continue
             for label, pat, why in BAD:

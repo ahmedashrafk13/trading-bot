@@ -14,6 +14,9 @@ Open these in order before doing anything:
 - memory/RESEARCH-LOG.md      — Today's research before any trade.
 - memory/PROJECT-CONTEXT.md   — Overall mission and context.
 - memory/WEEKLY-REVIEW.md     — Friday afternoons; template for new entries.
+- memory/SHADOW-LOG.md        — screened-but-not-taken candidates and how they
+  resolved. This is where sample size comes from: ~50 observations/month at
+  zero cost and zero risk, versus ~4 real closes. Append on every research run.
 
 ## Daily Workflows
 
@@ -21,9 +24,10 @@ Defined in .claude/commands/ (local) and routines/ (cloud). Crypto has no
 trading day — everything is UTC, every day of the week:
 
 - scan, EVERY 30 MIN (:07/:37 — TWO hourly routines offset 30 min apart, since
-  the scheduler's minimum interval is 1h) — invariants, ratchets, and the
-  TACTICAL STOP, which is enforced here and nowhere else. The only thing watching a 24/7 market between the other runs,
-  and the ONLY mechanism that takes profit (no resting take-profit exists).
+  the scheduler's minimum interval is 1h) — invariants and ratchets. Every
+  position's downside now rests AT THE BROKER as a stop_limit, so a missed scan
+  is no longer an unprotected window; the scan raises trails and repairs any
+  position whose stop is missing or mis-sized.
 - research, 06:07 — the day's plan. CORE entries require it.
 - execute, every 6h (00:07/06:07/12:07/18:07) — the gate, entries, stops.
   TACTICAL may be originated here; CORE may not.
@@ -40,25 +44,31 @@ next run cannot see it.
 - TWO SLEEVES. Capital is split so "more trades" and "let winners run" do not
   fight each other. Respect each sleeve's COUNT and SIZE:
 
-  |  | CORE | TACTICAL |
+  |  | CORE (primary) | TACTICAL (experimental) |
   |---|---|---|
-  | RISK per position | 1.5% of equity | 1.5% of equity |
-  | Position size | risk / stop (~$20) | risk / stop (~$49) |
-  | Size cap | 15% of equity | 25% of equity |
-  | Max positions | 3 | 3 |
-  | Stop | 15% below high-water, ratcheted | 6% below entry, breakeven at +6% |
-  | Target | none — let it run | +14% (2:1 AFTER fees) |
+  | RISK per position | 2.0% of equity | 1.0% of equity |
+  | Position size | risk / trail (~$26) | risk / trail (~$20) |
+  | Size cap | 20% of equity | 12% of equity |
+  | Max positions | 4 | 1 |
+  | Stop | 15% below high-water, ratcheted | 10% below high-water, ratcheted |
+  | Target | NONE — the trail is the exit | NONE — the trail is the exit |
+  | Time limit | none | none |
   | Screen bars | daily | hourly |
-  | Hold horizon | weeks to months | hours to ~2 days |
+  | Hold horizon | weeks to months | days to weeks |
 
-  Combined cap: 6 positions, deployment <= 85%. NO deployment floor.
-  SIZE IS DERIVED FROM RISK: (equity * 0.015) / stop distance, then capped.
-  Never a fixed dollar amount. A tighter stop earns MORE size, which is why
-  TACTICAL is now the larger position — CORE's edge is time, not size.
+  Combined cap: 5 positions, deployment <= 85%. NO deployment floor.
+  SIZE IS DERIVED FROM RISK: (equity * risk%) / trail distance, then capped.
+  Never a fixed dollar amount. Run `state.sh` — it prints both sizes.
+- NEITHER SLEEVE HAS A PROFIT TARGET (v2, 2026-09-15). Any fixed target/stop
+  pair is negative-expectancy after fees: a zero-edge random walk hits the stop
+  first `stop/(stop+target)` of the time, which is always just under the
+  fee-adjusted breakeven rate. Only an UNBOUNDED right tail — trail up, never
+  cap — pays for the losers. Do not reintroduce a target.
 - NO fixed trade cap — frequency is your judgement. What binds instead:
-  WEEKLY FEE BUDGET 1.5% of equity (~$3.00); measured friction is 0.65% per
-  round trip. Budget exhausted -> no new entries until Monday 00:00 UTC.
-  The budget is a ceiling, NOT a target to spend.
+  MONTHLY FEE BUDGET 1.0% of equity (~$2.00); measured friction is 0.65% per
+  round trip. Budget exhausted -> no new entries until the 1st, 00:00 UTC.
+  The budget is a CEILING, NOT a target to spend. Trade count is the enemy:
+  BTC buy-and-hold, the benchmark, pays 0% in fees.
 - CIRCUIT BREAKER: realized losses today >= 5% of equity (~$10), or 3 consecutive
   tactical losses -> no new entries for the rest of the UTC day.
 - CORE entries need the morning research plan. TACTICAL may be originated in the
@@ -66,33 +76,38 @@ next run cannot see it.
 - Deployment <= 85%, with NO floor. Cash is a position: being 0% deployed is a
   valid, compliant state. NEVER open a position to "correct" deployment.
   Never hold a stablecoin as a position.
-- Every position carries a resting stop_limit GTC sell at the broker.
-  `trailing_stop` and `stop` are REJECTED for crypto — stop_limit only,
-  with limit_price 5% below stop_price (trigger * 0.95). NOT 2% — a 2% gap is
-  routinely jumped in a crypto flush, which turns the stop into a no-op.
+- EVERY position in BOTH sleeves carries a resting `stop_limit` GTC sell at the
+  broker, for 100% of the HELD qty. No exceptions, no splits, no target legs.
+  This is now unambiguous because neither sleeve has a target competing for the
+  one resting-order slot. `trailing_stop` and `stop` are REJECTED for crypto —
+  stop_limit only, with limit_price 5% below stop_price (trigger * 0.95). NOT
+  2% — a 2% gap is routinely jumped in a crypto flush, which no-ops the stop.
+- NEVER rest a limit sell as a take-profit. A resting sell reserves the qty it
+  names, so a target leg leaves the position unstopped. That is what left DOT
+  naked for 70h, and what caused six order-thrash cycles on 2026-09-15.
 - Buys MUST use time_in_force `gtc`. `day` is rejected for crypto.
-- A stop and a take-profit CANNOT coexist on Alpaca crypto. Verified live
-  2026-09-15: oco/bracket/trailing_stop/stop are ALL rejected, and a resting
-  sell reserves the qty it names, so a full-size stop leaves nothing over.
-  So CORE rests its STOP and TACTICAL rests its +14% TARGET. A tactical
-  position has NO resting stop — its -6% level is enforced by the 30-MIN SCAN. NEVER split the quantity and never
-  rest a limit sell as a take-profit — that is what left DOT naked for 70h.
-- CORE: hard cut and trail are both 15% below high-water, ratcheted UP only;
-  tighten to 12% at +30%, to 10% at +40%.
-- TACTICAL: hard stop 6% below entry; raise to breakeven once +6%; exit at the
-  +14% target; never widen a tactical stop.
-- Never place a stop within 5% of price (2% for TACTICAL). NEVER move a stop down.
+- CORE: trail 15% below high-water, ratcheted UP only; tighten to 12% at +30%,
+  to 10% at +40%.
+- TACTICAL: trail 10% below high-water, ratcheted UP only; tighten to 8% at
+  +20%. Initial stop is 10% below ENTRY (entry is the first high-water mark).
+- Never place a stop within 5% of current price. NEVER move a stop down —
+  this applies to grandfathered positions too: a v1 position carrying a tighter
+  stop KEEPS it and is never widened to the v2 distance.
 - Follow narrative momentum (majors / L1 / DeFi / memes / infra).
   Exit a narrative after 2 consecutive failed trades.
 - Patience > activity.
-- The weekly review MAY rewrite memory/TRADING-STRATEGY.md based on results,
-  without asking — and so may ANY run, including the daily summary. The trigger
-  is EVIDENCE not the calendar: >= 10 closed trades since the last amendment.
-  Only the TUNABLE list, never the IMMUTABLE platform facts, max 2 rules at a
-  time. A demonstrably broken rule may be fixed immediately.
-- EVERY run: reconcile positions, verify each has a stop, cut anything past
-  -15% the stop missed, ratchet winners. Crypto trades 24/7 and runs are 6h
-  apart — nothing else is watching.
+- AMENDMENT FREEZE. ONLY the weekly-review run may edit
+  memory/TRADING-STRATEGY.md, and ONLY at >= 10 closed trades since the last
+  amendment. No other run may amend it — not scan, not execute, not summary.
+  Max 2 TUNABLE rules at a time, never the IMMUTABLE platform facts.
+  There is NO "demonstrably broken rule" fast path: that loophole produced six
+  amendments in five days on a sample of ONE closed trade, which is fitting to
+  noise. If a rule looks broken, make the account SAFE (close or stop the
+  position), write the evidence to TRADE-LOG.md, and leave the doc alone.
+- EVERY run: reconcile positions, verify each has a full-size stop, cut
+  anything the stop gapped through, ratchet winners. Crypto trades 24/7.
+- Patience is the strategy, not a virtue. A scan that does nothing is the
+  system WORKING. Most weeks should have zero entries.
 
 ## API Wrappers
 

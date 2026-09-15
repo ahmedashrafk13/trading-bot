@@ -25,12 +25,22 @@ MEASURED 0.65% per round trip recorded below, which was observed on this account
 and already supersedes the ~0.5% estimate here. On $40 that is ~$0.20 per round trip, and it is charged
 whether the trade wins or loses. Consequences that are part of the strategy:
 - Every stop-out costs the spread AND the fees. Frequent small stops bleed.
-- The WEEKLY FEE BUDGET is the frequency control. There is no fixed trade cap.
+- The MONTHLY FEE BUDGET is the frequency control. There is no fixed trade cap.
 - Require a minimum 2:1 reward:risk AFTER the measured 0.65% friction.
 
-## Self-amendment (the weekly review MAY change this document)
-The Friday/Sunday weekly review is authorised to EDIT this file directly based
-on observed trade results. It does not need human approval. Rules changed this
+## Self-amendment — FROZEN except to the weekly review at N >= 10 (v2)
+**ONLY the weekly-review run may edit this file, and only at >= 10 closed trades
+since the last amendment.** Not scan, not execute, not summary, not research.
+
+Why the freeze: between 2026-09-10 and 2026-09-15 this document was amended six
+times on a sample of ONE closed trade. Every one of those amendments was fitted
+to noise, and two of them contradicted each other badly enough to produce six
+live order-thrash cycles in a single day. A rulebook that changes faster than it
+generates evidence cannot be evaluated, and an unevaluable strategy cannot be
+profitable except by accident.
+
+The weekly review is authorised to EDIT this file based on observed trade
+results once the trigger is met. It does not need human approval. Rules changed this
 way must be recorded in WEEKLY-REVIEW.md with the evidence, the before value and
 the after value, and committed together with the review so `git log` shows
 exactly what changed and why. Any bad change is recoverable with `git revert`.
@@ -39,7 +49,7 @@ exactly what changed and why. Any bad change is recoverable with `git revert`.
 - Stop distances and trail percentages, and the ratchet thresholds
 - Hard-cut levels (-15% core, -6% tactical) and the tactical target
 - Position counts, position sizes and sleeve allocation
-- The weekly fee budget (1.5%) and the circuit-breaker thresholds
+- The monthly fee budget (1.0%) and the circuit-breaker thresholds
 - Deployment CEILING (85%). The FLOOR is gone and may not return without
   evidence — see "Cash is a position".
 - Screen filter thresholds (momentum, SMA20 distance, vol band, spread limits)
@@ -61,15 +71,15 @@ or changes what this bot is:
    DISTANCE; it may never remove the requirement or allow a naked position.
 8. Never move a stop down, and never widen a stop on an open losing position.
 9. No stablecoins as positions.
-10. A weekly fee budget must EXIST and may never exceed 3% of equity. The review
+10. A fee budget must EXIST and may never exceed 1.5% of equity per month. The review
     may tune it below that; it may not remove it or raise it past the ceiling.
 11. The daily circuit breaker must EXIST. Thresholds are tunable; removal is not.
 12. This section itself, and the requirement to log amendments with evidence.
 
 ### When amendment may happen — EVIDENCE, not the calendar
-Amendment is NOT tied to the weekly review. It may happen in ANY run that
-computes the trigger, including daily, because with unbounded tactical frequency
-a week is an arbitrary unit — 15 trades can happen in two days or in a month.
+Amendment happens ONLY in the weekly-review run, and ONLY when the evidence
+trigger is met. Any other run that believes a rule should change writes the
+observation to TRADE-LOG.md and changes nothing.
 
 TRIGGER: at least **10 closed trades since the last amendment**. Below that,
 change nothing and say so.
@@ -78,12 +88,15 @@ change nothing and say so.
   learn nothing, and destroy a rule that was working.
 - The counter resets on every applied amendment, so two changes cannot ride on
   the same 10 trades.
-- EXCEPTION — a single rule may be amended immediately, on fewer trades, if it is
-  demonstrably BROKEN rather than underperforming: it produced an API rejection
-  every time it was applied, or it is arithmetically unsatisfiable (as the 12%
-  target was against a 2:1-after-fees requirement). A broken rule is a defect,
-  not a hypothesis, and waiting for 10 trades to fix it is pointless when it
-  blocks all 10.
+- THERE IS NO "BROKEN RULE" FAST PATH. It was removed in v2: every one of the
+  six amendments in the first five days was justified under it. If a rule looks
+  broken, do THIS instead, in this order:
+  1. Make the account SAFE — place the missing stop, or close the position.
+  2. Write the evidence to TRADE-LOG.md: what you saw, the exact API response.
+  3. Leave TRADING-STRATEGY.md alone and let the weekly review adjudicate it.
+  A rule that produces a literal API rejection is a defect and the weekly review
+  will treat it as one — but it is still not an excuse for an unscheduled edit,
+  because "this rule is broken" is exactly how noise-fitting rationalises itself.
 - The weekly review still ALWAYS runs and always reports. It just may conclude
   "insufficient evidence, nothing changed", which is a valid and common outcome.
 
@@ -99,27 +112,31 @@ Capital is split so that "more trades" and "let good trades run" can coexist
 without fighting each other. A 15% trailing stop implies week-long holds; 2-3
 trades a day implies hour-long holds. They cannot be the same position.
 
-| | CORE | TACTICAL |
+| | CORE (primary) | TACTICAL (experimental) |
 |---|---|---|
-| RISK per position | 1.5% of equity | 1.5% of equity |
-| Position size | risk / stop distance (~$20 at $200) | risk / stop distance (~$49 at $200) |
-| Hard cap on size | 15% of equity | 25% of equity |
-| Max positions | 3 | 3 |
+| RISK per position | 2.0% of equity | 1.0% of equity |
+| Position size | risk / trail (~$26 at $197) | risk / trail (~$20 at $197) |
+| Hard cap on size | 20% of equity | 12% of equity |
+| Max positions | 4 | 1 |
 | New trades | agent's judgement | agent's judgement |
-| Stop | 15% below high-water, ratcheted | 6% below entry, to breakeven at +6% |
-| Target | none — let winners run, no time limit | +14% (2:1 AFTER fees) |
+| Stop | 15% below high-water, ratcheted | 10% below high-water, ratcheted |
+| Target | NONE — the trail is the exit | NONE — the trail is the exit |
+| Time limit | none | none |
 | Screen timeframe | daily bars | hourly bars |
-| Hold horizon | weeks to months | hours to ~2 days |
+| Hold horizon | weeks to months | days to weeks |
 
-### Size is DERIVED from risk, never fixed in dollars (amended 2026-09-15)
-`position size = (equity * 0.015) / stop distance`, then capped by the hard cap.
+### Size is DERIVED from risk, never fixed in dollars
+`position size = (equity * sleeve risk%) / trail distance`, then capped.
 
-At $197 equity: CORE = $2.96 / 0.15 = ~$20; TACTICAL = $2.96 / 0.06 = ~$49.
+At $197 equity: CORE = $3.94 / 0.15 = ~$26; TACTICAL = $1.97 / 0.10 = ~$20.
 
-This DELIBERATELY inverts the old table, where TACTICAL was the smaller
-position. A tighter stop earns more size for the same risk — that is the whole
-point of a tight stop. CORE's edge is not size, it is TIME: no target, no time
-limit, unlimited runway. TACTICAL gets size but a capped +14%.
+CORE is the PRIMARY sleeve and carries twice the per-trade risk. The previous
+version had this backwards: it gave TACTICAL $49 against CORE's $20, i.e. it put
+2.5x the capital behind the sleeve with the structurally negative edge. See
+"Why there is no profit target" below.
+
+Total risk if every slot is filled: 4 CORE x 2.0% + 1 TACTICAL x 1.0% = 9.0% of
+equity at risk simultaneously. That is the deliberate ceiling.
 
 Why this replaced fixed $40/$20 sizing: under the old rule CORE risked $8.00 per
 position (4.06% of equity) against TACTICAL's $1.20 (0.61%) — the "patient, safe"
@@ -128,26 +145,70 @@ sleeve carried **6.7x** the risk of the fast one, and three CORE positions put
 
 - Combined cap: 6 positions, and total deployment must stay AT OR BELOW 85%.
   There is NO minimum deployment. See "Cash is a position" below.
-- CORE is where "long trades if it is good" lives: there is NO time limit and NO
-  profit target. A core winner is held until its ratcheted stop takes it out.
-- TACTICAL positions that have neither hit target nor stop within ~48h are
-  reassessed and closed unless the setup is still valid. Dead money pays fees.
+- NEITHER sleeve has a time limit or a profit target. Every winner in this
+  account is held until its ratcheted stop takes it out. The 48h tactical
+  reassess-or-close rule is REMOVED: it truncated exactly the right tail the
+  system depends on.
 
-## Cadence change 2026-09-15: scan now runs every 30 min (SAFETY-CRITICAL)
+## Why there is no profit target (v2, 2026-09-15) — READ BEFORE PROPOSING ONE
+
+A fixed target/stop pair is a double-barrier bet. Under a zero-edge random walk
+the probability of touching the target before the stop is `stop/(stop+target)`.
+The old TACTICAL geometry, priced on the measured 0.65% round-trip fee:
+
+| | |
+|---|---|
+| size / stop / target | $49.38 / -6% / +14% |
+| net win | $6.91 - $0.32 fees = $6.59 |
+| net loss | $2.96 + $0.32 fees = $3.28 |
+| breakeven win rate | 3.28 / (6.59+3.28) = **33.2%** |
+| random-walk win rate | 6/(6+14) = **30.0%** |
+
+The gap is the fee. And it does NOT close by retuning: for any barrier pair the
+random-walk rate sits just below the fee-adjusted breakeven, because the fee is
+charged on both outcomes. A bounded-upside system therefore needs real
+predictive edge merely to reach ZERO.
+
+The 48h time limit made it strictly worse. The screen admits 0.4-6% daily vol;
+at ~3% vol a 48h window is sigma ~= 4.2%, so +14% was a 3.3-sigma move while -6%
+was 1.4-sigma. The losers were reachable inside the window and the winners were
+not, which pushes the realised rate BELOW the 30% random-walk floor.
+
+The only structure that pays without predictive edge is an UNBOUNDED right tail:
+trail the stop up, never cap the winner, and let one large move pay for many
+small stops. That is what CORE already was, and as of v2 it is what TACTICAL is
+too. TACTICAL now differs from CORE only in timeframe (hourly screen), trail
+tightness (10% vs 15%), size, and slot count — it is a FASTER trend-follow, not
+a different kind of bet.
+
+A side effect worth stating: with no target in either sleeve, nothing competes
+for Alpaca's single resting-order slot. The stop/target ambiguity that caused
+six live order-thrash cycles on 2026-09-15 is gone by construction, not by
+convention.
+
+## Grandfathered v1 positions
+Positions opened under v1 KEEP their existing stops. "Never move a stop down" is
+IMMUTABLE and outranks the new trail distance, so a v1 TACTICAL position on a 6%
+stop is NOT widened to 10%. It is managed to the v2 ratchet from where it sits,
+and closed only by its stop. Slot counts are likewise not enforced retroactively:
+if the account holds more TACTICAL positions than v2 allows, open no new ones
+until the count falls to the cap. Never force-close a compliant position to
+satisfy a count.
+
+## Cadence: scan runs every 30 min (v2: no longer safety-critical)
 Scan moved from hourly to every 30 minutes. The scheduler enforces a 1-HOUR
 MINIMUM interval, so `*/30` is rejected; the cadence is built from TWO routines
 on separate hourly crons, offset 30 min apart (`7 * * * *`, `37 * * * *`),
 both running the identical scan prompt.
 
-This is no longer a convenience setting. Under the same-day change to resting
-orders, a TACTICAL position rests its +14% TARGET at the exchange and has NO
-resting stop — its -6% level is enforced ONLY by the scan. The scan interval is
-therefore the resolution of the tactical stop, and an outage is an unprotected
-window. On 2026-09-14 the runner failed twice and nothing ran successfully
-between 20:27 and 23:30 (~3h). Lengthening this interval, or letting the scan
-routines fail silently, directly widens tactical downside risk.
+Under v2 every position in BOTH sleeves rests a full-size stop_limit at the
+broker, so the scan is NOT the mechanism protecting anything. A missed scan now
+costs a late trail raise, not an unstopped position. The ~3h blind window of
+2026-09-14 would have exposed nothing under these rules.
 
-CORE is unaffected and keeps its exchange-side stop_limit.
+The cadence is kept at 30 min anyway because the ratchet is what converts an
+open winner into a realised one, and a tighter ratchet loop gives back less of a
+move. It is a performance setting now, not a safety one.
 
 This does NOT raise trading frequency: scan never opens a position, only execute
 does, so the fee budget is untouched by cadence.
@@ -178,22 +239,38 @@ MEASURED friction: 0.65% per round trip (verified — a $12.31 BTC round trip co
 $0.08, taker fee both ways plus spread). BTC has the tightest spread in the
 universe, so 0.65% is a FLOOR and alts cost more.
 
-**WEEKLY FEE BUDGET: 1.5% of equity (~$3.00 at $200).**
+**MONTHLY FEE BUDGET: 1.0% of equity (~$2.00 at $200).** (v2: was 1.5% WEEKLY.)
 - Estimate the round-trip cost of every entry BEFORE placing it: notional x 0.65%
-  (use more for a wide-spread alt) and add it to the running weekly total.
-- Track the total in each daily snapshot as "fees used this week: $X / $3.00".
+  (use more for a wide-spread alt) and add it to the running monthly total.
+- Track the total in each daily snapshot as "fees used this month: $X / $2.00".
 - When the budget is exhausted, STOP OPENING NEW POSITIONS for the rest of the
-  UTC week. Exits are always still allowed — never let a budget trap a loser.
-- The budget resets Monday 00:00 UTC.
+  UTC month. Exits are always still allowed — never let a budget trap a loser.
+- The budget resets on the 1st, 00:00 UTC.
+
+### Why the weekly budget had to go
+1.5% of equity PER WEEK is **78% annualised** if spent. Even half-spent it is
+~39%/yr of drag. The benchmark this account is graded against — BTC
+buy-and-hold — pays ZERO. A budget framed as a safety ceiling was in fact
+licensing a rate of churn that no edge could survive.
+
+1.0% per MONTH is ~12%/yr at the ceiling, and the EXPECTED burn is about half
+that: a trend-follower holding weeks-to-months across 5 slots does perhaps 3-6
+round trips a month, which at ~$0.17 per $26 round trip is ~0.45%/month (~5%/yr).
+If the budget is regularly being exhausted, the system is churning and the
+diagnosis is the entry gate, not the budget.
 
 Why a budget rather than a trade count: it self-adjusts. Bigger positions and
 wider spreads buy fewer trades; cheap tight-spread entries buy more. A trade
 count cannot tell the difference between a $0.13 BTC round trip and a $0.40
 round trip in a thin alt, and it is the dollars that compound against you.
-At $20 tactical positions, 1.5%/week is roughly 23 round trips — more than the
-3/day this replaced, and it flexes with what you actually trade.
 
-## Why the tactical target is 14% and not 12%
+## Why the tactical target was 14% — SUPERSEDED 2026-09-15 (v2), kept as history
+**There is no tactical target any more.** See "Why there is no profit target".
+The analysis below is correct on its own terms and still wrong in outcome: it
+tuned the target until the R:R arithmetic passed the gate, without ever asking
+whether a BOUNDED target can clear the fee hurdle at all. It cannot. Preserved
+so the same reasoning is not rediscovered and re-adopted.
+
 Set 2026-09-10 after the gate refused every tactical trade. A 6% stop with a 12%
 target is 2:1 GROSS, but the 0.65% round-trip fee is charged on both legs, so the
 real ratio was 1.71:1 against a required 2:1 — a failure produced by the
@@ -258,15 +335,16 @@ each individual trade can look reasonable while the sequence is ruinous.
 3. Deployment <= 85%. There is NO deployment floor — see "Cash is a position".
 4. Respect each sleeve's position COUNT and RISK BUDGET (table above). Size is
    derived from the stop distance, never fixed in dollars. Trade frequency is
-   the agent's call, bounded by the weekly fee budget and circuit breaker.
-5. EVERY position carries a resting `stop_limit` GTC sell at the broker
+   the agent's call, bounded by the monthly fee budget and circuit breaker.
+5. EVERY position, in BOTH sleeves, carries a resting `stop_limit` GTC sell at
+   the broker for 100% of the HELD qty. Never a target leg, never a split.
 6. CORE: hard cut AND trail are both 15% below high-water, ratcheted UP only;
    tighten to 12% at +30% and 10% at +40%. (The old 20% trail sat BELOW the
    -15% hard cut, so the cut always fired first and the trail was decorative.)
-7. TACTICAL: hard stop 6% below entry; raise to breakeven once +6%; exit at
-   +14% target; never widen a tactical stop
-8. Never place a stop within 5% of current price (2% for tactical); NEVER move
-   any stop down
+7. TACTICAL: trail 10% below high-water, ratcheted UP only; tighten to 8% at
+   +20%. Initial stop is 10% below ENTRY. No target, no time limit.
+8. Never place a stop within 5% of current price; NEVER move any stop down —
+   including on grandfathered positions carrying a tighter v1 stop
 9. Never hold a stablecoin as a position
 10. Follow narrative momentum; exit a narrative after 2 consecutive failed
     trades in it (counted per sleeve)
@@ -295,68 +373,34 @@ TACTICAL (hourly bars):
 If a coin fails its screen, it is NOT tradeable this run no matter how good the
 news is. Log the failure reason.
 
-## What rests at the exchange, by sleeve (amended 2026-09-15, revised same day)
+## What rests at the exchange (v2, 2026-09-15)
 Alpaca crypto gives each position exactly ONE resting-order slot, because a
-resting sell reserves the quantity it names and there is no oco/bracket. So for
-every position you choose: protect the downside, or capture the upside. Not both.
+resting sell reserves the quantity it names and there is no oco/bracket.
 
-The two sleeves resolve that differently, because only one of them has a target:
+Under v2 that constraint costs nothing, because **neither sleeve has a target**:
 
 | | Rests at the EXCHANGE | Enforced by the 30-MIN SCAN |
 |---|---|---|
 | **CORE** | `stop_limit` @ 100% of held qty | the ratchet |
-| **TACTICAL** | `limit` sell @ entry * 1.14, 100% of qty | the -6% stop |
+| **TACTICAL** | `stop_limit` @ 100% of held qty | the ratchet |
 
-**CORE keeps its stop.** CORE has no profit target by design — it runs until the
-ratcheted trail takes it out — so nothing competes for its slot. Its downside
-stays protected 24/7 at the broker, even when no run happens.
+**One rule, both sleeves: a full-size `stop_limit`, always.** Downside is
+protected 24/7 at the broker even when no run happens, and the scan's only job
+on an open position is to raise the trail.
 
-**TACTICAL rests its TARGET instead of its stop.** A tactical trade has a fixed
-+14% exit, and capturing that exactly, the moment it prints, is worth more than
-an exchange-side stop on a position whose stop is only 6% away and which is
-reassessed every 30 minutes. The -6% stop is enforced by the scan: every run
-reads each tactical position and closes at market if it is at or below -6%.
+### This supersedes the 2026-09-15 "TACTICAL rests its target" decision
+That decision traded exchange-side downside protection for exact capture of a
++14% target. v2 deletes the target, so there is nothing left to buy with that
+risk and the trade-off no longer exists. Consequences of the reversal:
 
-### This is a DELIBERATE risk decision, directed by the account owner
-Recorded plainly so no future review "fixes" it without knowing the trade-off.
+- No sleeve is ever unprotected between scans, or during a runner outage. The
+  ~3h blind window of 2026-09-14 would no longer have exposed anything.
+- The scan is no longer safety-critical. It still runs every 30 min to ratchet,
+  but a missed scan now costs a late trail raise, not an unstopped position.
+- The stop/target contention that produced six live order-thrash cycles on
+  2026-09-15 is removed at the root: `execute` and `scan` can no longer want
+  different legs, because there is only one leg.
 
-A tactical position has NO exchange-side stop. Between scans it is unprotected,
-and if the runner is down it stays unprotected for as long as the outage lasts.
-On 2026-09-14 the runner failed twice (22:58 execute, 23:10 scan) and nothing ran
-successfully between 20:27 and 23:30 — a ~3h blind window. A tactical position
-held through that window today would rely entirely on the market not falling.
-
-The reasoning ACCEPTED in exchange:
-- A tactical stop is only 6% away and the target is fixed at +14%, so the upside
-  being captured exactly is a large share of the whole trade's edge.
-- Tactical positions are short-lived by design (<= 48h), so the exposure window
-  is bounded.
-- CORE — the sleeve held for weeks, where an outage is most likely to overlap a
-  position — keeps its exchange-side stop, so the long-duration risk is covered.
-
-The scan cadence IS the tactical stop's resolution. It must not be lengthened
-beyond 30 minutes without revisiting this whole section.
-
-### Why one slot, not two (VERIFIED LIVE 2026-09-15)
-Tested against the live account, all five order paths:
-
-| Attempt | Result |
-|---|---|
-| `order_class: bracket` | REJECTED `42210000 ... advanced order_class: otoco` |
-| `order_class: oco` | REJECTED `40010001 invalid order type for crypto order` |
-| `trailing_stop` | REJECTED `40010001 invalid order type for crypto order` |
-| `stop` (stop-market) | REJECTED `40010001 invalid order type for crypto order` |
-| `stop_limit` | ACCEPTED — the only usable type |
-
-And a resting sell RESERVES the quantity it names. Verified on the live ETH
-position (balance 0.015302647, already fully covered):
-`insufficient balance for ETH (requested: 0.001, available: 0)`.
-
-Binance, Bybit and Crypto.com all support OCO and would allow both legs at once.
-Alpaca crypto does not. If the bot ever moves to a venue with OCO, both legs
-should rest and this entire section collapses to "rest both".
-
-### The split remains BANNED
 Splitting the quantity (stop on part, target on the rest) is NOT the answer to
 the one-slot limit and must not be reintroduced. It leaves a slice with no stop
 AND no target, and creates orphan legs when one side fills. That is exactly how
@@ -405,21 +449,24 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 ## Entry Checklist (document all before placing)
 - What is the specific catalyst? (unlock, upgrade, listing, ETF flow, macro)
 - Is the narrative in momentum, or is it rolling over?
-- Where is the -15% hard cut in dollars?
-- Where is the initial stop_limit (trigger and limit)?
-- What is the target, minimum 2:1 R:R after 0.5% fees?
+- Where is the hard cut in dollars (15% CORE / 10% TACTICAL below entry)?
+- Where is the initial stop_limit (trigger and limit = trigger * 0.95)?
+- There is NO target to state. Do not compute an R:R ratio against an invented
+  target — a trend-follow has no denominator. State instead: what would have to
+  happen for this to run 30%+, and what kills the thesis?
 
 ## Buy-Side Gate (ALL must pass, else skip and log the reason)
 - The sleeve is stated explicitly (CORE or TACTICAL) before sizing
-- CORE: positions after fill <= 3, cost ~$40
-- TACTICAL: positions after fill <= 3, cost ~$20
-- Estimated round-trip fee for THIS trade + fees already used this week
-  <= 1.5% of equity (~$3.00). If it would breach, SKIP and log the budget state.
+- CORE: positions after fill <= 4, cost ~$26 (run state.sh for the live number)
+- TACTICAL: positions after fill <= 1, cost ~$20
+- Estimated round-trip fee for THIS trade + fees already used THIS MONTH
+  <= 1.0% of equity (~$2.00). If it would breach, SKIP and log it.
 - Circuit breaker not tripped: realized losses today < 5% of equity, and not
   3 consecutive tactical losses today
-- Combined positions after fill <= 6, total deployment <= 85% of equity
-- Position size == (equity * 0.015) / stop distance, capped at 15% (CORE) /
-  25% (TACTICAL) of equity. NEVER a fixed dollar amount.
+- Combined positions after fill <= 5, total deployment <= 85% of equity
+- Position size == (equity * risk%) / trail distance, capped at 20% (CORE) /
+  12% (TACTICAL) of equity. Risk% is 2.0 CORE / 1.0 TACTICAL. NEVER a fixed
+  dollar amount — read both sizes off `state.sh`.
 - Position cost <= available cash
 - Pair is in the Alpaca tradable crypto USD list (`alpaca.sh assets crypto`)
 - Pair is NOT a stablecoin
@@ -434,8 +481,12 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - The instrument is crypto (never a stock, never an option)
 
 ## Sell-Side Rules
+Both sleeves exit the same way: **the ratcheted stop_limit is the exit.** There
+is no profit target and no time limit anywhere in this system.
+
 CORE:
-- Unrealized <= -15% -> close at market, cancel the resting stop
+- Unrealized <= -15% and the stop did not fill (gapped through) -> cancel the
+  stop, close at market
 - Thesis broken (catalyst dead, narrative rolling over, exploit/depeg/delisting)
   -> close even if not at -15%
 - Up >= +40% -> ratchet stop to 10% below high-water
@@ -444,40 +495,33 @@ CORE:
 - NO profit target. Let it run; the ratchet decides the exit.
 
 TACTICAL:
-- Unrealized <= -6% -> close at market, cancel the resting stop
-- A resting `limit` sell at entry * 1.14 covers 100% of the qty from ENTRY.
-  That is the tactical exit and it fills itself at the exchange.
-- The -6% stop is enforced BY THE SCAN, not by a resting order. Every scan run
-  reads each tactical position and closes at market if unrealized <= -6%.
-- Up >= +6% -> the notional stop moves to BREAKEVEN. There is no resting stop to
-  amend, so this is a LOGGED level, not an order: record it in TRADE-LOG and the
-  scan enforces the new level from then on.
-- Up >= +10% -> notional stop to entry +4%, logged the same way.
-- The resting limit fills itself at +14%. If a run sees a position at or above
-  +14% with the limit UNFILLED (gapped past, or the leg went missing), cancel it
-  and close at market immediately.
-- ONE resting leg, 100% of the qty. Never split, and never leave a tactical
-  position with neither a resting target nor a logged stop level.
-- Open > ~48h without hitting target or stop -> reassess; close unless the
-  hourly screen still PASSES
+- Unrealized <= -10% and the stop did not fill (gapped through) -> cancel the
+  stop, close at market
+- Up >= +20% -> ratchet stop to 8% below high-water
+- Otherwise -> keep stop 10% below high-water
+- NO profit target and NO 48h rule. A tactical position that is still trending
+  is a WINNER, not dead money; the trail decides when it is over.
 - Thesis broken -> close immediately
+- Grandfathered v1 positions keep their tighter stop and are never widened.
 
 BOTH:
 - Narrative with 2 consecutive failed trades -> exit all positions in it
-- CORE found without a full-size resting stop_limit -> place one immediately
-- TACTICAL found without a full-size resting limit at its +14% target ->
-  place one immediately, and verify its -6% level is logged in TRADE-LOG
+- Any position found without a full-size resting stop_limit -> place one
+  immediately. If placement is rejected twice, close at market rather than hold
+  it unprotected.
+- Any position found carrying a resting `limit` SELL (a v1 target leg) -> cancel
+  it and place a full-size stop_limit. Target legs are banned in v2.
 
 ## Every-Run Invariants
 Because crypto trades 24/7 and runs are 6h apart, every run (not just one of
 them) must:
 1. Reconcile live positions against TRADE-LOG (a fill may have happened between runs)
 2. Verify every position has a resting stop_limit; place one if missing
-3. Close anything at or below -15% that the stop failed to catch
-4. Ratchet stops upward where the high-water mark has risen (CORE), and raise
-   tactical stops to breakeven once +6%
+3. Close anything past its hard cut (-15% CORE / -10% TACTICAL) that the
+   stop_limit gapped through without filling
+4. Ratchet stops upward wherever the high-water mark has risen, in BOTH sleeves
 5. Tag every position in TRADE-LOG with its sleeve. An untagged position cannot
-   be managed by the right rules — if the tag is missing, infer it from position
-   its STOP DISTANCE (~15% = CORE, ~6% = TACTICAL) and record it. NEVER infer
-   from size: since 2026-09-15 size is derived from risk, so TACTICAL is the
-   LARGER position and a size-based guess returns the wrong sleeve.
+   be managed by the right rules — if the tag is missing, infer it from its
+   TRAIL DISTANCE (~15% = CORE, ~10% = TACTICAL, ~6% = grandfathered v1
+   TACTICAL) and record it. NEVER infer from size: size is derived from risk and
+   the two sleeves now sit ~$26 vs ~$20, too close to distinguish.

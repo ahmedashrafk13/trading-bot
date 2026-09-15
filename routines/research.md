@@ -40,14 +40,13 @@ Crypto trades 24/7 and runs are 6h apart, so nothing watches between runs.
   bash scripts/state.sh
 This one call gives you: UTC time FROM THE BROKER CLOCK (never trust the local
 machine clock), equity/cash/deployment, every position with its age and its exact
-stop coverage percentage, the weekly fee-budget state, the circuit-breaker state,
+stop coverage percentage, the MONTHLY fee-budget state, the circuit-breaker state,
 and the amendment-trigger count. Use these numbers. Do NOT re-derive them by
 adding up markdown rows — that is how the budget and the breaker drift.
 Every position must carry exactly ONE resting leg covering 100% of the held
 qty, and WHICH leg depends on the sleeve:
-  CORE     -> resting stop_limit (CORE has no target, so its slot holds the stop)
-  TACTICAL -> resting limit sell @ entry*1.14 (its -6% stop is enforced by the
-              30-min SCAN, not by a resting order)
+  BOTH SLEEVES -> resting stop_limit @ 100% of held qty. Neither sleeve has a
+              profit target in v2, so nothing competes for the slot.
 A position with NO resting leg (*** NAKED *** / *** n% UNRESERVED ***) is the
 highest-priority item in the run. Never split the quantity across two legs.
 Then, if you need the raw detail:
@@ -58,16 +57,14 @@ Then, if you need the raw detail:
 2. RESTING LEG, BY SLEEVE. Exactly one leg, 100% of held qty, never split.
    CORE missing its stop:
      bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.95>","time_in_force":"gtc"}'
-   TACTICAL missing its target:
-     bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"limit","limit_price":"<entry*1.14>","time_in_force":"gtc"}'
+   Carrying a v1 `limit` target leg -> cancel it, then place the stop above.
    NOTE: trailing_stop, stop and oco/bracket are all REJECTED for crypto.
 3. HARD CUT — THRESHOLD DEPENDS ON THE SLEEVE. Read the sleeve from TRADE-LOG,
-   or infer it from the stop distance (~15% = CORE, ~6% = TACTICAL). NEVER infer
-   from position size: size is risk-derived since 2026-09-15, so TACTICAL is the
-   LARGER position and a size guess returns the wrong sleeve.
+   or infer it from the TRAIL DISTANCE (~15% = CORE, ~10% = TACTICAL, ~6% =
+   grandfathered v1 TACTICAL). NEVER infer from position size: both sleeves size
+   from risk and sit ~$26 vs ~$20, far too close to tell apart.
      CORE     -> cut at unrealized <= -15%
-     TACTICAL -> cut at unrealized <=  -6%, or past whatever ratcheted level is
-                 logged in TRADE-LOG (breakeven at +6%, entry+4% at +10%)
+     TACTICAL -> cut at unrealized <= -10% (grandfathered v1: its logged level)
    For TACTICAL this IS the stop — there is no resting stop order behind it, so
    if this run does not close the position nothing will until the next run.
    For CORE the stop_limit can still be gapped through without filling, so never
@@ -76,19 +73,11 @@ Then, if you need the raw detail:
      bash scripts/alpaca.sh close SYM/USD
 4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
    CORE: trail 15% below high-water; 12% once up +30%; 10% once up +40%.
-   TACTICAL: the TARGET rests at the exchange and fills itself; the STOP is a
-   LOGGED LEVEL the scan enforces. Alpaca crypto gives one resting slot per
-   position (oco/bracket rejected, a resting sell reserves its qty), and tactical
-   spends that slot on the target.
-     resting limit @ entry*1.14 -> leave it alone, it fills itself
-     +6%  -> raise the LOGGED stop level to BREAKEVEN (write it to TRADE-LOG;
-             there is no resting stop order to amend)
-     +10% -> raise the LOGGED stop level to entry +4%
-     +14% with the limit UNFILLED -> it gapped or went missing: cancel, close now
-   Never split the qty across two legs.
-   Reassess and close if open >48h — TACTICAL ONLY; CORE has NO time limit and
-   is never closed for age.
-   Never move any stop down. Never place one within 5% of price (2% tactical).
+   TACTICAL: trail 10% below high-water; 8% once up +20%.
+   NO profit target in either sleeve: never close a winner for reaching a level.
+   NO time limit in either sleeve: never close a position for age.
+   Never move any stop down — a grandfathered v1 position KEEPS its tighter stop
+   and is never widened. Never place a stop within 5% of current price.
 Log every action to memory/TRADE-LOG.md. Any EXIT row MUST record:
   `Exit time (UTC)`, `Exit price`, `REALIZED P&L $X`, `fees $X`, and the reason.
 Without an explicit realized figure the 5%-daily-loss circuit breaker cannot be
@@ -133,14 +122,30 @@ STEP D — Write a dated entry to memory/RESEARCH-LOG.md:
   TACTICAL HOLD is only a recommendation: the execute run may originate a
   tactical entry later if the screen and a fresh catalyst justify it. Say what
   would have to change for tactical to become worth trading today.
-- Fee budget state: fees used this week so far vs the 1.5% (~$3.00) ceiling
+- Fee budget state: fees used this MONTH so far vs the 1.0% (~$2.00) ceiling
+
+STEP D2 — APPEND TO THE SHADOW LOG (memory/SHADOW-LOG.md). Do this every run,
+including runs where nothing is bought — especially those.
+
+For EVERY pair that PASSED a sleeve screen in STEP D but is NOT being entered,
+append one row: date, pair, sleeve, the price from THIS screen run, and the
+one-line reason it was skipped (budget, slot full, weaker catalyst, no catalyst,
+breaker, spread). Use the screen price, never a price looked up afterwards.
+
+Then SCORE any unscored row that is now >= 5 days old: fill in the % change from
+its screen price and the best close in the window, and mark it scored. Get the
+prices with `bash scripts/alpaca.sh bars <PAIR> 1D` — one call per pair, and
+skip a pair whose bars are unavailable rather than guessing.
+
+This is the only source of statistical power this account has: ~4 real closes a
+month versus ~50 shadow observations. Do not skip it because nothing was traded.
 
 STEP E — Notification: silent unless urgent (a position gapped past -15% without
 its stop filling, an exploit/depeg/delisting on something held, a macro shock).
   bash scripts/clickup.sh "<one line>"
 
 STEP 5 — COMMIT AND PUSH:
-  git add memory/RESEARCH-LOG.md memory/TRADE-LOG.md
+  git add memory/RESEARCH-LOG.md memory/SHADOW-LOG.md memory/TRADE-LOG.md
   git commit -m "research $DATE"
   git push origin main
 On push failure: git pull --rebase origin main, then push again.
@@ -153,3 +158,11 @@ next run clones `main`, so work parked on any other branch is invisible to it an
 the memory silently stops accumulating. If the push is genuinely REJECTED by the
 remote, retry once after `git pull --rebase origin main`; if it still fails, say
 so plainly in your summary rather than routing around it.
+
+AMENDMENT FREEZE (v2) — this run may NEVER edit memory/TRADING-STRATEGY.md.
+Only the weekly-review run may, and only at >= 10 closed trades since the last
+amendment. Between 2026-09-10 and 2026-09-15 the rulebook was amended six times
+on a sample of ONE closed trade, and two of those amendments contradicted each
+other badly enough to cause six live order-thrash cycles in a day. If a rule
+looks broken: make the account safe, write the evidence to memory/TRADE-LOG.md,
+and leave the rulebook alone.

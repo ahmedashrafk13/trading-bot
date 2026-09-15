@@ -95,7 +95,7 @@ cadence is built from TWO routines, each on its own hourly cron, offset 30 min:
 Both take the SAME `scan.md` prompt and the SAME env vars.
 
 This cadence is now SAFETY-CRITICAL, not a convenience. A TACTICAL position
-rests its +14% TARGET at the exchange, not a stop — so its -6% stop exists ONLY
+SUPERSEDED (v1): TACTICAL rested its +14% target at the exchange, so its stop existed ONLY
 as a level the scan enforces. If the scan does not run, nothing closes a losing
 tactical position. Do not lengthen this interval without re-reading
 "What rests at the exchange, by sleeve" in memory/TRADING-STRATEGY.md.

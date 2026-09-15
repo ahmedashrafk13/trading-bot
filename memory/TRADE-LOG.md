@@ -964,3 +964,68 @@ No qty or price level changed — same values used in every prior restoration.
 
 **Execute at 18:07:** same choice as before — restore target legs if TACTICAL-rests-target policy stands, or document scan prompt as authoritative to end the cycle.
 
+
+---
+
+## 2026-09-15 — v2 RULEBOOK: targets deleted, sleeves inverted, rulebook frozen
+
+Rule change, not a trade. No position opened or closed; no realized P&L.
+No live order was modified — all three positions already carry a full-size
+resting `stop_limit`, which is the v2-compliant shape.
+
+**Why.** The account was structurally unable to be profitable, for three
+reasons that are arithmetic rather than bad luck.
+
+1. **Bounded targets cannot clear the fee hurdle.** The TACTICAL geometry
+   ($49.38 / -6% / +14%) needed a **33.2%** win rate to break even after the
+   measured 0.65% round trip, against a **30.0%** zero-edge random-walk rate
+   (6/(6+14)). That gap is the fee, and it does not close by retuning: for any
+   fixed target/stop pair the random-walk rate sits just under the fee-adjusted
+   breakeven, because the fee is charged on both outcomes. The 48h time limit
+   made it strictly worse — at ~3% daily vol a 48h window is sigma ~= 4.2%, so
+   +14% was a 3.3-sigma move while -6% was 1.4-sigma: losers reachable inside
+   the window, winners not.
+2. **Capital was behind the wrong sleeve.** TACTICAL (bounded, negative EV) was
+   sized at $49.38 against CORE's $19.75 — 2.5x the capital on the sleeve that
+   could not win.
+3. **The fee budget licensed fatal churn.** 1.5% of equity per WEEK is 78%
+   annualised if spent. The benchmark, BTC buy-and-hold, pays zero.
+
+**Changes applied:**
+
+| | v1 | v2 |
+|---|---|---|
+| CORE risk / size / slots | 1.5% / ~$20 / 3 | **2.0% / ~$26 / 4** |
+| TACTICAL risk / size / slots | 1.5% / ~$49 / 3 | **1.0% / ~$20 / 1** |
+| CORE stop | 15% trail | unchanged |
+| TACTICAL stop | 6% below entry | **10% trail, 8% at +20%** |
+| Profit target | CORE none, TACTICAL +14% | **NONE, both sleeves** |
+| Time limit | TACTICAL 48h | **none, both sleeves** |
+| Resting leg | CORE stop / TACTICAL target | **stop_limit @100%, both** |
+| Fee budget | 1.5% weekly | **1.0% monthly** |
+| May amend the rulebook | any run | **weekly-review only, at N>=10** |
+
+**The thrash is fixed at the root.** Six order-thrash cycles occurred on
+2026-09-15 (00:09, 03:37, 06:11, 06:37, 12:11, 12:37) because `execute` placed
+target legs per the repo while `scan` cancelled them per a stale stored trigger
+prompt. With no target in either sleeve, nothing competes for Alpaca's single
+resting-order slot and the two runs can no longer want different legs.
+
+**Grandfathered:** UNI and XRP are v1 TACTICAL on 6% stops. "Never move a stop
+down" is IMMUTABLE and outranks the new 10% trail, so both KEEP their current
+stops and are managed to the v2 ratchet from where they sit. The account holds 2
+TACTICAL against a v2 cap of 1: no new tactical entries until the count falls to
+1, and neither is force-closed to satisfy the cap.
+
+**New file: memory/SHADOW-LOG.md.** Every screen PASS that is not bought is
+recorded with its screen price and scored at T+5d. ~50 observations/month
+against ~4 real closes — the only statistical power this account has.
+
+**Benchmark is now mandatory in the daily summary**, cumulative and against the
+fixed baseline BTC $77,153.29 @ 2026-09-10 19:39 UTC. As of 13:25 UTC today:
+bot -1.25%, BTC -0.29%, edge -0.96pp. At N=1 closed trade that number is noise
+and is recorded for the series, not as a judgement.
+
+**Expectation going in:** fewer trades, most weeks with zero entries, and a
+result that depends entirely on whether one CORE position runs far enough to pay
+for the stop-outs. A quiet scan is the system working.

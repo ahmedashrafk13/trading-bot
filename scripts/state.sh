@@ -38,8 +38,12 @@ print(f"UTC NOW (broker clock)   {now:%Y-%m-%d %H:%M} UTC   [local clock is NOT 
 print(f"EQUITY ${eq:.2f} | CASH ${cash:.2f} | DEPLOYED {(eq-cash)/eq*100:.1f}% (CEILING 85%, no floor)")
 # Size is derived from risk, never fixed in dollars. Printing it here keeps the
 # arithmetic out of the run prompts, where it was previously re-derived by hand.
-risk = eq*0.015
-print(f"SIZE NOW   CORE ${min(risk/0.15, eq*0.15):.2f} (15% stop) | TACTICAL ${min(risk/0.06, eq*0.25):.2f} (6% stop)   risk ${risk:.2f}/trade (1.5%)")
+core_risk, tac_risk = eq*0.020, eq*0.010
+core_sz = min(core_risk/0.15, eq*0.20)
+tac_sz  = min(tac_risk/0.10, eq*0.12)
+print(f"SIZE NOW   CORE ${core_sz:.2f} (15% trail, risk ${core_risk:.2f} = 2.0%, max 4)"
+      f" | TACTICAL ${tac_sz:.2f} (10% trail, risk ${tac_risk:.2f} = 1.0%, max 1)")
+print(f"           BOTH SLEEVES TRAIL. No profit target, no time limit, no target leg.")
 print()
 
 # --- positions, ages, stop coverage -------------------------------------------
@@ -73,34 +77,31 @@ for p in pos:
                 et = dt.datetime.fromisoformat(v).replace(tzinfo=dt.timezone.utc)
                 age = f"{(now-et).total_seconds()/3600:.1f}h"
             except Exception: age = '?'
-    # ONE resting leg per position, covering 100%, and WHICH leg depends on the
-    # sleeve: CORE rests a stop_limit, TACTICAL rests its +14% limit target (its
-    # -6% stop is a level the 30-min scan enforces, not an order). So "no stop"
-    # is NOT automatically naked — but a SPLIT across both legs is always wrong.
+    # ONE resting leg per position and it is ALWAYS a stop_limit at 100% of the
+    # held qty, in BOTH sleeves. Targets were removed 2026-09-15 (v2): neither
+    # sleeve has a profit target any more, so nothing competes for the slot and
+    # there is no stop/target ambiguity left to thrash over.
     total = pct_cov + pct_tgt
-    if pct_cov > 0.5 and pct_tgt > 0.5:
-        flag = f'*** SPLIT — BANNED: {pct_cov:.0f}% stop + {pct_tgt:.0f}% target, consolidate to ONE leg ***'
-    elif total < 0.5:
-        flag = '*** NAKED — no resting leg at all ***'
-    elif total < 99.5:
-        flag = f'*** ONLY {total:.0f}% RESERVED ***'
-    elif pct_cov >= 99.5:
-        flag = 'OK stop @100% (CORE shape)'
+    if pct_tgt > 0.5:
+        flag = f'*** TARGET LEG {pct_tgt:.0f}% — BANNED in v2: cancel it, re-place a full stop_limit ***'
+    elif pct_cov < 0.5:
+        flag = '*** NAKED — no resting stop at all ***'
+    elif pct_cov < 99.5:
+        flag = f'*** ONLY {pct_cov:.0f}% STOPPED ***'
     else:
-        flag = 'OK target @100% (TACTICAL shape; -6% stop enforced by scan)'
+        flag = 'OK stop @100%'
     print(f"  {sym:9} qty={qty:<12.6f} P&L {plpc:+6.2f}%  stop {pct_cov:5.1f}% / target {pct_tgt:5.1f}%"
           f" / unreserved {unreserved:4.1f}%  [{flag}]  age {age or 'unknown'}")
-    if age and age!='?' and float(age[:-1]) > 48:
-        print(f"    !! open >48h — reassess-or-close rule applies")
 print()
 
 # --- fee budget ---------------------------------------------------------------
-fees_wk = 0.0
-for m in re.finditer(r'Est\. round-trip fee \| \$([0-9.]+)', log):  fees_wk += float(m.group(1))
-budget = eq*0.015
-print(f"FEE BUDGET  ${fees_wk:.2f} / ${budget:.2f} used this week (1.5% of equity)")
-print(f"            {'HEADROOM $%.2f' % (budget-fees_wk) if fees_wk < budget else '*** EXHAUSTED — no new entries until Monday ***'}")
-print(f"            week started {monday}")
+fees_mo = 0.0
+for m in re.finditer(r'Est\. round-trip fee \| \$([0-9.]+)', log):  fees_mo += float(m.group(1))
+budget = eq*0.010
+month_start = today.replace(day=1)
+print(f"FEE BUDGET  ${fees_mo:.2f} / ${budget:.2f} used this MONTH (1.0% of equity)")
+print(f"            {'HEADROOM $%.2f' % (budget-fees_mo) if fees_mo < budget else '*** EXHAUSTED — no new entries until the 1st ***'}")
+print(f"            month started {month_start}  [budget is a CEILING, expected burn is ~half]")
 print()
 
 # --- circuit breaker ----------------------------------------------------------

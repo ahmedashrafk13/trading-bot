@@ -86,7 +86,9 @@
   practice was REMOVED on 2026-09-15 and must not be reintroduced: the slice
   carrying the take-profit has NO stop, and that is exactly how DOT sat naked
   for 70h and closed at -8.0%. The stop now covers 100% of every position and
-  CORE rests its stop; TACTICAL rests its +14% target and its -6% stop is
+  v2 (2026-09-15): BOTH sleeves rest a full-size stop_limit. Neither has a
+  profit target. The v1 arrangement below is SUPERSEDED — it rested a +14%
+  target on TACTICAL and its -6% stop was
   enforced by the 30-minute scan instead.
 - ORDER TYPES, RE-VERIFIED LIVE 2026-09-15 (all five paths tested):
   * `order_class: bracket` -> 42210000 "advanced order_class: otoco"
