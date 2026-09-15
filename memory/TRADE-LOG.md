@@ -1057,3 +1057,53 @@ for the stop-outs. A quiet scan is the system working.
 **UNIUSD ratchet:** Current $6.3954 is below entry $6.56226. No ratchet.
 
 **No new positions opened. No rule edits.**
+
+---
+
+### 2026-09-15T14:51 UTC — EXIT — TACTICAL (v1 grandfathered) — UNI/USD — STOPPED OUT
+
+Stop_limit order `3ad1dca9` (placed by 14:11 scan) triggered and filled automatically at the broker.
+
+| Field | Value |
+|---|---|
+| Exit time (UTC) | 2026-09-15T14:51:42Z |
+| Exit type | stop_limit fill (stop triggered, filled within limit) |
+| Qty | 7.49691075 |
+| Stop trigger | $6.1685 (-6% below entry $6.56226) |
+| Fill price | $6.1608 (between trigger $6.1685 and limit $5.8601 — filled normally) |
+| Exit proceeds | ~$46.19 |
+| Cost basis | $49.20 |
+| Gross P&L | -$3.01 |
+| Sell fee (~0.35%) | -$0.16 |
+| Buy fee (in kind, reflected in cost basis) | -$0.12 |
+| **REALIZED P&L** | **≈ -$3.17** (gross -$3.01, sell fee -$0.16) |
+
+**Circuit breaker status after this exit:**
+- Realized losses today (UTC 2026-09-15): ~$3.17 vs $9.58 limit (5% of equity) → **CLEAR**
+- Consecutive tactical losses: DOT (closed 2026-09-14, -$1.61) → UNI (closed today, -$3.17) = **2 of 3** → **CLEAR**
+
+**Reason:** Stop hit at -6% from entry. UNI's CLARITY Act catalyst (Senate cloture vote, scheduled ~18:15 UTC today) was a binary event and the position was sized smaller for that reason. The -6% stop executed correctly.
+
+**Narrative:** DeFi (UNI, AAVE, LINK, CRV, LDO...) — **1** consecutive failed DeFi trade. Exit-narrative rule needs 2.
+
+---
+
+### 2026-09-15T17:08 UTC — SCAN — QUIET, NO ACTION
+
+**State:** EQUITY $191.62 | CASH $135.05 | DEPLOYED 29.5% (down from 54.8% — UNI exit freed ~$46). Fee budget $0.52/$1.92 used (monthly). Circuit breaker clear ($3.17 realized losses vs $9.58 limit; 2 consecutive tactical losses vs 3 threshold). Amendment trigger 0/10.
+
+**Positions (v2 shape — stop_limit @100%):**
+- ETHUSD (CORE): -7.35%, stop 100% @ $2223.69 (order `1ebb2562`) ✓ — no action
+- XRPUSD (v1 TACTICAL, 6% trail): -1.78%, stop 100% @ $1.3303 (order `607e3472`) ✓ — no action
+
+**Gap check (STEP 3):** ETH -7.35% vs CORE -15% ✓. XRP: current $1.38668 > stop $1.3303, not gapped through ✓. No close needed.
+
+**Ratchet (STEP 4):**
+- ETH (CORE, 15% trail): HWM $2616.11, current $2417.646 below HWM → no new high → no ratchet.
+- XRP (v1 TACTICAL, 6% trail): HWM $1.4152 (from 14:11 ratchet log), current $1.38668 below HWM → no new high → no ratchet.
+
+**UNI exit logged above** (stopped out at 14:51 UTC while this run was not active; discovered via order history reconciliation this run).
+
+**XRP thesis flag (carry-forward):** CLARITY Act Senate cloture vote ~18:15 UTC, still ~1h ahead. Execute at 18:07 UTC must check the outcome and close XRP at market if the motion to proceed fails — thesis would be broken.
+
+**No orders placed, no stops cancelled. No clickup notification sent (scan acted on nothing — documentation only).**
