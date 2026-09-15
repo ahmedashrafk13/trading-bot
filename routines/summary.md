@@ -84,9 +84,10 @@ breaker wrongly. Sum today's REALIZED rows to evaluate the breaker.
 
 STEP B — Read the tail of memory/TRADE-LOG.md for the most recent daily snapshot
 (that is yesterday's equity, needed for the day-over-day figure). Count trades
-dated today, and ALL trades this week (Mon 00:00 UTC onwards) so you can total
-the fees they cost — that running total is what the 1.5% (~$3.00) weekly fee
-budget is measured against. There is no trade-count cap any more.
+dated today, and ALL trades this MONTH (the 1st, 00:00 UTC onwards) so you can
+total the fees they cost — that running total is what the 1.0% (~$2.00) MONTHLY
+fee budget is measured against. It resets on the 1st, NOT on Monday. There is no
+trade-count cap any more.
 
 STEP C — Pull final state and compute:
   bash scripts/alpaca.sh account
@@ -129,8 +130,17 @@ STEP E — Send ONE ClickUp message (always, even on no-trade days), <= 15 lines
     SYM ±X.X% (stop \$X)
   Next 6h: <one-line plan>"
 
+STEP OBS — SELF-DEFECT INBOX. If anything in THIS prompt contradicted
+memory/TRADING-STRATEGY.md or another prompt, was rejected by the API, or was
+too ambiguous to follow without guessing, append ONE row to
+memory/OBSERVATIONS.md in the format that file defines, naming BOTH files so the
+contradiction can be reproduced without rerunning anything.
+Append only. Do NOT fix the prompt, the strategy doc or any rule yourself — only
+the weekly-review run may edit those. Do NOT log trading opinions here; those go
+to TRADE-LOG.md. Most runs append nothing, which is the normal outcome.
+
 STEP 6 — COMMIT AND PUSH:
-  git add memory/TRADE-LOG.md
+  git add memory/TRADE-LOG.md memory/OBSERVATIONS.md
   git commit -m "daily snapshot $DATE"
   git push origin main
 On push failure: git pull --rebase origin main, then push again.

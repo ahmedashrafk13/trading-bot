@@ -24,7 +24,7 @@ Paste these once. After that, `git push` is the only deployment step forever.
 
 ---
 
-## scan  (two routines: `7 * * * *` and `37 * * * *`)
+## scan  (`7 * * * *`)
 
 ```
 Read the file routines/scan.md in this repository and follow it exactly, from

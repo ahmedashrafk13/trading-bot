@@ -111,11 +111,13 @@ STEP D — Write a dated entry to memory/RESEARCH-LOG.md:
 - The CORE and TACTICAL shortlists from scripts/screen.sh (coins + key metrics)
 - Ideas TAGGED BY SLEEVE. For each: sleeve, catalyst, entry, stop trigger and
   limit, target (CORE: none, let it run), and R:R AFTER ~0.5% round-trip fees
-  * CORE ideas: $40, only from the CORE shortlist. NO fixed count cap — what
-    binds is the 3-position sleeve limit and the weekly fee budget.
-  * TACTICAL ideas: $20, only from the TACTICAL shortlist. NO fixed count cap —
-    bounded by the 3-position sleeve limit, the weekly fee budget and the
-    circuit breaker. The budget is a CEILING, never a target to spend.
+  * CORE ideas: only from the CORE shortlist. SIZE IS RISK-DERIVED — take it
+    from scripts/state.sh, never a fixed dollar amount. NO fixed count cap —
+    what binds is the 4-position CORE cap and the MONTHLY fee budget.
+  * TACTICAL ideas: only from the TACTICAL shortlist, size again from
+    scripts/state.sh. NO fixed count cap — bounded by the 1-position TACTICAL
+    cap, the MONTHLY fee budget and the circuit breaker. The budget is a
+    CEILING, never a target to spend.
 - Risk factors
 - Decision, STATED PER SLEEVE: TRADE or HOLD (default HOLD — patience > activity,
   and fees punish churn). Note that a CORE HOLD is binding for the day, but a
@@ -144,8 +146,17 @@ STEP E — Notification: silent unless urgent (a position gapped past -15% witho
 its stop filling, an exploit/depeg/delisting on something held, a macro shock).
   bash scripts/clickup.sh "<one line>"
 
+STEP OBS — SELF-DEFECT INBOX. If anything in THIS prompt contradicted
+memory/TRADING-STRATEGY.md or another prompt, was rejected by the API, or was
+too ambiguous to follow without guessing, append ONE row to
+memory/OBSERVATIONS.md in the format that file defines, naming BOTH files so the
+contradiction can be reproduced without rerunning anything.
+Append only. Do NOT fix the prompt, the strategy doc or any rule yourself — only
+the weekly-review run may edit those. Do NOT log trading opinions here; those go
+to TRADE-LOG.md. Most runs append nothing, which is the normal outcome.
+
 STEP 5 — COMMIT AND PUSH:
-  git add memory/RESEARCH-LOG.md memory/SHADOW-LOG.md memory/TRADE-LOG.md
+  git add memory/RESEARCH-LOG.md memory/SHADOW-LOG.md memory/TRADE-LOG.md memory/OBSERVATIONS.md
   git commit -m "research $DATE"
   git push origin main
 On push failure: git pull --rebase origin main, then push again.

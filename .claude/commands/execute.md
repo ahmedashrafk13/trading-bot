@@ -176,8 +176,17 @@ rules apply. Never log a position without it.
 STEP I — Notification: only if a trade was placed.
   bash scripts/clickup.sh "<pairs, qty, fill prices, stop levels, one-line why>"
 
+STEP OBS — SELF-DEFECT INBOX. If anything in THIS prompt contradicted
+memory/TRADING-STRATEGY.md or another prompt, was rejected by the API, or was
+too ambiguous to follow without guessing, append ONE row to
+memory/OBSERVATIONS.md in the format that file defines, naming BOTH files so the
+contradiction can be reproduced without rerunning anything.
+Append only. Do NOT fix the prompt, the strategy doc or any rule yourself — only
+the weekly-review run may edit those. Do NOT log trading opinions here; those go
+to TRADE-LOG.md. Most runs append nothing, which is the normal outcome.
+
 STEP J — COMMIT AND PUSH:
-  git add memory/TRADE-LOG.md
+  git add memory/TRADE-LOG.md memory/OBSERVATIONS.md
   git commit -m "execute $DATE"
   git push origin main
 On push failure: git pull --rebase origin main, then push again.

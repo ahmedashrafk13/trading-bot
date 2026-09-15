@@ -76,7 +76,7 @@ leaking credentials. Every prompt here carries an explicit "do not create a .env
 
 | File | Cron | UTC | Role |
 |---|---|---|---|
-| `scan.md` x2 | `7 * * * *`, `37 * * * *` | :07/:37 | ratchet levels, safety sweep, TACTICAL STOP enforcement |
+| `scan.md` | `7 * * * *` | :07 | ratchet levels, safety sweep, stop repair |
 | `research.md` | `7 6 * * *` | 06:07 | research + write the day's plan |
 | `execute.md` | `7 */6 * * *` | 00:07/06:07/12:07/18:07 | run the gate, place entries + stops |
 | `summary.md` | `7 18 * * *` | 18:07 | daily snapshot, P&L vs BTC |
@@ -86,22 +86,23 @@ Every day of the week, including weekends — crypto never closes. The `:07` and
 `:37` offsets keep these off the `:00` minute that everyone else schedules on,
 and keep the Sunday weekly review from colliding with that day's summary.
 
-SCAN RUNS EVERY 30 MIN (changed 2026-09-15, was hourly) — but the scheduler
-enforces a ONE HOUR MINIMUM interval, so `*/30` is NOT accepted. The 30-minute
-cadence is built from TWO routines, each on its own hourly cron, offset 30 min:
+SCAN RUNS HOURLY, from ONE routine on `7 * * * *`.
 
-  scan-1  `7 * * * *`        scan-2  `37 * * * *`
+SUPERSEDED (v1): a 30-minute cadence, built from two hourly routines offset 30
+min apart, the second half an hour behind the first (SUPERSEDED), because the
+scheduler enforces a ONE
+HOUR MINIMUM interval and `*/30` is not accepted. It was called safety-critical
+because TACTICAL rested its +14% target at the exchange, leaving its stop as a
+level only the scan enforced — miss a scan and nothing closed a losing tactical
+position. The second routine was specified but NEVER CREATED.
 
-Both take the SAME `scan.md` prompt and the SAME env vars.
-
-This cadence is now SAFETY-CRITICAL, not a convenience. A TACTICAL position
-SUPERSEDED (v1): TACTICAL rested its +14% target at the exchange, so its stop existed ONLY
-as a level the scan enforces. If the scan does not run, nothing closes a losing
-tactical position. Do not lengthen this interval without re-reading
-"What rests at the exchange, by sleeve" in memory/TRADING-STRATEGY.md.
-
-CORE is unaffected: it has no target, so its slot holds a resting stop_limit
-that protects it 24/7 even when no run happens.
+Under v2 it is not needed and should not be created. Neither sleeve has a
+target, so EVERY position in BOTH sleeves rests a full-size stop_limit at the
+broker and is protected 24/7 whether or not a run happens. A second scan buys
+faster trail ratcheting only, at double the scan run cost. Before reinstating
+it, re-read "What rests at the exchange, by sleeve" in
+memory/TRADING-STRATEGY.md — if any sleeve ever stops resting a broker-side
+stop, this decision reverses.
 
 It does NOT increase trading frequency. The scan never opens a position — only
 `execute` does — so a faster cadence cannot churn the fee budget.

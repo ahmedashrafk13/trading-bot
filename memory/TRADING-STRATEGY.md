@@ -195,11 +195,13 @@ if the account holds more TACTICAL positions than v2 allows, open no new ones
 until the count falls to the cap. Never force-close a compliant position to
 satisfy a count.
 
-## Cadence: scan runs every 30 min (v2: no longer safety-critical)
-Scan moved from hourly to every 30 minutes. The scheduler enforces a 1-HOUR
-MINIMUM interval, so `*/30` is rejected; the cadence is built from TWO routines
-on separate hourly crons, offset 30 min apart (`7 * * * *`, `37 * * * *`),
-both running the identical scan prompt.
+## Cadence: scan runs HOURLY (`7 * * * *`, one routine)
+SUPERSEDED (v1) — the plan below was specified and never deployed. It moved scan
+from hourly to a 30-minute cadence (SUPERSEDED). The scheduler enforces a 1-HOUR
+MINIMUM interval, so
+`*/30` is rejected, and the cadence was to be built from TWO routines on separate
+hourly crons offset 30 min apart, both running the identical scan prompt. The
+second routine was NEVER CREATED, so scan has always in fact run hourly.
 
 Under v2 every position in BOTH sleeves rests a full-size stop_limit at the
 broker, so the scan is NOT the mechanism protecting anything. A missed scan now

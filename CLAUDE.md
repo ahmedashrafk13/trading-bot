@@ -14,6 +14,8 @@ Open these in order before doing anything:
 - memory/RESEARCH-LOG.md      — Today's research before any trade.
 - memory/PROJECT-CONTEXT.md   — Overall mission and context.
 - memory/WEEKLY-REVIEW.md     — Friday afternoons; template for new entries.
+- memory/OBSERVATIONS.md      — defects found in the bot's OWN instructions.
+  APPEND-ONLY for every run except weekly-review, which repairs and clears them.
 - memory/SHADOW-LOG.md        — screened-but-not-taken candidates and how they
   resolved. This is where sample size comes from: ~50 observations/month at
   zero cost and zero risk, versus ~4 real closes. Append on every research run.
@@ -23,16 +25,19 @@ Open these in order before doing anything:
 Defined in .claude/commands/ (local) and routines/ (cloud). Crypto has no
 trading day — everything is UTC, every day of the week:
 
-- scan, EVERY 30 MIN (:07/:37 — TWO hourly routines offset 30 min apart, since
-  the scheduler's minimum interval is 1h) — invariants and ratchets. Every
-  position's downside now rests AT THE BROKER as a stop_limit, so a missed scan
-  is no longer an unprotected window; the scan raises trails and repairs any
-  position whose stop is missing or mis-sized.
+- scan, HOURLY (:07 — ONE routine) — invariants and ratchets. Every position's
+  downside now rests AT THE BROKER as a stop_limit, so a missed scan is no
+  longer an unprotected window; the scan raises trails and repairs any position
+  whose stop is missing or mis-sized. A second offset routine at :37 was
+  specified under v1 and never created; under v2 it is unnecessary — see
+  routines/README.md.
 - research, 06:07 — the day's plan. CORE entries require it.
 - execute, every 6h (00:07/06:07/12:07/18:07) — the gate, entries, stops.
   TACTICAL may be originated here; CORE may not.
 - summary, 18:07 — daily snapshot vs BTC.
-- weekly-review, Sun 18:37 — graded recap, may amend the strategy.
+- weekly-review, Sun 18:37 — graded recap, may amend the strategy (STEP E,
+  >= 10 closed trades) and may repair the prompt files themselves (STEP E2,
+  gated on a reproducible contradiction, never on trade count).
 
 Cloud runs are stateless: git is the memory. Work not pushed to `main` did not
 happen. Push to `main` directly — never a `claude/*` branch or a PR, or the

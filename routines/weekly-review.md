@@ -97,9 +97,11 @@ STEP C — Compute the week's metrics:
 - Trades taken (W/L/open) and win rate, SPLIT BY SLEEVE. Core and tactical have
   different holding periods, stops and fee loads; a blended number hides which
   sleeve is actually working.
-- FEE BUDGET: total fees paid vs the 1.5% (~$3.00) weekly ceiling, and how many
-  trades that bought. If the budget was exhausted before Friday, say which day
-  and whether the trades that spent it were worth it.
+- FEE BUDGET: fees paid THIS MONTH TO DATE vs the 1.0% (~$2.00) MONTHLY ceiling
+  (it resets on the 1st, not on Monday), and how many trades that bought. If the
+  budget is already exhausted, say which day exhausted it and whether the trades
+  that spent it were worth it. Also report this week's fees on their own, but
+  never as a fraction of any weekly ceiling — that was removed in v1.
 - Circuit breaker: how many times it tripped and what followed.
 - TACTICAL fee check: total tactical fees vs tactical gross profit. If fees
   exceeded gross profit, say so in one blunt sentence. If that has now happened
@@ -155,6 +157,52 @@ results justify it. Read that file's "Self-amendment" section first and obey it:
   doc. That structure is negative-expectancy after fees by construction, not by
   bad luck, and it has already been adopted and reverted once.
 
+STEP E2 — REPAIR THE INSTRUCTIONS THEMSELVES. This is the ONLY run permitted
+to edit routines/*.md, .claude/commands/*.md, CLAUDE.md or scripts/*. It is a
+SEPARATE authority from STEP E and a separate gate — do not conflate them:
+
+  STEP E  changes what the bot SHOULD DO.  Gate: >= 10 closed trades.
+  STEP E2 makes the files SAY what the rulebook already says. Gate: the
+          contradiction is REPRODUCIBLE — you can point at two files, right
+          now, that disagree. Trade count is irrelevant and MUST NOT be used
+          to defer a repair.
+
+Procedure:
+1. Read memory/OBSERVATIONS.md. For each row, open BOTH files named and confirm
+   they still disagree. A row you cannot reproduce is DROPPED, not investigated.
+2. Run `python scripts/audit-rules.py` and treat every finding as a row too.
+   It exits non-zero while anything is outstanding.
+3. Fix the WRONG file — the one that drifted from memory/TRADING-STRATEGY.md.
+   The strategy doc is the authority; if the strategy doc itself is the file
+   that is wrong, that is a STEP E amendment and goes behind the STEP E gate
+   instead. Never "fix" a prompt by changing the rule it was restating.
+4. A rule is restated in ~12 files. After fixing one, grep for the old wording
+   everywhere and fix every copy, including .claude/commands/ (the local
+   mirror of routines/ — keep the two byte-identical).
+5. Add the OLD wording to the BAD list in scripts/audit-rules.py so the same
+   drift is caught automatically next time. A repair without a new BAD entry is
+   incomplete.
+6. Re-run `python scripts/audit-rules.py`. It MUST exit 0 before you commit.
+   If it does not, you have introduced a new contradiction — revert your edit
+   rather than shipping it.
+7. Delete the handled rows from memory/OBSERVATIONS.md. Leave unreproducible
+   ones deleted too, with one line in the review saying which and why.
+8. Record every repair in WEEKLY-REVIEW.md under "### Instruction repairs
+   applied": file, what it said, what it says now, and which file it was
+   contradicting.
+
+HARD LIMITS on this step:
+- NEVER edit routines/BOOTSTRAP.md. Those blocks are pasted into the cloud
+  routine settings by hand and a repo edit cannot reach them — changing the
+  file silently desynchronises the repo from what is actually deployed. If a
+  bootstrap block is wrong, write it in the review as an ACTION FOR THE HUMAN.
+- Repairs are TEXT-ONLY: wording, stale numbers restated from the rulebook,
+  broken references. You may NOT introduce a new rule, delete a safety check,
+  loosen a gate, or widen your own authority through this step. If a repair
+  seems to require any of those, it is a STEP E amendment — stop and log it.
+- If STEP E2 and STEP E would touch the same rule in the same review, do STEP E
+  first, then make E2 propagate the new wording. Never the other way round.
+
 STEP F0 — Rotate the logs so per-run context stops growing:
   bash scripts/rotate-logs.sh 14
 Entries older than 14 days move to memory/archive/. Nothing is deleted and git
@@ -172,7 +220,7 @@ STEP F — Send ONE ClickUp message, <= 15 lines:
   Grade: <letter>"
 
 STEP 7 — COMMIT AND PUSH:
-  git add memory/WEEKLY-REVIEW.md memory/TRADE-LOG.md memory/TRADING-STRATEGY.md memory/RESEARCH-LOG.md memory/archive
+  git add memory/WEEKLY-REVIEW.md memory/TRADE-LOG.md memory/TRADING-STRATEGY.md memory/RESEARCH-LOG.md memory/archive memory/OBSERVATIONS.md routines .claude/commands CLAUDE.md scripts
   git commit -m "weekly review $DATE"
   git push origin main
 On push failure: git pull --rebase origin main, then push again.
