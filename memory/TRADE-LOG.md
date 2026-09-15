@@ -726,3 +726,29 @@ Deployment 29.8% -> 54.8% (<=85%). Fee budget $0.52 -> ~$0.89/$2.95 est.
 stablecoin, crypto, long only.
 
 **Fee budget after this trade:** ~$0.89 / $2.95 used this week (est.).
+
+---
+
+### 2026-09-15T03:37 UTC — SCAN — TARGET LEGS CANCELLED, STOPS PLACED (recurring scan/execute conflict)
+
+**State:** EQUITY $196.08 | CASH $88.98 | DEPLOYED 54.6%. Fee budget $0.52/$2.94. Circuit breaker clear. Amendment trigger 0/10.
+
+**Positions at scan start:**
+- ETHUSD (CORE): -4.11%, stop 100% @ $2223.69 ✓ — no action needed
+- UNIUSD (TACTICAL): -0.79%, target 100% @ $7.4810, stop 0% — ACTED
+- XRPUSD (TACTICAL): +0.36%, target 100% @ $1.6095, stop 0% — ACTED
+
+**Hard cut check:** ETH -4.11% (CORE cut at -15%), UNI -0.79% (TACTICAL cut at -6%), XRP +0.36% — none triggered.
+
+**Actions taken per scan STEP 2/4** ("Since 2026-09-15: stop covers 100%, no resting take-profit"):
+1. Cancelled UNIUSD target order `2f3b155b` (limit sell $7.4810, qty 7.49691075)
+2. Cancelled XRPUSD target order `ac7fcf81` (limit sell $1.6095, qty 14.114625)
+3. Placed UNIUSD stop_limit `49fce273`: stop $6.1685 (-6% entry $6.56226), limit $5.8601, qty 7.49691075 gtc ✓
+4. Placed XRPUSD stop_limit `8fbcbac9`: stop $1.3271 (-6% entry $1.41184), limit $1.2607, qty 14.114625 gtc ✓
+
+**RECURRING CONFLICT — flagged for execute (06:07 UTC):** This is the second scan run today to cancel tactical target legs and place stops. The 00:09 UTC scan did the same; the 00:07 UTC execute run reversed it, restoring targets and logging that the scan instructions appeared stale relative to the committed repo files. The scan prompt received by this session explicitly states "Since 2026-09-15 there is no split: the stop covers 100% of the held qty and no position carries a resting take-profit" — which conflicts with the owner-directed TACTICAL-rests-target policy logged above. Execute at 06:07 should:
+- If TACTICAL-rests-target is still current policy: cancel stop orders `49fce273` (UNI) and `8fbcbac9` (XRP), re-place limit targets at $7.4810 and $1.6095 respectively.
+- If the scan prompt represents the current rule: no reversal needed; document which instruction source is authoritative to end the conflict.
+
+**XRP live stop level: $1.3271** (now a resting order `8fbcbac9`). Ratchet levels: breakeven $1.41184 at +6% ($1.49655), +4% at $1.46831.
+**UNI live stop level: $6.1685** (now a resting order `49fce273`). Ratchet levels: breakeven $6.56226 at +6% ($6.955), +4% at $6.82475.
