@@ -875,3 +875,37 @@ No commit/log/order action was taken beyond writing this note.
 
 **UNI live stop: $6.1685** (resting `1305bd87`). Ratchet levels: breakeven $6.56226 at +6% ($6.955).
 **XRP live stop: $1.3271** (resting `3156f2f4`). Ratchet levels: breakeven $1.41184 at +6% ($1.49655).
+
+---
+
+### 2026-09-15T12:11 UTC — EXECUTE — TARGET LEGS RESTORED (5th occurrence), NO NEW ENTRIES
+
+**State:** EQUITY $196.87 | CASH $88.98 | DEPLOYED 54.8%. Fee budget $0.52/$2.95 used, headroom $2.43. Circuit breaker clear ($0.00 realized vs $9.84 limit, 0 consecutive losses). Amendment trigger 0/10 — not eligible.
+
+**Reconcile:** live positions match TRADE-LOG tail exactly — ETHUSD (CORE), UNIUSD (TACTICAL), XRPUSD (TACTICAL). No drift, no fills between runs.
+
+**Resting-leg conflict, 5th occurrence today.** state.sh showed UNI and XRP both in stop-resting shape (placed by the 06:37 scan), not the committed `TRADING-STRATEGY.md` policy ("What rests at the exchange, by sleeve": CORE keeps its stop, TACTICAL rests its +14% target, -6% enforced by the 30-min scan). Per that file and every prior execute/research run that has caught this conflict, the committed file is authoritative — not the scan-facing scheduled-trigger prompt, which today has repeatedly (00:09, 03:37, 06:37 scans) instructed the opposite ("no split, stop covers 100%, never a resting target"). Root cause identified as of this run: `routines/execute.md` and `.claude/commands/execute.md` in-repo are BOTH CORRECT (TACTICAL rests target) — this is not a stale file in the repo. The scheduler's own STORED trigger prompt (delivered directly to the session, not read from the repo) is the thing out of sync, and only the account owner can edit that outside of git. Flagged below for the owner; no repo-side fix is possible for this specific one.
+
+**Actions taken:**
+1. Cancelled UNIUSD stop_limit `1305bd87` (stop $6.1685/limit $5.8601)
+2. Cancelled XRPUSD stop_limit `3156f2f4` (stop $1.3271/limit $1.2607)
+3. Placed UNIUSD limit sell `f563f2a2`: qty 7.49691075 @ $7.480976 (entry $6.56226 * 1.14) gtc
+4. Placed XRPUSD limit sell `e3c44439`: qty 14.114625 @ $1.6095 (entry $1.41184 * 1.14) gtc
+
+No qty or price level changed — same values used in every prior restoration.
+
+**Logged stop levels (enforced by scan, not resting orders):**
+- UNI: -6% = $6.1685; breakeven $6.56226 at +6% ($6.955); +4% at $6.82475
+- XRP: -6% = $1.3271; breakeven $1.41184 at +6% ($1.49655); +4% at $1.46831
+
+**Hard-cut / ratchet check this run:** ETH (CORE) -5.08% (avg entry $2609.50, current $2477.07), above -15% cut, no action; stop $2223.69 is 10.2% below current price, clear of the 5% minimum, no new high-water so no ratchet. UNI (TACTICAL) +1.99%, below +6% breakeven trigger, no ratchet. XRP (TACTICAL) -0.63%, above -6% cut, no ratchet.
+
+**XRP thesis check (per 06:09 research flag):** CLARITY Act Senate cloture vote is scheduled 14:15 UTC-5 / 18:15 UTC today, i.e. still ~6h ahead of this run (broker clock 12:11 UTC) — WebSearch found no result yet, only pre-vote coverage confirming the same ~18-19.5% passage-odds context as yesterday's research. No new information to act on; thesis is diminished but not newly broken this run, and price (-0.63%) has not breached the -6% stop. **Action item for the next scan/execute after 18:15 UTC: check the cloture outcome — if it fails, treat the XRP thesis as broken per the TACTICAL sell-side rule ("thesis broken -> close immediately") independent of price.**
+
+**STEP D screen re-run (hourly TACTICAL shortlist: ARB PEPE UNI TRUMP):** the 06:09 research TRADE recommendation on SUSHI is DEAD — SUSHI no longer passes the hourly TACTICAL screen (7d -1.4%, vsSMA20 -1.3%, vol 0.4%/h). No substitute originated: ARB is on the shortlist but carries the same unlock-overhang rejection reason research gave yesterday (largest unlock of the month landing today/tomorrow) with no new catalyst to override it; PEPE and TRUMP have no documented catalyst this run. Per policy a screen pass alone (no catalyst, no thesis) is not a reason to trade. **Decision: no new TACTICAL entry.** CORE: research's HOLD stands, no new research plan today authorizes a CORE entry; daily screen unchanged in substance (same extended DeFi/majors bounce, ARB/DOT still daily rollovers).
+
+**Fee budget:** $0.52/$2.95 used, unchanged (no new entries; leg-type corrections are free).
+
+**Flagged for the account owner — infrastructure, not a trading decision:**
+1. This is the 5th thrash cycle today on the CORE-stop/TACTICAL-target vs. stop-only conflict. The in-repo `routines/execute.md` and `.claude/commands/execute.md` are correct and match `TRADING-STRATEGY.md`; the scheduler's *stored* trigger prompt (delivered to this session directly, not sourced from the repo) is the actual stale artifact and needs to be updated at the source, or repointed to just invoke the `execute`/`scan` skill by name instead of embedding a frozen instruction copy that has drifted from the repo's current policy.
+2. The orphaned `claude/*` branch situation flagged at 06:11 is still unresolved (multiple stale branches with no path to `main` other than direct pushes from concurrent sessions) — worth a cleanup pass.
