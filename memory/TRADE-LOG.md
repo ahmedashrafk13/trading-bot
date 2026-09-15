@@ -799,3 +799,51 @@ research run). The committed file is being treated as authoritative each time
 by the run that catches it, but the underlying skill/prompt text serving
 `scan` has not been corrected, so this will keep recurring every ~3h until the
 skill content itself is fixed to match the repo's current policy.
+
+---
+
+### 2026-09-15T06:11 UTC — EXECUTE — NO NEW ENTRIES (concurrent-session collision detected)
+
+**State:** EQUITY $197.31 | CASH $88.98 | DEPLOYED 54.9%. Fee budget $0.52/$2.96, headroom $2.44. Circuit breaker clear (realized $0.00 vs $9.87 limit, 0 consecutive losses). Amendment trigger 0/10.
+
+**Positions (live, already correctly resting):**
+- ETHUSD (CORE): -4.36%, stop 100% @ 100.0% — OK, no action
+- UNIUSD (TACTICAL): +2.12%, target 100% @ $7.480976 (order `d8c34a47`) — OK
+- XRPUSD (TACTICAL): -0.12%, target 100% @ $1.6095 (order `a8401c8e`) — OK
+
+No hard cuts, no naked positions, no ratchet threshold crossed.
+
+**Anomaly found before any action was taken by this run:** `git fetch origin` returned
+**six** other `claude/*` branches beyond this one — `determined-lamport-r2aqmz`,
+`ecstatic-faraday-bbw0uv`, `eloquent-shannon-l3bi9f`, `gallant-fermat-82wi7v`,
+`gallant-gates-w7ohb5`, `optimistic-ride-v1e0kr` — one per prior scheduled run,
+chained tip-to-tip, none merged to `main` until just now. During this run
+`origin/main` was observed to fast-forward live, from `af11a09` to `f6c5c6f`
+(this branch's own tip), meaning another process pushed to `main` **while this
+session was already working**. The UNI/XRP target-restoring orders logged above
+(`a8401c8e`, `d8c34a47`, created 06:09:44Z) were placed before this run's first
+`alpaca.sh` call — i.e. by that other concurrent process, not by this session.
+
+**Decision: originate NO new trade this run.** Positions are already fully
+reconciled and compliant; the open question (recurring scan/execute policy
+conflict over resting stop-vs-target) already appears resolved in the live
+account. Adding a new buy from this session risks double-executing against
+whatever concurrent run is also active right now (shared position caps, fee
+budget and circuit-breaker counters are not safe to spend from two sessions
+at once). No CORE research plan exists for today's date either way, so only a
+TACTICAL entry was ever in scope.
+
+**Flagged for the account owner — infrastructure, not a trading decision:**
+1. The `scan`/`execute` prompt text actually delivered by the scheduler has,
+   twice today, disagreed with the checked-in `routines/scan.md` /
+   `routines/execute.md` (which correctly state TACTICAL rests its +14%
+   TARGET, not a stop) — causing live order thrash between stop and target on
+   real resting orders. The stored scheduled-trigger prompts need to be
+   re-synced with the repo files, or repointed to just invoke the `scan`/
+   `execute` skill rather than embedding a frozen instruction copy.
+2. Six orphaned `claude/*` branches exist with no path to `main` except
+   whatever just fast-forwarded it. Worth confirming that mechanism is
+   reliable and cleaning up the stale branches so future sessions do not
+   keep building on an ever-diverging chain.
+
+No commit/log/order action was taken beyond writing this note.
