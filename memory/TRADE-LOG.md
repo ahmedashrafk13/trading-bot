@@ -932,3 +932,35 @@ No qty or price level changed — same values used in every prior restoration.
 **XRP thesis:** CLARITY Act cloture vote still pending (~18:15 UTC, ~6h ahead). Price -0.63%, thesis not yet failed. Next scan/execute after 18:15 UTC must check the outcome and close XRP at market if the motion to proceed fails.
 
 **No action taken. No commit needed beyond this log entry.**
+
+---
+
+### 2026-09-15T12:37 UTC — SCAN — TARGET LEGS CANCELLED (6th occurrence), STOPS PLACED
+
+**State:** EQUITY $197.22 | CASH $88.98 | DEPLOYED 54.9%. Fee budget $0.52/$2.96. Circuit breaker clear. Amendment trigger 0/10.
+
+**Positions at scan start (from state.sh):**
+- ETHUSD (CORE): -5.09%, stop 100% @ $2223.69 ✓ — no action needed
+- UNIUSD (TACTICAL): +2.78%, target 100% @ $7.480976 (order `f563f2a2`), stop 0% — ACTED
+- XRPUSD (TACTICAL): -0.77%, target 100% @ $1.6095 (order `e3c44439`), stop 0% — ACTED
+
+**Hard cut check:** ETH -5.09% (CORE cut -15%) ✓, UNI +2.78% (TACTICAL cut -6%) ✓, XRP -0.77% (TACTICAL cut -6%) ✓ — none triggered.
+
+**Actions taken (scan STEP 2 — "Since 2026-09-15: stop covers 100%, no resting take-profit"):**
+1. Cancelled UNIUSD target `f563f2a2` (limit sell $7.480976, qty 7.49691075)
+2. Cancelled XRPUSD target `e3c44439` (limit sell $1.6095, qty 14.114625)
+3. Placed UNIUSD stop_limit `3ad1dca9`: stop $6.1685 (-6% × entry $6.56226), limit $5.8601, qty 7.49691075 gtc ✓
+4. Placed XRPUSD stop_limit `e59a3afa`: stop $1.3271 (-6% × entry $1.41184), limit $1.2607, qty 14.114625 gtc ✓
+
+**ETHUSD CORE ratchet:** high-water $2616.11, stop $2223.69 = 15% below HWM. Current $2476.681, no new high. No ratchet needed.
+
+**TACTICAL ratchet:** UNI +2.78% (below +6% breakeven rung, no ratchet). XRP -0.77% (in slight loss, no ratchet).
+
+**6th thrash cycle today.** This scan received the same stored trigger prompt ("no split, stop covers 100%, no resting take-profit") that the 00:09, 03:37, and 06:37 scan runs also received. The 12:18 scan deliberately chose NOT to act on this instruction (deferring to TRADING-STRATEGY.md). This 12:37 scan acted on the prompt. The 12:11 execute run had just restored UNI/XRP target legs per the committed rulebook. The conflict remains unresolvable at the repo level — it requires the account owner to update the stored scheduled-trigger scan prompt.
+
+**UNI live stop: $6.1685** (resting order `3ad1dca9`). **XRP live stop: $1.3271** (resting order `e59a3afa`).
+
+**XRP thesis:** CLARITY Act Senate cloture vote ~18:15 UTC. Price -0.77%, thesis not yet failed. Execute at 18:07 UTC must check the outcome and close XRP at market if the motion fails.
+
+**Execute at 18:07:** same choice as before — restore target legs if TACTICAL-rests-target policy stands, or document scan prompt as authoritative to end the cycle.
+
