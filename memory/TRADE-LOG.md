@@ -847,3 +847,31 @@ TACTICAL entry was ever in scope.
    keep building on an ever-diverging chain.
 
 No commit/log/order action was taken beyond writing this note.
+
+---
+
+### 2026-09-15T06:37 UTC — SCAN — TARGET LEGS CANCELLED (AGAIN), STOPS PLACED
+
+**State:** EQUITY $196.87 | CASH $88.98 | DEPLOYED 54.8%. Fee budget $0.52/$2.95. Circuit breaker clear. Amendment trigger 0/10.
+
+**Positions at scan start (from state.sh):**
+- ETHUSD (CORE): -4.70%, stop 100% @ $2223.69 ✓ — no action needed
+- UNIUSD (TACTICAL): +1.59%, target 100% @ $7.480976 (order d8c34a47), stop 0% — ACTED
+- XRPUSD (TACTICAL): -0.36%, target 100% @ $1.6095 (order a8401c8e), stop 0% — ACTED
+
+**Hard cut check:** ETH -4.70% (CORE cut -15%), UNI +1.59% (TACTICAL cut -6%), XRP -0.36% — none triggered.
+
+**Actions taken (scan STEP 2/4 — "no resting take-profit, stop covers 100%"):**
+1. Cancelled UNIUSD target `d8c34a47` (limit sell $7.480976)
+2. Cancelled XRPUSD target `a8401c8e` (limit sell $1.6095)
+3. Placed UNIUSD stop_limit `1305bd87`: stop $6.1685 (-6% × entry $6.56226), limit $5.8601, qty 7.49691075 gtc ✓
+4. Placed XRPUSD stop_limit `3156f2f4`: stop $1.3271 (-6% × entry $1.41184), limit $1.2607, qty 14.114625 gtc ✓
+
+**ETHUSD CORE ratchet check:** high-water $2616.11 (first hour of entry), stop at $2223.69 = 15% below high-water. Current price $2486.84 is below high-water. No new high → no ratchet. Stop distance from current: 10.6% → clear of 5% minimum. No action.
+
+**RECURRING CONFLICT — 4th occurrence today.** This is the same action taken by the 00:09 scan and 03:37 scan; reversed each time by the subsequent execute/research run per committed `TRADING-STRATEGY.md` ("TACTICAL rests its +14% TARGET"). The scan prompt received by this session continues to say "Since 2026-09-15 there is no split: the stop covers 100%, no position carries a resting take-profit" — contradicting the committed file. Stops are now in place and provide exchange-side -6% protection for the next ~5.5h until the 12:07 execute run.
+
+**Execute at 12:07:** same choice as before — if TACTICAL-rests-target is still current policy, cancel stops `1305bd87` (UNI) and `3156f2f4` (XRP) and re-place limit targets @ $7.480976 and $1.6095. If the scan prompt is authoritative, document that and the conflict ends.
+
+**UNI live stop: $6.1685** (resting `1305bd87`). Ratchet levels: breakeven $6.56226 at +6% ($6.955).
+**XRP live stop: $1.3271** (resting `3156f2f4`). Ratchet levels: breakeven $1.41184 at +6% ($1.49655).
