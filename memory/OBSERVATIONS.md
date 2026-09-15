@@ -34,3 +34,4 @@ gets dropped by the review, not investigated.
 | Date | Run | File:line | Says | Contradicts |
 |---|---|---|---|---|
 | 2026-09-15 | (seeded by hand) | — | — | Inbox created empty. First real rows come from live runs. |
+| 2026-09-15 | execute (18:08 UTC) | memory/TRADING-STRATEGY.md:29 | "Require a minimum 2:1 reward:risk AFTER the measured 0.65% friction" | routines/execute.md STEP E: "NO R:R REQUIREMENT, because there is no target in either sleeve to compute one against. Do NOT invent a target to satisfy a ratio." Line 29 is a stale pre-v2 (2026-09-15 rulebook rewrite) leftover never updated when targets were removed. Did not block this run (no order was gated on it), but the next run that reads TRADING-STRATEGY.md literally could demand an R:R figure that cannot exist. |
