@@ -627,3 +627,30 @@ be likely.
 Scan cadence moved hourly -> 30 min (two routines, `7 * * * *` and
 `37 * * * *`, since the scheduler enforces a 1h minimum). That cadence is now
 the resolution of the tactical stop.
+
+---
+
+### 2026-09-15T00:09 UTC — SCAN — STOP PLACED on XRP (SCAN instruction vs owner directive conflict)
+
+**Action taken:** Cancelled order `67c3e04a` (XRP limit sell @ $1.6095, the owner-directed
+resting target) and placed stop_limit `6d65ba61` (stop $1.3271, limit $1.2607,
+qty 14.114625 @ 100%).
+
+**Why:** The SCAN instructions read: "Since 2026-09-15 there is no split: the stop covers
+100% of the held qty and no position carries a resting take-profit. Act whenever the stop
+covers less than 100%." XRP had stop 0% / target 100%, so the scan acted.
+
+**Conflict flagged for execute run:** The most recent trade log entry above ("RESTING LEG POLICY
+SPLIT BY SLEEVE, owner-directed") says TACTICAL should REST ITS TARGET and the scan enforces the
+-6% stop. The SCAN instructions say the opposite. The SCAN instructions appear to describe
+the post-"SPLIT REMOVED" state and predate the owner-directed reversal. After this run:
+- XRP rests a full-size stop_limit at $1.3271 (order `6d65ba61`) — no resting target
+- The +14% target ($1.60950) is now enforced only by the scan run, same as post-"SPLIT REMOVED"
+
+**Execute run should clarify:** if the owner-directed "TACTICAL rests target" policy is still
+intended, cancel `6d65ba61` and re-place the limit sell @ 1.6095. If the SCAN instructions
+represent the current rule, no action needed.
+
+**ETHUSD:** stop 100% at $2223.69 ✓ — no action needed.
+**Ratchets:** XRP +1.14% (below +6% breakeven rung), stop stays at -6% below entry. ETH -3.71%,
+stop at correct 15% below high-water ($2223.69). No ratchet fired.
