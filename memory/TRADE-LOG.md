@@ -584,3 +584,46 @@ Both now read `[OK full stop]`, stop 100.0% / unreserved 0.0%.
 closes a TACTICAL position at market once it sees >= +14%. Accepted cost: a
 spike that fully round-trips inside 60 minutes is missed. Accepted because the
 alternative is an unstopped slice through every flush, 24/7.
+
+---
+
+## 2026-09-15 — RESTING LEG POLICY SPLIT BY SLEEVE (owner-directed)
+
+Rule change, not a trade. No position opened or closed; no realized P&L.
+
+Alpaca crypto allows ONE resting leg per position (a resting sell reserves its
+qty; oco/bracket rejected). Account owner directed that PROFIT be captured at the
+exchange and losses checked on a timer. Applied per sleeve, because only TACTICAL
+has a target competing for the slot:
+
+| Sleeve | Rests at exchange | Enforced by 30-min scan |
+|---|---|---|
+| CORE | `stop_limit` @ 100% | the ratchet |
+| TACTICAL | `limit` @ entry*1.14 @ 100% | the -6% stop |
+
+**Migrated:**
+
+| Pair | Sleeve | Was | Now |
+|---|---|---|---|
+| ETH/USD | CORE | stop_limit 2223.69 @ 100% | UNCHANGED — CORE keeps its stop |
+| XRP/USD | TACTICAL | stop_limit 1.32713 @ 100% | limit sell **1.60950** @ 100% |
+
+XRP order 77e151f7 cancelled, 67c3e04a placed. Entry 1.41184, so target
+1.41184 * 1.14 = 1.60950.
+
+**XRP LIVE STOP LEVEL: 1.32713 (-6%).** This is NOT an order. There is no
+resting stop on XRP. The scan MUST close it at market if price is at or below
+1.32713. Ratchet levels when they trigger: breakeven 1.41184 at +6%
+(1.49655), entry+4% 1.46831 at +10% (1.55302).
+
+**ACCEPTED RISK, owner-directed:** XRP now has no exchange-side downside
+protection. Between scans, and for the duration of any runner outage, it is
+unprotected. On 2026-09-14 the runner failed twice and nothing ran successfully
+between 20:27 and 23:30 (~3h). A tactical position held through a window like
+that today would depend entirely on the market not falling. CORE keeps its
+exchange stop precisely because it is the sleeve held long enough for that to
+be likely.
+
+Scan cadence moved hourly -> 30 min (two routines, `7 * * * *` and
+`37 * * * *`, since the scheduler enforces a 1h minimum). That cadence is now
+the resolution of the tactical stop.

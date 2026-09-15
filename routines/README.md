@@ -76,7 +76,7 @@ leaking credentials. Every prompt here carries an explicit "do not create a .env
 
 | File | Cron | UTC | Role |
 |---|---|---|---|
-| `scan.md` x4 | `7 * * * *`, `22 * * * *`, `37 * * * *`, `52 * * * *` | :07/:22/:37/:52 | ratchet stops, safety sweep, TAKE PROFIT |
+| `scan.md` x2 | `7 * * * *`, `37 * * * *` | :07/:37 | ratchet levels, safety sweep, TACTICAL STOP enforcement |
 | `research.md` | `7 6 * * *` | 06:07 | research + write the day's plan |
 | `execute.md` | `7 */6 * * *` | 00:07/06:07/12:07/18:07 | run the gate, place entries + stops |
 | `summary.md` | `7 18 * * *` | 18:07 | daily snapshot, P&L vs BTC |
@@ -86,27 +86,22 @@ Every day of the week, including weekends — crypto never closes. The `:07` and
 `:37` offsets keep these off the `:00` minute that everyone else schedules on,
 and keep the Sunday weekly review from colliding with that day's summary.
 
-SCAN RUNS EVERY 15 MIN (changed 2026-09-15, was hourly) — but the scheduler
-enforces a ONE HOUR MINIMUM interval, so `*/15` and `7,22,37,52 * * * *` are NOT
-accepted. The 15-minute cadence is built from FOUR separate routines, each on
-its own hourly cron, offset 15 minutes apart:
+SCAN RUNS EVERY 30 MIN (changed 2026-09-15, was hourly) — but the scheduler
+enforces a ONE HOUR MINIMUM interval, so `*/30` is NOT accepted. The 30-minute
+cadence is built from TWO routines, each on its own hourly cron, offset 30 min:
 
-  scan-1  `7 * * * *`     scan-2  `22 * * * *`
-  scan-3  `37 * * * *`    scan-4  `52 * * * *`
+  scan-1  `7 * * * *`        scan-2  `37 * * * *`
 
-All four take the SAME `scan.md` prompt and the SAME env vars. They are 15 min
-apart and a scan takes ~1-2 min, so they never overlap; if one ever did, the
-prompt's `git pull --rebase` on push failure handles it.
+Both take the SAME `scan.md` prompt and the SAME env vars.
 
-Why it matters more than a normal cadence tweak: since the split was removed
-there is NO resting take-profit, so the scan is the ONLY thing that takes the
-+14% tactical target, and the only thing that notices a stop that gapped through
-without filling. The interval IS the exposure window for both.
+This cadence is now SAFETY-CRITICAL, not a convenience. A TACTICAL position
+rests its +14% TARGET at the exchange, not a stop — so its -6% stop exists ONLY
+as a level the scan enforces. If the scan does not run, nothing closes a losing
+tactical position. Do not lengthen this interval without re-reading
+"What rests at the exchange, by sleeve" in memory/TRADING-STRATEGY.md.
 
-Why 15 min and not faster: a scan that finds nothing places no orders and pays
-no fees, so the only cost is tokens (96 runs/day vs 24). Below ~15 min the added
-protection is marginal and log noise dominates — and it would need even more
-routines.
+CORE is unaffected: it has no target, so its slot holds a resting stop_limit
+that protects it 24/7 even when no run happens.
 
 It does NOT increase trading frequency. The scan never opens a position — only
 `execute` does — so a faster cadence cannot churn the fee budget.
@@ -121,13 +116,13 @@ It does NOT increase trading frequency. The scan never opens a position — only
   TACTICAL on hourly. Hard-fails rather than truncating if pagination overruns.
 - `scripts/rotate-logs.sh` — archives log entries older than 14 days into
   memory/archive/. Run by the weekly review. Without it, per-run context (and
-  cost) grows forever at a 15-minute scan cadence.
+  cost) grows forever at a 30-minute scan cadence.
 
 `scan` runs HOURLY, not daily. It is cheap (a positions call, an orders call and
 at most a stop re-placement) and it is the only thing standing between a spike
 and a round trip. A take-profit CANNOT rest alongside a stop: `oco`/bracket are
 rejected for crypto and a resting sell reserves the qty it names, so the stop
-covers 100% and the scan takes the target instead — yet the stop is still only ratcheted when a run happens. A 15-minute cadence means at most ~15min of a favourable move goes
+covers 100% and TACTICAL rests its target instead — yet its stop level is only enforced when a run happens. A 30-minute cadence means at most ~30min of an adverse move goes
 uncaptured, instead of up to 6h.
 
 `scan` is deliberately LEAN (~1,100 tokens, self-contained, reads no memory

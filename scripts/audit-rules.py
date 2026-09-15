@@ -21,6 +21,8 @@ import re
 
 # (label, regex, why it is wrong now)
 BAD = [
+    ('old CORE stop at entry', r'fill \* 0\.80|stop 20% below fill', 'CORE stop is 15% below fill'),
+    ('tactical resting stop', r'TACTICAL -> stop\s+6% below fill', 'TACTICAL rests its TARGET, not a stop'),
     ('old CORE trail 20%', r'20% below high-water|trail 20%', 'CORE trail is 15% since 2026-09-15'),
     ('old CORE rung 14%', r'14% (?:once|at) \+30', 'CORE tightens to 12% at +30%'),
     ('old circuit breaker 3%', r'3%[- ]daily|3% of equity \(~\$6|<= *-?0?\.?03 of equity', 'breaker is 5%'),

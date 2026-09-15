@@ -133,33 +133,24 @@ sleeve carried **6.7x** the risk of the fast one, and three CORE positions put
 - TACTICAL positions that have neither hit target nor stop within ~48h are
   reassessed and closed unless the setup is still valid. Dead money pays fees.
 
-## Cadence change 2026-09-15: scan now runs every 15 min (NOT a rule change)
-Scan moved from hourly to every 15 minutes. This changes no rule and no
-threshold — the same invariants run, just more often.
+## Cadence change 2026-09-15: scan now runs every 30 min (SAFETY-CRITICAL)
+Scan moved from hourly to every 30 minutes. The scheduler enforces a 1-HOUR
+MINIMUM interval, so `*/30` is rejected; the cadence is built from TWO routines
+on separate hourly crons, offset 30 min apart (`7 * * * *`, `37 * * * *`),
+both running the identical scan prompt.
 
-HOW, given the scheduler enforces a 1-HOUR MINIMUM interval: four separate scan
-routines, each on its own hourly cron, offset 15 min apart (`7`, `22`, `37`,
-`52 * * * *`), all running the identical scan prompt. A single `*/15` cron is
-rejected by the platform.
+This is no longer a convenience setting. Under the same-day change to resting
+orders, a TACTICAL position rests its +14% TARGET at the exchange and has NO
+resting stop — its -6% level is enforced ONLY by the scan. The scan interval is
+therefore the resolution of the tactical stop, and an outage is an unprotected
+window. On 2026-09-14 the runner failed twice and nothing ran successfully
+between 20:27 and 23:30 (~3h). Lengthening this interval, or letting the scan
+routines fail silently, directly widens tactical downside risk.
 
-It matters more than a normal cadence tweak because the split was removed the
-same day. With no resting take-profit, the scan is the ONLY mechanism that takes
-the +14% tactical target and the only thing that catches a stop that gapped
-through without filling. Its interval IS the exposure window for both.
+CORE is unaffected and keeps its exchange-side stop_limit.
 
-Evidence it needed to be shorter: on 2026-09-14 the runner failed twice
-(22:58 execute, 23:10 scan, both unreachable) and nothing ran successfully
-between 20:27 and 23:30 — a ~3h blind window. The resting stop_limit covered
-the downside through it, which is exactly why the stop stays at the EXCHANGE
-and the target does not. A faster scan shrinks the window; it does not remove
-the need for the resting stop.
-
-Not faster than 15 min: a scan with nothing to do places no orders and pays no
-fees, so the only cost is tokens (96 runs/day vs 24). Below ~15 min the added
-protection is marginal and log noise dominates.
-
-This does NOT raise trading frequency. Scan never opens a position — only
-execute does — so the fee budget is untouched by the cadence.
+This does NOT raise trading frequency: scan never opens a position, only execute
+does, so the fee budget is untouched by cadence.
 
 ## Cadence change 2026-09-14: execute now runs every 6h (NOT a rule change)
 The sleeve design above targets "2-3 trades a day" in TACTICAL, but TACTICAL can
@@ -304,18 +295,50 @@ TACTICAL (hourly bars):
 If a coin fails its screen, it is NOT tradeable this run no matter how good the
 news is. Log the failure reason.
 
-## Take-profit: the stop ALWAYS covers 100% (amended 2026-09-15)
-EVERY position carries a stop_limit on 100% of the held quantity, at all times,
-in every sleeve, at every P&L. There is no split. There is no state in which
-part of a position rests without a stop.
+## What rests at the exchange, by sleeve (amended 2026-09-15, revised same day)
+Alpaca crypto gives each position exactly ONE resting-order slot, because a
+resting sell reserves the quantity it names and there is no oco/bracket. So for
+every position you choose: protect the downside, or capture the upside. Not both.
 
-Take-profit is executed BY THE 15-MINUTE SCAN, not by a resting order: when the
-scan sees a TACTICAL position at or above its +14% target, it cancels the stop
-and closes at market in the same run.
+The two sleeves resolve that differently, because only one of them has a target:
 
-### Why there is no resting take-profit (VERIFIED LIVE 2026-09-15)
-Alpaca crypto cannot do what every other venue can. Tested against the live
-account, all five order paths:
+| | Rests at the EXCHANGE | Enforced by the 30-MIN SCAN |
+|---|---|---|
+| **CORE** | `stop_limit` @ 100% of held qty | the ratchet |
+| **TACTICAL** | `limit` sell @ entry * 1.14, 100% of qty | the -6% stop |
+
+**CORE keeps its stop.** CORE has no profit target by design — it runs until the
+ratcheted trail takes it out — so nothing competes for its slot. Its downside
+stays protected 24/7 at the broker, even when no run happens.
+
+**TACTICAL rests its TARGET instead of its stop.** A tactical trade has a fixed
++14% exit, and capturing that exactly, the moment it prints, is worth more than
+an exchange-side stop on a position whose stop is only 6% away and which is
+reassessed every 30 minutes. The -6% stop is enforced by the scan: every run
+reads each tactical position and closes at market if it is at or below -6%.
+
+### This is a DELIBERATE risk decision, directed by the account owner
+Recorded plainly so no future review "fixes" it without knowing the trade-off.
+
+A tactical position has NO exchange-side stop. Between scans it is unprotected,
+and if the runner is down it stays unprotected for as long as the outage lasts.
+On 2026-09-14 the runner failed twice (22:58 execute, 23:10 scan) and nothing ran
+successfully between 20:27 and 23:30 — a ~3h blind window. A tactical position
+held through that window today would rely entirely on the market not falling.
+
+The reasoning ACCEPTED in exchange:
+- A tactical stop is only 6% away and the target is fixed at +14%, so the upside
+  being captured exactly is a large share of the whole trade's edge.
+- Tactical positions are short-lived by design (<= 48h), so the exposure window
+  is bounded.
+- CORE — the sleeve held for weeks, where an outage is most likely to overlap a
+  position — keeps its exchange-side stop, so the long-duration risk is covered.
+
+The scan cadence IS the tactical stop's resolution. It must not be lengthened
+beyond 30 minutes without revisiting this whole section.
+
+### Why one slot, not two (VERIFIED LIVE 2026-09-15)
+Tested against the live account, all five order paths:
 
 | Attempt | Result |
 |---|---|
@@ -326,47 +349,19 @@ account, all five order paths:
 | `stop_limit` | ACCEPTED — the only usable type |
 
 And a resting sell RESERVES the quantity it names. Verified on the live ETH
-position (balance 0.015302647, fully covered by two legs):
+position (balance 0.015302647, already fully covered):
 `insufficient balance for ETH (requested: 0.001, available: 0)`.
 
-So a full-size stop consumes the whole position and no take-profit can coexist.
-On Alpaca crypto, a stop and a target on 100% of a position is IMPOSSIBLE — not
-a configuration mistake, a platform limitation. Binance, Bybit and Crypto.com
-all support OCO; Alpaca crypto does not.
+Binance, Bybit and Crypto.com all support OCO and would allow both legs at once.
+Alpaca crypto does not. If the bot ever moves to a venue with OCO, both legs
+should rest and this entire section collapses to "rest both".
 
-That leaves exactly two options, and only two:
-
-| | Split (REMOVED) | Full stop (CURRENT) |
-|---|---|---|
-| Position protected | 50-75% | **100%** |
-| Naked exposure | always, by design | none |
-| Target enforcement | exchange-side, instant | 15-min scan, <= 15min lag |
-| Orphan bug possible | yes | no |
-
-### Why the split was removed
-1. It cost real money. DOT — the only closed trade in this account's history —
-   lost $1.61 (-8.0%) because one leg filled and the unstopped remainder sat
-   **70 hours** naked, blowing through its -6% stop unseen.
-2. Its justification had expired. The split was introduced when NO cadence was
-   running and a target could only be captured by an exchange-resting order.
-   The scan now runs HOURLY and can take the target itself.
-3. It generated enormous complexity for negative return: orphan checks,
-   `unreserved` arithmetic, `[SPLIT ok]` special-casing and "do not restore full
-   coverage" warnings across ten prompt files, all to service a rule with one
-   loss and zero wins.
-
-The accepted cost: a spike that fully round-trips inside 15 minutes is missed.
-That is smaller and rarer than carrying an unstopped half through every flush,
-24/7.
-
-### Migration of existing split positions
-Unlike the earlier "leave existing splits alone" clause, this amendment IS
-retroactive — that clause is exactly how DOT stayed naked for 70h. Any position
-found with a resting target leg: cancel the target, then re-place the stop at
-the FULL held quantity. The execute and scan runs both own this.
-
-If a future review wants a resting take-profit back, it needs a platform that
-supports OCO. It cannot be recovered by splitting.
+### The split remains BANNED
+Splitting the quantity (stop on part, target on the rest) is NOT the answer to
+the one-slot limit and must not be reintroduced. It leaves a slice with no stop
+AND no target, and creates orphan legs when one side fills. That is exactly how
+DOT sat naked for 70h and closed at -8.0%, the only closed trade this account
+has. One leg, 100% of the quantity, every time.
 
 
 ## Stops — how they actually work here (READ THIS)
@@ -450,22 +445,28 @@ CORE:
 
 TACTICAL:
 - Unrealized <= -6% -> close at market, cancel the resting stop
-- Up >= +6% -> ratchet the FULL-SIZE stop to BREAKEVEN
-- Up >= +10% -> move the stop to entry +4%
-- Up >= +14% -> TARGET HIT: cancel the stop and close at market, this run.
-  There is no resting limit to fill itself — the run IS the exit mechanism.
-- Above +14% (target overshot between runs) -> still close at market; do not
-  chase it higher. The +14% target is the rule, not a suggestion.
-- The stop always covers 100% of the held qty. Never split, never leave a
-  slice unreserved, and never place a resting take-profit.
+- A resting `limit` sell at entry * 1.14 covers 100% of the qty from ENTRY.
+  That is the tactical exit and it fills itself at the exchange.
+- The -6% stop is enforced BY THE SCAN, not by a resting order. Every scan run
+  reads each tactical position and closes at market if unrealized <= -6%.
+- Up >= +6% -> the notional stop moves to BREAKEVEN. There is no resting stop to
+  amend, so this is a LOGGED level, not an order: record it in TRADE-LOG and the
+  scan enforces the new level from then on.
+- Up >= +10% -> notional stop to entry +4%, logged the same way.
+- The resting limit fills itself at +14%. If a run sees a position at or above
+  +14% with the limit UNFILLED (gapped past, or the leg went missing), cancel it
+  and close at market immediately.
+- ONE resting leg, 100% of the qty. Never split, and never leave a tactical
+  position with neither a resting target nor a logged stop level.
 - Open > ~48h without hitting target or stop -> reassess; close unless the
   hourly screen still PASSES
 - Thesis broken -> close immediately
 
 BOTH:
 - Narrative with 2 consecutive failed trades -> exit all positions in it
-- Any position found WITHOUT a FULL-SIZE resting stop_limit -> fix immediately:
-  cancel any resting target leg first, then place a stop on 100% of held qty
+- CORE found without a full-size resting stop_limit -> place one immediately
+- TACTICAL found without a full-size resting limit at its +14% target ->
+  place one immediately, and verify its -6% level is logged in TRADE-LOG
 
 ## Every-Run Invariants
 Because crypto trades 24/7 and runs are 6h apart, every run (not just one of

@@ -73,17 +73,21 @@ for p in pos:
                 et = dt.datetime.fromisoformat(v).replace(tzinfo=dt.timezone.utc)
                 age = f"{(now-et).total_seconds()/3600:.1f}h"
             except Exception: age = '?'
-    # Since 2026-09-15 the stop must cover 100%. A resting TARGET leg is no longer
-    # healthy — it is a legacy split to be migrated, so it is flagged, not excused.
-    if pct_cov < 99.5:
-        if pct_tgt > 0.5:
-            flag = f'*** LEGACY SPLIT — cancel {pct_tgt:.0f}% target leg, restore full stop ***'
-        elif pct_cov < 0.5:
-            flag = '*** NAKED ***'
-        else:
-            flag = f'*** STOP COVERS ONLY {pct_cov:.0f}% ***'
+    # ONE resting leg per position, covering 100%, and WHICH leg depends on the
+    # sleeve: CORE rests a stop_limit, TACTICAL rests its +14% limit target (its
+    # -6% stop is a level the 30-min scan enforces, not an order). So "no stop"
+    # is NOT automatically naked — but a SPLIT across both legs is always wrong.
+    total = pct_cov + pct_tgt
+    if pct_cov > 0.5 and pct_tgt > 0.5:
+        flag = f'*** SPLIT — BANNED: {pct_cov:.0f}% stop + {pct_tgt:.0f}% target, consolidate to ONE leg ***'
+    elif total < 0.5:
+        flag = '*** NAKED — no resting leg at all ***'
+    elif total < 99.5:
+        flag = f'*** ONLY {total:.0f}% RESERVED ***'
+    elif pct_cov >= 99.5:
+        flag = 'OK stop @100% (CORE shape)'
     else:
-        flag = 'OK full stop'
+        flag = 'OK target @100% (TACTICAL shape; -6% stop enforced by scan)'
     print(f"  {sym:9} qty={qty:<12.6f} P&L {plpc:+6.2f}%  stop {pct_cov:5.1f}% / target {pct_tgt:5.1f}%"
           f" / unreserved {unreserved:4.1f}%  [{flag}]  age {age or 'unknown'}")
     if age and age!='?' and float(age[:-1]) > 48:

@@ -20,9 +20,9 @@ Open these in order before doing anything:
 Defined in .claude/commands/ (local) and routines/ (cloud). Crypto has no
 trading day — everything is UTC, every day of the week:
 
-- scan, EVERY 15 MIN (:07/:22/:37/:52 — FOUR hourly routines offset 15 min
-  apart, since the scheduler's minimum interval is 1h) — invariants, ratchets,
-  and the +14% tactical exit. The only thing watching a 24/7 market between the other runs,
+- scan, EVERY 30 MIN (:07/:37 — TWO hourly routines offset 30 min apart, since
+  the scheduler's minimum interval is 1h) — invariants, ratchets, and the
+  TACTICAL STOP, which is enforced here and nowhere else. The only thing watching a 24/7 market between the other runs,
   and the ONLY mechanism that takes profit (no resting take-profit exists).
 - research, 06:07 — the day's plan. CORE entries require it.
 - execute, every 6h (00:07/06:07/12:07/18:07) — the gate, entries, stops.
@@ -74,8 +74,8 @@ next run cannot see it.
 - A stop and a take-profit CANNOT coexist on Alpaca crypto. Verified live
   2026-09-15: oco/bracket/trailing_stop/stop are ALL rejected, and a resting
   sell reserves the qty it names, so a full-size stop leaves nothing over.
-  The stop therefore covers 100% of every position, always, and the 15-MINUTE
-  SCAN takes the +14% target by closing at market. NEVER split the quantity and never
+  So CORE rests its STOP and TACTICAL rests its +14% TARGET. A tactical
+  position has NO resting stop — its -6% level is enforced by the 30-MIN SCAN. NEVER split the quantity and never
   rest a limit sell as a take-profit — that is what left DOT naked for 70h.
 - CORE: hard cut and trail are both 15% below high-water, ratcheted UP only;
   tighten to 12% at +30%, to 10% at +40%.
