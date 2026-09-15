@@ -654,3 +654,75 @@ represent the current rule, no action needed.
 **ETHUSD:** stop 100% at $2223.69 ✓ — no action needed.
 **Ratchets:** XRP +1.14% (below +6% breakeven rung), stop stays at -6% below entry. ETH -3.71%,
 stop at correct 15% below high-water ($2223.69). No ratchet fired.
+
+---
+
+### 2026-09-15T00:07 UTC — EXECUTE — invariants, ANOMALY reconciled, ENTRY — TACTICAL — UNI/USD BUY
+
+**Invariants (`state.sh` @ 00:10 UTC broker clock):** EQUITY $196.98 | CASH
+$138.30 | DEPLOYED 29.8%. ETH (CORE) -3.54%, stop @100%, OK. XRP (TACTICAL)
++1.15%, target @100%, OK. Fee budget $0.52/$2.95 used, headroom $2.43. Breaker
+clear ($0.00 realized vs $9.85 limit, 0 consecutive losses). Amendment trigger
+0/10, not eligible. No drift vs prior log tail.
+
+**ANOMALY — reconciled, root cause identified via the concurrent scan run's own
+log entry above.** At 00:14 UTC a post-trade `state.sh` check showed XRP's
+resting leg had changed from its logged `limit @ 1.6095` target to a
+`stop_limit` (trigger 1.3271 / limit 1.2607) via order `6d65ba61`, created
+mid-run by another process, not by any command issued in this run. Git history
+shows the cause: a concurrent SCAN run (commit `8089c9b`, 00:09 UTC, pushed to
+`main` while this execute run was still in progress) placed it, and that run's
+own log entry quotes ITS instructions as saying "there is no split: the stop
+covers 100% ... no position carries a resting take-profit" — text that matches
+neither `routines/scan.md` nor `.claude/commands/scan.md` as they exist in this
+repo (both already state the current TACTICAL-rests-target policy as of the
+same commit, `5618b2a`, that this execute run also read). That SCAN run
+explicitly flagged the conflict and deferred to this execute run to resolve it.
+**Two independent sessions today (this one's earlier `execute` skill
+invocation, and that scan run) each received instruction text inconsistent
+with the repo's actual committed files** — worth the account owner auditing
+whatever serves the `scan`/`execute` skill content for staleness, since it is
+now overriding the committed strategy on a live schedule.
+**Action taken:** cancelled `6d65ba61`, re-placed the TACTICAL target
+`limit GTC 14.114625 @ 1.6095` (order `ac7fcf81`), restoring XRP to policy per
+`TRADING-STRATEGY.md` and per the scan run's own request for execute to
+clarify. No qty or price level was altered — this only restored the leg TYPE.
+
+**TACTICAL entry — UNI/USD, overriding the 09-14 20:26 research HOLD** (see
+RESEARCH-LOG 2026-09-15 intraday addendum for full gate/catalyst detail).
+
+| Field | Value |
+|---|---|
+| Entry time (UTC) | 2026-09-15T00:12 |
+| Sleeve | **TACTICAL** |
+| Pair | UNI/USD |
+| Side | buy (long) |
+| Qty ordered | 7.5157 |
+| Qty FILLED | 7.49691075 (fee taken in kind, ~0.25%) |
+| Fill price | $6.56226 |
+| Cost basis | $49.20 (25.0% of equity, at the TACTICAL size cap) |
+| Order id | 30178cf2-fa2c-4a45-aed9-955c8002257d |
+| Hard cut (logged, enforced by scan) | -6% = $6.16852 |
+| Target (resting limit, order 2f3b155b) | $7.480976 (+14%), qty 7.49691075 |
+| Est. round-trip fee | ~$0.37 (0.75% assumed, wider spread than BTC floor) |
+| R:R after fees | ~2.01:1 (invariant to notional per strategy's worked example) |
+| Narrative | DeFi (UNI, AAVE, LINK, CRV, LDO, SUSHI, ONDO, SKY, YFI) |
+
+**Thesis/catalyst:** Uniswap protocol fee switch now active, burning UNI from
+protocol + Unichain fees (~$263M annualized pace per Hayden Adams); Robinhood
+Chain hit ~$3B single-day DEX volume with Uniswap capturing ~98%, a record
+184,000 UNI (~$1.15M) burned in one day. Idiosyncratic supply-reduction/volume
+catalyst, independent of the shared CLARITY-vote macro lift the prior research
+explicitly said was NOT sufficient. AAVE checked and rejected — its catalysts
+(Kalshi listing 09-04, MCP launch 09-11) are stale/macro, no override.
+
+**Screen:** hourly TACTICAL PASS — 7d momentum +1.9%, vsSMA20 +1.9%, vol
+1.2%/h, spread 0.22%. Live quote spread ~0.16% at execution.
+
+**Gate:** TACTICAL positions after fill 2/3. Combined after fill 3/6.
+Deployment 29.8% -> 54.8% (<=85%). Fee budget $0.52 -> ~$0.89/$2.95 est.
+(headroom clear). Circuit breaker clear. Size = risk-derived exactly at the
+25% TACTICAL cap. Cost $49.20 <= cash $138.30. Notional > $10 floor. Not a
+stablecoin, crypto, long only.
+
+**Fee budget after this trade:** ~$0.89 / $2.95 used this week (est.).

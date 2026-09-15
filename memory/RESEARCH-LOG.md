@@ -552,3 +552,38 @@ may still originate if the CLARITY vote passes and a fresh, coin-specific
 setup — not just shared macro lift — clears the hourly screen).
 **Fee budget:** $0.52 / $2.99 used this week, unchanged this run (no trade
 placed).
+
+## 2026-09-15 — TACTICAL (INTRADAY ADDENDUM, execute run, UTC 00:11 broker clock)
+
+**Overriding the 09-14 20:26 HOLD for UNI only.** That HOLD's stated condition —
+"a second name with its OWN catalyst, not just shared macro lift" — is now met:
+CLARITY/FOMC have NOT resolved yet (vote still ~18h out), but UNI has a fresh,
+coin-specific, dated event distinct from that macro overhang.
+
+**Catalyst (WebSearch, PERPLEXITY_API_KEY not set -> fallback per design):**
+Uniswap's protocol fee switch is now active, burning UNI from protocol +
+Unichain fees; trailing 7-day pace implies ~$263M annualized burn (Hayden
+Adams). Robinhood Chain hit ~$3B single-day DEX volume with Uniswap capturing
+~98% of it, triggering a record 184,000 UNI burned (~$1.15M) in one day. This
+is an idiosyncratic supply-reduction mechanism/volume record, not the shared
+CLARITY-optimism lift the prior research flagged as insufficient.
+Checked AAVE too: its catalysts (Kalshi listing 09-04, MCP server launch
+09-11, CLARITY vote) are all stale or macro-shared — no override for AAVE.
+
+**Screen:** UNI hourly — 7d momentum +1.9%, vsSMA20 +1.9% (within +/-8%), vol
+1.2%/h (within 0.4-6% band), spread 0.22% (<=0.5%). TACTICAL PASS.
+**Live quote:** ap 6.5521 / bp 6.54192 -> spread ~0.16% (`alpaca.sh crypto-quote`,
+00:11 UTC broker clock).
+
+**Gate:** TACTICAL positions after fill 2/3. Combined after fill 3/6.
+Deployment 29.8% -> ~54.8% after fill (<=85%). Fee budget $0.52/$2.95 used,
+est. this round trip ~$0.37 (0.75% assumed, wider than BTC's floor) ->
+~$0.89/$2.95, headroom clear. Circuit breaker clear (0 realized losses, 0
+consecutive tactical losses). Size = (196.98*0.015)/0.06 = $49.24 = exactly the
+25% TACTICAL cap. Cost $49.24 <= cash $138.30. UNI/USD tradable, not a
+stablecoin, notional > $10 floor. R:R ~2.01:1 after fees at this size (fee is
+proportional, ratio invariant to notional per TRADING-STRATEGY.md's 14%/6%
+worked example).
+
+**Decision: TACTICAL ENTRY — UNI/USD.** Target +14% (limit rests at exchange),
+stop -6% (logged, enforced by 30-min scan). See TRADE-LOG for fill/order IDs.
