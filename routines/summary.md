@@ -48,13 +48,13 @@ qty, and WHICH leg depends on the sleeve:
 A position with NO resting leg (*** NAKED *** / *** n% UNRESERVED ***) is the
 highest-priority item in the run. Never split the quantity across two legs.
 Then, if you need the raw detail:
-  bash scripts/alpaca.sh positions
-  bash scripts/alpaca.sh orders
+  python scripts/bybit.py positions
+  python scripts/bybit.py orders
 1. RECONCILE: compare live positions to the tail of memory/TRADE-LOG.md. A stop
    may have filled, or a fill may have landed, between runs. Log any drift.
 2. RESTING LEG, BY SLEEVE. Exactly one leg, 100% of held qty, never split.
    CORE missing its stop:
-     bash scripts/alpaca.sh order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.95>","time_in_force":"gtc"}'
+     python scripts/bybit.py order '{"symbol":"SYM/USD","qty":"<frac>","side":"sell","type":"stop_limit","stop_price":"<trig>","limit_price":"<trig*0.95>","time_in_force":"gtc"}'
    Carrying a v1 `limit` target leg -> cancel it, then place the stop above.
    NOTE: trailing_stop, stop and oco/bracket are all REJECTED for crypto.
 3. HARD CUT — THRESHOLD DEPENDS ON THE SLEEVE. Read the sleeve from TRADE-LOG,
@@ -67,8 +67,8 @@ Then, if you need the raw detail:
    if this run does not close the position nothing will until the next run.
    For CORE the stop_limit can still be gapped through without filling, so never
    assume the resting order handled it. Cancel the resting leg, close at market.
-     bash scripts/alpaca.sh cancel ORDER_ID
-     bash scripts/alpaca.sh close SYM/USD
+     python scripts/bybit.py cancel ORDER_ID
+     python scripts/bybit.py close SYM/USD
 4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
    CORE: trail 15% below high-water; 12% once up +30%; 10% once up +40%.
    TACTICAL: trail 10% below high-water; 8% once up +20%.
@@ -90,10 +90,10 @@ fee budget is measured against. It resets on the 1st, NOT on Monday. There is no
 trade-count cap any more.
 
 STEP C — Pull final state and compute:
-  bash scripts/alpaca.sh account
+  python scripts/bybit.py account
 - Day P&L ($ and %) = today_equity - previous snapshot equity
 - Cumulative P&L ($ and %) vs $200 starting equity
-- BTC/USD over the same window (bash scripts/alpaca.sh crypto-quote BTC/USD),
+- BTC/USD over the same window (python scripts/bybit.py crypto-quote BTC/USD),
   so performance is measured against the real benchmark, not zero.
   THE BENCHMARK IS MANDATORY AND CUMULATIVE, not just the day's move:
     BTC baseline = $77,153.29 @ 2026-09-10 19:39 UTC (fixed, never re-based)

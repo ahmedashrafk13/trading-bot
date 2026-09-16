@@ -132,14 +132,30 @@ class Universe:
         # 40MB hourly cache is gitignored), so defaulting to 1H would make every
         # backtest command fail there with "no cached bars".
         if timeframe == "auto":
-            has_h = glob.glob(os.path.join(BARS_ROOT, "1H", "*.json"))
-            timeframe = "1H" if has_h else "1D"
+            # Prefer the richest cache present. Bybit writes "D"/"60"; the
+            # Alpaca era wrote "1D"/"1H". Both are supported so old caches and
+            # the committed one keep working.
+            for tf in ("60", "1H", "D", "1D"):
+                if glob.glob(os.path.join(BARS_ROOT, tf, "*.json")):
+                    timeframe = tf
+                    break
+            else:
+                timeframe = "1D"
         # step is the bar width in seconds. Everything downstream that says
         # "hour" means "bar"; on 1D data a 30-day window is 30 bars, not 720.
-        self.step = 86400 if timeframe == "1D" else HOUR
-        self.bars_per_day = 1 if timeframe == "1D" else 24
+        # Bar width in seconds, keyed by both naming schemes. Everything
+        # downstream that says "hour" means "bar": on daily data a 30-day
+        # window is 30 bars, not 720.
+        steps = {"1H": HOUR, "1D": 86400, "D": 86400, "W": 604800,
+                 "1": 60, "3": 180, "5": 300, "15": 900, "30": 1800,
+                 "60": HOUR, "120": 7200, "240": 14400, "360": 21600, "720": 43200}
+        if timeframe not in steps:
+            raise SystemExit(f"unknown timeframe {timeframe!r}; "
+                             f"expected one of {', '.join(sorted(steps))}")
+        self.step = steps[timeframe]
+        self.bars_per_day = max(1, round(86400 / self.step))
         self.timeframe = timeframe
-        d = BARS if timeframe == "1H" else os.path.join(BARS_ROOT, timeframe)
+        d = os.path.join(BARS_ROOT, timeframe)
         files = sorted(glob.glob(os.path.join(d, "*.json")))
         if not files:
             raise SystemExit(
@@ -448,9 +464,13 @@ def metrics(u, equity, trades):
     gl = -sum(t.pnl for t in losses)
 
     # benchmark: buy and hold BTC over the identical window
+    # The benchmark symbol differs by venue: Alpaca quoted BTC/USD, Bybit uses
+    # BTCUSDT. Hardcoding one silently reports a MISSING benchmark as "no edge"
+    # rather than as an error, which is how a strategy gets compared to nothing.
     bench = None
-    if "BTC/USD" in u.symbols:
-        b = u.mark[u.symbols.index("BTC/USD")]
+    bsym = next((s for s in ("BTC/USD", "BTCUSDT", "BTCUSD") if s in u.symbols), None)
+    if bsym:
+        b = u.mark[u.symbols.index(bsym)]
         b = b[~np.isnan(b)]
         if len(b) > 1:
             bench = float(b[-1] / b[0] - 1)

@@ -48,8 +48,11 @@ def make_universe(series, tmp):
         rows = [[T0 + i * HOUR, o, h, l, c, 1.0] for i, (o, h, l, c) in enumerate(bars)]
         json.dump({"symbol": sym, "start": "x", "bars": rows},
                   open(os.path.join(d, sym.replace("/", "-") + ".json"), "w"), separators=(",", ":"))
-    engine.BARS = d
-    return Universe()
+    # Universe now resolves <BARS_ROOT>/<timeframe>, so the ROOT is what
+    # the harness must redirect; patching the old BARS constant silently
+    # did nothing and every test read the real cache instead.
+    engine.BARS_ROOT = tmp
+    return Universe(timeframe="1H")
 
 
 def flat(n, px):
@@ -66,7 +69,7 @@ def ramp(n, start, step):
 
 def main():
     tmp = tempfile.mkdtemp()
-    orig = engine.BARS
+    orig = engine.BARS_ROOT
     try:
         # ---------------------------------------------------------------- 1
         # A position must never exit better than its stop. With a hard gap down,
@@ -167,7 +170,7 @@ def main():
               f"end={eq[~np.isnan(eq)][-1]:.2f}")
 
     finally:
-        engine.BARS = orig
+        engine.BARS_ROOT = orig
         shutil.rmtree(tmp, ignore_errors=True)
 
     print()

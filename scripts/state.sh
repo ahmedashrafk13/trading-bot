@@ -49,6 +49,12 @@ print()
 # --- positions, ages, stop coverage -------------------------------------------
 log = Path('memory/TRADE-LOG.md').read_text(encoding='utf-8')
 entry_times = dict(re.findall(r'TACTICAL entry: (\S+?)/USD.*?Entry time \(UTC\) \| (\S+)', log, re.S))
+# Sleeve per symbol, from the ENTRY section headers ("### <date> UTC - ENTRY - CORE - ETH/USD BUY").
+# Later entries win, so a symbol re-entered in the other sleeve resolves to its CURRENT sleeve.
+sleeves = {}
+SLEEVE_RE = re.compile(r'###\s*(\d{4}-\d{2}-\d{2})[^\n]*?ENTRY\s*[—-]\s*(CORE|TACTICAL)\s*[—-]\s*([A-Z0-9]+)/USD')
+for d, sl, sy in SLEEVE_RE.findall(log):
+    sleeves[sy.upper()+'USD'] = (sl, dt.date.fromisoformat(d))
 def norm(s): return s.replace('/','').upper()
 stops = {}
 for o in orders:
@@ -59,6 +65,17 @@ for o in orders:
     if o['side']=='sell' and o['type']=='limit':
         limit_orders.setdefault(norm(o['symbol']), []).append(o)
 limits = set(limit_orders)
+
+# --- SCAN GATE (advisory) -----------------------------------------------------
+# Scan's only actions are STEP 2 (stop shape/coverage), STEP 3 (gap enforcement)
+# and STEP 4 (ratchet). This block decides, in Python, whether ANY of them could
+# fire. It FAILS OPEN by construction: every uncertainty appends a reason, and any
+# reason at all means ACTION. So a bug here can only cost a wasted run, never a
+# missed ratchet or an unprotected position.
+V2_CUTOVER = dt.date(2026, 9, 15)
+TIGHTEST   = {'CORE': 0.10, 'TACTICAL': 0.08}   # tightest legal v2 tier per sleeve
+GAPCUT     = {'CORE': -14.0, 'TACTICAL': -9.0}  # 1pt EARLY of the -15/-10 hard cut
+gate = []
 
 print(f"OPEN POSITIONS ({len(pos)})")
 if not pos: print("  none")
@@ -92,6 +109,57 @@ for p in pos:
         flag = 'OK stop @100%'
     print(f"  {sym:9} qty={qty:<12.6f} P&L {plpc:+6.2f}%  stop {pct_cov:5.1f}% / target {pct_tgt:5.1f}%"
           f" / unreserved {unreserved:4.1f}%  [{flag}]  age {age or 'unknown'}")
+    # --- SCAN GATE evidence for this position -----------------------------
+    # Fails open: anything unknown, unusual or borderline appends a reason, and
+    # any reason at all makes the verdict ACTION.
+    cur = float(p.get('current_price') or 0)
+    mystops = stops.get(sym, [])
+    stop_px = None
+    if len(mystops) == 1:
+        try: stop_px = float(mystops[0].get('stop_price'))
+        except (TypeError, ValueError): stop_px = None
+    sl, ent = sleeves.get(sym, (None, None))
+    # TIGHTEST tier, not the base trail: a tighter trail yields a HIGHER candidate
+    # stop, so if even the tightest legal tier does not clear the resting stop,
+    # no tier does. That is what makes a NO-ACTION verdict safe without knowing
+    # the high-water mark -- the resting stop already encodes it.
+    trail = TIGHTEST.get(sl)
+    cand = cur*(1-trail) if (cur and trail) else None
+    print(f"            price ${cur:,.2f} | stop {('$%s' % format(stop_px, ',.2f')) if stop_px else 'NONE'}"
+          f" | sleeve {sl or 'UNKNOWN'} | ratchet due above {('$%s' % format(cand, ',.2f')) if cand else 'n/a'}")
+    if flag != 'OK stop @100%':
+        gate.append(f"{sym}: {flag}")
+    if sl is None:
+        gate.append(f"{sym}: sleeve not resolvable from TRADE-LOG")
+    elif sl == 'TACTICAL' and ent and ent < V2_CUTOVER:
+        gate.append(f"{sym}: pre-v2 TACTICAL entry ({ent}) - trail may be grandfathered, cannot reason")
+    if len(mystops) != 1:
+        gate.append(f"{sym}: expected exactly 1 resting stop_limit, found {len(mystops)}")
+    elif stop_px is None:
+        gate.append(f"{sym}: resting stop carries no readable stop_price")
+    if not cur:
+        gate.append(f"{sym}: broker returned no current_price")
+    if sl and plpc <= GAPCUT.get(sl, -999):
+        gate.append(f"{sym}: {plpc:+.2f}% at/near the {sl} hard cut - gap enforcement (STEP 3)")
+    if cand and stop_px and cand > stop_px:
+        gate.append(f"{sym}: ratchet may be due - {trail*100:.0f}% trail on ${cur:,.2f}"
+                    f" = ${cand:,.2f} > resting ${stop_px:,.2f}")
+print()
+# A resting sell against a symbol that is no longer held is an orphan the run
+# must look at; it is never a normal steady state.
+open_syms = {norm(q['symbol']) for q in pos}
+for o in orders:
+    if o['side'] == 'sell' and norm(o['symbol']) not in open_syms:
+        gate.append(f"{norm(o['symbol'])}: resting {o['type']} sell with no open position")
+
+print("SCAN GATE  (advisory - SHADOW MODE, runs must NOT obey this yet)")
+if gate:
+    print("  SCAN-VERDICT: ACTION")
+    for g in gate: print(f"    - {g}")
+else:
+    print("  SCAN-VERDICT: NO-ACTION")
+    print("    every stop @100%, no gap-enforcement breach, and no ratchet due")
+    print("    even at the tightest legal trail for each position's sleeve")
 print()
 
 # --- fee budget ---------------------------------------------------------------

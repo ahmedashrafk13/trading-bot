@@ -21,8 +21,11 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CACHE = os.path.join(ROOT, "data", "cache", "bars-1D.json.gz")
-DEST = os.path.join(ROOT, "data", "bars", "1D")
+# Default to the Bybit daily cache. The Alpaca-era 1D cache is kept so old
+# results stay reproducible, but it is no longer what routines load.
+TF = os.environ.get("CACHE_TF", "D")
+CACHE = os.path.join(ROOT, "data", "cache", f"bars-{TF}.json.gz")
+DEST = os.path.join(ROOT, "data", "bars", TF)
 
 
 def pack():

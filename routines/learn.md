@@ -28,7 +28,8 @@ STEP 0 — MAKE THE BACKTESTER RUNNABLE. Before anything else:
   python backtest/cache.py unpack
   python backtest/test_engine.py
 
-`unpack` expands the committed 5.7-year daily bar cache into data/bars/1D/. It is
+`unpack` expands the committed Bybit daily bar cache (60 liquid USDT spot
+pairs, ~4.1 years) into data/bars/D/. It is
 idempotent and takes a second; the per-symbol hourly cache is gitignored and
 would cost ~15 minutes of API calls to rebuild, which is longer than this run
 should take.
@@ -74,7 +75,7 @@ STEP 3 — SPECIFY THE TEST BEFORE RUNNING IT. For each new hypothesis, write do
 the exact command AND what result would falsify it. Committing to the falsifier
 in advance is what stops you from reading whatever comes back as confirmation.
 
-  - About WHAT TO BUY -> `python backtest/research.py`. If the signal's
+  - About WHAT TO BUY -> `python backtest/research.py --timeframe D`. If the signal's
     information coefficient does not beat the RANDOM row out of sample, mark it
     REJECTED and STOP. Do not proceed to a backtest. A signal with no predictive
     power cannot be rescued by sizing, stops or frequency.
