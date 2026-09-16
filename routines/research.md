@@ -146,6 +146,19 @@ STEP E — Notification: silent unless urgent (a position gapped past -15% witho
 its stop filling, an exploit/depeg/delisting on something held, a macro shock).
   bash scripts/clickup.sh "<one line>"
 
+STEP EVIDENCE — CHECK THE RECORD BEFORE FORMING A VIEW. Read the STANDING
+VERDICTS table in `memory/HYPOTHESIS-LOG.md` before writing today's plan. If your
+reasoning depends on something already marked REJECTED there, your reasoning is
+wrong and you must say so explicitly rather than quietly repeating it.
+
+In particular, these are settled and measured, not opinions:
+  - short-horizon momentum is INVERTED (IC -0.050, t=-13)
+  - 30-day momentum is INVERTED (IC -0.037, t=-10)
+  - tighter stops and higher frequency are both strictly worse
+A plan that says "enter because momentum is strong" is arguing against the
+evidence in this repo. If you want to make that call anyway, state why the
+measured IC is wrong.
+
 STEP OBS — SELF-DEFECT INBOX. If anything in THIS prompt contradicted
 memory/TRADING-STRATEGY.md or another prompt, was rejected by the API, or was
 too ambiguous to follow without guessing, append ONE row to

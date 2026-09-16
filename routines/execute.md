@@ -179,6 +179,15 @@ itself into closing a winner early.
 The sleeve tag is load-bearing: later runs use it to choose which stop and exit
 rules apply. Never log a position without it.
 
+STEP LEARN — SEED THE LEARNING LOOP. If any position CLOSED this run, append a
+one-line `LESSON:` to that trade's TRADE-LOG entry: what you think caused the
+outcome, stated so it could be proven wrong. "Stop was inside normal noise for
+this coin's vol" is a lesson; "bad luck" and "market was choppy" are not.
+Do NOT change any rule here, and do NOT let the lesson alter this run's trading.
+It is raw material — the learn routine tests it against history before anything
+acts on it. One trade is ~95% noise and acting on it directly is what produced
+six contradictory amendments in five days.
+
 STEP I — Notification: only if a trade was placed.
   bash scripts/clickup.sh "<pairs, qty, fill prices, stop levels, one-line why>"
 
