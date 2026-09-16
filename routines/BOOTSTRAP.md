@@ -2,18 +2,26 @@
 
 ## Current setup: Bybit spot, LOCAL, live money
 
-Five routines, all run on your own machine. Times are UTC; Pakistan is UTC+5, so
-a machine awake 8pm-5am PKT covers roughly 15:00-00:00 UTC. Every cadence below
-is chosen to land inside that window — a routine scheduled while the laptop is
-off simply does not run.
+Five routines. The account timezone is **GMT+5 (Pakistan)**, so every cron below
+is written in LOCAL time — that is what the Routines panel uses. Do not convert
+to UTC; entering UTC times would schedule everything five hours early, mostly
+while the machine is asleep.
 
-| routine | cron (UTC) | PKT | places orders? |
+The laptop is awake roughly **8pm-5am PKT**, and a routine scheduled outside that
+window simply does not run. Every cadence below sits inside it.
+
+| routine | cron (PKT) | runs at | places orders? |
 |---|---|---|---|
-| research | `7 15 * * *` | 8:07 pm | no |
-| execute  | `7 16,20 * * *` | 9:07 pm, 1:07 am | **YES** |
-| summary  | `7 22 * * *` | 3:07 am | no |
-| learn    | `7 23 * * *` | 4:07 am | no |
-| weekly-review | `37 23 * * 0` | 4:37 am Mon | no |
+| research | `7 20 * * *` | 8:07 pm | no |
+| execute  | `7 21,1 * * *` | 9:07 pm, 1:07 am | **YES** |
+| summary  | `7 3 * * *` | 3:07 am | no |
+| learn    | `7 4 * * *` | 4:07 am | no |
+| weekly-review | `37 4 * * 1` | 4:37 am Mon | no |
+
+Execute runs twice, nine hours apart, so a stop that fills overnight is
+reconciled the same session rather than a day later. Positions are protected by
+exchange-side stops, so the hours the machine is off carry no unprotected
+exposure — that is the whole reason this setup can be local at all.
 
 Positions are protected by exchange-side stops, so the hours the machine is off
 carry no unprotected exposure.
