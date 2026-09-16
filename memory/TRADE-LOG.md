@@ -1167,6 +1167,7 @@ Stop_limit order `3ad1dca9` (placed by 14:11 scan) triggered and filled automati
 **RECONCILE finding:** `alpaca.sh orders` (status=all) shows XRP's resting stop_limit `607e3472` (stop $1.3303 / limit $1.2638, placed by the 14:11 UTC scan) FILLED at **2026-09-15T18:41:08Z**, qty 14.114625 @ $1.3272 — 33 minutes after the 18:08 execute run logged the CLARITY Act vote as "not yet knowable." This fill was never logged. No run was active between the 18:10 daily snapshot and this one to catch it — exactly the blind-window case Every-Run Invariants STEP A.1 exists for.
 
 **EXIT — TACTICAL (v1 grandfathered, 6% trail) — XRP/USD — STOPPED OUT**
+*(Also discovered concurrently by the 2026-09-16T00:08 UTC scan run; execute version is canonical.)*
 
 | Field | Value |
 |---|---|
@@ -1190,3 +1191,19 @@ Stop_limit order `3ad1dca9` (placed by 14:11 scan) triggered and filled automati
 **Amendment trigger:** 3 closed trades total (DOT -$1.61, UNI -$3.17, XRP -$1.31) since the last applied amendment. 3 < 10 -> not eligible, nothing amended.
 
 **No stops cancelled, no new orders placed for this reconcile step.**
+
+---
+
+### 2026-09-16T00:08 UTC — SCAN — QUIET, NO ACTION
+
+**State (broker clock):** EQUITY $190.45 | CASH $153.73 | DEPLOYED 19.3% (ceiling 85%). Fee budget $0.52/$1.90 used (monthly), headroom $1.38. Circuit breaker clear ($0.00 realized vs $9.52 limit, 0 consecutive tactical losses on 09-16). Amendment trigger 0/10 (script bug; manual count 3/10) — not eligible.
+
+**Positions:**
+- ETHUSD (CORE): -8.03%, stop 100% @ $2223.69 (order `1ebb2562`) ✓ — no action
+- XRPUSD: CLOSED at 18:41 UTC 09-15 (logged above in execute entry) — no action
+
+**Gap check (STEP 3):** ETH -8.03% vs CORE -15% ✓. Not triggered.
+
+**Ratchet (STEP 4):** ETH HWM $2616.11, current ~$2400 below HWM → no new high → no ratchet. Stop $2223.69 = 15% below HWM, distance ~7.4% from current — above 5% minimum ✓.
+
+**No orders placed, no stops cancelled. No clickup notification (nothing acted upon).**
