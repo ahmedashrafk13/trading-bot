@@ -28,9 +28,15 @@ whether the trade wins or loses. Consequences that are part of the strategy:
 - The MONTHLY FEE BUDGET is the frequency control. There is no fixed trade cap.
 - Require a minimum 2:1 reward:risk AFTER the measured 0.65% friction.
 
-## Self-amendment — FROZEN except to the weekly review at N >= 10 (v2)
-**ONLY the weekly-review run may edit this file, and only at >= 10 closed trades
-since the last amendment.** Not scan, not execute, not summary, not research.
+## Self-amendment — OPEN. Any run may amend (owner directive, 2026-09-16)
+**ANY run may edit this file at any time, with no minimum trade count.** scan,
+execute, research, summary and weekly-review all have amendment authority. If a
+run sees something worth improving, it improves it in that run — do not defer.
+
+The owner removed the freeze deliberately on 2026-09-16 and accepts the risk it
+was guarding against (six amendments in five days on N=1, fitted to noise). Keep
+logging every change with its evidence and reasoning so the churn stays visible
+and reversible, but do NOT block on the counter.
 
 Why the freeze: between 2026-09-10 and 2026-09-15 this document was amended six
 times on a sample of ONE closed trade. Every one of those amendments was fitted
@@ -81,7 +87,8 @@ Amendment happens ONLY in the weekly-review run, and ONLY when the evidence
 trigger is met. Any other run that believes a rule should change writes the
 observation to TRADE-LOG.md and changes nothing.
 
-TRIGGER: at least **10 closed trades since the last amendment**. Below that,
+TRIGGER: none. Amend whenever the evidence warrants. (Historical note: this
+used to require 10 closed trades since the last amendment. Below that,
 change nothing and say so.
 - 10, not 3. Three closed trades cannot distinguish a real effect from noise, and
   tuning on noise produces thrash: tighten a stop one day, loosen it the next,
