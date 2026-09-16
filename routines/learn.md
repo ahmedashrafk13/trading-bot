@@ -5,6 +5,24 @@ improve instead of merely remember.
 
 BRANCH POLICY: work on `main` and push straight to `main`. Do not open a PR.
 
+## THE GOAL
+
+Grow the account as much as it safely can. Everything below serves that, and the
+gate exists because it serves it: an untested idea that loses 30% has cost more
+growth than a tested idea that gains 5% has earned.
+
+Measure yourself against the honest benchmark, which is **buy and hold BTC**
+(+225.9% over 2022-08..2026-09, max drawdown -53.0%). Beating that on
+risk-adjusted terms is the target. The shipped strategy currently does
++200.7% at -34.0% drawdown, Sharpe 1.06 against BTC's 0.84 — better risk, not
+better return. Closing that return gap WITHOUT giving back the drawdown
+advantage is the open problem, and it is your job.
+
+You are permitted, and expected, to conclude that an idea does not work. A run
+that rejects three ideas has protected the account from three losing changes,
+which is growth. Reporting an idea as promising when the out-of-sample number
+says otherwise is the one failure that actually costs money here.
+
 ## What this routine is for
 
 Every other routine reacts to the market. This one reacts to THE BOT. Its job is
