@@ -24,3 +24,16 @@ RULES
 
 | date (UTC) | pair | sleeve | screen px | reason not taken | T+5d % | MFE % | scored |
 |---|---|---|---|---|---|---|---|
+| 2026-09-16 | UNI | CORE | 6.3393 | catalyst stale (~8d old, fee-switch burn), already priced +93%/30d, DeFi narrative has 1 tactical loss (UNI itself, 09-15) | | | |
+| 2026-09-16 | ARB | CORE | 0.1538 | same-day token unlock (~$13M, 0.93% supply) is a bearish overhang | | | |
+| 2026-09-16 | FIL | CORE | 0.8126 | no confirmed catalyst, momentum/speculation only | | | |
+| 2026-09-16 | XTZ | CORE | 0.2448 | catalysts (X mainnet, Etherlink 7.0) undated/ongoing | | | |
+| 2026-09-16 | ARB | TACTICAL | 0.1538 | same-day token unlock (~$13M, 0.93% supply) is a bearish overhang | | | |
+| 2026-09-16 | XRP | TACTICAL | 1.2944 | catalyst (CLARITY cloture) already failed 09-15, caused this week's tactical stop-out | | | |
+| 2026-09-16 | DOT | TACTICAL | 0.9508 | no catalyst found; L1/L2 narrative already has 1 tactical loss (09-14) | | | |
+| 2026-09-16 | WIF | TACTICAL | 0.1792 | meme narrative rolling over, no dated catalyst | | | |
+| 2026-09-16 | BTC | TACTICAL | 75943.8655 | shared FOMC/macro catalyst only, not idiosyncratic | | | |
+| 2026-09-16 | HYPE | TACTICAL | 77.2080 | unlock already happened Sept 6, priced in, no fresh trigger | | | |
+| 2026-09-16 | SOL | TACTICAL | 97.1300 | no dated catalyst found | | | |
+| 2026-09-16 | ETH | TACTICAL | 2403.9500 | shared FOMC/ETF-flow catalyst only; already the account's CORE exposure, would concentrate risk | | | |
+| 2026-09-16 | DOGE | TACTICAL | 0.0801 | meme narrative rolling over, no dated catalyst | | | |
