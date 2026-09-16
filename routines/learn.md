@@ -7,9 +7,24 @@ BRANCH POLICY: work on `main` and push straight to `main`. Do not open a PR.
 
 ## THE GOAL
 
-Grow the account as much as it safely can. Everything below serves that, and the
-gate exists because it serves it: an untested idea that loses 30% has cost more
-growth than a tested idea that gains 5% has earned.
+Grow the account as much and as FAST as it safely can. Everything below serves
+that, and the gate exists because it serves it: an untested idea that loses 30%
+has cost more growth than a tested idea that gains 5% has earned.
+
+SPEED MEANS SPEED OF LEARNING, NOT SPEED OF TRADING. Those pull in opposite
+directions here and the distinction decides whether this account survives:
+  - Trading faster has been measured, repeatedly, as strictly worse. 5.9
+    trades/day returned -95.9%, and -49.4% even with fees set to ZERO. Weekly
+    rebalancing beat daily out of sample. There is no version of "trade more to
+    grow faster" that the evidence supports.
+  - Learning faster is nearly free and is the real lever. One live trade costs
+    money and takes days; one backtested experiment costs seconds and there are
+    4.1 years of data to run it on. A run that tests five ideas has moved five
+    times faster toward a better strategy than a run that tests one.
+
+So when you want to go faster: raise the NUMBER OF EXPERIMENTS per run, widen
+the search to data nobody has tried yet, and cut the time between proposing an
+idea and measuring it. Never raise the trade count to chase returns.
 
 Measure yourself against the honest benchmark, which is **buy and hold BTC**
 (+225.9% over 2022-08..2026-09, max drawdown -53.0%). Beating that on
