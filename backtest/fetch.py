@@ -17,7 +17,7 @@ keys.
 import argparse, datetime as dt, json, os, shutil, subprocess, sys, time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BARS = os.path.join(ROOT, "data", "bars", "1H")
+BARS_ROOT = os.path.join(ROOT, "data", "bars")
 STABLES = {"USDC", "USDT", "USDG", "DAI", "PYUSD"}
 
 
@@ -76,7 +76,7 @@ def parse_ts(s):
     return int(dt.datetime.fromisoformat(s.replace("Z", "+00:00")).timestamp())
 
 
-def fetch_symbol(sym, start):
+def fetch_symbol(sym, start, tf="1H"):
     """Fetch one symbol, following pagination to exhaustion.
 
     Fetching ONE symbol per request sidesteps the crypto-bars trap where `limit`
@@ -86,7 +86,7 @@ def fetch_symbol(sym, start):
     """
     rows, page, pages = [], "", 0
     while True:
-        d = sh("crypto-bars", sym, "1H", start, "10000", page)
+        d = sh("crypto-bars", sym, tf, start, "10000", page)
         for b in d.get("bars", {}).get(sym, []):
             rows.append([parse_ts(b["t"]), b["o"], b["h"], b["l"], b["c"], b.get("v", 0.0)])
         page = d.get("next_page_token") or ""
@@ -110,12 +110,14 @@ def main():
     ap.add_argument("--days", type=int, default=400)
     ap.add_argument("--symbols", default="")
     ap.add_argument("--refresh", action="store_true")
+    ap.add_argument("--timeframe", default="1H", help="1H or 1D")
     a = ap.parse_args()
 
+    BARS = os.path.join(BARS_ROOT, a.timeframe)
     os.makedirs(BARS, exist_ok=True)
     syms = [s.strip() for s in a.symbols.split(",") if s.strip()] or universe()
     start = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=a.days)).strftime("%Y-%m-%d")
-    print(f"fetching {len(syms)} symbols, 1H bars from {start}", file=sys.stderr)
+    print(f"fetching {len(syms)} symbols, {a.timeframe} bars from {start}", file=sys.stderr)
 
     for i, sym in enumerate(syms, 1):
         path = os.path.join(BARS, sym.replace("/", "-") + ".json")
@@ -123,7 +125,7 @@ def main():
             n = len(json.load(open(path, encoding="utf-8"))["bars"])
             print(f"  [{i}/{len(syms)}] {sym:12} cached ({n} bars)", file=sys.stderr)
             continue
-        bars = fetch_symbol(sym, start)
+        bars = fetch_symbol(sym, start, a.timeframe)
         json.dump({"symbol": sym, "start": start, "bars": bars},
                   open(path, "w", encoding="utf-8"), separators=(",", ":"))
         print(f"  [{i}/{len(syms)}] {sym:12} {len(bars)} bars", file=sys.stderr)

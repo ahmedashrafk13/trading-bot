@@ -27,6 +27,7 @@ python backtest/sweep.py --quick         # parameter search with an OOS verdict
 | `test_engine.py` | Invariant tests on synthetic bars with known answers. |
 | `signals.py` | Candidate entry signals + the information-coefficient machinery. |
 | `research.py` | Signal bake-off: which rule predicts, in-sample and out, vs a random null. |
+| `portfolio.py` | Time-series momentum + volatility targeting. A different engine, built on what the evidence and the literature both point to. |
 
 ## What the engine refuses to do
 
@@ -142,3 +143,76 @@ python backtest/run.py --set breaker_streak_resets_daily=true
 That last one resolves the circuit-breaker day-boundary ambiguity logged in
 `memory/OBSERVATIONS.md` — you can now measure which reading is better instead
 of arguing about it.
+
+
+## The strategy research, and where it ended (2026-09-16)
+
+Grounded in the academic literature (see Sources at the bottom), which says two
+things that match what this repo measured independently:
+
+  * There is **hardly any cross-sectional momentum in crypto** - coins are ~0.8
+    correlated, so ranking them barely helps. Time-series momentum (is THIS coin
+    trending?) is the robust version.
+  * **Volatility targeting** with inverse-vol sizing is the single largest
+    risk-adjusted improvement available, because volatility is autocorrelated.
+
+`portfolio.py` implements exactly that: per-asset trend signal, inverse-vol
+weights scaled to a portfolio vol target, cash when the trend is off, no stops,
+and costs charged on turnover rather than per round trip.
+
+### Result over 400 days (2025-08 to 2026-09, a bear market)
+
+| config | return | vs BTC | maxDD |
+|---|---|---|---|
+| shipped slot strategy | -44.8% | -8.4pp | -53.0% |
+| tsmom 50d + BTC regime 100d | **+4.3%** | **+40.6pp** | -13.9% |
+
+That looks like a win. **It is not.** It is a regime artifact.
+
+### Result over 5.7 years (2021-01 to 2026-09, bull AND bear)
+
+| config | return | CAGR | maxDD | Sharpe |
+|---|---|---|---|---|
+| **buy and hold BTC** | **+157.4%** | **+17.5%** | - | - |
+| tsmom 50d + regime 100d | +7.0% | +1.2% | -48.3% | +0.19 |
+| tsmom 50d + reg100, weekly rebal | +27.3% | +4.3% | -51.7% | +0.29 |
+| tsmom 50d + reg100, vol target 30% | +17.2% | +2.8% | -32.5% | +0.24 |
+| tsmom on BTC only, 50d | +52.3% | - | -60.2% | +0.39 |
+| tsmom 50d, no regime | -50.5% | -11.6% | -75.3% | -0.13 |
+
+**Nothing beat buying BTC and doing nothing.** Not the bot, not the fixed bot,
+not the literature-best design, not even trend-following BTC itself.
+
+### Why: the altcoin universe is the problem
+
+Per-coin total return, 2021-01 to 2026-09, on the *survivorship-biased* list
+(delisted coins are missing, so reality was worse):
+
+| | |
+|---|---|
+| best | SOL +5147%, DOGE +1291%, ETH +227% |
+| BTC | +157% |
+| **median coin** | **-21.2%** |
+| worst | SUSHI -97.6%, GRT -97.1%, TRUMP -95.0% |
+
+The median altcoin lost a fifth of its value while BTC more than doubled. A
+long-only bot drawing from this universe is picking from a pool with a deeply
+negative median. Skill in selection has to overcome that before it earns a cent,
+and no signal tested here is remotely strong enough.
+
+### Honest limits of this conclusion
+
+1. One asset class, one 5.7-year sample, ending in a drawdown.
+2. Survivorship bias flatters every result above.
+3. Long-only is assumed throughout. A market-neutral long/short book could in
+   principle monetize the cross-sectional IC that `research.py` does find - that
+   is a genuinely different vehicle, not a parameter change, and Alpaca crypto
+   cannot express it.
+
+## Sources
+
+- [Time-Series and Cross-Sectional Momentum in the Cryptocurrency Market (Han, Kang, Ryu)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4675565)
+- [Cryptocurrency momentum has (not) its moments](https://link.springer.com/article/10.1007/s11408-025-00474-9)
+- [An Introduction to Volatility Targeting - QuantPedia](https://quantpedia.com/an-introduction-to-volatility-targeting/)
+- [The Impact of Volatility Targeting - Man Group](https://www.man.com/insights/the-impact-of-volatility-targeting)
+- [Catching Crypto Trends - Concretum Group](https://concretumgroup.com/catching-crypto-trends-a-tactical-approach-for-bitcoin-and-altcoins/)

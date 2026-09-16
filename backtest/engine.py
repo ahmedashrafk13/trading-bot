@@ -35,6 +35,7 @@ import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BARS = os.path.join(ROOT, "data", "bars", "1H")
+BARS_ROOT = os.path.join(ROOT, "data", "bars")
 HOUR = 3600
 
 
@@ -125,8 +126,14 @@ class Universe:
     forward-filled close is kept purely for marking equity.
     """
 
-    def __init__(self, symbols=None, start=None, end=None):
-        files = sorted(glob.glob(os.path.join(BARS, "*.json")))
+    def __init__(self, symbols=None, start=None, end=None, timeframe="1H"):
+        # step is the bar width in seconds. Everything downstream that says
+        # "hour" means "bar"; on 1D data a 30-day window is 30 bars, not 720.
+        self.step = 86400 if timeframe == "1D" else HOUR
+        self.bars_per_day = 1 if timeframe == "1D" else 24
+        self.timeframe = timeframe
+        d = BARS if timeframe == "1H" else os.path.join(BARS_ROOT, timeframe)
+        files = sorted(glob.glob(os.path.join(d, "*.json")))
         if not files:
             raise SystemExit("no cached bars - run: python backtest/fetch.py --days 400")
 
@@ -146,7 +153,8 @@ class Universe:
             lo = max(lo, start)
         if end:
             hi = min(hi, end)
-        self.t = np.arange(lo - lo % HOUR, hi + HOUR, HOUR, dtype=np.int64)
+        st = self.step
+        self.t = np.arange(lo - lo % st, hi + st, st, dtype=np.int64)
         idx = {int(ts): i for i, ts in enumerate(self.t)}
         n = len(self.t)
 
@@ -158,7 +166,7 @@ class Universe:
 
         for si, sym in enumerate(self.symbols):
             for ts, o, h, l, c, _v in raw[sym]:
-                i = idx.get(ts - ts % HOUR)
+                i = idx.get(ts - ts % st)
                 if i is not None:
                     self.o[si, i], self.h[si, i] = o, h
                     self.l[si, i], self.c[si, i] = l, c
