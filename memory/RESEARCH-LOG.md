@@ -724,3 +724,129 @@ is non-binding and does not authorize an entry from this run.
 **Fee budget:** $0.52 / $2.96 used this week, unchanged this run (no new
 entries; only order-type corrections on existing UNI/XRP legs, at no
 incremental fee cost).
+
+---
+## 2026-09-16 — Crypto Research (UTC ~00:08, broker clock) — run inline from execute.md STEP B (no standalone research run had posted for today)
+
+**Account snapshot:** EQUITY $190.45 | CASH $153.73 | DEPLOYED 19.3% (ceiling 85%,
+no floor). SIZE NOW: CORE $25.39 (15% trail, risk $3.81=2.0%, max 4) | TACTICAL
+$19.04 (10% trail, risk $1.90=1.0%, max 1). Positions: ETH (CORE) qty 0.015302647,
+entry $2,609.50, current ~$2,399.9-2,417 (screen vs state.sh timestamps differ
+slightly), unrealized ~-8%, stop 100% @ $2,223.69 (order `1ebb2562`) OK. XRP
+(v1 TACTICAL) STOPPED OUT 2026-09-15T18:41 UTC at -6.23%, discovered this run via
+RECONCILE — see TRADE-LOG for the full exit writeup; XRP is no longer an open
+position. Fee budget $0.52/$1.90 used (monthly), headroom $1.38. Circuit breaker:
+$0.00 realized losses today vs $9.52 limit — dollar threshold clear; BUT 3
+consecutive tactical losses now on the books (DOT 09-14, UNI 09-15, XRP 09-15)
+with no intervening tactical win — see TRADE-LOG reconcile entry for the
+day-boundary ambiguity in that rule. This run treats TACTICAL as closed for new
+entries regardless of screen/catalyst until a tactical win breaks the streak.
+Amendment trigger: 3 closed trades since last amendment, 3 < 10, not eligible.
+
+**Market context (WebSearch — PERPLEXITY_API_KEY is still the template
+placeholder value `your_perplexity_api_key_here` -> exits 3 -> fallback per
+design, same as every prior run):**
+- BTC live quote (screen.sh) $75,618.15, -3.4% 7d, -3.1% vs SMA20, spread 0.03%.
+  WebSearch results for "today" are noisy/conflicting on exact level ($75.6k-79k
+  across sources of different recency) but agree on direction: BTC has been
+  range-bound/soft, dominance ~58.4-58.9% (flat).
+- **FOMC decision TODAY, 2026-09-16, 2:00pm ET (~18:00 UTC), Powell presser
+  2:30pm ET.** Hike-odds estimates from different sources range ~68-85%
+  (up sharply from ~36-44% in late August) against a 3.50-3.75% hold; driven by
+  persistent inflation (PCE 3.7%). This is a live, unresolved, high-impact macro
+  event landing squarely inside today's execute/scan windows. BOJ meets Sept
+  17-18 right behind it (from 09-15 research, unchanged).
+- **CLARITY Act cloture vote FAILED in the Senate on 2026-09-15** (fell short of
+  60 votes; Hawley/Collins/Moran among Republicans not supporting) — confirms
+  the thesis-deterioration flagged in yesterday's research and explains the XRP
+  stop-out discovered this run. No new open position is exposed to this now.
+- ETH: spot ETF inflows +$197M last week (4th straight week of inflows) vs BTC
+  ETF outflows -$463M in the same window — the BTC/ETH ETF-flow divergence
+  flagged 09-14/09-15 is still intact, now with a bigger number. Glamsterdam
+  mainnet still slipped to Q4 2026; Sepolia fork Sept 28 unchanged. No new
+  near-term ETH-specific catalyst beyond the ETF divergence, which is a slow
+  thesis not a today-trade trigger.
+- Token unlocks this week: ARB is NOT in the major-unlock headlines this
+  specific WebSearch pass, but the 09-15 research entry already flagged ARB's
+  own unlock (92.65M tokens, ~$13.02M, 0.93% of supply) landing **today,
+  2026-09-16** — a supply overhang on the one name that also clears the
+  TACTICAL screen today (see below).
+- Narrative rotation: broad 2026 framing continues to favor AI-infra/DePIN,
+  stablecoin payments, RWA, and "real revenue" L1/DeFi over pure memes (memes
+  broadly -30%+ from mid-April highs) — unchanged from 09-14/09-15 framing,
+  nothing fresh enough today to act on by itself.
+
+**CORE shortlist (4, daily bars, `scripts/screen.sh`):** UNI ARB FIL XTZ
+(7d%/30d%/vsSMA20/spread%): UNI +3.0/+93.2/+4.4/0.23, ARB +1.1/+101.4/+11.3/0.37,
+FIL -0.9/+20.9/+2.8/0.29, XTZ -5.2/+25.5/+4.0/0.26.
+Every other one of the 33-pair universe FAILED the CORE screen this run — a much
+narrower board than 09-15's 12-name shortlist, consistent with the broad red week
+into FOMC (BTC -3.4% 7d, most alts -3% to -16% 7d).
+
+**TACTICAL shortlist (1, hourly bars):** ARB only (0.8/7.7/+6.2/2.9%vol/0.32%
+spread). Moot this run — TACTICAL is circuit-breaker-blocked (see above).
+
+**Ideas by sleeve**
+
+**CORE — no new entry (HOLD).** Checked each shortlist name's catalyst
+individually against the "own dated catalyst, not shared macro" bar:
+- UNI: catalyst is real (fee-switch burn ramp, ~$263M annualized implied burn,
+  record Robinhood Chain volume) but it is 8+ days old (dated ~Sept 8), already
+  well-priced (+93.2% 30d, +4.4% vs SMA20, and this account already ate a -6%
+  TACTICAL stop on UNI on 09-15 — same coin, DeFi narrative already has 1 failed
+  trade), not a fresh trigger for a NEW CORE-sized position today.
+- ARB: catalyst is BEARISH, not bullish — the largest token unlock of the month
+  (~$13M / 0.93% supply) is scheduled for TODAY. A daily-bar bounce sitting
+  directly in front of a same-day supply unlock is the setup this desk rejected
+  outright on 09-15 for the identical reason; nothing has changed except the
+  unlock is now imminent rather than "tomorrow." Reject.
+- FIL: WebSearch explicitly could not attribute FIL's rally to any confirmed
+  catalyst ("no independently confirmed fundamental catalyst," "technical
+  breakout combined with renewed speculation") — this is a shared-narrative/
+  momentum move (AI-storage speculation), not the idiosyncratic, dated catalyst
+  the entry checklist requires. Reject.
+- XTZ: catalysts cited (Tezos X mainnet, Etherlink 7.0) are real but
+  undated/ongoing ("anticipation building," no confirmed date this week) —
+  not a today-dated trigger. Reject.
+No CORE shortlist name clears the bar. Combined with a same-day FOMC decision
+that is a coin-flip-adjacent, high-impact macro event, adding CORE exposure
+right now is exactly the "shared macro, not idiosyncratic" trade the strategy's
+own catalyst rule exists to filter out. CORE stays at 1/4 (ETH only).
+What would change it: a shortlist name develops a fresh, dated, idiosyncratic
+catalyst, ideally reviewed again after the FOMC print has cleared and the
+market has digested it rather than into the event blind.
+
+**TACTICAL — no new entry (HOLD, circuit-breaker-blocked).** ARB is the only
+name clearing the TACTICAL hourly screen, and it carries the same same-day
+unlock overhang that kills it for CORE. Moot regardless: 3 consecutive tactical
+losses (DOT, UNI, XRP) sit on the books with no intervening win, and this run
+treats that streak as blocking new tactical originations today (see TRADE-LOG
+reconcile entry and account snapshot above for the exact reasoning and the
+day-boundary ambiguity flagged to OBSERVATIONS.md). Even absent the breaker
+question, ARB's catalyst is bearish, so nothing here would have been traded
+today regardless.
+
+**Risk factors:** FOMC decision + Powell presser today (~18:00-18:30 UTC),
+hike-odds materially elevated vs a month ago — expect volatility spanning both
+today's 18:07 UTC execute run and every scan between now and then. BOJ Sept
+17-18 stacked right behind it. ARB's unlock lands same-day as FOMC — a
+double catalyst, both bearish/uncertain, on the one TACTICAL-qualifying name.
+CLARITY Act failure is now resolved (bearish, already realized via the XRP
+stop) rather than a forward risk. Broad market red across almost the entire
+33-pair universe this week (32/33 fail the CORE screen) — a much thinner
+opportunity set than 09-15, consistent with pre-FOMC de-risking rather than a
+narrative rotation.
+
+**Decision:** CORE **HOLD** (binding for the day) — no shortlist name clears
+the idiosyncratic-catalyst bar, and adding exposure into a same-day FOMC
+decision is the wrong trade even if one did. TACTICAL **HOLD** — blocked by the
+3-consecutive-tactical-loss circuit breaker (see reasoning above), and moot
+regardless since ARB (the only TACTICAL pass) carries a same-day bearish unlock
+catalyst. What would change TACTICAL: a tactical win to break the loss streak
+(none available — 0 tactical positions open) or, failing that, explicit
+weekly-review guidance on the day-boundary question; what would change CORE:
+FOMC clearing without damage plus a shortlist name still un-extended and
+carrying its own dated catalyst.
+
+**Fee budget:** $0.52 / $1.90 used this MONTH so far (headroom $1.38). No
+entries this run, so unchanged.

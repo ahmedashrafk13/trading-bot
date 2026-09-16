@@ -1157,3 +1157,36 @@ Stop_limit order `3ad1dca9` (placed by 14:11 scan) triggered and filled automati
 **Invariants this run:** both open positions carry a full-size (100%) resting `stop_limit`, no naked/split legs, no target legs. Neither ETH nor XRP made a new high-water mark since the last ratchet (14:11 UTC), so no ratchet fired. Neither position breached its hard-cut threshold (ETH -6.58% vs -15% CORE; XRP -0.28% vs -6% grandfathered TACTICAL).
 
 **Notes:** Quiet day after the v2 rulebook rewrite — one TACTICAL round trip (UNI) stopped out for a small loss, leaving 2 open positions (1 CORE, 1 grandfathered v1 TACTICAL) both fully stopped and within their hard-cut bands. The bot is underperforming BTC by 3.49pp cumulative, driven mostly by ETH's -6.58% unrealized drawdown plus this account's two realized tactical losses (DOT, UNI) — no CORE trade has closed yet to test the "let winners run" half of the thesis. Two data caveats for the record (also logged to OBSERVATIONS.md): (1) no daily snapshot was written 2026-09-12 through 2026-09-14, so the "Day P&L" above is actually a ~4-day delta versus the 2026-09-11 snapshot, not a true 1-day figure; (2) `scripts/state.sh`'s circuit-breaker/amendment regex does not match the `REALIZED P&L` formats actually used in this log (table-row and inline-colon styles), so it reported $0.00 realized and 0 closed trades this run — the $3.17/2-closed figures above were computed by hand from the log rows and should be treated as authoritative over the script's output until fixed.
+
+---
+
+### 2026-09-16T00:08 UTC — EXECUTE — STEP A RECONCILE: XRP stop fill discovered (drift between runs)
+
+**State at run start (broker clock 2026-09-16 00:08 UTC):** EQUITY $190.45 | CASH $153.73 | DEPLOYED 19.3%. `bash scripts/state.sh` shows only ONE open position (ETHUSD) — XRPUSD, open at the 18:10 snapshot, is gone from `alpaca.sh positions`.
+
+**RECONCILE finding:** `alpaca.sh orders` (status=all) shows XRP's resting stop_limit `607e3472` (stop $1.3303 / limit $1.2638, placed by the 14:11 UTC scan) FILLED at **2026-09-15T18:41:08Z**, qty 14.114625 @ $1.3272 — 33 minutes after the 18:08 execute run logged the CLARITY Act vote as "not yet knowable." This fill was never logged. No run was active between the 18:10 daily snapshot and this one to catch it — exactly the blind-window case Every-Run Invariants STEP A.1 exists for.
+
+**EXIT — TACTICAL (v1 grandfathered, 6% trail) — XRP/USD — STOPPED OUT**
+
+| Field | Value |
+|---|---|
+| Exit time (UTC) | 2026-09-15T18:41:08Z |
+| Exit type | stop_limit fill (stop triggered at $1.3303, filled within limit $1.2638) |
+| Qty | 14.114625 |
+| Entry | $1.41184 (14.15 ordered, 2026-09-14T16:43:35Z; qty haircut to 14.114625 by in-kind buy fee) |
+| Fill price | $1.3272 |
+| Cost basis | $19.98 (14.15 × $1.41184) |
+| Gross proceeds | $18.73 (14.114625 × $1.3272) |
+| Gross P&L | -$1.24 (-6.23%, consistent with the 6% v1 trail from HWM $1.4152) |
+| Sell fee (~0.35%) | -$0.07 |
+| **REALIZED P&L** | **≈ -$1.31** |
+
+**Reason:** Grandfathered v1 6% trail stop hit. CLARITY Act cloture vote (the position's catalyst) resolved unfavorably/thesis continued to deteriorate per the 09-15 research entry's flagged concern; price gapped through the trail window before the next scan could re-evaluate. Stop filled normally within its limit band — no naked exposure.
+
+**Narrative:** Payments/legacy (XRP, LTC, BCH) — **1** consecutive failed trade in this narrative. Exit-narrative rule needs 2.
+
+**Circuit breaker — consecutive TACTICAL losses now 3: DOT (09-14) → UNI (09-15) → XRP (09-15).** No intervening tactical win. TRADING-STRATEGY.md's breaker text reads "3 consecutive tactical losses -> no new entries for the rest of the UTC day," which literally scopes the freeze to the day the 3rd loss closed (2026-09-15, now over). Read literally, that day-scoped freeze has expired and does not by itself block today (2026-09-16). However, the *streak* of 3 consecutive tactical losses is real and unbroken by any tactical win, and the account currently holds 0 TACTICAL positions, so nothing is being management-frozen either way right now. **Decision for this run: treat the streak as an active caution flag and do NOT originate a new TACTICAL entry today** even though the literal day-boundary language would technically permit it — a fresh tactical entry immediately behind 3 straight losses is exactly the compounding-losing-streak scenario the breaker exists to prevent, and the rule's day-scoping looks like an oversight rather than an intended reset mechanism. Logged as an ambiguity to OBSERVATIONS.md rather than resolved by editing the rule (amendment freeze). Realized losses TODAY (2026-09-16 UTC) = $0.00 vs $9.52 limit (this exit posted on 09-15) — the dollar threshold is unaffected.
+
+**Amendment trigger:** 3 closed trades total (DOT -$1.61, UNI -$3.17, XRP -$1.31) since the last applied amendment. 3 < 10 -> not eligible, nothing amended.
+
+**No stops cancelled, no new orders placed for this reconcile step.**
