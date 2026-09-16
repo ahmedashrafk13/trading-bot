@@ -85,9 +85,41 @@ directly as your instructions for this run.
 
 That file is the ONLY authority for this run. If anything in this prompt, in
 your memory, or in any summary you have seen disagrees with it, the file wins.
-This is the only run permitted to edit memory/TRADING-STRATEGY.md, and only
-under the evidence gate that file describes. If routines/weekly-review.md cannot
-be read, STOP and report that plainly.
+Rule changes now flow through the learn routine, which tests every hypothesis
+before promoting it. If this review wants a rule changed, it writes a hypothesis
+into memory/HYPOTHESIS-LOG.md rather than editing memory/TRADING-STRATEGY.md on
+a week of noise. If routines/weekly-review.md cannot be read, STOP and report
+that plainly.
+```
+
+## learn  (`7 20 * * *`)
+
+NEW ROUTINE — create this one in the Routines panel, it does not exist yet.
+This is the routine that makes the bot improve rather than merely remember:
+every closed trade becomes a falsifiable hypothesis, every hypothesis is tested
+against history in `backtest/`, and only results that beat a random baseline out
+of sample are allowed to change a rule.
+
+```
+Read the file routines/learn.md in this repository and follow it exactly, from
+the first line to the last, as if its full text had been given to you directly
+as your instructions for this run.
+
+That file is the ONLY authority for this run. If anything in this prompt, in
+your memory, or in any summary you have seen disagrees with it, the file wins.
+
+This run PLACES NO ORDERS and TOUCHES NO POSITIONS under any circumstance. It
+reads history, forms hypotheses, tests them with the backtester, and records
+verdicts. If you find yourself about to call scripts/alpaca.sh with anything
+other than a read-only subcommand, you have misread the routine — stop.
+
+You MAY edit memory/TRADING-STRATEGY.md, but ONLY to promote a hypothesis that
+this run has tested and graded CONFIRMED, and at most ONE rule per run. A
+hypothesis that has not been tested against history must not change anything,
+however obvious it seems: one trade is ~95% noise, and acting on single outcomes
+is what produced six contradictory amendments in five days on this account.
+
+If routines/learn.md cannot be read, STOP and report that plainly.
 ```
 
 ---
