@@ -50,9 +50,10 @@ These are settled. Do not re-propose them; test something new instead.
 
 | finding | evidence | status |
 |---|---|---|
-| Short-horizon momentum (the TACTICAL rule) is INVERTED | IC -0.050 test, t=-13, vs null 0.002 | CONFIRMED |
-| 30-day momentum (the CORE rule) is INVERTED | IC -0.037 test, t=-10 | CONFIRMED |
-| Low volatility predicts higher forward return | IC +0.065 @168h, t=+16 | CONFIRMED |
+| Momentum is INVERTED at SHORT horizons only (<=1 day) | Bybit daily: IC@1d -0.012 test; but IC@30d **+0.025** test. The Alpaca-era "momentum is inverted" verdict was measured on hourly bars only and was WRONGLY generalised to all horizons. Short-horizon reversal and medium-horizon momentum coexist. | CORRECTED 2026-09-16 |
+| Low volatility predicts a higher MEDIAN forward return | IC +0.059@1d, +0.093@7d, +0.122@30d out of sample (Bybit daily) | CONFIRMED |
+| **...but low volatility does NOT predict a higher MEAN return, so it cannot be traded long/short** | 30d forward: LOW vol median -0.0% vs HIGH vol -5.1% (low wins on median by +5.0pp) — yet MEAN is +2.7% vs +7.3% (high wins by +4.6pp). High-vol returns are lottery-shaped: p99 +206.8%, max +832%. Shorting them is right most days and catastrophic occasionally. | CONFIRMED |
+| Market-neutral long/short does NOT rescue the low-vol signal | `neutral.py`: -93.1% risk-weighted, -97.4% equal-dollar. Momentum L/S made +109.7% but still lost to holding BTC (+225.9%) at the same drawdown. | CONFIRMED |
 | Trailing stops harvest noise; wider is always better | -44.8% -> -5.8% as trail widens to none | CONFIRMED |
 | Higher trade frequency is strictly worse | 5.9 trades/day = -95.9%; -49.4% even at ZERO fees | CONFIRMED |
 | Cross-sectional selection cannot be monetized long-only | lowvol signal has real IC, still returns -44% in the engine | CONFIRMED |
