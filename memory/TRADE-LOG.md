@@ -1227,3 +1227,21 @@ Stop_limit order `3ad1dca9` (placed by 14:11 scan) triggered and filled automati
 **STEP D — Re-screened anyway for completeness:** CORE shortlist unchanged (UNI ARB FIL XTZ). TACTICAL shortlist widened to 8 (ARB XRP DOT WIF BTC SOL ETH DOGE), but moot — blocked by the tactical-loss-streak caution flag above regardless of any catalyst. Did not run STEP C (live quote/spread re-validation) or spend a perplexity/WebSearch catalyst call, since no candidate can pass the circuit-breaker gate this run.
 
 **No orders placed, no stops cancelled. No clickup notification (nothing acted upon).**
+
+---
+
+### 2026-09-16T12:11 UTC — EXECUTE — NO ACTION
+
+**State (broker clock via `state.sh`):** EQUITY $190.67 | CASH $153.73 | DEPLOYED 19.4% (ceiling 85%). SIZE NOW: CORE $25.42 / TACTICAL $19.07. Fee budget $0.52/$1.91 used this month, headroom $1.39. Circuit breaker (script): $0.00 realized vs $9.53 limit, script-reported consecutive losing closes 0 — same known regex bug as prior runs (table/bold `REALIZED P&L` formats aren't matched). Manual count from the log: 3 consecutive tactical losses on the books (DOT 09-14, UNI 09-15, XRP 09-15), still no intervening tactical win, 0 TACTICAL positions open. Amendment trigger: 3 closed trades since last amendment, 3 < 10 — not eligible, nothing amended.
+
+**STEP A — Reconcile:** `alpaca.sh positions` shows exactly one position, ETHUSD qty 0.015302647, avg entry $2,609.50, current $2,414.20, unrealized -7.48% ($-2.99) — matches TRADE-LOG, no drift since the 06:08 UTC run. `alpaca.sh orders` shows the single resting leg `1ebb2562` (stop_limit, stop $2,223.69 / limit $2,112.51) still open, covering 100% of held qty — one leg, no target, no split.
+
+**Gap check:** ETH unrealized -7.48% vs CORE -15% hard cut — not triggered.
+
+**Ratchet:** HWM $2,616.11 unchanged (current $2,414.20 is below HWM) — no new high, no ratchet. Stop distance from current price ~7.9%, above the 5% minimum.
+
+**STEP B — Research:** Today's 06:08 UTC entry read. CORE: **HOLD** (binding — no CORE entry originates from this run regardless of screen changes). TACTICAL: **HOLD** (recommendation), and this run continues treating the unbroken 3-consecutive-tactical-loss streak as an active block on new TACTICAL originations, same reasoning as the 00:08 and 06:08 UTC runs today — no tactical win has occurred since to break the streak, and the day-boundary ambiguity is already logged in OBSERVATIONS.md pending weekly-review. Not re-logging a duplicate observation this run.
+
+**STEP D — Re-screened for completeness:** CORE shortlist now UNI FIL XTZ DOT (ARB dropped off CORE, DOT joined) — moot, CORE is HOLD-binding regardless of shortlist composition. TACTICAL (1H) shortlist narrowed to 5 (POL DOT HYPE GRT DOGE) — moot, blocked by the tactical-loss-streak caution flag above regardless of any catalyst. Did not run STEP C (live quote/spread re-validation) or spend a perplexity/WebSearch catalyst call, since no candidate can pass the circuit-breaker-caution gate this run.
+
+**No orders placed, no stops cancelled. No clickup notification (nothing acted upon).**
