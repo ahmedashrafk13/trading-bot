@@ -78,6 +78,15 @@ class Params:
     core_decision_hour: int = 6
     tac_every_hours: int = 6
 
+    # --- entry signal ---
+    # "momentum" is what the bot ships today: buy the strongest recent mover.
+    # research.py measures that rule at a NEGATIVE information coefficient in
+    # both halves of the data (t = -13), i.e. it is not merely edgeless, it is
+    # inverted. "lowvol_reversion" is the composite the same test ranked best:
+    # prefer calm coins trading below their own SMA20.
+    entry_signal: str = "momentum"
+    signal_top_frac: float = 0.25   # only the best quartile of the cross-section
+
     # --- regime gate (OFF by default = the strategy as it is shipped today) ---
     # When on, no new position is originated unless BTC is above its own daily
     # SMA20. The live account's Day 0 note observed that every tactical pass was
@@ -250,6 +259,18 @@ def run(u, p):
     regime_si = (u.symbols.index(p.regime_symbol)
                  if p.regime_symbol in u.symbols else None)
 
+    # Imported lazily: signals.py imports helpers from this module, so a
+    # top-level import here would be circular.
+    alt_score = alt_cut = None
+    if p.entry_signal != "momentum":
+        from signals import composite_score
+        alt_score = composite_score(u, p.entry_signal)
+        # One cross-sectional threshold per hour, so "top quartile" means top
+        # quartile of the coins actually quoting that hour, not of the universe.
+        alt_cut = np.nanquantile(
+            np.where(np.isnan(alt_score), np.nan, alt_score),
+            1.0 - p.signal_top_frac, axis=0)
+
     for i in range(len(u.t)):
         if u.days[i] != cur_day:
             cur_day = u.days[i]
@@ -337,23 +358,33 @@ def run(u, p):
         if u.hours[i] == p.core_decision_hour:
             free = p.core_slots - sum(1 for q in pos if q.sleeve == "CORE")
             if free > 0:
-                ok = ((u.core_mom[:, i] > p.core_min_mom)
-                      & (u.core_dsma[:, i] > 0)
-                      & (u.core_dsma[:, i] <= p.core_max_ext))
-                if p.core_require_rising_sma:
-                    ok = ok & u.core_rising[:, i]
-                for si in _rank(ok, u.core_mom[:, i], held, free):
+                if alt_score is not None:
+                    ok = alt_score[:, i] >= alt_cut[i]
+                    rank_by = alt_score[:, i]
+                else:
+                    ok = ((u.core_mom[:, i] > p.core_min_mom)
+                          & (u.core_dsma[:, i] > 0)
+                          & (u.core_dsma[:, i] <= p.core_max_ext))
+                    if p.core_require_rising_sma:
+                        ok = ok & u.core_rising[:, i]
+                    rank_by = u.core_mom[:, i]
+                for si in _rank(ok, rank_by, held, free):
                     pending.append(("CORE", si))
                     held.add(si)
 
         if not tac_frozen and u.hours[i] % p.tac_every_hours == 0:
             free = p.tac_slots - sum(1 for q in pos if q.sleeve == "TACTICAL")
             if free > 0:
-                ok = ((u.tac_mom[:, i] > p.tac_min_mom)
-                      & (np.abs(u.tac_dsma[:, i]) <= p.tac_ext_band)
-                      & (u.tac_vol[:, i] >= p.tac_vol_lo)
-                      & (u.tac_vol[:, i] <= p.tac_vol_hi))
-                for si in _rank(ok, u.tac_mom[:, i], held, free):
+                if alt_score is not None:
+                    ok = alt_score[:, i] >= alt_cut[i]
+                    rank_by = alt_score[:, i]
+                else:
+                    ok = ((u.tac_mom[:, i] > p.tac_min_mom)
+                          & (np.abs(u.tac_dsma[:, i]) <= p.tac_ext_band)
+                          & (u.tac_vol[:, i] >= p.tac_vol_lo)
+                          & (u.tac_vol[:, i] <= p.tac_vol_hi))
+                    rank_by = u.tac_mom[:, i]
+                for si in _rank(ok, rank_by, held, free):
                     pending.append(("TACTICAL", si))
                     held.add(si)
 

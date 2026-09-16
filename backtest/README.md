@@ -25,6 +25,8 @@ python backtest/sweep.py --quick         # parameter search with an OOS verdict
 | `run.py` | One backtest, one report. `--set key=val` overrides any parameter. |
 | `sweep.py` | Parameter search with train/test split, top-N stability and walk-forward. |
 | `test_engine.py` | Invariant tests on synthetic bars with known answers. |
+| `signals.py` | Candidate entry signals + the information-coefficient machinery. |
+| `research.py` | Signal bake-off: which rule predicts, in-sample and out, vs a random null. |
 
 ## What the engine refuses to do
 
@@ -57,6 +59,58 @@ wrong in the optimistic direction. These are pinned by `test_engine.py`:
    which is a floor on — not a forecast of — live behaviour.
 4. **One regime.** 400 days of crypto is one macro environment. A result that
    only works on this slice is not a result.
+
+## Start here: does the signal predict anything?
+
+```bash
+python backtest/research.py
+```
+
+Backtesting a whole strategy is confounded - sizing, trails, slots and fees all
+sit between the signal and the result, so a losing backtest cannot tell you which
+part was wrong. `research.py` strips all of it away and measures only whether the
+signal at time `t` says anything about the return from `t` to `t+h`, as a rank
+correlation (information coefficient) across ~250,000 symbol-hours.
+
+This is also the honest answer to "I want more trades so it improves faster": a
+live trade costs money and two days, an observation here costs nothing and there
+are a quarter of a million of them.
+
+Read every row against the RANDOM row, never against zero. The null wanders, and
+how far it wanders IS the noise floor.
+
+### What it found (2025-08 to 2026-09)
+
+| signal | IC@24h train | IC@24h test | verdict |
+|---|---|---|---|
+| `momentum_7h` (bot TACTICAL) | -0.056 | -0.019 | **backwards** |
+| `momentum_30d` (bot CORE) | -0.018 | -0.037 | **backwards** |
+| `low_volatility` | +0.069 | +0.055 | best found (t=+12) |
+| `below_sma20` | +0.073 | +0.013 | positive, decays fast |
+| RANDOM (null) | +0.000 | +0.002 | the noise floor |
+
+Both signals the bot trades on have NEGATIVE information coefficients in both
+halves of the data. They are not edgeless, they are inverted.
+
+But — and this is the important part — **feeding the good signals into the engine
+does not make money either**:
+
+| entry_signal | return | vs BTC |
+|---|---|---|
+| `momentum` (shipped) | -44.8% | -8.4pp |
+| `lowvol` | -44.4% | -8.1pp |
+| `reversion` | -58.0% | -21.7pp |
+| `lowvol` + no stops + regime gate | -5.8% | +30.6pp |
+| **cash (0 slots)** | **0.0%** | **+36.4pp** |
+
+The reason is structural: an information coefficient is a *cross-sectional*
+measure - it says you picked better coins than average. The bot is *long-only and
+directional*. Picking the best-falling coin in a market where everything falls
+still loses money. The edge that exists cannot be expressed by this vehicle.
+
+The second structural finding: every widening of the trail improves the result,
+monotonically, all the way to disabling stops entirely. The trailing stops are
+harvesting noise, not protecting capital.
 
 ## Reading a sweep
 

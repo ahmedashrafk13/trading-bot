@@ -22,7 +22,11 @@ from engine import Params, Universe, run, metrics
 
 
 def coerce(name, raw):
+    # dataclass field types arrive as strings under `from __future__ import
+    # annotations`, so match on both the type object and its name.
     t = {f.name: f.type for f in fields(Params)}[name]
+    if t is str or t == "str":
+        return raw
     if t is bool or t == "bool":
         return raw.lower() in ("1", "true", "yes")
     if t is int or t == "int":
