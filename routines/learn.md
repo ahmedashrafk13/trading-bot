@@ -24,6 +24,25 @@ account produces about three a week.
 
 ---
 
+STEP 0 — MAKE THE BACKTESTER RUNNABLE. Before anything else:
+  python backtest/cache.py unpack
+  python backtest/test_engine.py
+
+`unpack` expands the committed 5.7-year daily bar cache into data/bars/1D/. It is
+idempotent and takes a second; the per-symbol hourly cache is gitignored and
+would cost ~15 minutes of API calls to rebuild, which is longer than this run
+should take.
+
+`test_engine.py` must print "all invariants hold". If it does NOT, the
+backtester is lying and every verdict this run produces would be worthless.
+STOP: change no rules, log the failure to memory/OBSERVATIONS.md, notify via
+scripts/clickup.sh, and end the run. A broken measuring instrument is worse than
+no measurement, because its output still looks like evidence.
+
+If a specific backtest command errors mid-run, do NOT guess the result and do
+NOT fall back to reasoning it out from the trade log. Mark that hypothesis
+`TESTING` with the error text, and move to the next one.
+
 STEP 1 — READ STATE. In this order, and do not skip the first one:
   1. `memory/HYPOTHESIS-LOG.md` — especially the STANDING VERDICTS table. If your
      idea is already there as REJECTED or CONFIRMED, it is settled. Do not
@@ -103,6 +122,11 @@ you may now edit `memory/TRADING-STRATEGY.md` to apply it. Requirements:
 If nothing is CONFIRMED, change NOTHING. A run that tests three ideas, rejects
 all three and edits no rules is a fully successful run. Most runs will look like
 this, and that is the system working.
+
+STEP NOTIFY — Report what was learned, always, even on a quiet run:
+  bash scripts/clickup.sh "learn: <n> tested, <n> confirmed, <n> rejected — <the single most interesting verdict, or 'nothing changed'>"
+This is the only visibility into whether the loop is working without opening the
+repo, so it runs on quiet days too.
 
 STEP OBS — If this prompt contradicted another file or was too ambiguous to
 follow, append one row to `memory/OBSERVATIONS.md` naming both files.

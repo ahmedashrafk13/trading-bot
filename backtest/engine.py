@@ -126,7 +126,14 @@ class Universe:
     forward-filled close is kept purely for marking equity.
     """
 
-    def __init__(self, symbols=None, start=None, end=None, timeframe="1H"):
+    def __init__(self, symbols=None, start=None, end=None, timeframe="auto"):
+        # "auto" prefers hourly when it is cached and falls back to the daily
+        # cache otherwise. Cloud runs only ever have the committed 1D cache (the
+        # 40MB hourly cache is gitignored), so defaulting to 1H would make every
+        # backtest command fail there with "no cached bars".
+        if timeframe == "auto":
+            has_h = glob.glob(os.path.join(BARS_ROOT, "1H", "*.json"))
+            timeframe = "1H" if has_h else "1D"
         # step is the bar width in seconds. Everything downstream that says
         # "hour" means "bar"; on 1D data a 30-day window is 30 bars, not 720.
         self.step = 86400 if timeframe == "1D" else HOUR
@@ -135,7 +142,10 @@ class Universe:
         d = BARS if timeframe == "1H" else os.path.join(BARS_ROOT, timeframe)
         files = sorted(glob.glob(os.path.join(d, "*.json")))
         if not files:
-            raise SystemExit("no cached bars - run: python backtest/fetch.py --days 400")
+            raise SystemExit(
+                "no cached bars. Either expand the committed daily cache "
+                "(python backtest/cache.py unpack), or fetch fresh hourly "
+                "bars, which takes ~15 min (python backtest/fetch.py --days 400).")
 
         raw = {}
         for f in files:

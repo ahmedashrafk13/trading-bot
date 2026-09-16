@@ -39,6 +39,7 @@ def main():
     ap.add_argument("--days", type=int, default=0, help="only backtest the last N days")
     ap.add_argument("--set", action="append", default=[], metavar="KEY=VAL")
     ap.add_argument("--trades", action="store_true")
+    ap.add_argument("--timeframe", default="auto", help="1H, 1D or auto")
     ap.add_argument("--json", default="")
     a = ap.parse_args()
 
@@ -54,7 +55,7 @@ def main():
     start = None
     if a.days:
         start = int((dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=a.days)).timestamp())
-    u = Universe(start=start)
+    u = Universe(start=start, timeframe=a.timeframe)
     eq, trades = run(u, p)
     m = metrics(u, eq, trades)
 
