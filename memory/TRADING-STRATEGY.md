@@ -471,7 +471,13 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - Estimated round-trip fee for THIS trade + fees already used THIS MONTH
   <= 1.0% of equity (~$2.00). If it would breach, SKIP and log it.
 - Circuit breaker not tripped: realized losses today < 5% of equity, and not
-  3 consecutive tactical losses today
+  3 consecutive tactical losses THAT CLOSED TODAY (UTC). The streak is scoped to
+  the UTC day and RESETS at 00:00 UTC. It does NOT carry across days.
+  WHY THIS IS EXPLICIT: the streak used to be readable as permanent, and a
+  permanent streak DEADLOCKS the sleeve — the only thing that clears it is a
+  winning tactical trade, which the freeze itself prevents. The account sat
+  frozen from 2026-09-15 for exactly this reason. Backtested: the permanent
+  reading froze the sleeve for 400 straight days.
 - Combined positions after fill <= 5, total deployment <= 85% of equity
 - Position size == (equity * risk%) / trail distance, capped at 20% (CORE) /
   12% (TACTICAL) of equity. Risk% is 2.0 CORE / 1.0 TACTICAL. NEVER a fixed

@@ -127,7 +127,13 @@ STEP E — Run the FULL buy-side gate per order. State the SLEEVE first, then:
   the budget state — the budget is a ceiling, not a target. If you are close to
   exhausting it, the system is churning: skip and say so.
 - CIRCUIT BREAKER not tripped: realized losses today < 5% of equity (~$10), and
-  not 3 consecutive tactical losses today
+  not 3 consecutive tactical losses THAT CLOSED TODAY (UTC). The streak is scoped to
+  the UTC day and RESETS at 00:00 UTC. It does NOT carry across days.
+  WHY THIS IS EXPLICIT: the streak used to be readable as permanent, and a
+  permanent streak DEADLOCKS the sleeve — the only thing that clears it is a
+  winning tactical trade, which the freeze itself prevents. The account sat
+  frozen from 2026-09-15 for exactly this reason. Backtested: the permanent
+  reading froze the sleeve for 400 straight days.
 - Combined positions after fill <= 5, total deployment <= 85% (NO floor — never
   buy to "correct" low deployment)
 - Size == (equity * risk%) / trail distance, capped 20% CORE / 12% TACTICAL.
