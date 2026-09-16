@@ -101,6 +101,43 @@ Grading, applied literally:
 An in-sample improvement with a worse out-of-sample result is REJECTED, not
 "promising". Be strict here; the whole file is worthless if this grade is soft.
 
+STEP 4B — GENERATE YOUR OWN IDEAS. Do not wait for a losing trade to think.
+Every run, propose at least TWO new signals that nothing in HYPOTHESIS-LOG has
+tested, write them as real code, and measure them. This is the step that makes
+the bot a researcher rather than a record-keeper.
+
+Where to look for candidates, in rough order of remaining promise:
+
+  1. NON-PRICE DATA. Every price-derived idea is close to exhausted — momentum,
+     reversal, volatility, breakout and relative strength have all been measured
+     at every horizon, long-only and long/short. The unexplored data is:
+       - funding rate (`/v5/market/funding/history`) — a crowding measure, not a
+         price derivative. Extreme funding precedes squeezes. Best remaining bet.
+       - open interest (`/v5/market/open-interest`) — leverage build-up.
+       - long/short account ratio, order-book imbalance, basis vs spot.
+     Add a fetcher for these under `backtest/` if one does not exist yet.
+  2. COMBINATIONS. A weak signal conditioned on another can beat either alone —
+     e.g. momentum ONLY when funding is negative, or reversion ONLY in the
+     bottom volatility tercile.
+  3. WEB RESEARCH. You may use WebSearch for published crypto factor research,
+     then implement and TEST what you find. Never adopt a claim because a paper
+     or a post asserts it; the whole point of this routine is that claims get
+     measured on our data before they touch the account.
+
+Write each candidate as a function in `backtest/signals.py`, register it in
+`CANDIDATES`, and run `python backtest/research.py --timeframe D`. That is a
+cheap, fully reversible experiment — new signal code changes NOTHING about live
+trading until STEP 6 promotes it.
+
+THE SKEW CHECK — MANDATORY before proposing any short leg. A positive
+information coefficient is NOT sufficient to justify shorting. IC measures the
+MEDIAN relationship; P&L is paid on the MEAN. Low volatility beats high
+volatility on 30d median by 5.0pp and LOSES on mean by 4.6pp, because high-vol
+crypto returns are lottery-shaped (p99 +207%, max +832%). `neutral.py` lost 93%
+learning this. So for any signal you intend to short, report the mean AND the
+median of forward returns for both tails, and if the mean disagrees with the
+median, the short leg is rejected regardless of its IC.
+
 STEP 5 — TEST ONE STANDING ASSUMPTION, EVEN ON A QUIET DAY. The bot must keep
 learning when it is not trading, which is most of the time. Pick one rule in
 `memory/TRADING-STRATEGY.md` that has never been tested, state what it assumes,
@@ -143,9 +180,16 @@ force-push.
 
 ## What good looks like
 
-A good learn run is usually boring: two hypotheses drawn, both tested, both
-rejected, nothing changed, three lines added to the log. Over a month that is
-~60 tested ideas and a rulebook where every surviving rule has evidence.
+A good learn run is usually boring: two or three ideas proposed, all tested, all
+rejected, nothing changed, a few lines added to the log. Over a month that is
+~60-90 tested ideas and a rulebook where every surviving rule has evidence.
+
+Rejecting your own idea is the job, not a failure. The owner's instinct that
+"some coin is always up 2% while another is down, so there must be money there"
+is correct about the dispersion and wrong about the difficulty: capturing it
+requires predicting WHICH coin, and the best signal measured so far is right
+about 53% of the time. Your job is to keep hunting for the signal that does
+better, and to be honest every time one does not.
 
 A bad learn run changes a rule because a trade lost. That is the failure mode
 this entire routine exists to prevent.
