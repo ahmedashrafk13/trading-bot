@@ -17,3 +17,8 @@ Thumbs.db
 *.log
 tmp/
 __pycache__/
+
+# Backtest data cache (large, regenerable via backtest/fetch.py)
+/data/bars/
+/data/fetch.out
+/data/sweep-results.json
