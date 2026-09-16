@@ -33,9 +33,57 @@ indistinguishable from luck, no matter how good its number looks in isolation.
 """
 from __future__ import annotations
 
+import json
+import os
+
 import numpy as np
 
-from engine import _pct_change, _sma, _roll_std
+from engine import _pct_change, _sma, _roll_std, ROOT
+
+FUNDING_DIR = os.path.join(ROOT, "data", "funding")
+
+
+def _load_funding(u):
+    """Align cached Bybit perp funding rates onto u's hourly grid.
+
+    Funding prints every 8h; the value is held flat (step function) until the
+    next print, matching how a live signal would actually see it — you only
+    know the CURRENT funding rate, not the next one. Symbols with no perp
+    (no cached file) stay all-NaN, which _rank_normalize already handles by
+    ranking only the symbols quoting that hour.
+    """
+    out = np.full((len(u.symbols), len(u.t)), np.nan)
+    if not os.path.isdir(FUNDING_DIR):
+        return out
+    for si, sym in enumerate(u.symbols):
+        # bars may be named either Bybit-style ("BTCUSDT") or legacy-cache
+        # ("BTC-USD"); funding is always cached Bybit-style.
+        bybit_sym = sym if sym.endswith("USDT") else sym.replace("-USD", "USDT").replace("/USD", "USDT")
+        path = os.path.join(FUNDING_DIR, bybit_sym + ".json")
+        if not os.path.exists(path):
+            continue
+        rates = json.load(open(path, encoding="utf-8"))["rates"]
+        if not rates:
+            continue
+        ts = np.array([r[0] for r in rates], dtype=np.int64)
+        rv = np.array([r[1] for r in rates], dtype=np.float64)
+        # searchsorted: for each grid hour, the most recent funding print at or
+        # before it (no lookahead — a print at 08:00 is unknown until then).
+        pos = np.searchsorted(ts, u.t, side="right") - 1
+        valid = pos >= 0
+        out[si, valid] = rv[pos[valid]]
+    return out
+
+
+_FUNDING_CACHE = {}
+
+
+def _funding_for(u):
+    key = id(u)
+    if key not in _FUNDING_CACHE:
+        _FUNDING_CACHE.clear()   # one universe at a time is all this needs
+        _FUNDING_CACHE[key] = _load_funding(u)
+    return _FUNDING_CACHE[key]
 
 
 def _rank_normalize(a):
@@ -133,6 +181,33 @@ def sig_vol_contraction(u):
         return -np.where(long > 0, short / long, np.nan)
 
 
+def sig_funding_contrarian(u):
+    """Negative current perp funding rate — fade the crowded side.
+
+    Positive funding means longs are paying shorts: leveraged longs are
+    crowded, which the "extreme funding precedes squeezes" thesis says should
+    front-run a pullback. Signal is NEGATIVE funding so higher score = less
+    crowded = expected higher forward return.
+    """
+    return -_funding_for(u)
+
+
+def sig_momentum_if_funding_calm(u):
+    """30d momentum signal, but only where funding is NOT stretched.
+
+    Tests the "combination" idea from learn.md STEP 4B: a weak momentum signal
+    conditioned on low crowding (funding near zero) might beat momentum alone,
+    since a crowded trade is more likely to be late/exhausted momentum.
+    """
+    mom = _pct_change(u.mark, 24 * 30)
+    fund = _funding_for(u)
+    # rank-normalize funding's absolute value per hour, keep only the calmer half
+    absf = np.abs(fund)
+    calm = _rank_normalize(absf) < 0.0   # bottom half = calmer than the cross-sectional median
+    out = np.where(calm, mom, np.nan)
+    return out
+
+
 def sig_random(u):
     """THE NULL. Any candidate that cannot beat this is luck."""
     rng = np.random.default_rng(0)
@@ -148,6 +223,8 @@ CANDIDATES = {
     "breakout_20d": sig_breakout_20d,
     "low_volatility": sig_low_vol,
     "vol_contraction": sig_vol_contraction,
+    "funding_contrarian": sig_funding_contrarian,
+    "momentum_if_funding_calm": sig_momentum_if_funding_calm,
     "RANDOM (null baseline)": sig_random,
 }
 

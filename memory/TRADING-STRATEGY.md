@@ -1,16 +1,16 @@
 # Trading Strategy — Crypto
 
 ## Mission
-Grow a ~$200 Alpaca crypto account. CRYPTO ONLY — no stocks, no options, ever.
-Benchmark is BTC/USD buy-and-hold, not the S&P 500: beating a rising BTC is the
+Grow a LIVE Bybit spot crypto account. CRYPTO SPOT ONLY — no perps, no
+leverage, no stocks, no options, ever. Benchmark is BTC buy-and-hold, not the S&P 500: beating a rising BTC is the
 only result that justifies active trading.
 
 ## Capital & Constraints
 - Starting capital: ~$200
-- Platform: Alpaca crypto (`crypto_status: ACTIVE`, `crypto_tier: 1` — verified
-  against the live account 2026-09-11; the docs previously said tier 0)
-- Instruments: Alpaca tradable crypto USD pairs ONLY (36 available)
-- Account type: cash, long only. Alpaca does NOT support shorting crypto.
+- Platform: Bybit v5 UNIFIED account, SPOT ONLY. LIVE MONEY.
+- Instruments: Bybit USDT spot pairs ONLY (~394 listed; only the liquid end is
+  tradable at this account size — see `scripts/screen.sh`)
+- Account type: spot, long only. Spot cannot short.
 - Max position size: 15% of equity CORE / 25% TACTICAL — and those are CAPS, not
   targets. Actual size is derived from risk: (equity * 0.015) / stop distance.
 - Fractional is native (min order sizes are ~$1 equivalent), so there is NO
@@ -56,7 +56,8 @@ exactly what changed and why. Any bad change is recoverable with `git revert`.
 - Hard-cut levels (-15% core, -6% tactical) and the tactical target
 - Position counts, position sizes and sleeve allocation
 - The monthly fee budget (1.0%) and the circuit-breaker thresholds
-- Deployment CEILING (85%). The FLOOR is gone and may not return without
+- Deployment CEILING (50%, lowered from 85% 2026-09-17 — hypothesis #3,
+  HYPOTHESIS-LOG.md, CONFIRMED). The FLOOR is gone and may not return without
   evidence — see "Cash is a position".
 - Screen filter thresholds (momentum, SMA20 distance, vol band, spread limits)
 - Screen timeframes (daily / hourly)
@@ -68,10 +69,12 @@ These are not preferences, they are verified facts about the platform or the
 mandate. A "rule improvement" that violates one produces orders the API rejects,
 or changes what this bot is:
 1. CRYPTO ONLY. No stocks, no options, ever.
-2. Long only — Alpaca does not support shorting crypto.
-3. Stops are `stop_limit` only. `trailing_stop` and `stop` are REJECTED for crypto.
-4. Orders use `time_in_force: gtc` (or ioc). `day` is REJECTED for crypto.
-5. Order notional >= $10. Hard API floor.
+2. Long only — spot cannot short. SPOT ONLY: every order body carries
+   `"category":"spot"`. Never linear/inverse, never leverage.
+3. Protection is attached AT ENTRY as `stopLoss` on the entry order, held
+   server-side by the exchange.
+4. Orders use `"timeInForce":"GTC"`.
+5. Order value >= the pair's `minOrderAmt` from `bybit.py instruments spot`.
 6. Stops are sized from the ACTUAL held qty (buy fees are taken in kind).
 7. Every position must carry a resting stop. The review may change the stop
    DISTANCE; it may never remove the requirement or allow a naked position.
@@ -150,7 +153,8 @@ position (4.06% of equity) against TACTICAL's $1.20 (0.61%) — the "patient, sa
 sleeve carried **6.7x** the risk of the fast one, and three CORE positions put
 12.2% of the account at risk at once against a 1-2% per-trade professional norm.
 
-- Combined cap: 6 positions, and total deployment must stay AT OR BELOW 85%.
+- Combined cap: 6 positions, and total deployment must stay AT OR BELOW 50%
+  (lowered from 85% 2026-09-17 — hypothesis #3, HYPOTHESIS-LOG.md, CONFIRMED).
   There is NO minimum deployment. See "Cash is a position" below.
 - NEITHER sleeve has a time limit or a profit target. Every winner in this
   account is held until its ratcheted stop takes it out. The 48h tactical
@@ -189,7 +193,7 @@ tightness (10% vs 15%), size, and slot count — it is a FASTER trend-follow, no
 a different kind of bet.
 
 A side effect worth stating: with no target in either sleeve, nothing competes
-for Alpaca's single resting-order slot. The stop/target ambiguity that caused
+for a resting-order slot, and Bybit would allow both legs anyway. The stop/target ambiguity that caused
 six live order-thrash cycles on 2026-09-15 is gone by construction, not by
 convention.
 
@@ -210,7 +214,7 @@ MINIMUM interval, so
 hourly crons offset 30 min apart, both running the identical scan prompt. The
 second routine was NEVER CREATED, so scan has always in fact run hourly.
 
-Under v2 every position in BOTH sleeves rests a full-size stop_limit at the
+Under v2 every position in BOTH sleeves rests a full-size conditional stop at the
 broker, so the scan is NOT the mechanism protecting anything. A missed scan now
 costs a late trail raise, not an unstopped position. The ~3h blind window of
 2026-09-14 would have exposed nothing under these rules.
@@ -293,7 +297,8 @@ LESSON: state R:R requirements NET of fees, or the parameters silently
 contradict the gate.
 
 ## Cash is a position (the deployment FLOOR was removed 2026-09-15)
-There is a deployment CEILING (85%) and no floor. Being 0% deployed is a valid,
+There is a deployment CEILING (50%, lowered from 85% 2026-09-17 — hypothesis
+#3, HYPOTHESIS-LOG.md, CONFIRMED) and no floor. Being 0% deployed is a valid,
 fully compliant state. Never open a position to "correct" deployment.
 
 The old 75-85% band was a floor as well as a ceiling, and it was dead letter
@@ -341,11 +346,13 @@ each individual trade can look reasonable while the sequence is ruinous.
 ## Core Rules
 1. CRYPTO ONLY — no stocks, no options, ever
 2. Long only — never attempt a short
-3. Deployment <= 85%. There is NO deployment floor — see "Cash is a position".
+3. Deployment <= 50% (lowered from 85% 2026-09-17 — hypothesis #3,
+   HYPOTHESIS-LOG.md, CONFIRMED). There is NO deployment floor — see "Cash is
+   a position".
 4. Respect each sleeve's position COUNT and RISK BUDGET (table above). Size is
    derived from the stop distance, never fixed in dollars. Trade frequency is
    the agent's call, bounded by the monthly fee budget and circuit breaker.
-5. EVERY position, in BOTH sleeves, carries a resting `stop_limit` GTC sell at
+5. EVERY position, in BOTH sleeves, carries a resting `stopLoss` conditional stop GTC sell at
    the broker for 100% of the HELD qty. Never a target leg, never a split.
 6. CORE: hard cut AND trail are both 15% below high-water, ratcheted UP only;
    tighten to 12% at +30% and 10% at +40%. (The old 20% trail sat BELOW the
@@ -383,17 +390,17 @@ If a coin fails its screen, it is NOT tradeable this run no matter how good the
 news is. Log the failure reason.
 
 ## What rests at the exchange (v2, 2026-09-15)
-Alpaca crypto gives each position exactly ONE resting-order slot, because a
-resting sell reserves the quantity it names and there is no oco/bracket.
+Bybit attaches `stopLoss` (and optionally `takeProfit`) to the position in the
+same order, held server-side. There is no single-slot constraint any more.
 
-Under v2 that constraint costs nothing, because **neither sleeve has a target**:
+Under v2 only one leg is ever used, because **neither sleeve has a target**:
 
 | | Rests at the EXCHANGE | Enforced by the 30-MIN SCAN |
 |---|---|---|
-| **CORE** | `stop_limit` @ 100% of held qty | the ratchet |
-| **TACTICAL** | `stop_limit` @ 100% of held qty | the ratchet |
+| **CORE** | `stopLoss` conditional stop @ 100% of held qty | the ratchet |
+| **TACTICAL** | `stopLoss` conditional stop @ 100% of held qty | the ratchet |
 
-**One rule, both sleeves: a full-size `stop_limit`, always.** Downside is
+**One rule, both sleeves: a full-size `stopLoss` conditional stop, always.** Downside is
 protected 24/7 at the broker even when no run happens, and the scan's only job
 on an open position is to raise the trail.
 
@@ -418,28 +425,31 @@ has. One leg, 100% of the quantity, every time.
 
 
 ## Stops — how they actually work here (READ THIS)
-Alpaca REJECTS `trailing_stop` and `stop` for crypto:
-`{"code":40010001,"message":"invalid order type for crypto order"}`
-Only `stop_limit` is accepted. So Core Rule 5 is implemented as:
+Protection is attached to the ENTRY order as `stopLoss`, so the position is
+never unprotected between two calls:
 
-    {"symbol":"BTC/USD","qty":"<frac>","side":"sell","type":"stop_limit",
-     "stop_price":"<trigger>","limit_price":"<trigger * 0.95>","time_in_force":"gtc"}
+    {"category":"spot","symbol":"BTCUSDT","side":"Buy","orderType":"Market",
+     "qty":"<base qty>","stopLoss":"<trigger>","tpslMode":"Full",
+     "timeInForce":"GTC"}
 
-- `limit_price` is set 5% BELOW `stop_price` so it can still fill while price is
-  falling. A limit equal to the stop will often not fill at all.
-- The limit sits 5% below the trigger, not 2%. A stop_limit only fills if price
+Where a stop is placed or moved as a standalone conditional order, its limit
+`price` sits 5% BELOW the `triggerPrice`:
+
+- The limit is set 5% BELOW the trigger so it can still fill while price is
+  falling. A limit equal to the trigger will often not fill at all.
+- The limit sits 5% below the trigger, not 2%. A stop limit only fills if price
   trades between the trigger and the limit; in a crypto flush 2% of room is
   routinely jumped, which converts the stop into a no-op and leaves the position
   riding down. 5% accepts a worse fill price in exchange for actually filling.
   This is the correct trade: a bad fill is a cost, an unfilled stop is a loss of
   unbounded size.
-- KNOWN RISK: a stop_limit can still be gapped through. In a violent drop price can
+- KNOWN RISK: a stop can still be gapped through. In a violent drop price can
   pass the limit without filling, leaving the position open and unprotected.
   This is the price of crypto having no stop-market order. Every run must
   therefore verify the stop actually exists and force-close anything that
   breached -15% without filling.
 - "Trailing" is EMULATED. There is no trailing order type, so each run cancels
-  the existing stop_limit and re-places it higher when the high-water mark rises.
+  the existing stop and re-places it higher when the high-water mark rises.
   Never re-place lower.
 
 ## Narrative momentum (the crypto analogue of sectors)
@@ -459,7 +469,7 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - What is the specific catalyst? (unlock, upgrade, listing, ETF flow, macro)
 - Is the narrative in momentum, or is it rolling over?
 - Where is the hard cut in dollars (15% CORE / 10% TACTICAL below entry)?
-- Where is the initial stop_limit (trigger and limit = trigger * 0.95)?
+- Where is the initial stop (triggerPrice, and limit price = trigger * 0.95)?
 - There is NO target to state. Do not compute an R:R ratio against an invented
   target — a trend-follow has no denominator. State instead: what would have to
   happen for this to run 30%+, and what kills the thesis?
@@ -478,25 +488,26 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
   winning tactical trade, which the freeze itself prevents. The account sat
   frozen from 2026-09-15 for exactly this reason. Backtested: the permanent
   reading froze the sleeve for 400 straight days.
-- Combined positions after fill <= 5, total deployment <= 85% of equity
+- Combined positions after fill <= 5, total deployment <= 50% of equity
+  (lowered from 85% 2026-09-17 — hypothesis #3, HYPOTHESIS-LOG.md, CONFIRMED)
 - Position size == (equity * risk%) / trail distance, capped at 20% (CORE) /
   12% (TACTICAL) of equity. Risk% is 2.0 CORE / 1.0 TACTICAL. NEVER a fixed
   dollar amount — read both sizes off `state.sh`.
 - Position cost <= available cash
-- Pair is in the Alpaca tradable crypto USD list (`alpaca.sh assets crypto`)
+- Pair is a Bybit USDT spot pair with status `Trading`
+  (`bybit.py instruments spot`)
 - Pair is NOT a stablecoin
-- Order notional >= $10 (HARD API floor). `min_order_size` is only a quantity
-  floor and is NOT sufficient — a sub-$10 order is rejected outright.
+- Order value >= the pair's `minOrderAmt`, and qty/price respect its
+  `basePrecision` and `tickSize`. Read them from the instrument; do not assume.
 - qty >= that pair's `min_order_size` as well
 - Quoted spread <= 1% (BTC/ETH run ~0.02-0.04%; a wide spread means thin book)
-- `time_in_force` is `gtc` — `day` is REJECTED for crypto
-  (`{"code":42210000,"message":"invalid crypto time_in_force"}`)
+- `timeInForce` is `GTC`, and every order body carries `"category":"spot"`
 - A specific catalyst is documented in today's RESEARCH-LOG entry
 - The coin PASSES its sleeve's technical screen (scripts/screen.sh)
 - The instrument is crypto (never a stock, never an option)
 
 ## Sell-Side Rules
-Both sleeves exit the same way: **the ratcheted stop_limit is the exit.** There
+Both sleeves exit the same way: **the ratcheted stop is the exit.** There
 is no profit target and no time limit anywhere in this system.
 
 CORE:
@@ -521,19 +532,19 @@ TACTICAL:
 
 BOTH:
 - Narrative with 2 consecutive failed trades -> exit all positions in it
-- Any position found without a full-size resting stop_limit -> place one
+- Any position found without a full-size resting conditional stop -> place one
   immediately. If placement is rejected twice, close at market rather than hold
   it unprotected.
 - Any position found carrying a resting `limit` SELL (a v1 target leg) -> cancel
-  it and place a full-size stop_limit. Target legs are banned in v2.
+  it and place a full-size conditional stop. Target legs are banned in v2.
 
 ## Every-Run Invariants
 Because crypto trades 24/7 and runs are 6h apart, every run (not just one of
 them) must:
 1. Reconcile live positions against TRADE-LOG (a fill may have happened between runs)
-2. Verify every position has a resting stop_limit; place one if missing
+2. Verify every position has a resting conditional stop; place one if missing
 3. Close anything past its hard cut (-15% CORE / -10% TACTICAL) that the
-   stop_limit gapped through without filling
+   stop gapped through without filling
 4. Ratchet stops upward wherever the high-water mark has risen, in BOTH sleeves
 5. Tag every position in TRADE-LOG with its sleeve. An untagged position cannot
    be managed by the right rules — if the tag is missing, infer it from its

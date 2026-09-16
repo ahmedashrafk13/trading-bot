@@ -3,15 +3,16 @@
 
     python scripts/bybit.py <subcommand> [args...]
 
-Mirrors the old scripts/alpaca.sh surface so routines read the same way.
+This is the ONLY way the bot speaks to the exchange.
 
-WHY THIS REPLACED ALPACA
+WHY BYBIT
   * Bybit accepts a take-profit AND a stop-loss attached to the same position,
-    so a position can carry both legs at once. On Alpaca only ONE resting order
-    could exist per symbol, which is what the hourly `scan` routine existed to
-    police. That whole class of order-thrash bug is gone by construction.
-  * Fees are ~0.055% taker against Alpaca's ~0.35%, roughly a 6x reduction in
-    the drag that made the old tactical geometry negative-expectancy.
+    so a position can carry both legs at once. The previous venue allowed only
+    ONE resting order per symbol, which is what the hourly `scan` routine
+    existed to police. That whole class of order-thrash bug is gone by
+    construction.
+  * Fees are ~0.055% taker against the paper-era ~0.35%, roughly a 6x reduction
+    in the drag that made the old tactical geometry negative-expectancy.
   * Far more symbols, and spot as well as perpetuals.
 
 SAFETY
@@ -215,7 +216,7 @@ def cmd_order(args):
     """order '<json>' — places an order. Body is passed through to Bybit v5.
 
     THE POINT OF BYBIT: takeProfit and stopLoss can both be attached here, so a
-    position carries both legs at once. On Alpaca only one resting order could
+    position carries both legs at once. On the previous venue only one order could
     exist per symbol, and reconciling that is what the hourly scan routine was
     for. Example:
 
@@ -270,12 +271,33 @@ def cmd_time(args):
     out(request("GET", "/v5/market/time"))
 
 
+def cmd_funding(args):
+    """funding SYMBOL [limit] [end_ms] — public, read-only.
+
+    GET /v5/market/funding/history, category=linear (perps). Bybit spot has no
+    funding rate; this is a crowding/leverage signal from the perp market,
+    reported OLDEST-to-check via re-sort like kline. Returns newest-first,
+    capped at 200/page.
+    """
+    if not args:
+        die("usage: funding SYMBOL [limit] [end_ms]")
+    sym = args[0]
+    limit = args[1] if len(args) > 1 else "200"
+    p = {"category": "linear", "symbol": sym, "limit": limit}
+    if len(args) > 2 and args[2]:
+        p["endTime"] = args[2]
+    r = request("GET", "/v5/market/funding/history", p)
+    rows = r.get("result", {}).get("list", [])
+    rows.sort(key=lambda x: int(x["fundingRateTimestamp"]))
+    out(rows)
+
+
 COMMANDS = {
     "balance": cmd_balance, "positions": cmd_positions, "holdings": cmd_holdings,
     "tickers": cmd_tickers, "instruments": cmd_instruments, "kline": cmd_kline,
     "order": cmd_order, "amend": cmd_amend, "cancel": cmd_cancel,
     "orders": cmd_orders, "history": cmd_history, "fills": cmd_fills,
-    "time": cmd_time,
+    "time": cmd_time, "funding": cmd_funding,
 }
 
 if __name__ == "__main__":
