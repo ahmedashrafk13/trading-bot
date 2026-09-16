@@ -104,23 +104,94 @@ print(f"            {'HEADROOM $%.2f' % (budget-fees_mo) if fees_mo < budget els
 print(f"            month started {month_start}  [budget is a CEILING, expected burn is ~half]")
 print()
 
+# --- closed trades ------------------------------------------------------------
+# Parsed per TRADE-LOG section (a `### ` header starts one), NOT by a flat regex
+# over the whole file. The flat scan this replaces looked for the literal
+# `REALIZED P&L $`, which (a) MISSED every real exit — they declare results as
+# `| **REALIZED P&L** | **≈ -$3.17** |` table rows or `**TOTAL REALIZED P&L:
+# -$1.609**` bullets, never that form — so it reported $0.00 / 0 closed trades
+# while three trades were on the books, and (b) would DOUBLE-COUNT the prose
+# restatements daily summaries and later execute runs make of the same exit.
+# One closed trade per section, taken only from a declaration-shaped line.
+AMT = r'\**\s*(?:≈\s*)?(-?)\$\s*(-?[0-9][0-9,]*(?:\.[0-9]+)?)'
+
+def _amt(sign, num):
+    v = float(num.replace(',', ''))
+    return -abs(v) if sign == '-' else v
+
+RE_HDR   = re.compile(r'^###\s+(\d{4}-\d{2}-\d{2})', re.M)
+RE_TOTAL = re.compile(r'^[-*]?\s*\**TOTAL REALIZED P&L:?\**\s*' + AMT, re.M)
+RE_ROW   = re.compile(r'^\|\s*\**REALIZED P&L\**\s*\|\s*' + AMT, re.M)
+RE_TODAY = re.compile(r'REALIZED TODAY \(UTC (\d{4}-\d{2}-\d{2})\):?\**\s*' + AMT)
+# A fill is often DISCOVERED by a later run (XRP filled 09-15T18:41, logged in
+# the 09-16T00:08 section), so the section's own header date is the WRONG day to
+# charge a daily loss limit against. Prefer the stated exit timestamp.
+RE_EXITTS = re.compile(r'^\|\s*Exit time \(UTC\)\s*\|\s*(\d{4}-\d{2}-\d{2})', re.M)
+
+closed_trades = []        # (date, $) — one per section that DECLARES a close
+day_amounts   = {}        # UTC date -> [amounts realized that day]
+unparsed      = []
+
+parts = RE_HDR.split(log)   # [preamble, date1, body1, date2, body2, ...]
+for i in range(1, len(parts) - 1, 2):
+    sec_date, body = parts[i], parts[i+1]
+    m = RE_TOTAL.search(body) or RE_ROW.search(body)
+    if not m:
+        # A section that only TALKS about a realized figure is a restatement of
+        # an earlier exit — skipping it is the point. Flag only a section whose
+        # header says EXIT, because that one was supposed to declare.
+        if 'EXIT' in body[:160].upper() and 'REALIZED P&L' in body:
+            unparsed.append(sec_date)
+        continue
+    amount = _amt(*m.groups())
+    # Day attribution: a trade whose legs straddle UTC days states its own split
+    # (`REALIZED TODAY (UTC ...)`); otherwise the whole result lands on the
+    # section's own date.
+    dated = RE_TODAY.findall(body)
+    for d, sg, n in dated:
+        day_amounts.setdefault(d, []).append(_amt(sg, n))
+    if not dated:
+        ts = RE_EXITTS.search(body)
+        day_amounts.setdefault(ts.group(1) if ts else sec_date, []).append(amount)
+    # The trade is dated by when it actually CLOSED, not by the section that
+    # happened to notice it.
+    ts = RE_EXITTS.search(body)
+    closed_trades.append((dated[0][0] if dated else (ts.group(1) if ts else sec_date), amount))
+
+print("CLOSED TRADES (parsed from TRADE-LOG sections)")
+for d, a in closed_trades:
+    print(f"                 {d}  {a:+7.2f}")
+if not closed_trades:
+    print("                 none")
+if unparsed:
+    print(f"  *** {len(unparsed)} EXIT section(s) declare no parseable REALIZED P&L: "
+          f"{', '.join(unparsed)} — figures below UNDER-report, count by hand ***")
+print()
+
 # --- circuit breaker ----------------------------------------------------------
-realized = [float(x) for x in re.findall(r'REALIZED P&L \$(-?[0-9.]+)', log)]
-today_real = sum(r for r in realized if r < 0)   # conservative: losses only
+today_real = sum(a for a in day_amounts.get(f'{today}', []) if a < 0)  # losses only
 losses_streak = 0
-for r in reversed(realized):
-    if r < 0: losses_streak += 1
+for _, a in reversed(closed_trades):
+    if a < 0: losses_streak += 1
     else: break
 limit = eq*0.05
-print(f"CIRCUIT BREAKER  realized losses logged ${abs(today_real):.2f} vs ${limit:.2f} limit (5% of equity)")
-print(f"                 consecutive losing closes: {losses_streak} (3 stops tactical for the day)")
+print(f"CIRCUIT BREAKER  realized losses TODAY ({today}) ${abs(today_real):.2f} vs ${limit:.2f} limit (5% of equity)")
+last_loss = closed_trades[-1][0] if closed_trades and closed_trades[-1][1] < 0 else None
+print(f"                 consecutive losing closes: {losses_streak} (3 stops tactical for the day)"
+      f"{f'; most recent loss closed {last_loss}' if last_loss else ''}")
 print(f"                 status: {'TRIPPED — no new entries' if abs(today_real)>=limit or losses_streak>=3 else 'clear'}")
 print()
 
 # --- amendment trigger --------------------------------------------------------
-closed = len(realized)
 rev = Path('memory/WEEKLY-REVIEW.md').read_text(encoding='utf-8')
-applied = len(re.findall(r'^### Rule changes applied', rev, re.M))
-print(f"AMENDMENT TRIGGER  closed trades logged: {closed} | need >= 10 since last amendment")
-print(f"                   status: {'ELIGIBLE' if closed >= 10 else 'not eligible — change nothing'}")
+# Last amendment = the newest `## Week ending DATE` section that applied one.
+amend_dates = [d for d, body in
+               zip(re.findall(r'^##\s+Week ending (\d{4}-\d{2}-\d{2})', rev, re.M),
+                   re.split(r'^##\s+Week ending \d{4}-\d{2}-\d{2}', rev, flags=re.M)[1:])
+               if re.search(r'^### Rule changes applied', body, re.M)]
+last_amend = max(amend_dates) if amend_dates else None
+since = [t for t in closed_trades if last_amend is None or t[0] > last_amend]
+print(f"AMENDMENT TRIGGER  closed trades since last amendment ({last_amend or 'none on record'}): "
+      f"{len(since)} | need >= 10 | {len(closed_trades)} closed all-time")
+print(f"                   status: {'ELIGIBLE' if len(since) >= 10 else 'not eligible — change nothing'}")
 PY
