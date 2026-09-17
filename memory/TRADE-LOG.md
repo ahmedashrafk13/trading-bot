@@ -1245,3 +1245,31 @@ Stop_limit order `3ad1dca9` (placed by 14:11 scan) triggered and filled automati
 **STEP D — Re-screened for completeness:** CORE shortlist now UNI FIL XTZ DOT (ARB dropped off CORE, DOT joined) — moot, CORE is HOLD-binding regardless of shortlist composition. TACTICAL (1H) shortlist narrowed to 5 (POL DOT HYPE GRT DOGE) — moot, blocked by the tactical-loss-streak caution flag above regardless of any catalyst. Did not run STEP C (live quote/spread re-validation) or spend a perplexity/WebSearch catalyst call, since no candidate can pass the circuit-breaker-caution gate this run.
 
 **No orders placed, no stops cancelled. No clickup notification (nothing acted upon).**
+
+---
+
+### 2026-09-17T17:08 UTC — EXECUTE — NO ACTION (BLOCKED AT STEP A)
+
+**Blocker:** `python scripts/bybit.py balance|holdings|orders spot|fills spot` and
+`bash scripts/state.sh` all fail with:
+`BYBIT ERROR: BYBIT_API_KEY / BYBIT_API_SECRET are not set.`
+Root cause: `.env` exists, but `BYBIT_API_KEY` and `BYBIT_API_SECRET` are still the
+shipped `your_..._here` placeholders, which `load_env()` (scripts/bybit.py:57-59)
+correctly normalizes to absent. Bybit credentials have never been filled in since
+the Alpaca -> Bybit migration.
+
+**Consequence:** STEP A (state and reconcile) could not be performed at all. Equity,
+holdings, resting stops and fills are ALL unknown this run. Per execute.md
+("If any check below is ambiguous, do nothing and log why"), STEPS B-G were not
+attempted and NO orders were placed, amended or cancelled.
+
+**UNVERIFIED RISK — carried forward:** the last reconciled state (2026-09-16T12:11 UTC,
+Alpaca era) showed one open CORE position, ETHUSD qty 0.015302647, with resting
+stop_limit `1ebb2562`. Whether any position exists on the Bybit account, and whether
+it carries a `stopLoss`, CANNOT be confirmed without credentials. execute.md STEP A.3
+calls an unprotected position the single largest risk in this setup.
+
+**Owner action required:** fill real Bybit API key/secret (read + spot trade, NO
+withdraw permission) into `.env`. Until then every execute run is a no-op.
+
+**No orders placed, no stops cancelled. No clickup notification (nothing acted upon).**
