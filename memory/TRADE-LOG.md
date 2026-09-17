@@ -1449,3 +1449,31 @@ the standing execute.md-vs-CLAUDE.md target-leg conflict did not have to be reso
 **Net:** flat, $0.11 dust, ~100% cash, 0 resting orders, fee budget untouched at
 $0.52 / $2.00 this month (headroom $1.48). Cash is a position; 0.1% deployed is a valid,
 compliant state. A run that does nothing is the system working.
+
+---
+
+## 2026-09-17 — Daily Snapshot (Day 7, UTC 20:44)
+
+**Portfolio:** $193.91 | **Cash:** $193.80 (99.9%) | **Day P&L:** +$1.68 (+0.87%, 2-day delta) | **Cumulative:** -$6.09 (-3.05%)
+**vs BTC:** -2.27pp edge | **Fees today:** $0.00 | **Fee budget:** $0.52 / $2.00 used this month (headroom $1.48)
+
+| Sleeve | Pair | Qty | Entry | Last | Unrealized | Stop trigger | Stop present? |
+|--------|------|-----|-------|------|------------|---------------|---------------|
+| — | none | — | — | — | — | — | n/a — flat, 0 positions |
+
+Only dust remains ($0.11 total, every balance below its symbol's `minOrderAmt`), so no
+position can or should carry a stop. `state.sh` SCAN-VERDICT: NO-ACTION.
+
+**Benchmark:** BTC/USD $76,551.70 (last) vs $77,153.29 Day-0 baseline (2026-09-10 19:39 UTC) = **-0.78% cumulative**. Bot cumulative **-3.05%**. **EDGE -2.27pp** — bot still trailing the benchmark, but the gap narrowed from -3.49pp on 09-15 because the bot has been flat and BTC fell.
+
+**Trades today (2026-09-17 UTC):** NONE by this bot. No entry, no exit, no order placed, cancelled or amended. Fee budget untouched.
+
+**Equity basis — read this before trusting the figures above.** `state.sh` prints `EQUITY $200.00 (budget)` because $200 is the sizing CAP applied to a demo account holding $178,978.89; it is NOT a P&L-tracked balance and does NOT decrease when the strategy loses. The $193.91 above is therefore computed by hand as $200.00 starting budget minus $6.09 of logged realized losses (DOT -$1.61 09-14, UNI -$3.17 09-15, XRP -$1.31 09-15). Day P&L is measured against the 2026-09-15 snapshot ($192.23) because no snapshot was written on 09-16 or 09-17 — it is a **2-day delta, not a one-day figure**, and it reads positive only because the 09-15 figure included ETH/XRP unrealized drawdown that has since left the book.
+
+**ETH disposition (unchanged from the 2026-09-17 20:27 run, not re-booked).** The bot's CORE ETH/USD leg (0.015302647 @ $2,609.50) is gone from the account. It was not closed by any bot order: the 09-17 20:22 UTC fills show an account-level sweep of 1.0 ETH @ $2,456.41 alongside 1 BTC, 2496 0G and 1389 CRV — all 10x-383x the entire $200 budget and none with a matching bot entry. Read as owner/account-level cleanup on the shared demo account. **No realized P&L is attributed to the strategy** and the fee budget is unaffected, consistent with the prior run's ruling. Memo only: had it been attributed, the mark-to-sweep figure would be ≈ -$2.34. If the owner intends that sweep to count as a strategy exit, a weekly-review run should book it explicitly — this run will not manufacture a close the bot did not place.
+
+**Circuit breaker:** realized losses today $0.00 vs $10.00 limit (5% of budget) — **CLEAR**. `state.sh` again prints `status: TRIPPED` on a 3-consecutive-tactical-loss streak whose most recent close was 2026-09-15, two UTC days ago; `routines/execute.md` STEP D resets that streak at 00:00 UTC and says it does not carry across days. **FOURTH occurrence of this conflict** — re-logged to OBSERVATIONS.md. Moot again this run: the bot is flat and placed no order, so the permissive reading was not acted on.
+
+**Amendment trigger:** 3 closed trades since the last applied amendment (2026-09-10), 3 all-time. 3 < 10 → **not eligible, nothing amended.** `memory/TRADING-STRATEGY.md` untouched.
+
+**Notes:** Second consecutive fully flat day — no entries, no exits, no fees, 99.9% cash. The research run left CORE on a binding HOLD and TACTICAL blocked for want of a dated idiosyncratic catalyst, and nothing in the 6h since changed that; ARB still leads the screen while carrying a bearish 139.15M-token unlock on 09-23. The edge versus BTC improved 1.22pp this week purely by not trading into a falling benchmark, which is the "patience is the strategy" clause working as designed rather than luck. The one thing that genuinely needs owner attention is not a trading decision: the $200 budget figure `state.sh` reports is a cap and not a balance, so every "EQUITY" line in this log has to be hand-reconciled against realized rows to mean anything — that reconciliation is currently the most error-prone step in the whole routine and is logged to OBSERVATIONS.md.
