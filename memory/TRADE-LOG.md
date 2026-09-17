@@ -1273,3 +1273,106 @@ calls an unprotected position the single largest risk in this setup.
 withdraw permission) into `.env`. Until then every execute run is a no-op.
 
 **No orders placed, no stops cancelled. No clickup notification (nothing acted upon).**
+
+---
+
+### 2026-09-17T20:27 UTC — EXECUTE — NO ACTION (flat, no candidate passes STEP D)
+
+**Credentials blocker RESOLVED.** The last two execute runs (17:08, 20:08 UTC) halted at
+STEP A because `.env` carried the `your_..._here` placeholders. Real Bybit credentials are
+now present: `balance`, `holdings`, `orders spot` and `fills spot` all returned successfully
+this run. STEP A was performed in full for the first time in the Bybit era.
+
+**STEP A — State (`state.sh`, exchange clock 2026-09-17 20:27 UTC):**
+EQUITY $200.00 (BUDGET CAP; account holds $178,978.89 — NOT tradeable) | FREE $199.89 |
+DEPLOYED $0.11 = 0.1% (ceiling 85%, no floor). SIZE NOW: CORE $26.67 (risk $4.00, 15% trail,
+max 4) / TACTICAL $20.00 (risk $2.00, 10% trail, max 1). Fee budget $0.52 / $2.00 used this
+month, headroom $1.48. Amendment trigger: 3 closed trades since 2026-09-10, 3 < 10 — not
+eligible, nothing amended.
+
+**STEP A — Reconcile:** `orders spot` returns `[]` — NO resting orders of any kind.
+`holdings` shows USDT $128,984.48, USDC $50,000.00, and eight dust balances: ARB $0.00125,
+AR $0.00550, UNI $0.07105, CRV $0.01902, XRP $0.01272, ZK $0.00002, CAKE $0.00096,
+0G $0.00038 — total $0.11, i.e. 0.05% of the $200 budget.
+
+**The Alpaca-era ETHUSD position does not exist on Bybit.** TRADE-LOG's last reconciled
+state (2026-09-16T12:11 UTC) showed one open CORE position, ETHUSD qty 0.015302647, with
+resting stop_limit `1ebb2562`. That position lived on the *previous venue*. The Bybit account
+holds no ETH whatsoever. The "UNVERIFIED RISK — carried forward" flag raised by the
+2026-09-17T17:08 run is hereby **CLOSED**: there is no unprotected Bybit position, because
+there is no Bybit position. **The bot is flat: 0 CORE, 0 TACTICAL, 0 resting orders.**
+
+**Unexplained account-level activity at 2026-09-17 20:22 UTC (5 min before this run).**
+`fills spot` shows four Sells, none of which this bot originated:
+
+| Time (UTC) | Symbol | Side | Qty | Price | Value | Fee |
+|---|---|---|---|---|---|---|
+| 09-17 20:22 | BTCUSDT | Sell | 1 | 76,670.9 | $76,670.90 | 76.6709 |
+| 09-17 20:22 | ETHUSDT | Sell | 1 | 2,456.41 | $2,456.41 | 2.45641 |
+| 09-17 20:22 | 0GUSDT | Sell | 2496.25 | 0.2027 | $505.99 | 0.50599 |
+| 09-17 20:22 | CRVUSDT | Sell | 1388.6 | 0.3328 | $462.13 | 0.46213 |
+
+These are NOT bot trades and are NOT logged as closed trades. Evidence: (a) a single $76,671
+BTC sale is 383x the entire $200 TRADING BUDGET and could never have been sized by any rule
+in TRADING-STRATEGY.md; (b) `grep -niE "BTCUSDT|0GUSDT|CRVUSDT" memory/TRADE-LOG.md` finds no
+corresponding bot entry; (c) no matching Buys appear anywhere in the fills window, so the bot
+never opened them. Read as owner//account-level cleanup on the shared demo account, which
+holds far more than the strategy may trade. Recorded for the audit trail only; no realized
+P&L is attributed to the strategy and the fee budget is unaffected.
+
+The only bot-scale fills in the window are the 2026-09-14 XRPUSDT pair (Buy 6.9367 @ 1.4416,
+$10.00, 22:24 → Sell 6.92 @ 1.4441, $9.99, 22:26), a ~2-minute near-flat round trip already
+accounted for in the closed-trade history. Not re-logged.
+
+**STEP A.3 — Stops on holdings:** every remaining balance is dust worth $0.00002–$0.07, all
+far below any symbol's `minOrderAmt`, so no stop can be placed on any of them and none is
+warranted — combined they are $0.11 against a $200 budget. No position requires protection
+and none was left unprotected.
+
+**STEP B — Research:** `memory/RESEARCH-LOG.md` has NO entry for 2026-09-17 or 2026-09-18.
+The most recent entry is 2026-09-16 06:08 UTC, whose standing decision was CORE **HOLD**
+(binding) and TACTICAL **HOLD**. HYPOTHESIS-LOG STANDING VERDICTS re-read: short-horizon
+momentum IC is negative (-0.050, t=-13), 30-day momentum likewise (-0.037, t=-10), tighter
+stops and higher frequency both strictly worse, nothing tested beat BTC buy-and-hold over
+5.7 years. Nothing this run contradicts them — this run places no trade.
+
+**STEP C — Screen: NOT RUN, and why.** Skipped the 400-day/60-symbol fetch and all live
+quote/spread validation deliberately: no candidate it could surface is able to pass STEP D
+this run (see below), so the screen would be spent compute with no reachable decision
+attached. Same reasoning the 2026-09-16 12:11 and 17:08 runs recorded.
+
+**STEP D — BUY GATE: FAILS. No entry is legal this run.**
+- `"category":"spot"` present in body — N/A, no order composed.
+- positions after fill <= sleeve cap — would PASS (0 CORE of 4, 0 TACTICAL of 1).
+- deployment after fill <= 85% — would PASS (0.1% now; there is NO floor, and this run does
+  NOT buy to "correct" low deployment — 100% cash is a valid, compliant state).
+- size = (equity * risk%) / stop distance — available: CORE $26.67 / TACTICAL $20.00.
+- order value >= `minOrderAmt` — not evaluated, no candidate.
+- spread <= 0.5% — not evaluated, no candidate.
+- **catalyst documented in today's RESEARCH-LOG — FAILS. This is the binding block.**
+  There is no 2026-09-17 research entry at all. CORE entries require the morning research
+  plan and cannot originate here under any circumstance. TACTICAL may be originated in an
+  execute run only if the current screen passes AND a catalyst is documented then — no
+  catalyst exists to document, and manufacturing one to justify an entry is precisely the
+  behaviour the gate exists to prevent.
+- circuit breaker — **the two authorities disagree; logged to OBSERVATIONS.** `state.sh`
+  prints "status: TRIPPED — no new entries" on a streak of 3 tactical losses whose most
+  recent close was 2026-09-15. execute.md STEP D defines the gate as "realized losses today
+  < 5% of equity, and not 3 consecutive tactical losses THAT CLOSED TODAY — the streak
+  resets at 00:00 UTC and does NOT carry across days". Realized losses today are $0.00 vs
+  the $10.00 limit, and no tactical loss closed today, so under execute.md — the sole
+  authority for this run — the breaker is **NOT tripped**. Moot in practice: the missing
+  catalyst blocks every entry regardless of which reading wins, so this run did not have to
+  resolve it and did not act on the permissive reading.
+- what would have to happen for a 30%+ run / what kills the thesis — N/A, no thesis formed.
+
+**STEP E — No order placed.** No naked buy, no stop cancelled, no stop moved, no position
+opened or closed by this bot.
+
+**STEP LEARN — No position closed this run** (the 20:22 UTC sells are account-level, not bot
+positions), so no `LESSON:` line is owed.
+
+**STEP G — No clickup notification** (nothing placed, nothing closed).
+
+**Net:** flat, $0.11 dust, 100% cash, 0 resting orders, fee budget untouched at $0.52/$2.00.
+Patience is the strategy — a run that does nothing is the system working.
