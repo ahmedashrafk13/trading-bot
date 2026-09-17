@@ -1,7 +1,7 @@
 # Backtester
 
 Replays the v2 two-sleeve rulebook (`memory/TRADING-STRATEGY.md`) over historical
-Alpaca crypto bars, so strategy questions can be answered in minutes instead of
+cached Bybit spot bars, so strategy questions can be answered in minutes instead of
 at the live rate of roughly one closed trade every two days.
 
 Stdlib + numpy only. No pandas, no new dependencies.
@@ -9,7 +9,7 @@ Stdlib + numpy only. No pandas, no new dependencies.
 ## Quick start
 
 ```bash
-python backtest/fetch.py --days 400      # download + cache hourly bars (~15 min)
+python backtest/fetch_bybit.py --timeframe 60 --days 400   # download + cache hourly bars
 python backtest/test_engine.py           # verify the engine is not cheating
 python backtest/run.py                   # backtest the shipped defaults
 python backtest/run.py --trades          # ...and list every closed trade
@@ -41,7 +41,7 @@ wrong in the optimistic direction. These are pinned by `test_engine.py`:
   would let a stop rise and fill within the same bar.
 - **Gaps fill at the open, not the stop price.** Assuming you always get your
   stop price is the single most common way a backtest invents money.
-- **Fees on both sides**, buy fees taken in kind exactly as Alpaca does. A flat
+- **Fees on both sides**, buy fees taken in kind exactly as the venue does. A flat
   round trip must lose money, and the test asserts it.
 - **Slot caps, the 85% deployment ceiling and the circuit breaker** are enforced
   every bar, and reconstructed from the trade list to verify.
@@ -52,7 +52,7 @@ wrong in the optimistic direction. These are pinned by `test_engine.py`:
    screen's live spread filter (`<=1.0%` CORE, `<=0.5%` TACTICAL) cannot be
    replayed. It is approximated by a flat `spread_bps` cost. Results are
    therefore **optimistic for thin coins** the live screen would have rejected.
-2. **Survivorship bias.** The universe is today's tradable list. Coins Alpaca
+2. **Survivorship bias.** The universe is today's tradable list. Coins the venue
    delisted are absent, so the historical universe is slightly too healthy.
 3. **The agent's judgement is not modelled.** Live, CORE and TACTICAL entries
    need a research-plan catalyst and the agent's discretion. The engine takes
@@ -206,7 +206,7 @@ and no signal tested here is remotely strong enough.
 2. Survivorship bias flatters every result above.
 3. Long-only is assumed throughout. A market-neutral long/short book could in
    principle monetize the cross-sectional IC that `research.py` does find - that
-   is a genuinely different vehicle, not a parameter change, and Alpaca crypto
+   is a genuinely different vehicle, not a parameter change, and spot crypto
    cannot express it.
 
 ## Sources

@@ -5,7 +5,8 @@
     python backtest/fetch_bybit.py --timeframe 60 --days 400 --top 80
     python backtest/fetch_bybit.py --timeframe D --days 1500 --refresh
 
-Bybit lists ~394 tradable USDT spot pairs against Alpaca's 33. That is not
+Bybit lists ~394 tradable USDT spot pairs, far more than the paper-era venue.
+That is not
 automatically an improvement: the median altcoin in the old 33-coin universe
 returned -21.2% over 5.7 years while BTC returned +157.4%, and a wider list is
 mostly wider at the junk end. So this fetcher ranks by 24h turnover and takes
@@ -14,7 +15,7 @@ survivable - a signal that only fires on a coin with a 3% spread is not
 tradable at any size.
 
 Writes data/bars/<tf>/<SYMBOL>.json as {"symbol", "bars": [[t,o,h,l,c,v], ...]}
-with t as a UTC epoch SECOND, matching the Alpaca-era cache format so the
+with t as a UTC epoch SECOND, matching the legacy cache format so the
 backtest engines need no changes.
 """
 from __future__ import annotations

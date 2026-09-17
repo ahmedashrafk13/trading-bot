@@ -7,6 +7,10 @@ only result that justifies active trading.
 
 ## Capital & Constraints
 - Starting capital: ~$200
+- TRADING BUDGET: $200 HARD CAP (owner-set 2026-09-18). The demo account holds
+  ~$179k; it is NOT the trading capital. All %-of-equity rules in this file are
+  percentages of the $200 budget. Enforced in scripts/state.sh via
+  TRADING_BUDGET_USD.
 - Platform: Bybit v5 UNIFIED account, SPOT ONLY. LIVE MONEY.
 - Instruments: Bybit USDT spot pairs ONLY (~394 listed; only the liquid end is
   tradable at this account size — see `scripts/screen.sh`)
@@ -127,7 +131,7 @@ trades a day implies hour-long holds. They cannot be the same position.
 | RISK per position | 2.0% of equity | 1.0% of equity |
 | Position size | risk / trail (~$26 at $197) | risk / trail (~$20 at $197) |
 | Hard cap on size | 20% of equity | 12% of equity |
-| Max positions | 4 | 1 |
+| Max positions | 1 (lowered from 4 on 2026-09-18 — hypothesis #6) | 1 |
 | New trades | agent's judgement | agent's judgement |
 | Stop | 15% below high-water, ratcheted | 10% below high-water, ratcheted |
 | Target | NONE — the trail is the exit | NONE — the trail is the exit |
@@ -145,15 +149,34 @@ version had this backwards: it gave TACTICAL $49 against CORE's $20, i.e. it put
 2.5x the capital behind the sleeve with the structurally negative edge. See
 "Why there is no profit target" below.
 
-Total risk if every slot is filled: 4 CORE x 2.0% + 1 TACTICAL x 1.0% = 9.0% of
+Total risk if every slot is filled: 1 CORE x 2.0% + 1 TACTICAL x 1.0% = 3.0% of
 equity at risk simultaneously. That is the deliberate ceiling.
+
+**CORE max positions was lowered 4 -> 1 on 2026-09-18 (hypothesis #6,
+HYPOTHESIS-LOG.md, CONFIRMED).** Evidence, out of sample and unanimous: on a
+60/40 split, 1 slot vs 4 returned -19.00% vs -42.60% (train) and -10.08% vs
+-19.34% (test), with max drawdown -21.62% vs -46.99% and -14.96% vs -27.52%.
+Across 4 rolling quarters, 1 slot beat 4 on BOTH return and drawdown in EVERY
+quarter with no exception, and the ordering 1 > 2 > 4 was monotone throughout.
+It also dominates the previously-promoted deployment cut: 1 slot at any
+deployment ceiling beat 4 slots at max_deploy=0.30 in both halves, and the
+deployment cap becomes non-binding at 1 slot (0.30 and 0.85 produce identical
+trades).
+
+MECHANISM, stated honestly because it bounds the claim: the altcoin universe has
+a CONFIRMED negative median, so each additional slot dilutes the top-ranked pick
+toward that median. The preference for fewer slots is therefore monotone and
+does NOT identify an optimum at 1 — extrapolated, it points at zero exposure,
+i.e. cash. This change is the largest step the rulebook's structure allows, not
+evidence of a long edge. See "Patience is the strategy".
 
 Why this replaced fixed $40/$20 sizing: under the old rule CORE risked $8.00 per
 position (4.06% of equity) against TACTICAL's $1.20 (0.61%) — the "patient, safe"
 sleeve carried **6.7x** the risk of the fast one, and three CORE positions put
 12.2% of the account at risk at once against a 1-2% per-trade professional norm.
 
-- Combined cap: 6 positions, and total deployment must stay AT OR BELOW 50%
+- Combined cap: 2 positions (1 CORE + 1 TACTICAL, per hypothesis #6,
+  2026-09-18), and total deployment must stay AT OR BELOW 50%
   (lowered from 85% 2026-09-17 — hypothesis #3, HYPOTHESIS-LOG.md, CONFIRMED).
   There is NO minimum deployment. See "Cash is a position" below.
 - NEITHER sleeve has a time limit or a profit target. Every winner in this

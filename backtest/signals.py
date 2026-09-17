@@ -208,6 +208,67 @@ def sig_momentum_if_funding_calm(u):
     return out
 
 
+def sig_clv_accumulation(u):
+    """Mean close-location-value over 14 bars — where in each bar's range the
+    close landed.
+
+    NEW 2026-09-18. Every signal tested so far reads only the CLOSE series;
+    the high/low arrays have never been used. CLV = (c-l)/(h-l)*2-1 is +1 when
+    a bar closes on its high (buyers absorbed the whole range) and -1 on its
+    low. Averaging it says "who won the last fortnight of intrabar fights",
+    which is a different measurement from price change: a coin can be flat on
+    close-to-close while consistently closing strong.
+    """
+    rng = u.h - u.l
+    with np.errstate(invalid="ignore", divide="ignore"):
+        clv = np.where(rng > 0, (u.c - u.l) / rng * 2.0 - 1.0, np.nan)
+    w = 14
+    out = np.full(clv.shape, np.nan)
+    for i in range(w, clv.shape[1]):
+        out[:, i] = np.nanmean(clv[:, i - w:i + 1], axis=1)
+    return out
+
+
+def sig_downside_vol_low(u):
+    """Negative DOWNSIDE semi-deviation over 30 bars.
+
+    NEW 2026-09-18. `low_volatility` is CONFIRMED predictive on the median and
+    CONFIRMED untradable, because it throws away the lottery-shaped right tail
+    along with the left one — that is exactly what cost neutral.py 93%. This
+    signal penalises only the LEFT tail: it ranks coins by how small their
+    negative returns have been, leaving upside dispersion unpenalised. If the
+    low-vol IC is really about avoiding crashes rather than about calm, this
+    one-sided version should keep the IC while preserving the mean.
+    """
+    r = _pct_change(u.mark, 1)
+    neg = np.where(r < 0, r, 0.0)
+    neg = np.where(np.isnan(r), np.nan, neg)
+    w = 30
+    out = np.full(r.shape, np.nan)
+    for i in range(w, r.shape[1]):
+        win = neg[:, i - w:i + 1]
+        out[:, i] = -np.sqrt(np.nanmean(win * win, axis=1))
+    return out
+
+
+def sig_momentum_skip_recent(u):
+    """90-bar momentum EXCLUDING the most recent 7 bars ("12-2" momentum).
+
+    NEW 2026-09-18. The standing verdicts say two things that fit together:
+    momentum is INVERTED at <=1 day and POSITIVE at 30d. If both are true, then
+    plain 30d momentum is carrying a reversal-contaminated tail in its own
+    window, and cutting that tail out should RAISE the IC. This is the
+    equity-factor 12-2 construction applied to the repo's own measured facts,
+    and it is a pure recombination of data already here.
+    """
+    c = u.mark
+    skip, look = 7, 90
+    out = np.full(c.shape, np.nan)
+    if c.shape[1] > look:
+        out[:, look:] = c[:, look - skip:c.shape[1] - skip] / c[:, :c.shape[1] - look] - 1.0
+    return out
+
+
 def sig_random(u):
     """THE NULL. Any candidate that cannot beat this is luck."""
     rng = np.random.default_rng(0)
@@ -225,6 +286,9 @@ CANDIDATES = {
     "vol_contraction": sig_vol_contraction,
     "funding_contrarian": sig_funding_contrarian,
     "momentum_if_funding_calm": sig_momentum_if_funding_calm,
+    "clv_accumulation": sig_clv_accumulation,
+    "downside_vol_low": sig_downside_vol_low,
+    "momentum_skip_recent": sig_momentum_skip_recent,
     "RANDOM (null baseline)": sig_random,
 }
 
@@ -277,9 +341,14 @@ COMPOSITES = {
     # The bot's own rule, INVERTED - its measured IC is negative, so flipping it
     # is the most direct test of whether the sign is the whole problem.
     "momentum_inverted": ["-momentum_7h (bot TACTICAL)"],
+    # NEW 2026-09-18 (hypothesis #7): one-sided low-vol — penalise the LEFT
+    # tail only, leaving the lottery-shaped right tail unpenalised.
+    "downside_vol": ["downside_vol_low"],
+    "downside_vol_reversion": ["downside_vol_low", "below_sma20"],
 }
 
 _BY_NAME = {
+    "downside_vol_low": sig_downside_vol_low,
     "low_volatility": sig_low_vol,
     "below_sma20": sig_dist_from_sma,
     "momentum_7h (bot TACTICAL)": sig_momentum_7h,

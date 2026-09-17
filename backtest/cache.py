@@ -21,7 +21,7 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# Default to the Bybit daily cache. The Alpaca-era 1D cache is kept so old
+# Default to the Bybit daily cache. The legacy 1D cache is still read so old
 # results stay reproducible, but it is no longer what routines load.
 TF = os.environ.get("CACHE_TF", "D")
 CACHE = os.path.join(ROOT, "data", "cache", f"bars-{TF}.json.gz")

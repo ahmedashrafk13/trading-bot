@@ -210,7 +210,8 @@ def pmetrics(u, equity, diag):
     dn = r[r < 0]
     sortino = (float(np.mean(r) / np.std(dn) * ann)
                if len(dn) and np.std(dn) > 0 else 0.0)
-    # The benchmark symbol differs by venue: Alpaca quoted BTC/USD, Bybit uses
+    # The benchmark symbol differs by cache vintage: the legacy cache holds
+    # BTC/USD, Bybit uses
     # BTCUSDT. Hardcoding one silently reports a MISSING benchmark as "no edge"
     # rather than as an error, which is how a strategy gets compared to nothing.
     bench = None

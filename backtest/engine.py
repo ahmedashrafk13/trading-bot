@@ -13,7 +13,7 @@ worse than none at all:
     you always get the stop price is the single most common way a backtest
     invents money it would never have made.
   * Fees are charged on BOTH sides, buy fees taken in kind (qty haircut) exactly
-    as Alpaca does, because that fee is the whole reason the v1 tactical
+    as the venue does, because that fee is the whole reason the v1 tactical
     geometry was negative-expectancy.
 
 Known limitation, stated rather than hidden: historical bid/ask spreads are not
@@ -133,7 +133,7 @@ class Universe:
         # backtest command fail there with "no cached bars".
         if timeframe == "auto":
             # Prefer the richest cache present. Bybit writes "D"/"60"; the
-            # Alpaca era wrote "1D"/"1H". Both are supported so old caches and
+            # the legacy cache wrote "1D"/"1H". Both are read so old caches and
             # the committed one keep working.
             for tf in ("60", "1H", "D", "1D"):
                 if glob.glob(os.path.join(BARS_ROOT, tf, "*.json")):
@@ -161,7 +161,7 @@ class Universe:
             raise SystemExit(
                 "no cached bars. Either expand the committed daily cache "
                 "(python backtest/cache.py unpack), or fetch fresh hourly "
-                "bars, which takes ~15 min (python backtest/fetch.py --days 400).")
+                "bars, which takes ~15 min (python backtest/fetch_bybit.py --timeframe 60 --days 400).")
 
         raw = {}
         for f in files:
@@ -326,7 +326,7 @@ def run(u, p):
             eq = cash + deployed
             room = max(0.0, p.max_deploy * eq - deployed)
             size = min(eq * risk / trail, eq * cap, cash, room)
-            if size < 1.0:          # Alpaca's ~$1 crypto minimum
+            if size < 1.0:          # ~$1 exchange minimum order value
                 continue
             qty = (size / px) * (1 - cost)   # buy fee taken in kind
             cash -= size
@@ -464,7 +464,8 @@ def metrics(u, equity, trades):
     gl = -sum(t.pnl for t in losses)
 
     # benchmark: buy and hold BTC over the identical window
-    # The benchmark symbol differs by venue: Alpaca quoted BTC/USD, Bybit uses
+    # The benchmark symbol differs by cache vintage: the legacy cache holds
+    # BTC/USD, Bybit uses
     # BTCUSDT. Hardcoding one silently reports a MISSING benchmark as "no edge"
     # rather than as an error, which is how a strategy gets compared to nothing.
     bench = None
