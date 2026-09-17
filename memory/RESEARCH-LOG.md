@@ -989,3 +989,129 @@ elsewhere breaking the loss streak.
 
 **Fee budget:** $0.52 / $1.91 used this MONTH so far (headroom $1.39). No
 entries this run, unchanged.
+
+## 2026-09-17 — Crypto Research (UTC 20:32, broker clock) — scheduled research run
+
+**Tooling note:** PERPLEXITY_API_KEY not usable (`perplexity.sh` reports "not
+set"); all STEP B research done via native WebSearch fallback, as the routine
+allows. Bybit credentials present and working via `.env` (the wrappers load it
+themselves — `scripts/bybit.py:40`). The earlier run today was blocked at the
+env check; that block is resolved.
+
+**Account snapshot (scripts/state.sh, broker clock 2026-09-17 20:32 UTC):**
+- EQUITY $200.00 (budget cap; account holds $178,978.89 — NOT the sizing basis)
+- FREE $199.89 | DEPLOYED $0.11 = 0.1% (ceiling 85%, no floor)
+- OPEN POSITIONS: 0. No stops owed, no ratchet due, no reconciliation drift
+  vs TRADE-LOG. SCAN-VERDICT: NO-ACTION.
+- Size available: CORE $26.67 (risk $4.00 / 15% trail) | TACTICAL $20.00
+  (risk $2.00 / 10% trail)
+- Circuit breaker: realized losses today $0.00 vs $10.00 limit. `state.sh`
+  prints TRIPPED on the 3-consecutive-tactical-loss streak whose most recent
+  close was 2026-09-15; execute.md reads that streak as resetting at 00:00 UTC.
+  The two authorities still disagree (already in OBSERVATIONS). MOOT this run —
+  the decision is HOLD on both sleeves regardless of which reading wins.
+
+**Market context:**
+- FOMC RESOLVED (the dominant risk flagged in the 09-16 entry is now behind us).
+  25bp HIKE to 3.75-4.00%, unanimous 12-0, first hike since July 2023.
+  16 of 18 officials project at least one more hike in 2026; 2026 median dot
+  4.1% (from 3.8%), 2027 median 4.1% (from 3.6%). Warsh hawkish in substance,
+  deliberately light on forward guidance: inflation "too high for too long",
+  PCE 3.7% for 2026, return to 2% pushed out to 2029.
+- Crypto rallied INTO the hawkish print — a relief move on removal of
+  uncertainty, not on easing. BTC $76,663 (+1.5%, reclaimed $76k), ETH $2,455
+  (+1.8%), XRP $1.30 (+2%). BTC is ~40% below its October $126k high.
+- MACRO IS A HEADWIND, and this is what the relief rally is not pricing:
+  DXY topped 100 for the first time since July (99.7 -> 100.3 on the print).
+  10-year at 5.027%, highest zone since 2007; 2-year 4.736%, near a 52-week
+  high. Higher-for-longer with no guidance is the mix that keeps the dollar bid.
+- BTC DOMINANCE broke above 60% this week, ending an eight-month accumulation
+  phase, targeting the 66% June-2025 cycle high. Altcoin Season Index 37.
+  Capital is rotating TO BTC, away from alts — a structural headwind for every
+  alt entry this account can make, independent of any single name's catalyst.
+- ETF flows NEGATIVE on the week: 09-15 saw ~$592M combined outflows (BTC
+  $450.3M, largest single day since June 25; ETH $141.5M, deepest in 155
+  sessions), on the CLARITY Act failing cloture 49-60. Week: BTC spot ETFs
+  -$462.7M (reversing a three-week inflow streak), ETH spot +$196.9M. BTC ETFs
+  remain net +$307.3M for September.
+
+**Leading vs rolling-over narratives:**
+- LEADING: privacy. Sector ~$33.6B market cap; ZEC +2,496% on the year and
+  +23% to a record high on the FOMC day. NOT ACTIONABLE — ZEC is not in the
+  tradable universe, and chasing a name already up 2,496% is the definition of
+  buying what has already moved.
+- LEADING (secondary): RWA / tokenized equities. SEC roundtable 09-17 with
+  BlackRock and Nasdaq on moving stock trading on-chain. Touches ONDO (CORE
+  shortlist) but a roundtable is a discussion, not a decision — no dated,
+  idiosyncratic outcome to trade.
+- ROLLING OVER: alts broadly, on the dominance breakout. Memes (PEPE/SHIB/DOGE
+  pass the technical screen but carry no catalyst and the narrative is not bid).
+- ETH-specific: Glamsterdam mainnet slipped to Q4 2026; Sepolia fork 09-28.
+  Slippage is not a catalyst. Senate inaction leaves staking/DeFi rules in limbo.
+
+**CORE SHORTLIST (18, daily bars):** FLOCK ONDO LIT PIEVERSE AERO AAVE ASTER
+XLM HYPE SPCXX FET JUP BNB LTC AVAX RLUSD DOT INJ
+- NOTE: RLUSD is a STABLECOIN (last 1.0008, 7p% 0.0, 30p% 0.0). The strategy
+  forbids holding a stablecoin as a position. Excluded here, and logged to
+  OBSERVATIONS as a screen defect — it should never reach a shortlist.
+
+**TACTICAL SHORTLIST (29, hourly bars):** ARB CRV NEAR FET DOT BR AAVE JUP PEPE
+BCH LTC ENA HYPE SHIB HBAR ONDO XLM ASTER INJ ADA CRCLX MON WLD DATA LINK CAP
+APT POL XPL
+
+**Ideas, tagged by sleeve:**
+- CORE — NONE ADVANCED. No shortlist name carries a dated, idiosyncratic
+  catalyst. ONDO (0.3748, +13.6%/30p) is the closest on the RWA/SEC-roundtable
+  story, but the catalyst is undated and shared across the sector. Size would
+  have been $26.67, stop 15% below entry (trigger 0.3186, limit 0.3027), no
+  target — rejected before sizing.
+- TACTICAL — NONE ADVANCED. ARB (0.1774) leads the hourly screen at +8.2%/7p
+  and passes both sleeves, but carries a KNOWN BEARISH OVERHANG: a 139.15M-token
+  unlock (1.4% of supply) on 2026-09-23, six days out, on top of the 92.63M
+  (~$9M) unlock that already landed 09-16. Entering a 10%-trail tactical long
+  into a dated supply event is taking the wrong side of the only dated catalyst
+  on the board. Rejected.
+- R:R after ~0.65% measured round-trip friction: not computed for any name — no
+  idea cleared the catalyst gate, so there is no entry to price.
+
+**EVIDENCE CHECK (STEP EVIDENCE):** This run's routine restates "30-day momentum
+is INVERTED (IC -0.037, t=-10)". That verdict is SUPERSEDED. The HYPOTHESIS-LOG
+standing-verdicts table was CORRECTED 2026-09-16: momentum is inverted at SHORT
+horizons only (<=1d, IC@1d -0.012 test), while IC@30d is **+0.025 test** —
+positive. The old verdict was measured on Alpaca-era hourly bars and wrongly
+generalised to all horizons. Logged to OBSERVATIONS; not acted on either way,
+since nothing was entered. What still stands and still binds: tighter stops are
+strictly worse, higher frequency is strictly worse, the altcoin universe has a
+negative median (-21.2% vs BTC +157.4% over 5.7y), and nothing tested beats
+buy-and-hold BTC. No part of today's reasoning rests on a REJECTED finding.
+
+**Risk factors:**
+- Dominance >60% with Altcoin Season Index 37: the measured negative median of
+  the alt universe is being actively expressed right now. Every name this
+  account can buy is an alt.
+- The post-FOMC bounce echoes March 2022: BTC was also ~40% below its high when
+  tightening began, rallied 18% over 12 days, then slid 50%. A relief rally
+  inside a hiking cycle is not a trend.
+- DXY >100 and 10y >5% are a sustained liquidity headwind, not a one-day event.
+- ARB unlock 09-23 (1.4% of supply) — the one dated catalyst on the board runs
+  bearish.
+- Open interest ~50% above its 30-day average and more than doubled on the
+  month: crowded leverage raises flush risk on any macro surprise.
+- Three consecutive tactical losses remain unbroken; the sleeve has not yet
+  shown it can win under current conditions.
+
+**Decision:**
+- CORE: **HOLD** — binding for the day. No shortlist name clears the
+  idiosyncratic-catalyst bar, and a >60% dominance breakout is the worst regime
+  in which to add alt exposure.
+- TACTICAL: **HOLD** — recommendation only; a later execute run may originate if
+  the screen passes AND a fresh catalyst is documented then. What would have to
+  change: a dated, idiosyncratic catalyst on a shortlist name that is NOT ARB
+  (its unlock runs the wrong way until 09-23 clears), plus dominance stalling
+  below ~60%. Absent both, the correct action remains none.
+- Cash is a position. 0.1% deployed is a valid, compliant state, and this run
+  does NOT buy to correct it.
+
+**Fee budget:** $0.52 / $2.00 used this MONTH (headroom $1.48), month started
+2026-09-01. No entries this run — unchanged. The budget is a CEILING, not a
+target; BTC buy-and-hold, the benchmark, pays 0%.

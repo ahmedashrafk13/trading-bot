@@ -1376,3 +1376,13 @@ positions), so no `LESSON:` line is owed.
 
 **Net:** flat, $0.11 dust, 100% cash, 0 resting orders, fee budget untouched at $0.52/$2.00.
 Patience is the strategy — a run that does nothing is the system working.
+
+## 2026-09-17 20:32 UTC — research run, STEP A reconciliation
+
+- Account FLAT: 0 open positions, $0.11 dust, 100% cash ($199.89 free of $200 budget).
+- Reconciles CLEAN against the TRADE-LOG tail (prior run also closed flat). No drift.
+- No resting orders owed: no position, so no stop, no ratchet, no hard-cut check applicable.
+- No order placed, cancelled or amended. No position opened or closed by this bot.
+- Realized P&L today: $0.00. Circuit breaker on the realized-loss test: NOT tripped ($0.00 vs $10.00).
+- Fee budget unchanged: $0.52 / $2.00 this month, headroom $1.48.
+- Decision recorded in RESEARCH-LOG: CORE HOLD (binding for the day), TACTICAL HOLD (advisory).
