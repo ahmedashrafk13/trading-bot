@@ -1386,3 +1386,66 @@ Patience is the strategy — a run that does nothing is the system working.
 - Realized P&L today: $0.00. Circuit breaker on the realized-loss test: NOT tripped ($0.00 vs $10.00).
 - Fee budget unchanged: $0.52 / $2.00 this month, headroom $1.48.
 - Decision recorded in RESEARCH-LOG: CORE HOLD (binding for the day), TACTICAL HOLD (advisory).
+
+## 2026-09-17 20:47 UTC — execute run, no order placed
+
+**STEP A — state and reconcile.** `balance`/`holdings`/`orders spot`/`fills spot` all
+returned live. EQUITY $200.00 (budget cap; account holds $178,978.89 — NOT the sizing
+basis). FREE $199.89, DEPLOYED $0.11 = 0.1%. Open positions: 0. Open orders: `[]`.
+Non-zero balances are dust only (ARB 0.0071, AR 0.0021, UNI 0.0091, CRV 0.057, XRP 0.0098,
+ZK, CAKE, 0G — $0.11 combined, every line below any symbol's `minOrderAmt`). Reconciles
+CLEAN against the TRADE-LOG tail; no fill occurred since the 20:32 research run. No stop
+is owed on dust: there is no position to protect and no sellable quantity. Nothing
+ratcheted, nothing cut, nothing closed.
+
+**STEP B — evidence.** RESEARCH-LOG 2026-09-17 (20:32 UTC) read in full; HYPOTHESIS-LOG
+standing verdicts read. Still binding: wider stops beat tighter, lower frequency beats
+higher, alt universe median -21.2% vs BTC +157.4% over 5.7y, nothing tested beats
+buy-and-hold BTC. No reasoning below contradicts a standing verdict.
+
+**STEP C — screen.** `screen.sh` re-run live. Output is materially unchanged from the
+20:32 screen 15 minutes earlier: ARB still leads the tactical ranks, ONDO 0.3742 leads
+CORE on 30p (+13.4%), BTC 76,536.5 (-0.2% 7p). TACTICAL shortlist 29 names, same set.
+No new name appeared, no ranking inverted.
+
+**STEP D — buy gate. NO ENTRY. Stated condition by condition:**
+- `"category":"spot"` — N/A, no order body composed.
+- positions after fill <= sleeve cap — would pass (0 of 4 CORE, 0 of 1 TACTICAL).
+- deployment after fill <= 85% — would pass (0.1% now). NO floor; not buying to correct it.
+- size = (equity * risk%) / stop distance — available: CORE $26.67, TACTICAL $20.00.
+- order value >= `minOrderAmt` — not evaluated, no candidate.
+- spread <= 0.5% — not evaluated, no candidate.
+- circuit breaker — realized losses today $0.00 vs $10.00 limit: NOT tripped. `state.sh`
+  again prints "TRIPPED" on a 3-tactical-loss streak whose most recent close was
+  2026-09-15; execute.md STEP D — the sole authority for this run — resets that streak at
+  00:00 UTC and says it does NOT carry across days, so under execute.md the breaker is
+  NOT tripped. Third occurrence, re-logged to OBSERVATIONS. Moot again: the catalyst gate
+  below blocks every entry regardless of which reading wins, and this run did not act on
+  the permissive reading.
+- **catalyst documented in today's RESEARCH-LOG — this is the binding block.**
+  CORE: today's research decision is **HOLD, binding for the day** — no shortlist name
+  carries a dated idiosyncratic catalyst, and CORE may not be originated in an execute run
+  regardless. TACTICAL: research left HOLD with origination permitted here only if the
+  screen passes AND a fresh catalyst is documented in this run. The screen passes for
+  several names; **no fresh catalyst exists.** Nothing has occurred in the 15 minutes since
+  the research run — no dated event, no print, no listing, no unlock resolving. ARB, the
+  screen leader, carries the one dated catalyst on the board and it runs BEARISH: 139.15M
+  tokens (1.4% of supply) unlock 2026-09-23, five days out. Entering a 10%-trail long into
+  a dated supply event is taking the wrong side of the only dated catalyst available.
+  Research's stated condition for a tactical entry — a dated idiosyncratic catalyst on a
+  non-ARB name, plus BTC dominance stalling below ~60% — is unmet on both halves:
+  dominance broke above 60% this week and the Altcoin Season Index is 37.
+- 30%+ path / thesis-killer — N/A, no thesis formed. Manufacturing a catalyst to clear
+  this gate is precisely the behaviour the gate exists to prevent.
+
+**STEP E — No order placed.** No buy, no naked buy, no stop cancelled, moved or widened,
+no position opened or closed by this bot. No `takeProfit`/`stopLoss` body was composed, so
+the standing execute.md-vs-CLAUDE.md target-leg conflict did not have to be resolved.
+
+**STEP LEARN — No position closed this run**, so no `LESSON:` line is owed.
+
+**STEP G — No clickup notification** (nothing placed, nothing closed).
+
+**Net:** flat, $0.11 dust, ~100% cash, 0 resting orders, fee budget untouched at
+$0.52 / $2.00 this month (headroom $1.48). Cash is a position; 0.1% deployed is a valid,
+compliant state. A run that does nothing is the system working.
