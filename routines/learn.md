@@ -174,8 +174,8 @@ median, the short leg is rejected regardless of its IC.
 STEP 5 — TEST ONE STANDING ASSUMPTION, EVEN ON A QUIET DAY. The bot must keep
 learning when it is not trading, which is most of the time. Pick one rule in
 `memory/TRADING-STRATEGY.md` that has never been tested, state what it assumes,
-and test it. Candidates: the 85% deployment ceiling, the 1% monthly fee budget,
-the 4/1 slot split, the 06:07 research hour, the CORE/TACTICAL risk ratio, the
+and test it. Candidates: the 50% deployment ceiling, the 1% monthly fee budget,
+the 1/1 slot split, the 06:07 research hour, the CORE/TACTICAL risk ratio, the
 hard-cut levels, the universe itself.
 
 Log the result like any other hypothesis. This is the step that compounds — a

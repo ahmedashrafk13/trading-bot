@@ -33,18 +33,17 @@ Mental model: the runner is stateless. Git is the memory. If it isn't in `main`,
    the policy explicitly at every push step.
 
 3. **Set network access to Full, or Custom with these hosts allowed:**
-   `paper-api.alpaca.markets`, `data.alpaca.markets`, `api.alpaca.markets`,
-   `api.perplexity.ai`, `api.clickup.com`. The default "Trusted" level is a package-registry
+   `api.bybit.com`, `api.perplexity.ai`, `api.clickup.com`.
+   The default "Trusted" level is a package-registry
    allowlist — every wrapper call 403s under it, which looks like a broken API key rather
    than a blocked egress.
 4. **Set env vars on the routine — NOT in a `.env` file:**
 
    | Variable | Required? |
    |---|---|
-   | `ALPACA_API_KEY` | required |
-   | `ALPACA_SECRET_KEY` | required |
-   | `ALPACA_ENDPOINT` | set to `https://paper-api.alpaca.markets/v2` for paper |
-   | `ALPACA_DATA_ENDPOINT` | optional (defaults to data URL) |
+   | `BYBIT_API_KEY` | required — Read + Trade only, NEVER Withdraw |
+   | `BYBIT_API_SECRET` | required |
+   | `BYBIT_ENDPOINT` | set to `https://api.bybit.com` |
    | `PERPLEXITY_API_KEY` | optional — falls back to WebSearch |
    | `PERPLEXITY_MODEL` | optional (defaults to `sonar`) |
    | `CLICKUP_API_KEY` | optional — falls back to a local file |
@@ -97,7 +96,7 @@ level only the scan enforced — miss a scan and nothing closed a losing tactica
 position. The second routine was specified but NEVER CREATED.
 
 Under v2 it is not needed and should not be created. Neither sleeve has a
-target, so EVERY position in BOTH sleeves rests a full-size stop_limit at the
+target, so EVERY position in BOTH sleeves rests a full-size conditional stop at the
 broker and is protected 24/7 whether or not a run happens. A second scan buys
 faster trail ratcheting only, at double the scan run cost. Before reinstating
 it, re-read "What rests at the exchange, by sleeve" in
@@ -131,7 +130,7 @@ files) because it runs ~720x/month. The other four read memory and are ~1,700-2,
 tokens each but run only once a day.
 
 Every routine begins with the same STEP A invariants: reconcile positions,
-verify every position has a resting `stop_limit`, force-close anything past -15%
+verify every position has a resting conditional stop, force-close anything past -15%
 that the stop missed, and ratchet stops upward. That repetition is deliberate —
 runs are 6h apart and nothing else is watching a 24/7 market.
 
@@ -152,13 +151,13 @@ one that mattered.
 |---|---|---|
 | "Repository not accessible" / clone fails | Claude GitHub App not installed | Install it, grant access to this repo |
 | Run opened a PR from a `claude/*` branch instead of pushing to `main` | Prompt was pasted without the BRANCH POLICY block | Re-paste the prompt; merge the stranded PR to recover the work |
-| Every wrapper call fails / 403 | Environment network access is "Trusted" | Set it to Full, or Custom with the five hosts listed above |
-| `ALPACA_API_KEY not set in environment` | Env var missing from routine config | Add it on the routine, not in a repo `.env` |
+| Every wrapper call fails / 403 | Environment network access is "Trusted" | Set it to Full, or Custom with the three hosts listed above |
+| `BYBIT_API_KEY not set in environment` | Env var missing from routine config | Add it on the routine, not in a repo `.env` |
 | Agent creates a `.env` anyway | Prompt was paraphrased, losing the DO-NOT block | Re-paste from `routines/*.md` exactly |
 | Yesterday's trades missing today | Previous run did not commit + push | Check `git log origin/main`, re-verify the final STEP |
 | Push fails "fetch first" / non-fast-forward | Another run pushed between clone and push | Prompts handle it with `git pull --rebase`; if looping, look for a real conflict |
 | ClickUp message never arrived | One of the three `CLICKUP_*` vars is missing | Script silently falls back to a local file — add the missing var |
 | Perplexity calls did not happen | `PERPLEXITY_API_KEY` missing | Script exits 3 and the agent falls back to WebSearch — add the key or accept the fallback |
-| `invalid order type for crypto order` | Prompt used `trailing_stop` or `stop` | Crypto supports `stop_limit` only — re-paste the prompt |
-| `invalid crypto time_in_force` | Order used `time_in_force: day` | Crypto requires `gtc` (or `ioc`) |
+| Non-zero `retCode` from Bybit | Order body malformed, or precision/minOrderAmt violated | Read the pair's `instruments spot` row; never round by eye |
+| Order rejected for category | Body missing `"category":"spot"` | Every order body must carry it — re-paste the prompt |
 | A position has no resting stop | Stop was rejected after the buy filled | STEP A of every run re-places it; if it fails twice the prompt closes the position |

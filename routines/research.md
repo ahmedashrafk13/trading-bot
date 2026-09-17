@@ -155,8 +155,13 @@ reasoning depends on something already marked REJECTED there, your reasoning is
 wrong and you must say so explicitly rather than quietly repeating it.
 
 In particular, these are settled and measured, not opinions:
-  - short-horizon momentum is INVERTED (IC -0.050, t=-13)
-  - 30-day momentum is INVERTED (IC -0.037, t=-10)
+  - momentum is INVERTED at SHORT horizons only (<= 1 day): Bybit daily
+    IC@1d -0.012 test
+  - at 30 DAYS momentum is POSITIVE, not inverted: IC@30d **+0.025** test.
+    The old Alpaca-era reading ("30-day momentum is INVERTED, IC -0.037") was
+    measured on hourly bars and was WRONGLY generalised to all horizons;
+    HYPOTHESIS-LOG.md CORRECTED it on 2026-09-16. Short-horizon reversal and
+    medium-horizon momentum coexist.
   - tighter stops and higher frequency are both strictly worse
 A plan that says "enter because momentum is strong" is arguing against the
 evidence in this repo. If you want to make that call anyway, state why the
@@ -187,8 +192,10 @@ remote, retry once after `git pull --rebase origin main`; if it still fails, say
 so plainly in your summary rather than routing around it.
 
 AMENDMENT FREEZE (v2) — this run may NEVER edit memory/TRADING-STRATEGY.md.
-ANY run may, at any time, with no minimum trade count (owner directive
-2026-09-16 — the freeze was removed on purpose). Log the change and its evidence. Between 2026-09-10 and 2026-09-15 the rulebook was amended six times
+ONLY the weekly-review run may, and only behind its own evidence gate. Any
+rule change this run believes is warranted is written as a hypothesis in
+memory/HYPOTHESIS-LOG.md, never as an edit to the rulebook.
+Between 2026-09-10 and 2026-09-15 the rulebook was amended six times
 on a sample of ONE closed trade, and two of those amendments contradicted each
 other badly enough to cause six live order-thrash cycles in a day. If a rule
 looks broken: make the account safe, write the evidence to memory/TRADE-LOG.md,

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Universe screener. Ranks ALL tradable non-stablecoin crypto USD pairs on
+# Universe screener. Ranks tradable non-stablecoin Bybit USDT spot pairs on
 # momentum, trend position and volatility, so entry decisions start from data
 # rather than from whichever coin the news happened to mention.
 #
-# Usage: bash scripts/screen.sh [--json] [--sleeve core|tactical|all]
+# Usage: bash scripts/screen.sh [--json] [--sleeve core|tactical|all] [--top N]
 #
 # Prints a ranked table plus a PASS/FAIL verdict per sleeve's technical filters.
 # Read-only: no orders, no writes.
@@ -12,12 +12,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-FORMAT="table"; SLEEVE="all"
+FORMAT="table"; SLEEVE="all"; TOP="60"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --json) FORMAT="json"; shift ;;
     --sleeve) SLEEVE="${2:?}"; shift 2 ;;
-    *) echo "usage: bash scripts/screen.sh [--json] [--sleeve core|tactical|all]" >&2; exit 1 ;;
+    --top) TOP="${2:?}"; shift 2 ;;
+    *) echo "usage: bash scripts/screen.sh [--json] [--sleeve core|tactical|all] [--top N]" >&2; exit 1 ;;
   esac
 done
 
@@ -25,108 +26,109 @@ done
 # on daily bars, TACTICAL only on hourly, so the sleeve picks the timeframe and
 # the irrelevant column is suppressed.
 if [[ "$SLEEVE" == "all" ]]; then
-  "$0" --sleeve core     ${FORMAT:+$([[ $FORMAT == json ]] && echo --json)}
+  "$0" --sleeve core     --top "$TOP" $([[ $FORMAT == json ]] && echo --json)
   echo
-  "$0" --sleeve tactical ${FORMAT:+$([[ $FORMAT == json ]] && echo --json)}
+  "$0" --sleeve tactical --top "$TOP" $([[ $FORMAT == json ]] && echo --json)
   exit 0
 fi
 case "$SLEEVE" in
-  core)     TF="1D" ;;
-  tactical) TF="1H" ;;
+  core)     TF="D"  ;;
+  tactical) TF="60" ;;
   *) echo "unknown sleeve: $SLEEVE (core|tactical|all)" >&2; exit 1 ;;
 esac
-export TF
 
-STABLES="USDC USDT USDG"
+FORMAT="$FORMAT" SLEEVE="$SLEEVE" TF="$TF" TOP="$TOP" python - <<'PY'
+import importlib.util, json, os, statistics as st, sys
+from concurrent.futures import ThreadPoolExecutor
 
-symbols="$(bash scripts/alpaca.sh assets crypto | python -c "
-import json,sys
-a=json.load(sys.stdin)
-st=set('$STABLES'.split())
-out=[x['symbol'] for x in a
-     if x.get('tradable') and x['symbol'].endswith('/USD')
-     and x['symbol'].split('/')[0] not in st]
-print(','.join(sorted(out)))
-")"
+ROOT = os.getcwd()
+# bybit.py is a script, not a package, so it is loaded by path. Going through it
+# rather than re-implementing signing keeps ONE place where the API is spoken to.
+_spec = importlib.util.spec_from_file_location("bybit", os.path.join(ROOT, "scripts", "bybit.py"))
+bybit = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(bybit)
 
-# 33 symbols x ~46 bars is far too large to pass as an argv string
-# ("Argument list too long"), so hand the payloads to python as files.
-TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
-TF="${TF:-1D}"
-# crypto-bars `limit` is 10000 TOTAL across symbols. 33 coins x 45 days of
-# hourly bars would be ~35k, so shorten the window for intraday timeframes.
-case "$TF" in
-  1D|1Day) START="$(python -c "import datetime as d;print((d.datetime.now(d.timezone.utc)-d.timedelta(days=45)).strftime('%Y-%m-%d'))")" ;;
-  *)       START="$(python -c "import datetime as d;print((d.datetime.now(d.timezone.utc)-d.timedelta(days=7)).strftime('%Y-%m-%d'))")" ;;
-esac
-# Follow pagination until exhausted, then merge. Without this the screen
-# silently sees only the first few coins.
-page=""; n=0
-: > "$TMP/pages.ndjson"
-while :; do
-  bash scripts/alpaca.sh crypto-bars "$symbols" "$TF" "$START" 10000 "$page" > "$TMP/page.json"
-  python -c "
-import json,sys
-d=json.load(open(sys.argv[1],encoding='utf-8'))
-print(json.dumps(d.get('bars',{})))
-" "$TMP/page.json" >> "$TMP/pages.ndjson"
-  page="$(python -c "
-import json,sys
-print(json.load(open(sys.argv[1],encoding='utf-8')).get('next_page_token') or '')
-" "$TMP/page.json")"
-  n=$((n+1))
-  # 1H over 33 symbols already needs ~29 pages; 15Min would need ~112. A silent
-  # break here reproduces the original bug (a partial universe that looks fine),
-  # so the cap is generous AND exceeding it is a hard error, never a truncation.
-  if [[ $n -ge 200 ]]; then
-    echo "SCREEN ERROR: pagination exceeded 200 pages and next_page_token is still set." >&2
-    echo "  The universe would be INCOMPLETE. Shorten the window or the symbol list." >&2
-    exit 1
-  fi
-  [[ -z "$page" ]] && break
-done
-python -c "
-import json,sys
-merged={}
-for line in open(sys.argv[1],encoding='utf-8'):
-    for k,v in json.loads(line).items():
-        merged.setdefault(k,[]).extend(v)
-json.dump({'bars':merged}, open(sys.argv[2],'w',encoding='utf-8'))
-print('fetched ' + sys.argv[3] + ' page(s), ' + str(len(merged)) + ' symbols', file=sys.stderr)
-" "$TMP/pages.ndjson" "$TMP/bars.json" "$n"
-bash scripts/alpaca.sh crypto-quote "$symbols"     > "$TMP/quotes.json"
+fmt    = os.environ["FORMAT"]
+sleeve = os.environ["SLEEVE"]
+TF     = os.environ["TF"]
+TOP    = int(os.environ["TOP"])
 
-FORMAT="$FORMAT" SLEEVE="$SLEEVE" python -c "
-import json, os, statistics as st, sys
+# Stablecoins and wrapped-dollar tokens are never positions — TRADING-STRATEGY
+# forbids holding one — so they are dropped before ranking rather than after.
+STABLES = {"USDC", "USDT", "USDG", "USDE", "DAI", "TUSD", "FDUSD", "BUSD",
+           "USDD", "PYUSD", "EURT", "EURS",
+           # added 2026-09-17 weekly review: RLUSD reached a live CORE
+           # SHORTLIST on 2026-09-17, which immutable rule 9 forbids holding.
+           "RLUSD", "USD1", "USDS", "USDY", "USDP", "GUSD", "LUSD", "FRAX",
+           "SUSD", "USDF", "USDO", "EURC"}
 
-bars   = json.load(open(sys.argv[1], encoding='utf-8')).get('bars', {})
-quotes = json.load(open(sys.argv[2], encoding='utf-8')).get('quotes', {})
-fmt, sleeve = os.environ['FORMAT'], os.environ['SLEEVE']
+# Bybit lists ~394 USDT spot pairs. A bigger universe is NOT automatically
+# better: the wide end of the list is illiquid junk whose spread alone exceeds
+# the edge. Rank by 24h turnover and keep the top TOP, which is where anything
+# tradable at this account size actually lives.
+tickers = bybit.request("GET", "/v5/market/tickers", {"category": "spot"}) \
+              .get("result", {}).get("list", [])
+
+def _f(x, default=float("nan")):
+    try: return float(x)
+    except (TypeError, ValueError): return default
+
+cands = []
+for t in tickers:
+    sym = t.get("symbol") or ""
+    if not sym.endswith("USDT"):
+        continue
+    coin = sym[:-4]
+    if coin in STABLES or not coin:
+        continue
+    turnover = _f(t.get("turnover24h"), 0.0)
+    if turnover != turnover:
+        turnover = 0.0
+    cands.append((turnover, sym, coin, t))
+cands.sort(reverse=True, key=lambda x: x[0])
+cands = cands[:TOP]
+if not cands:
+    print("SCREEN ERROR: Bybit returned no USDT spot tickers.", file=sys.stderr)
+    raise SystemExit(1)
+
+# Bybit has no batch-bars endpoint — one kline call per symbol — so the fetch is
+# parallel. 8 is well inside the public rate limit and keeps a 60-coin screen
+# under ~5s. `limit` is capped at 1000 server-side; 60 periods is plenty for a
+# 30-period momentum and a 20-period SMA.
+BARS = 60
+def klines(sym):
+    r = bybit.request("GET", "/v5/market/kline",
+                      {"category": "spot", "symbol": sym,
+                       "interval": TF, "limit": BARS})
+    rows = r.get("result", {}).get("list", [])
+    rows.sort(key=lambda x: int(x[0]))          # Bybit returns NEWEST first
+    return sym, [_f(x[4]) for x in rows]        # index 4 = close
+
+with ThreadPoolExecutor(max_workers=8) as ex:
+    closes = dict(ex.map(klines, [c[1] for c in cands]))
 
 rows = []
-for sym, b in bars.items():
-    c = [x['c'] for x in b]
+for turnover, sym, coin, t in cands:
+    c = [x for x in closes.get(sym, []) if x == x]
     if len(c) < 21:
         continue                      # not enough history to judge trend
     last  = c[-1]
     sma20 = sum(c[-20:]) / 20
     prev_sma20 = sum(c[-21:-1]) / 20
     sma_rising = sma20 > prev_sma20
-    rets  = [(c[i] / c[i-1] - 1) for i in range(1, len(c))]
+    rets  = [(c[i] / c[i-1] - 1) for i in range(1, len(c)) if c[i-1]]
     vol   = st.pstdev(rets[-14:]) * 100 if len(rets) >= 14 else float('nan')
-    m7    = (last / c[-8]  - 1) * 100 if len(c) >  8 else float('nan')
-    m30   = (last / c[-31] - 1) * 100 if len(c) > 31 else float('nan')
-    dsma  = (last / sma20 - 1) * 100
+    m7    = (last / c[-8]  - 1) * 100 if len(c) >  8 and c[-8]  else float('nan')
+    m30   = (last / c[-31] - 1) * 100 if len(c) > 31 and c[-31] else float('nan')
+    dsma  = (last / sma20 - 1) * 100 if sma20 else float('nan')
 
-    q = quotes.get(sym, {})
-    ap, bp = q.get('ap'), q.get('bp')
-    spread = ((ap - bp) / ((ap + bp) / 2) * 100) if (ap and bp) else float('nan')
+    ap, bp = _f(t.get("ask1Price")), _f(t.get("bid1Price"))
+    spread = ((ap - bp) / ((ap + bp) / 2) * 100) if (ap == ap and bp == bp and ap and bp) else float('nan')
 
     # --- technical entry filters (see memory/TRADING-STRATEGY.md) ---
     # CORE (daily bars): established uptrend, priced above a rising SMA20, not
     # extended. Demanding a rising SMA and dsma>0 is what makes this selective —
-    # a 30d>0 test alone passed 32 of 33 coins and screened nothing.
+    # a 30d>0 test alone passed nearly the whole universe and screened nothing.
     core_ok, core_why = True, []
     if not (m30 > 0):            core_ok, _ = False, core_why.append('30p<=0')
     if not (dsma > 0):           core_ok, _ = False, core_why.append('below SMA20')
@@ -135,44 +137,44 @@ for sym, b in bars.items():
     if not (spread <= 1.0):      core_ok, _ = False, core_why.append('spread>1%')
 
     # TACTICAL (hourly bars): short-horizon push that is not yet extended, with
-    # enough movement to reach a ~12% target and a spread cheap enough that
-    # ~0.5% round-trip fees do not eat the edge.
+    # enough movement to be worth taking and a spread cheap enough that the
+    # ~0.11% Bybit round trip does not eat the edge.
     tac_ok, tac_why = True, []
     if not (m7 > 0):             tac_ok, _ = False, tac_why.append('short-mom<=0')
     if not (-8 <= dsma <= 8):    tac_ok, _ = False, tac_why.append('too far from SMA20')
     if not (0.4 <= vol <= 6.0):  tac_ok, _ = False, tac_why.append('vol outside band')
     if not (spread <= 0.5):      tac_ok, _ = False, tac_why.append('spread>0.5%')
 
-    rows.append(dict(symbol=sym, last=last, m7=m7, m30=m30, dsma=dsma, vol=vol,
-                     spread=spread, sma20_rising=sma20 > prev_sma20,
+    rows.append(dict(symbol=sym, coin=coin, last=last, m7=m7, m30=m30, dsma=dsma,
+                     vol=vol, spread=spread, turnover24h=turnover,
+                     sma20_rising=sma_rising,
                      core_pass=core_ok, core_fail=core_why,
                      tactical_pass=tac_ok, tactical_fail=tac_why))
 
-dropped = [sym for sym, b in bars.items() if len([x['c'] for x in b]) < 21]
+dropped = [c[2] for c in cands if len([x for x in closes.get(c[1], []) if x == x]) < 21]
 if dropped:
     print(f'WARNING: {len(dropped)} coin(s) skipped for <21 periods of history: '
-          + ' '.join(sorted(s.replace('/USD','') for s in dropped)), file=sys.stderr)
-expected = len(bars)
+          + ' '.join(sorted(dropped)), file=sys.stderr)
+expected = len(cands)
 if expected and len(rows) < expected * 0.8:
     print(f'WARNING: only {len(rows)} of {expected} symbols scored — the screen may be '
-          'working from incomplete data. Check pagination before trusting it.', file=sys.stderr)
+          'working from incomplete data. Check the kline fetch before trusting it.', file=sys.stderr)
 
 rows.sort(key=lambda r: (r['m7'] if r['m7'] == r['m7'] else -999), reverse=True)
 
 if fmt == 'json':
     print(json.dumps(rows, indent=2)); raise SystemExit
 
-tf_label = os.environ.get('TF', '1D')
-print(f'UNIVERSE SCREEN [{tf_label}] — {len(rows)} coins with >=21 periods')
-print(f\"{'coin':7}{'last':>12}{'7d%':>8}{'30d%':>8}{'vsSMA20':>9}{'vol%':>7}{'spr%':>7}  {'CORE':<6}{'TACTICAL':<9}\")
-print('-' * 88)
+print(f'UNIVERSE SCREEN [{TF}] — {len(rows)} of the top {TOP} coins by 24h turnover, >=21 periods')
+print(f"{'coin':9}{'last':>13}{'7p%':>8}{'30p%':>8}{'vsSMA20':>9}{'vol%':>7}{'spr%':>7}  {'CORE':<6}{'TACTICAL':<9}")
+print('-' * 92)
 for r in rows:
-    c = 'PASS' if r['core_pass'] else 'fail'
-    t = 'PASS' if r['tactical_pass'] else 'fail'
-    print(f\"{r['symbol'].replace('/USD',''):7}{r['last']:>12,.4f}{r['m7']:>8.1f}{r['m30']:>8.1f}\"
-          f\"{r['dsma']:>9.1f}{r['vol']:>7.1f}{r['spread']:>7.2f}  {c:<6}{t:<9}\")
+    cf = 'PASS' if r['core_pass'] else 'fail'
+    tf_ = 'PASS' if r['tactical_pass'] else 'fail'
+    print(f"{r['coin']:9}{r['last']:>13,.4f}{r['m7']:>8.1f}{r['m30']:>8.1f}"
+          f"{r['dsma']:>9.1f}{r['vol']:>7.1f}{r['spread']:>7.2f}  {cf:<6}{tf_:<9}")
 print()
 key = 'core_pass' if sleeve == 'core' else 'tactical_pass'
-passes = [r['symbol'] for r in rows if r[key]]
-print(f'{sleeve.upper()} SHORTLIST ({len(passes)}):', ' '.join(s.replace('/USD','') for s in passes) or '(none)')
-" "$TMP/bars.json" "$TMP/quotes.json"
+passes = [r['coin'] for r in rows if r[key]]
+print(f'{sleeve.upper()} SHORTLIST ({len(passes)}):', ' '.join(passes) or '(none)')
+PY

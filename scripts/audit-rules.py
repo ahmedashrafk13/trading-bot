@@ -33,17 +33,38 @@ BAD = [
     ('resting take-profit', r'entry\s*\*\s*1\.14|fill\s*\*\s*1\.14|rests its \+?14% TARGET|resting LIMIT at the \+14%',
      'no resting take-profit exists'),
     ('blanket -15% cut', r'any position at unrealized_plpc <= -0\.15', 'TACTICAL cuts at -10%'),
-    ('v1 weekly fee budget', r'1\.5%.{0,24}\(~?\$3|weekly fee budget|weekly ceiling|used this week|resets Monday',
+    # `\bused this week` is anchored: without the word boundary it also matched
+    # "ca-used this week's ..." in SHADOW-LOG.md data rows (false positive,
+    # found 2026-09-17 weekly review).
+    ('v1 weekly fee budget', r'1\.5%.{0,24}\(~?\$3|weekly fee budget|weekly ceiling|\bused this week|resets Monday',
      'budget is 1.0% MONTHLY, resets on the 1st'),
+    ('v1 85% deployment ceiling', r'85% (?:of equity|deployment)|deployment (?:<=|after fill <=) ?85%'
+     r'|CEILING 85%|85% deployment ceiling|deployment <= 85',
+     'deployment ceiling is 50% since 2026-09-17 (hypothesis #3)'),
+    ('v1 4-slot CORE / 5 combined', r'Max positions \| 4|positions after fill <= 4|max 4\)'
+     r'|Combined cap: 5|Combined positions after fill <= 5|4/1 slot split',
+     'CORE is 1 slot, combined cap 2, since 2026-09-18 (hypothesis #6)'),
+    ('reintroduced take-profit leg', r'"takeProfit"|BOTH LEGS ATTACHED|that both legs exist|stop, TP,',
+     'neither sleeve has a profit target — only a stopLoss leg is ever attached'),
+    ('streak carried across UTC days', r'3 stops tactical for the day\)',
+     'the 3-loss streak is scoped to the UTC day and resets at 00:00 UTC'),
+    ('superseded 30d momentum inversion', r'30-day momentum is INVERTED|30-day momentum likewise|IC -0\.037',
+     '30d momentum is POSITIVE (+0.025 test); only <=1d is inverted (corrected 2026-09-16)'),
     ('ghost second scan routine', r'scan\.md.? ?x2|scan-2|37 \* \* \* \*|EVERY 30 MIN',
      'there is ONE scan routine, hourly at :07'),
     ('v1 48h age rule', r'open >\s*~?48h|48h reassess|closed for being 48h', 'no time limit in v2'),
     ('v1 slot counts', r'after fill <= 3, cost ~\$(?:40|20)|Combined .{0,20}<= 6', 'caps are 4 CORE / 1 TACTICAL / 5 total'),
-    ('bybit leftovers', r'bybit|BYBIT|orderLinkId|api-demo', 'reverted to Alpaca'),
+    ('alpaca leftovers', r'(?i)alpaca|stop_limit|time_in_force|crypto-bars',
+     'the venue is Bybit spot — no Alpaca surface may remain'),
 ]
 
+# Append-only RECORDS, not instructions. They quote superseded rules by design
+# (that is what a log of superseded rules is for), so scanning them produces
+# nothing but false positives. Added HYPOTHESIS/OBSERVATIONS/SHADOW/SCAN-GATE
+# 2026-09-17: no run obeys these files, it only appends to them.
 SKIP = {'memory/TRADE-LOG.md', 'memory/RESEARCH-LOG.md', 'memory/WEEKLY-REVIEW.md',
-        'DAILY-SUMMARY.md'}
+        'memory/HYPOTHESIS-LOG.md', 'memory/OBSERVATIONS.md', 'memory/SHADOW-LOG.md',
+        'memory/SCAN-GATE-LOG.md', 'DAILY-SUMMARY.md'}
 
 
 def main():

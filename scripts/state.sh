@@ -4,8 +4,8 @@
 #
 # Usage: bash scripts/state.sh
 #
-# Emits: UTC now (from the BROKER clock, never the local machine clock),
-# equity/cash/deployment, open positions with age and stop coverage, the weekly
+# Emits: UTC now (from the EXCHANGE clock, never the local machine clock),
+# equity/cash/deployment, open positions with age and stop coverage, the monthly
 # fee budget state, today's realized P&L for the circuit breaker, and the count
 # of closed trades since the last applied amendment.
 
@@ -14,57 +14,134 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
-bash scripts/alpaca.sh clock     > "$TMP/clock.json"
-bash scripts/alpaca.sh account   > "$TMP/acct.json"
-bash scripts/alpaca.sh positions > "$TMP/pos.json"
-bash scripts/alpaca.sh orders    > "$TMP/ord.json"
+python scripts/bybit.py time         > "$TMP/clock.json"
+python scripts/bybit.py balance      > "$TMP/bal.json"
+python scripts/bybit.py holdings     > "$TMP/hold.json"
+python scripts/bybit.py orders spot  > "$TMP/ord.json"
+python scripts/bybit.py tickers spot > "$TMP/tick.json"
 
 python - "$TMP" <<'PY'
 import json, re, sys, datetime as dt
 from pathlib import Path
 t = Path(sys.argv[1])
-clock = json.loads((t/'clock.json').read_text())
-acct  = json.loads((t/'acct.json').read_text())
-pos   = json.loads((t/'pos.json').read_text())
-orders= json.loads((t/'ord.json').read_text())
+clock  = json.loads((t/'clock.json').read_text())
+bal    = json.loads((t/'bal.json').read_text())
+hold   = json.loads((t/'hold.json').read_text())
+orders = json.loads((t/'ord.json').read_text())
+ticks  = json.loads((t/'tick.json').read_text())
 
 # NEVER trust the local clock — this machine is known to be 12h fast.
-now = dt.datetime.fromisoformat(clock['timestamp']).astimezone(dt.timezone.utc)
+now = dt.datetime.fromtimestamp(int(clock['time'])/1000, dt.timezone.utc)
 today = now.date()
-monday = today - dt.timedelta(days=today.weekday())
 
-eq, cash = float(acct['equity']), float(acct['cash'])
-print(f"UTC NOW (broker clock)   {now:%Y-%m-%d %H:%M} UTC   [local clock is NOT trusted]")
-print(f"EQUITY ${eq:.2f} | CASH ${cash:.2f} | DEPLOYED {(eq-cash)/eq*100:.1f}% (CEILING 85%, no floor)")
+# Unified account: totalEquity is the single number routines treat as equity.
+# Cash is the USDT leg of that account, not the free-collateral figure, so
+# "deployed" means value held in coins other than USDT.
+accts = bal.get('list') or []
+if not accts:
+    raise SystemExit("bybit balance returned no UNIFIED account — cannot compute state")
+_acct = accts[0]
+eq = float(_acct.get('totalEquity') or 0)
+cash = 0.0
+for _c in _acct.get('coin', []):
+    if _c.get('coin') == 'USDT':
+        cash = float(_c.get('usdValue') or _c.get('walletBalance') or 0)
+if eq <= 0:
+    raise SystemExit("bybit reports zero equity — refusing to derive position sizes from it")
+
+# TRADING BUDGET CAP. The account this runs against holds far more than the
+# strategy is authorised to trade. Every guardrail below is a PERCENTAGE OF
+# EQUITY, so feeding it the raw account balance would size positions hundreds of
+# times too large. `eq` is therefore the SIZING BASIS, not the account balance:
+# capped at TRADING_BUDGET_USD. Owner-set 2026-09-18; only the owner may raise it.
+import os
+_budget = float(os.environ.get('TRADING_BUDGET_USD') or 200)
+_account_eq = eq
+if _account_eq > _budget:
+    eq = _budget
+    print(f"BUDGET CAP  account holds ${_account_eq:,.2f}; sizing basis capped to "
+          f"${eq:,.2f} (TRADING_BUDGET_USD). All %-of-equity rules below use the CAP.")
+
+print(f"UTC NOW (exchange clock) {now:%Y-%m-%d %H:%M} UTC   [local clock is NOT trusted]")
+# Deployment is measured against the BUDGET, not the account. With the sizing
+# basis capped, `eq - cash` is meaningless (the account's spare cash dwarfs the
+# budget), so deployed value is summed from the non-stablecoin holdings directly.
+_deployed = sum(float(_c.get('usdValue') or 0) for _c in hold
+                if _c.get('coin') not in ('USDT', 'USDC'))
+_free = max(0.0, eq - _deployed)
+print(f"EQUITY ${eq:.2f} (budget) | FREE ${_free:.2f} | DEPLOYED ${_deployed:.2f} = "
+      f"{_deployed/eq*100:.1f}% of budget (CEILING 50%, no floor)")
+print(f"           account cash ${cash:,.2f} — NOT tradeable, budget is the ceiling")
 # Size is derived from risk, never fixed in dollars. Printing it here keeps the
 # arithmetic out of the run prompts, where it was previously re-derived by hand.
 core_risk, tac_risk = eq*0.020, eq*0.010
 core_sz = min(core_risk/0.15, eq*0.20)
 tac_sz  = min(tac_risk/0.10, eq*0.12)
-print(f"SIZE NOW   CORE ${core_sz:.2f} (15% trail, risk ${core_risk:.2f} = 2.0%, max 4)"
+print(f"SIZE NOW   CORE ${core_sz:.2f} (15% trail, risk ${core_risk:.2f} = 2.0%, max 1)"
       f" | TACTICAL ${tac_sz:.2f} (10% trail, risk ${tac_risk:.2f} = 1.0%, max 1)")
 print(f"           BOTH SLEEVES TRAIL. No profit target, no time limit, no target leg.")
 print()
 
 # --- positions, ages, stop coverage -------------------------------------------
+# TRADE-LOG carries pairs as BTC/USD; Bybit spot symbols are BTCUSDT. Everything
+# below keys off the BASE COIN so the two notations reconcile.
+QUOTES = ('USDT', 'USDC', 'USD')
+def base(s):
+    s = (s or '').replace('/', '').upper()
+    for q in QUOTES:
+        if s.endswith(q) and len(s) > len(q):
+            return s[:-len(q)]
+    return s
+
+price = {}
+for _row in ticks:
+    _sym = _row.get('symbol') or ''
+    if _sym.endswith('USDT'):
+        try: price[base(_sym)] = float(_row.get('lastPrice') or 0)
+        except (TypeError, ValueError): pass
+
 log = Path('memory/TRADE-LOG.md').read_text(encoding='utf-8')
-entry_times = dict(re.findall(r'TACTICAL entry: (\S+?)/USD.*?Entry time \(UTC\) \| (\S+)', log, re.S))
+entry_times = {base(k): v for k, v in re.findall(
+    r'TACTICAL entry: ([A-Z0-9]+)(?:/USDT?|USDT)?\b.*?Entry time \(UTC\) \| (\S+)', log, re.S)}
 # Sleeve per symbol, from the ENTRY section headers ("### <date> UTC - ENTRY - CORE - ETH/USD BUY").
 # Later entries win, so a symbol re-entered in the other sleeve resolves to its CURRENT sleeve.
 sleeves = {}
-SLEEVE_RE = re.compile(r'###\s*(\d{4}-\d{2}-\d{2})[^\n]*?ENTRY\s*[—-]\s*(CORE|TACTICAL)\s*[—-]\s*([A-Z0-9]+)/USD')
+SLEEVE_RE = re.compile(
+    r'###\s*(\d{4}-\d{2}-\d{2})[^\n]*?ENTRY\s*[—-]\s*(CORE|TACTICAL)\s*[—-]\s*([A-Z0-9]+)(?:/USDT?|USDT)?\b')
 for d, sl, sy in SLEEVE_RE.findall(log):
-    sleeves[sy.upper()+'USD'] = (sl, dt.date.fromisoformat(d))
-def norm(s): return s.replace('/','').upper()
-stops = {}
+    sleeves[base(sy)] = (sl, dt.date.fromisoformat(d))
+
+# Entry price per symbol. A spot wallet balance has NO cost basis — the exchange
+# cannot tell us what we paid — so unrealised P&L, and therefore the gap-
+# enforcement check, is only computable from what the entry run wrote down.
+# Scanned per ENTRY section so a later re-entry supersedes an earlier one.
+entry_px = {}
+ENTRY_PX_RE = re.compile(r'^\|\s*(?:Fill price|Avg entry|Entry)\s*\|\s*\$\s*([0-9][0-9,]*(?:\.[0-9]+)?)', re.M)
+_chunks = re.split(r'(?=^###\s)', log, flags=re.M)
+for _ch in _chunks:
+    _h = SLEEVE_RE.search(_ch)
+    if not _h:
+        continue
+    _p = ENTRY_PX_RE.search(_ch)
+    if _p:
+        entry_px[base(_h.group(3))] = float(_p.group(1).replace(',', ''))
+
+# On Bybit a protective stop rests as a CONDITIONAL sell: the exchange reports it
+# in /v5/order/realtime carrying a non-empty stopOrderType and a triggerPrice. A
+# plain limit sell with no trigger is a TARGET LEG, which v2 bans outright.
+def is_sell(o): return (o.get('side') or '').lower() == 'sell'
+def qty_of(o):
+    try: return float(o.get('qty') or 0)
+    except (TypeError, ValueError): return 0.0
+
+stops, limit_orders = {}, {}
 for o in orders:
-    if o['side']=='sell' and o['type']=='stop_limit':
-        stops.setdefault(norm(o['symbol']), []).append(o)
-limit_orders = {}
-for o in orders:
-    if o['side']=='sell' and o['type']=='limit':
-        limit_orders.setdefault(norm(o['symbol']), []).append(o)
-limits = set(limit_orders)
+    if not is_sell(o):
+        continue
+    if o.get('stopOrderType') or o.get('triggerPrice'):
+        stops.setdefault(base(o.get('symbol')), []).append(o)
+    else:
+        limit_orders.setdefault(base(o.get('symbol')), []).append(o)
 
 # --- SCAN GATE (advisory) -----------------------------------------------------
 # Scan's only actions are STEP 2 (stop shape/coverage), STEP 3 (gap enforcement)
@@ -77,46 +154,62 @@ TIGHTEST   = {'CORE': 0.10, 'TACTICAL': 0.08}   # tightest legal v2 tier per sle
 GAPCUT     = {'CORE': -14.0, 'TACTICAL': -9.0}  # 1pt EARLY of the -15/-10 hard cut
 gate = []
 
+# Spot holdings ARE the positions. USDT/USDC is cash, and dust below $1 is not a
+# position worth stopping — it cannot be sold for more than the fee anyway.
+DUST_USD = 1.0
+pos = []
+for c in hold:
+    if c.get('coin') in ('USDT', 'USDC'):
+        continue
+    try:
+        _qty = float(c.get('walletBalance') or 0)
+        _usd = float(c.get('usdValue') or 0)
+    except (TypeError, ValueError):
+        continue
+    if _usd < DUST_USD:
+        continue
+    pos.append((c.get('coin'), _qty, _usd))
+
 print(f"OPEN POSITIONS ({len(pos)})")
 if not pos: print("  none")
-for p in pos:
-    sym = norm(p['symbol']); qty = float(p['qty'])
-    plpc = float(p['unrealized_plpc'])*100
-    covered = sum(float(o['qty']) for o in stops.get(sym, []))
-    targeted = sum(float(o['qty']) for o in limit_orders.get(sym, []))
+for coin, qty, usd in pos:
+    sym = base(coin)
+    cur = price.get(sym) or (usd/qty if qty else 0.0)
+    covered = sum(qty_of(o) for o in stops.get(sym, []))
+    targeted = sum(qty_of(o) for o in limit_orders.get(sym, []))
     pct_cov = covered/qty*100 if qty else 0
     pct_tgt = targeted/qty*100 if qty else 0
     unreserved = max(0.0, 100 - pct_cov - pct_tgt)
+    # A spot wallet balance carries no cost basis, so entry — and therefore age —
+    # is only knowable where the run recorded it in TRADE-LOG.
     age = ''
-    for k,v in entry_times.items():
-        if norm(k+'USD')==sym:
-            try:
-                et = dt.datetime.fromisoformat(v).replace(tzinfo=dt.timezone.utc)
-                age = f"{(now-et).total_seconds()/3600:.1f}h"
-            except Exception: age = '?'
-    # ONE resting leg per position and it is ALWAYS a stop_limit at 100% of the
-    # held qty, in BOTH sleeves. Targets were removed 2026-09-15 (v2): neither
-    # sleeve has a profit target any more, so nothing competes for the slot and
-    # there is no stop/target ambiguity left to thrash over.
-    total = pct_cov + pct_tgt
+    v = entry_times.get(sym)
+    if v:
+        try:
+            et = dt.datetime.fromisoformat(v).replace(tzinfo=dt.timezone.utc)
+            age = f"{(now-et).total_seconds()/3600:.1f}h"
+        except Exception: age = '?'
+    # ONE resting leg per position and it is ALWAYS a conditional stop sell at
+    # 100% of the held qty, in BOTH sleeves. Targets were removed 2026-09-15
+    # (v2): neither sleeve has a profit target any more, so nothing competes for
+    # the slot and there is no stop/target ambiguity left to thrash over.
     if pct_tgt > 0.5:
-        flag = f'*** TARGET LEG {pct_tgt:.0f}% — BANNED in v2: cancel it, re-place a full stop_limit ***'
+        flag = f'*** TARGET LEG {pct_tgt:.0f}% — BANNED in v2: cancel it, re-place a full stop ***'
     elif pct_cov < 0.5:
         flag = '*** NAKED — no resting stop at all ***'
     elif pct_cov < 99.5:
         flag = f'*** ONLY {pct_cov:.0f}% STOPPED ***'
     else:
         flag = 'OK stop @100%'
-    print(f"  {sym:9} qty={qty:<12.6f} P&L {plpc:+6.2f}%  stop {pct_cov:5.1f}% / target {pct_tgt:5.1f}%"
+    print(f"  {sym:9} qty={qty:<12.6f} ${usd:>9.2f}  stop {pct_cov:5.1f}% / target {pct_tgt:5.1f}%"
           f" / unreserved {unreserved:4.1f}%  [{flag}]  age {age or 'unknown'}")
     # --- SCAN GATE evidence for this position -----------------------------
     # Fails open: anything unknown, unusual or borderline appends a reason, and
     # any reason at all makes the verdict ACTION.
-    cur = float(p.get('current_price') or 0)
     mystops = stops.get(sym, [])
     stop_px = None
     if len(mystops) == 1:
-        try: stop_px = float(mystops[0].get('stop_price'))
+        try: stop_px = float(mystops[0].get('triggerPrice'))
         except (TypeError, ValueError): stop_px = None
     sl, ent = sleeves.get(sym, (None, None))
     # TIGHTEST tier, not the base trail: a tighter trail yields a HIGHER candidate
@@ -125,8 +218,12 @@ for p in pos:
     # the high-water mark -- the resting stop already encodes it.
     trail = TIGHTEST.get(sl)
     cand = cur*(1-trail) if (cur and trail) else None
-    print(f"            price ${cur:,.2f} | stop {('$%s' % format(stop_px, ',.2f')) if stop_px else 'NONE'}"
-          f" | sleeve {sl or 'UNKNOWN'} | ratchet due above {('$%s' % format(cand, ',.2f')) if cand else 'n/a'}")
+    ent_px = entry_px.get(sym)
+    plpc = ((cur/ent_px - 1)*100) if (ent_px and cur) else None
+    print(f"            price ${cur:,.4f} | stop {('$%s' % format(stop_px, ',.4f')) if stop_px else 'NONE'}"
+          f" | entry {('$%s' % format(ent_px, ',.4f')) if ent_px else 'UNKNOWN'}"
+          f" | P&L {('%+.2f%%' % plpc) if plpc is not None else 'n/a'}"
+          f" | sleeve {sl or 'UNKNOWN'} | ratchet due above {('$%s' % format(cand, ',.4f')) if cand else 'n/a'}")
     if flag != 'OK stop @100%':
         gate.append(f"{sym}: {flag}")
     if sl is None:
@@ -134,23 +231,26 @@ for p in pos:
     elif sl == 'TACTICAL' and ent and ent < V2_CUTOVER:
         gate.append(f"{sym}: pre-v2 TACTICAL entry ({ent}) - trail may be grandfathered, cannot reason")
     if len(mystops) != 1:
-        gate.append(f"{sym}: expected exactly 1 resting stop_limit, found {len(mystops)}")
+        gate.append(f"{sym}: expected exactly 1 resting conditional stop, found {len(mystops)}")
     elif stop_px is None:
-        gate.append(f"{sym}: resting stop carries no readable stop_price")
+        gate.append(f"{sym}: resting stop carries no readable triggerPrice")
     if not cur:
-        gate.append(f"{sym}: broker returned no current_price")
-    if sl and plpc <= GAPCUT.get(sl, -999):
+        gate.append(f"{sym}: exchange returned no last price")
+    if plpc is None:
+        gate.append(f"{sym}: no entry price in TRADE-LOG - cannot evaluate gap enforcement (STEP 3)")
+    elif sl and plpc <= GAPCUT.get(sl, -999):
         gate.append(f"{sym}: {plpc:+.2f}% at/near the {sl} hard cut - gap enforcement (STEP 3)")
     if cand and stop_px and cand > stop_px:
-        gate.append(f"{sym}: ratchet may be due - {trail*100:.0f}% trail on ${cur:,.2f}"
-                    f" = ${cand:,.2f} > resting ${stop_px:,.2f}")
+        gate.append(f"{sym}: ratchet may be due - {trail*100:.0f}% trail on ${cur:,.4f}"
+                    f" = ${cand:,.4f} > resting ${stop_px:,.4f}")
 print()
-# A resting sell against a symbol that is no longer held is an orphan the run
-# must look at; it is never a normal steady state.
-open_syms = {norm(q['symbol']) for q in pos}
+# A resting sell against a coin that is no longer held is an orphan the run must
+# look at; it is never a normal steady state.
+open_syms = {base(c) for c, _, _ in pos}
 for o in orders:
-    if o['side'] == 'sell' and norm(o['symbol']) not in open_syms:
-        gate.append(f"{norm(o['symbol'])}: resting {o['type']} sell with no open position")
+    if is_sell(o) and base(o.get('symbol')) not in open_syms:
+        kind = o.get('stopOrderType') or o.get('orderType') or 'sell'
+        gate.append(f"{base(o.get('symbol'))}: resting {kind} sell with no open position")
 
 print("SCAN GATE  (advisory - SHADOW MODE, runs must NOT obey this yet)")
 if gate:
@@ -238,14 +338,19 @@ print()
 
 # --- circuit breaker ----------------------------------------------------------
 today_real = sum(a for a in day_amounts.get(f'{today}', []) if a < 0)  # losses only
+# The 3-loss streak is scoped to the UTC DAY and RESETS at 00:00 UTC
+# (TRADING-STRATEGY.md Buy-Side Gate: "3 consecutive tactical losses THAT
+# CLOSED TODAY (UTC) ... It does NOT carry across days"). Counting it over all
+# history deadlocks the sleeve permanently: only a WIN clears the streak, and
+# the freeze itself prevents any trade that could produce one.
 losses_streak = 0
-for _, a in reversed(closed_trades):
+for _, a in reversed([t for t in closed_trades if t[0] == f'{today}']):
     if a < 0: losses_streak += 1
     else: break
 limit = eq*0.05
 print(f"CIRCUIT BREAKER  realized losses TODAY ({today}) ${abs(today_real):.2f} vs ${limit:.2f} limit (5% of equity)")
 last_loss = closed_trades[-1][0] if closed_trades and closed_trades[-1][1] < 0 else None
-print(f"                 consecutive losing closes: {losses_streak} (3 stops tactical for the day)"
+print(f"                 consecutive losing closes TODAY: {losses_streak} (streak resets 00:00 UTC)"
       f"{f'; most recent loss closed {last_loss}' if last_loss else ''}")
 print(f"                 status: {'TRIPPED — no new entries' if abs(today_real)>=limit or losses_streak>=3 else 'clear'}")
 print()

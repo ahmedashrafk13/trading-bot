@@ -15,8 +15,11 @@ only result that justifies active trading.
 - Instruments: Bybit USDT spot pairs ONLY (~394 listed; only the liquid end is
   tradable at this account size — see `scripts/screen.sh`)
 - Account type: spot, long only. Spot cannot short.
-- Max position size: 15% of equity CORE / 25% TACTICAL — and those are CAPS, not
-  targets. Actual size is derived from risk: (equity * 0.015) / stop distance.
+- Max position size: 20% of equity CORE / 12% TACTICAL — and those are CAPS, not
+  targets. Actual size is derived from risk: (equity * sleeve risk%) / stop
+  distance, where risk% is 2.0 CORE / 1.0 TACTICAL. (This line restates the
+  sleeve table below; it carried the pre-v2 "15%/25%, 1.5%" figures until
+  2026-09-17.)
 - Fractional is native (min order sizes are ~$1 equivalent), so there is NO
   whole-share ceiling and any of the 36 pairs is reachable at this size.
 - NO PDT rule and NO T+1 settlement — crypto settles instantly. Proceeds from a
@@ -499,7 +502,8 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 
 ## Buy-Side Gate (ALL must pass, else skip and log the reason)
 - The sleeve is stated explicitly (CORE or TACTICAL) before sizing
-- CORE: positions after fill <= 4, cost ~$26 (run state.sh for the live number)
+- CORE: positions after fill <= 1, cost ~$26 (run state.sh for the live number)
+  (4 -> 1 on 2026-09-18, hypothesis #6; this line restates the sleeve table above)
 - TACTICAL: positions after fill <= 1, cost ~$20
 - Estimated round-trip fee for THIS trade + fees already used THIS MONTH
   <= 1.0% of equity (~$2.00). If it would breach, SKIP and log it.
@@ -511,7 +515,7 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
   winning tactical trade, which the freeze itself prevents. The account sat
   frozen from 2026-09-15 for exactly this reason. Backtested: the permanent
   reading froze the sleeve for 400 straight days.
-- Combined positions after fill <= 5, total deployment <= 50% of equity
+- Combined positions after fill <= 2, total deployment <= 50% of equity
   (lowered from 85% 2026-09-17 — hypothesis #3, HYPOTHESIS-LOG.md, CONFIRMED)
 - Position size == (equity * risk%) / trail distance, capped at 20% (CORE) /
   12% (TACTICAL) of equity. Risk% is 2.0 CORE / 1.0 TACTICAL. NEVER a fixed

@@ -7,7 +7,7 @@ BRANCH POLICY: work on `main`, push straight to `main`. Do not open a PR.
 
 ## THIS IS LIVE MONEY
 
-The Alpaca era was a $200 paper account where a bug cost nothing. Bybit is real.
+The paper era was a $200 account where a bug cost nothing. This one is real.
 Every rule below that looks paranoid is there because the failure it prevents now
 has a price.
 
@@ -25,13 +25,14 @@ Hard limits, no exceptions, no interpretation:
 
 ## Why there is no longer a `scan` routine
 
-On Alpaca only ONE resting order could exist per symbol, so a stop and a target
-competed for the same slot. `scan` ran hourly to reconcile that, and on
+On the previous venue only ONE resting order could exist per symbol, so a stop
+and a target competed for the same slot. `scan` ran hourly to reconcile that, and on
 2026-09-15 the reconciliation itself caused six live order-thrash cycles.
 
-Bybit attaches `takeProfit` AND `stopLoss` to the position in the same order.
-Both legs are held by the exchange, server-side, and survive your laptop being
-closed. There is nothing to reconcile hourly, so that entire class of bug — and
+Bybit attaches `stopLoss` to the position in the same order, held by the
+exchange server-side, surviving your laptop being closed. NEITHER SLEEVE HAS A
+PROFIT TARGET (v2), so only ONE leg is ever attached and nothing competes for a
+slot. There is nothing to reconcile hourly, so that entire class of bug — and
 the routine that existed to police it — is gone. Protection no longer depends on
 a routine running.
 
@@ -59,8 +60,10 @@ STEP B — RESEARCH AND EVIDENCE. Read today's entry in `memory/RESEARCH-LOG.md`
 and the STANDING VERDICTS table in `memory/HYPOTHESIS-LOG.md`.
 
 The verdicts are measurements, not opinions. As of 2026-09-16 they include:
-short-horizon momentum has a NEGATIVE information coefficient (-0.050, t=-13);
-30-day momentum likewise (-0.037, t=-10); tighter stops and higher frequency are
+momentum has a NEGATIVE information coefficient at SHORT horizons only
+(IC@1d -0.012 test); at 30 DAYS it is POSITIVE (IC@30d +0.025 test) — the
+Alpaca-era "30d momentum is inverted (-0.037)" reading was CORRECTED in
+HYPOTHESIS-LOG.md on 2026-09-16; tighter stops and higher frequency are
 both strictly worse; nothing tested beat buy-and-hold BTC over 5.7 years. If your
 reasoning for a trade contradicts one of these, you are probably wrong — say so
 explicitly and justify it, or do not place the trade.
@@ -70,7 +73,8 @@ STEP C — SCREEN AND PRICE.
   python backtest/fetch_bybit.py --timeframe D --days 400 --top 60
   python scripts/bybit.py tickers spot <SYMBOL>
 
-Bybit lists ~394 USDT spot pairs against Alpaca's 33. A bigger universe is NOT
+Bybit lists ~394 USDT spot pairs, an order of magnitude more than the paper-era
+venue offered. A bigger universe is NOT
 automatically better: the median altcoin returned -21.2% over 5.7 years while
 BTC returned +157.4%, and the wide end of the list is mostly junk. Only consider
 the liquid subset the fetcher keeps, and skip anything whose spread exceeds 0.5%.
@@ -78,8 +82,8 @@ the liquid subset the fetcher keeps, and skip anything whose spread exceeds 0.5%
 STEP D — THE BUY GATE. Every condition must pass. State each one explicitly.
 - `"category":"spot"` is present in the body
 - positions after fill <= the sleeve cap in `memory/TRADING-STRATEGY.md`
-- total deployment after fill <= 85% of equity. There is NO minimum — never buy
-  to "correct" low deployment
+- total deployment after fill <= 50% of equity (lowered from 85% 2026-09-17,
+  hypothesis #3). There is NO minimum — never buy to "correct" low deployment
 - size = (equity * sleeve risk%) / stop distance, then capped
 - order value >= the symbol's `minOrderAmt` from `instruments`
 - spread <= 0.5%
@@ -90,20 +94,22 @@ STEP D — THE BUY GATE. Every condition must pass. State each one explicitly.
 - you can state what would have to happen for this to run 30%+, and what kills
   the thesis
 
-STEP E — PLACE THE ORDER WITH BOTH LEGS ATTACHED. One call, never three:
+STEP E — PLACE THE ORDER WITH THE STOP ATTACHED. One call, never two.
+NEVER attach a `takeProfit`: neither sleeve has a profit target in v2 and the
+trail is the only exit (TRADING-STRATEGY.md, "Why there is no profit target").
 
-  python scripts/bybit.py order '{"category":"spot","symbol":"BTCUSDT","side":"Buy","orderType":"Market","qty":"<base qty>","takeProfit":"<tp>","stopLoss":"<sl>","tpslMode":"Full"}'
+  python scripts/bybit.py order '{"category":"spot","symbol":"BTCUSDT","side":"Buy","orderType":"Market","qty":"<base qty>","stopLoss":"<sl>","tpslMode":"Full"}'
 
 `stopLoss` is MANDATORY on every entry. Never place a naked buy intending to add
 protection afterwards: between those two calls the position is unprotected, and
-on Alpaca that exact pattern is what left positions exposed.
+that exact pattern is what left positions exposed in the paper era.
 
-Verify with `python scripts/bybit.py orders spot` that both legs exist. If the
-order filled but the legs did not attach, close the position immediately.
+Verify with `python scripts/bybit.py orders spot` that the stop leg exists. If
+the order filled but the stop did not attach, close the position immediately.
 
 STEP F — LOG. Append to `memory/TRADE-LOG.md`, tagged with its sleeve: UTC entry
-time, sleeve, symbol, side, qty, fill price, order value, stop, take-profit,
-thesis, fees. The sleeve tag is load-bearing — later runs use it to decide which
+time, sleeve, symbol, side, qty, fill price, order value, stop (no target —
+v2 has none), thesis, fees. The sleeve tag is load-bearing — later runs use it to decide which
 rules apply.
 
 STEP LEARN — SEED THE LEARNING LOOP. If any position CLOSED this run, append a
@@ -117,7 +123,7 @@ is ~95% noise, and acting directly on single outcomes is what produced six
 contradictory rulebook amendments in five days.
 
 STEP G — NOTIFY, only if you placed or closed something:
-  bash scripts/clickup.sh "<symbol, qty, fill, stop, TP, one-line why>"
+  bash scripts/clickup.sh "<symbol, qty, fill, stop, one-line why>"
 
 STEP OBS — If this prompt contradicted another file, was rejected by the API, or
 was too ambiguous to follow without guessing, append one row to

@@ -43,7 +43,7 @@ wrong in the optimistic direction. These are pinned by `test_engine.py`:
   stop price is the single most common way a backtest invents money.
 - **Fees on both sides**, buy fees taken in kind exactly as the venue does. A flat
   round trip must lose money, and the test asserts it.
-- **Slot caps, the 85% deployment ceiling and the circuit breaker** are enforced
+- **Slot caps, the 50% deployment ceiling and the circuit breaker** are enforced
   every bar, and reconstructed from the trade list to verify.
 
 ## Known limitations — read before trusting a number
