@@ -1526,3 +1526,80 @@ target-leg wording conflict again did not have to be resolved.
 **Net:** flat, $0.12 dust, ~99.9% cash, 0 resting orders, fee budget untouched at
 $0.52 / $2.00 this month (headroom $1.48). Third consecutive fully flat day. Cash is a
 position; a run that does nothing against a >60%-dominance alt tape is the system working.
+
+---
+
+## 2026-09-18T20:07 UTC — execute (18:07 slot, broker clock 20:07)
+
+**STEP A — state & reconcile.** `state.sh`: EQUITY $200.00 (budget cap; account holds
+$179,026.40 — not tradeable) | FREE $199.88 | DEPLOYED $0.12 = 0.1% | OPEN POSITIONS 0 |
+RESTING ORDERS 0 (`orders spot` -> `[]`). `holdings` = dust only (0G, CAKE), matching the
+TRADE-LOG tail exactly. No drift, no fill while unattended, nothing to cut or ratchet.
+72h TACTICAL time stop: no TACTICAL holdings, not applicable.
+Circuit breaker CLEAR ($0.00 realized today vs $10.00; 0 consecutive losing closes today).
+Fee budget $0.52 / $8.00 this month, headroom $7.48.
+
+**STEP B — evidence.** STANDING VERDICTS binding: altcoin median -21.2% vs BTC +157.4%
+(CONFIRMED); nothing tested beats buy-and-hold BTC; higher frequency and tighter stops both
+strictly worse; momentum inverted at <=1d (IC -0.012 test), positive at 30d (+0.025 test);
+row #9 `sig_momentum_skip_recent` REJECTED. **These verdicts argue against these entries**
+and I state that explicitly: both names are short-horizon 7p movers, the horizon where
+measured IC is negative. They are taken anyway because the owner directive of 2026-09-18
+(v3 quota mode, commit 900e78b) sets a HARD FLOOR of 2 TACTICAL entries per UTC day and
+declares the expectancy cost accepted. This is quota compliance, not a conviction claim.
+
+**STEP C — screen.** `screen.sh` live. TACTICAL SHORTLIST (46) in rank order:
+POL OP XPL ARB AERO VVV SKY MNT SOL UNI ...
+
+**STEP D0 — QUOTA: 0/2 entries today, this is the 18:07 run -> BACKSTOP ACTIVE, must fill 2.**
+Worked the tactical screen in RANK ORDER; ranks 1 and 2 (POL, OP) both cleared every hard
+gate, so no substitution or judgement was applied.
+
+**STEP D — BUY GATE, both entries:**
+- `"category":"spot"` present in every body — yes. No leverage, no short, no perp.
+- positions after fill = 2 TACTICAL <= 6 cap; combined 2 <= 7. PASS
+- deployment after fill = $19.97 = 10.0% of the $200 budget <= 50% ceiling. PASS
+- size = (equity $200 * 0.5%) / 10% trail = $10.00 per position, under the 8% ($16) cap. PASS
+- order value $9.97 / $10.00 >= minOrderAmt $5 for both. PASS
+- spread: POL 0.13% (0.10719/0.10733), OP 0.026% (0.11765/0.11768) — both <= 0.5%. PASS
+- circuit breaker not tripped. PASS
+- catalyst: TACTICAL requires NONE (amended 2026-09-18). Screen record below is the thesis.
+
+| Sleeve | Symbol | Rank | 7p% | 30p% | vsSMA20 | vol% | spr% |
+|---|---|---|---|---|---|---|---|
+| TACTICAL | POLUSDT | 1 | +8.0 | +11.0 | +7.2 | 1.5 | 0.15 |
+| TACTICAL | OPUSDT | 2 | +6.5 | +20.3 | +5.7 | 1.1 | 0.06 |
+
+**STEP E — orders placed.**
+
+| UTC | Sleeve | Symbol | Side | Qty | Fill | Value | Fee | Stop (trigger/limit) | Target |
+|---|---|---|---|---|---|---|---|---|---|
+| 2026-09-18T20:10 | TACTICAL | POLUSDT | Buy | 93.1 | 0.10708 | $9.97 | 0.0931 POL | 0.09637 / 0.09155 | NONE (v2) |
+| 2026-09-18T20:10 | TACTICAL | OPUSDT | Buy | 84.98 | 0.11764 | $10.00 | 0.08498 OP | 0.10588 / 0.10059 | NONE (v2) |
+
+Stops are 10% below entry (entry = first high-water mark), ratchet UP only, tighten to 8%
+at +20%. Each stop covers 100% of the HELD qty (fill minus the base-coin fee): POL 93.0 of
+93.0069 held, OP 84.89 of 84.895 held. Verified resting via `orders spot`: both
+`Untriggered`. No `takeProfit` attached to either — neither sleeve has a target in v2.
+72h time stop starts now: both are due for a close at 2026-09-21T20:10 UTC unless >= +5%.
+
+**MECHANISM DEVIATION — READ THIS.** `routines/execute.md` STEP E prescribes ONE call with
+`stopLoss` attached to the market buy. **Bybit rejected every form of that body** with
+`retCode 170130: Data sent for paramter '' is not valid` — with `tpslMode":"Full"`, without
+it, with `marketUnit` quoteCoin and with baseCoin. The attached-stop form does not work on
+this venue's spot endpoint. Protection was instead placed as the separate resting
+CONDITIONAL stop sell that `CLAUDE.md` ("Strategy Hard Rules") actually specifies —
+`orderFilter":"StopOrder"`, `triggerPrice` at the stop, limit 5% below it — which was
+accepted first try on both names. Consequence, stated plainly: each position was
+**unprotected for the few seconds between the buy fill and the stop acknowledgement**,
+which is the exact exposure STEP E exists to prevent. The first such gap was opened by a
+probe buy I sent to isolate which parameter the API was rejecting, and that probe filled —
+that was my error, not an API quirk. Logged to OBSERVATIONS.md. Until execute.md STEP E is
+repaired, the two-call sequence is the only way to hold a stop at this venue.
+
+**STEP LEARN — no position closed this run**, so no `LESSON:` line is owed.
+
+**Net:** 2 TACTICAL positions, $19.97 deployed = 10.0% of budget, both stopped at the
+exchange, 4 TACTICAL slots free, CORE slot empty (binding HOLD from the 09-18 research run
+stands). Quota 2/2 — satisfied. Fees this run ~$0.02 equivalent; month-to-date unchanged
+band, headroom ample.
