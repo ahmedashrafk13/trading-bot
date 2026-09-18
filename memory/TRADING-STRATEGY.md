@@ -47,6 +47,30 @@ was guarding against (six amendments in five days on N=1, fitted to noise). Keep
 logging every change with its evidence and reasoning so the churn stays visible
 and reversible, but do NOT block on the counter.
 
+### OWNER DIRECTIVES ARE NOT SELF-AMENDABLE (added 2026-09-18)
+Amendment authority covers the TUNABLE list below. It does NOT extend to the
+IMMUTABLE list, nor to anything this file marks **OWNER DIRECTIVE**. As of
+2026-09-18 those are:
+- the $200 `TRADING_BUDGET_USD` cap
+- the TACTICAL DAILY TRADE QUOTA of >= 2 entries per UTC day
+- SPOT ONLY / long only / no leverage / never withdraw
+
+A run may ARGUE against any of these in `memory/OBSERVATIONS.md` or as a
+hypothesis, and weekly-review may recommend a change — but only the owner
+enacts one. A run that edits an owner directive out of this file has exceeded
+its authority, and the next run should revert it and log the breach. Without
+this clause "any run may amend" would let a single run delete the quota it was
+supposed to be filling.
+
+### This section is the ONLY authority on amendment rights
+`routines/research.md`, `routines/summary.md`, `CLAUDE.md` and
+`scripts/state.sh` all previously carried a conflicting "AMENDMENT FREEZE (v2)
+— ONLY weekly-review, and ONLY at >= 10 closed trades". Three files said frozen,
+this one said open, and `summary.md` contradicted ITSELF in two places. That was
+logged in OBSERVATIONS.md on 2026-09-18 and is resolved here in favour of the
+owner's 2026-09-16 directive. The >= 10 counter that `state.sh` prints is
+INFORMATIONAL — it is not a gate and does not block an amendment.
+
 Why the freeze: between 2026-09-10 and 2026-09-15 this document was amended six
 times on a sample of ONE closed trade. Every one of those amendments was fitted
 to noise, and two of them contradicted each other badly enough to produce six

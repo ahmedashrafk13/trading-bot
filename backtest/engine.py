@@ -46,16 +46,20 @@ class Params:
     core_trail: float = 0.15
     core_risk: float = 0.020
     core_cap: float = 0.20
-    core_slots: int = 4
+    core_slots: int = 1           # 4 -> 1, hypothesis #6 CONFIRMED 2026-09-18
     core_hardcut: float = 0.15
 
     tac_trail: float = 0.10
-    tac_risk: float = 0.010
-    tac_cap: float = 0.12
-    tac_slots: int = 1
+    tac_risk: float = 0.005       # 1.0% -> 0.5%, v3 quota mode 2026-09-18
+    tac_cap: float = 0.08         # 12% -> 8%, v3 quota mode 2026-09-18
+    tac_slots: int = 6            # 1 -> 6, v3 quota mode 2026-09-18
     tac_hardcut: float = 0.10
+    # TACTICAL 72h time stop (v3): close if not >= +5% after 72 hourly bars.
+    # Without this the 6-slot sleeve fills and never recycles.
+    tac_time_stop_h: int = 72
+    tac_time_stop_min: float = 0.05
 
-    max_deploy: float = 0.85
+    max_deploy: float = 0.50      # 85% -> 50%, hypothesis #3 CONFIRMED 2026-09-17
     start_equity: float = 200.0
 
     # --- costs ---
@@ -98,8 +102,12 @@ class Params:
 
     # --- circuit breaker ---
     breaker_daily_loss: float = 0.05        # realized loss vs equity, freezes the UTC day
-    breaker_tac_loss_streak: int = 3        # consecutive tactical losses
-    breaker_streak_resets_daily: bool = False  # the ambiguity logged in OBSERVATIONS.md
+    breaker_tac_loss_streak: int = 5        # 3 -> 5, v3 quota mode 2026-09-18
+    # RESOLVED 2026-09-18: the streak resets at 00:00 UTC. routines/execute.md
+    # STEP D and TRADING-STRATEGY.md both say it does not carry across days, and
+    # state.sh now implements that. The old False default modelled the stale
+    # reading that printed a permanent TRIPPED state four runs in a row.
+    breaker_streak_resets_daily: bool = True
 
 
 @dataclass
@@ -348,6 +356,14 @@ def run(u, p):
             elif cl / q.entry - 1 <= -q.hardcut:
                 exit_px = cl
                 exit_reason = "hard_cut"
+            elif (q.sleeve == "TACTICAL"
+                  and p.tac_time_stop_h > 0
+                  and i - q.entry_i >= p.tac_time_stop_h
+                  and cl / q.entry - 1 < p.tac_time_stop_min):
+                # v3 72h time stop: a tactical position that has not earned
+                # +5% in 72h gives its slot back to the daily quota.
+                exit_px = cl
+                exit_reason = "time_stop"
 
             if exit_px is not None:
                 proceeds = q.qty * exit_px * (1 - cost)

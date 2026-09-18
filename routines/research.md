@@ -197,12 +197,28 @@ the memory silently stops accumulating. If the push is genuinely REJECTED by the
 remote, retry once after `git pull --rebase origin main`; if it still fails, say
 so plainly in your summary rather than routing around it.
 
-AMENDMENT FREEZE (v2) — this run may NEVER edit memory/TRADING-STRATEGY.md.
-ONLY the weekly-review run may, and only behind its own evidence gate. Any
-rule change this run believes is warranted is written as a hypothesis in
-memory/HYPOTHESIS-LOG.md, never as an edit to the rulebook.
-Between 2026-09-10 and 2026-09-15 the rulebook was amended six times
-on a sample of ONE closed trade, and two of those amendments contradicted each
-other badly enough to cause six live order-thrash cycles in a day. If a rule
-looks broken: make the account safe, write the evidence to memory/TRADE-LOG.md,
-and leave the rulebook alone.
+AMENDMENT AUTHORITY — OPEN, with two carve-outs (resolved 2026-09-18).
+This run MAY edit memory/TRADING-STRATEGY.md, per the owner directive of
+2026-09-16. There is no minimum-closed-trade gate; the ">= 10" figure that
+scripts/state.sh prints is INFORMATIONAL, not a blocker.
+
+This file previously carried an "AMENDMENT FREEZE (v2)" clause saying the
+opposite. Three files said frozen while the rulebook said open, and summary.md
+contradicted itself in two places — logged to OBSERVATIONS.md 2026-09-18 and
+resolved in favour of the owner's directive. memory/TRADING-STRATEGY.md
+("Self-amendment") is now the ONLY authority on this question.
+
+Two carve-outs, both hard:
+- NEVER amend an OWNER DIRECTIVE (the $200 budget cap, the >= 2 TACTICAL
+  entries/day quota, SPOT ONLY / long only / no leverage / never withdraw) or
+  anything on the IMMUTABLE list. Argue for a change in OBSERVATIONS.md or as a
+  hypothesis; only the owner enacts one.
+- Log every amendment with its evidence, the before value and the after value,
+  so the churn stays visible and `git revert` stays usable.
+
+The caution behind the old freeze still stands as JUDGEMENT, not as a lock:
+between 2026-09-10 and 2026-09-15 the rulebook was amended six times on a sample
+of ONE closed trade, and two of those amendments contradicted each other badly
+enough to cause six live order-thrash cycles in a day. One trade is ~95% noise.
+If a rule looks broken mid-run: make the account SAFE first, write the evidence
+down, and prefer a hypothesis over an immediate edit.

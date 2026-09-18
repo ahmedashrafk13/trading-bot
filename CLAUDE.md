@@ -110,19 +110,28 @@ next run cannot see it.
   stop KEEPS it and is never widened to the v2 distance.
 - Follow narrative momentum (majors / L1 / DeFi / memes / infra).
   Exit a narrative after 2 consecutive failed trades.
-- Patience > activity.
-- AMENDMENT FREEZE. ONLY the weekly-review run may edit
-  memory/TRADING-STRATEGY.md, and ONLY at >= 10 closed trades since the last
-  amendment. No other run may amend it — not scan, not execute, not summary.
-  Max 2 TUNABLE rules at a time, never the IMMUTABLE platform facts.
-  There is NO "demonstrably broken rule" fast path: that loophole produced six
-  amendments in five days on a sample of ONE closed trade, which is fitting to
-  noise. If a rule looks broken, make the account SAFE (close or stop the
-  position), write the evidence to TRADE-LOG.md, and leave the doc alone.
+- Patience > activity — **CORE ONLY**. TACTICAL has a hard floor of 2 entries
+  per UTC day and may not cite patience to skip it.
+- AMENDMENT AUTHORITY IS OPEN (resolved 2026-09-18). Any run may edit
+  memory/TRADING-STRATEGY.md per the owner directive of 2026-09-16. The ">= 10
+  closed trades" figure state.sh prints is INFORMATIONAL, not a gate. This entry
+  previously said the opposite ("AMENDMENT FREEZE"), contradicting the rulebook;
+  memory/TRADING-STRATEGY.md "Self-amendment" is now the only authority.
+  TWO CARVE-OUTS: never amend an OWNER DIRECTIVE (the $200 budget cap, the >= 2
+  TACTICAL entries/day quota, SPOT ONLY / long only / no leverage / never
+  withdraw) or anything IMMUTABLE — argue for it, do not enact it. And log every
+  change with evidence, before value and after value.
+  Judgement still applies: one trade is ~95% noise, and six amendments in five
+  days on N=1 caused six order-thrash cycles. Make the account SAFE first, then
+  prefer a hypothesis over an immediate edit.
 - EVERY run: reconcile positions, verify each has a full-size stop, cut
   anything the stop gapped through, ratchet winners. Crypto trades 24/7.
-- Patience is the strategy, not a virtue. A scan that does nothing is the
-  system WORKING. Most weeks should have zero entries.
+- Patience is the strategy **in CORE**, not a virtue: a CORE run that does
+  nothing is the system WORKING, and most weeks should have zero CORE entries.
+  This does NOT apply to TACTICAL (owner directive 2026-09-18) — that sleeve
+  carries a hard floor of >= 2 entries per UTC day, and "nothing justified it"
+  is not a valid reason to miss it. Only the 8 hard safety gates in
+  TRADING-STRATEGY.md ("The quota NEVER overrides these") excuse a miss.
 
 ## API Wrappers
 

@@ -133,13 +133,43 @@ def main():
               all(t.pnl < 0 for t in rt) if rt else True,
               f"{[round(t.pnl, 4) for t in rt]}")
 
+        # ---------------------------------------------------------------- 4b
+        # v3 TACTICAL 72h time stop: a position that never earns +5% must be
+        # closed and its slot returned, or the 6-slot sleeve fills and the
+        # daily quota becomes unreachable.
+        n = 24 * 60
+        # rise enough to trigger entry, then go flat well under +5%
+        bars = ramp(24 * 35, 100.0, 0.1) + flat(n - 24 * 35, 103.4)
+        u = make_universe({"AAA/USD": bars, "BTC/USD": flat(n, 1000.0)}, tmp)
+        # The tactical screen has a volatility band that a smooth synthetic
+        # ramp cannot pass, so relax the SCREEN here — this test targets the
+        # time stop, not entry selection.
+        p = Params(core_slots=0, tac_slots=6, start_equity=200.0,
+                   tac_vol_lo=0.0, tac_vol_hi=9.9, tac_ext_band=9.9)
+        eq, trades = run(u, p)
+        ts = [t for t in trades if t.reason == "time_stop"]
+        check("TACTICAL 72h time stop fires on a flat position",
+              bool(ts), f"{len(ts)} time_stop exit(s)")
+        check("time stop never fires before 72 bars",
+              all(t.bars_held >= 72 for t in ts),
+              f"earliest={min((t.bars_held for t in ts), default=None)}")
+        # and it must NOT fire on a position that is up >= 5%
+        bars_up = ramp(24 * 35, 100.0, 0.1) + ramp(n - 24 * 35, 103.4, 0.05)
+        u2 = make_universe({"AAA/USD": bars_up, "BTC/USD": flat(n, 1000.0)}, tmp)
+        _eq2, trades2 = run(u2, Params(core_slots=0, tac_slots=6, start_equity=200.0,
+                                       tac_vol_lo=0.0, tac_vol_hi=9.9, tac_ext_band=9.9))
+        early = [t for t in trades2 if t.reason == "time_stop" and t.ret >= 0.05]
+        check("time stop spares a position already >= +5%",
+              not early, f"{len(early)} winner(s) cut by the time stop")
+
         # ---------------------------------------------------------------- 5
         # Deployment ceiling and slot caps must hold at every instant.
         n = 24 * 90
         series = {f"C{i}/USD": ramp(n, 100.0, 0.05) for i in range(8)}
         series["BTC/USD"] = flat(n, 1000.0)
         u = make_universe(series, tmp)
-        p = Params(start_equity=200.0, max_deploy=0.85, core_slots=4, tac_slots=1)
+        # LIVE sleeve geometry (v3): CORE 1 slot, TACTICAL 6, deployment 50%.
+        p = Params(start_equity=200.0, max_deploy=0.50, core_slots=1, tac_slots=6)
         eq, trades = run(u, p)
         # reconstruct concurrent holdings from the trade list
         events = []
@@ -152,8 +182,8 @@ def main():
         for _ts, d, s in events:
             cur[s] += d
             worst[s] = max(worst[s], cur[s])
-        check("CORE slot cap of 4 never exceeded", worst["CORE"] <= 4, f"peak={worst['CORE']}")
-        check("TACTICAL slot cap of 1 never exceeded", worst["TACTICAL"] <= 1, f"peak={worst['TACTICAL']}")
+        check("CORE slot cap of 1 never exceeded", worst["CORE"] <= 1, f"peak={worst['CORE']}")
+        check("TACTICAL slot cap of 6 never exceeded", worst["TACTICAL"] <= 6, f"peak={worst['TACTICAL']}")
 
         # ---------------------------------------------------------------- 6
         # Equity must never go negative and cash must never be lent.

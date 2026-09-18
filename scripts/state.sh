@@ -411,6 +411,10 @@ amend_dates = [d for d, body in
 last_amend = max(amend_dates) if amend_dates else None
 since = [t for t in closed_trades if last_amend is None or t[0] > last_amend]
 print(f"AMENDMENT TRIGGER  closed trades since last amendment ({last_amend or 'none on record'}): "
-      f"{len(since)} | need >= 10 | {len(closed_trades)} closed all-time")
-print(f"                   status: {'ELIGIBLE' if len(since) >= 10 else 'not eligible — change nothing'}")
+      f"{len(since)} | reference mark 10 | {len(closed_trades)} closed all-time")
+# INFORMATIONAL ONLY since the owner's 2026-09-16 directive: amendment is OPEN
+# to any run and this counter is not a gate. It stays because a thin sample is
+# still a reason to prefer a hypothesis over an edit.
+print(f"                   status: {'ample sample' if len(since) >= 10 else 'THIN sample — prefer a hypothesis over an edit'}"
+      f"  [informational, NOT a gate]")
 PY

@@ -126,7 +126,9 @@ STEP D — Append a full review to memory/WEEKLY-REVIEW.md:
 STEP E — AMEND THE STRATEGY. You are authorised to edit
 memory/TRADING-STRATEGY.md directly, without human approval, when the week's
 results justify it. Read that file's "Self-amendment" section first and obey it:
-- Only the TUNABLE list may change. The IMMUTABLE list must never change — those
+- Only the TUNABLE list may change. Never an OWNER DIRECTIVE (the $200 budget
+  cap, the >= 2 TACTICAL entries/day quota) — recommend those to the owner, do
+  not enact them. The IMMUTABLE list must never change — those
   are verified platform facts (spot only, GTC only, per-pair minOrderAmt,
   stops sized from held qty, always-stopped, crypto only, long only). A change
   that violates one produces orders Bybit rejects.
@@ -164,7 +166,12 @@ STEP E2 — REPAIR THE INSTRUCTIONS THEMSELVES. This is the ONLY run permitted
 to edit routines/*.md, .claude/commands/*.md, CLAUDE.md or scripts/*. It is a
 SEPARATE authority from STEP E and a separate gate — do not conflate them:
 
-  STEP E  changes what the bot SHOULD DO.  Gate: >= 10 closed trades.
+  STEP E  changes what the bot SHOULD DO.  Gate: NONE since the owner's
+          2026-09-16 directive — amendment is open to any run and the ">= 10
+          closed trades" figure is informational. Judgement still applies: a
+          thin sample argues for a hypothesis, not an edit. NEVER amend an
+          OWNER DIRECTIVE ($200 budget cap, >= 2 TACTICAL entries/day quota,
+          spot-only/long-only/no-leverage/no-withdraw) or an IMMUTABLE item.
   STEP E2 makes the files SAY what the rulebook already says. Gate: the
           contradiction is REPRODUCIBLE — you can point at two files, right
           now, that disagree. Trade count is irrelevant and MUST NOT be used
