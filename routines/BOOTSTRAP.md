@@ -1,6 +1,6 @@
 # Bootstrap prompts — paste these ONCE, never re-paste again
 
-## Current setup: Bybit spot, LOCAL, live money
+## Current setup: Bybit spot, LOCAL, DEMO endpoint (live-money discipline)
 
 Five routines. The account timezone is **GMT+5 (Pakistan)**, so every cron below
 is written in LOCAL time — that is what the Routines panel uses. Do not convert
@@ -54,17 +54,18 @@ Paste these once. After that, `git push` is the only deployment step forever.
 
 Do NOT create this routine. Delete it if it exists.
 
-It existed only because Alpaca allowed ONE resting order per symbol, so a stop
-and a target competed for the same slot and had to be reconciled hourly. That
-reconciliation is itself what caused six live order-thrash cycles on 2026-09-15.
+It existed only because the previous venue allowed ONE resting order per symbol,
+so a stop and a target competed for the same slot and had to be reconciled
+hourly. That reconciliation is itself what caused six live order-thrash cycles
+on 2026-09-15.
 
-Bybit attaches `takeProfit` AND `stopLoss` to the position in the same order.
-Both legs are held server-side by the exchange and survive the laptop being
+Bybit attaches `stopLoss` to the position in the same order. NEITHER SLEEVE HAS
+A PROFIT TARGET (v2), so only ONE leg is ever attached — never a `takeProfit`.
+That leg is held server-side by the exchange and survives the laptop being
 closed, so there is nothing to reconcile. Protection no longer depends on a
 routine running — which matters here, because this setup is LOCAL and the
 machine is off for most of the day.
 
-The old file is kept at `routines/archive/scan-alpaca-era.md` for history only.
 
 ## execute  (`7 */6 * * *`)
 
@@ -158,10 +159,10 @@ Everything in README.md's one-time prerequisites still applies to each routine,
 because it is configured on the routine and not in the prompt:
 
 - the Claude GitHub App installed on this repo (clone + push)
-- network access Full, or Custom allowing `paper-api.alpaca.markets`,
-  `data.alpaca.markets`, `api.alpaca.markets`, `api.perplexity.ai`,
+- network access Full, or Custom allowing `api-demo.bybit.com` (and
+  `api.bybit.com` if the endpoint is ever flipped to mainnet), `api.perplexity.ai`,
   `api.clickup.com`
-- `ALPACA_API_KEY`, `ALPACA_SECRET_KEY`, `ALPACA_ENDPOINT` set as routine env
+- `BYBIT_API_KEY`, `BYBIT_API_SECRET`, `BYBIT_ENDPOINT` set as routine env
   vars — never in a `.env` file
 - the cron expression and timezone (UTC)
 

@@ -100,7 +100,7 @@ STEP C — Compute the week's metrics:
 - Trades taken (W/L/open) and win rate, SPLIT BY SLEEVE. Core and tactical have
   different holding periods, stops and fee loads; a blended number hides which
   sleeve is actually working.
-- FEE BUDGET: fees paid THIS MONTH TO DATE vs the 1.0% (~$2.00) MONTHLY ceiling
+- FEE BUDGET: fees paid THIS MONTH TO DATE vs the 4.0% (~$8.00) MONTHLY ceiling
   (it resets on the 1st, not on Monday), and how many trades that bought. If the
   budget is already exhausted, say which day exhausted it and whether the trades
   that spent it were worth it. Also report this week's fees on their own, but

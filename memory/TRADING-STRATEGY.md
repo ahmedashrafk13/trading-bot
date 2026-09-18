@@ -1,7 +1,8 @@
 # Trading Strategy — Crypto
 
 ## Mission
-Grow a LIVE Bybit spot crypto account. CRYPTO SPOT ONLY — no perps, no
+Grow a Bybit spot crypto account (currently the DEMO endpoint
+`api-demo.bybit.com`; treat every rule as if it were live). CRYPTO SPOT ONLY — no perps, no
 leverage, no stocks, no options, ever. Benchmark is BTC buy-and-hold, not the S&P 500: beating a rising BTC is the
 only result that justifies active trading.
 
@@ -11,7 +12,8 @@ only result that justifies active trading.
   ~$179k; it is NOT the trading capital. All %-of-equity rules in this file are
   percentages of the $200 budget. Enforced in scripts/state.sh via
   TRADING_BUDGET_USD.
-- Platform: Bybit v5 UNIFIED account, SPOT ONLY. LIVE MONEY.
+- Platform: Bybit v5 UNIFIED account, SPOT ONLY. DEMO endpoint
+  (`api-demo.bybit.com`, per `.env`) — treated with live-money discipline.
 - Instruments: Bybit USDT spot pairs ONLY (~394 listed; only the liquid end is
   tradable at this account size — see `scripts/screen.sh`)
 - Account type: spot, long only. Spot cannot short.
@@ -131,16 +133,16 @@ trades a day implies hour-long holds. They cannot be the same position.
 
 | | CORE (primary) | TACTICAL (experimental) |
 |---|---|---|
-| RISK per position | 2.0% of equity | 1.0% of equity |
+| RISK per position | 2.0% of equity | 0.5% of equity |
 | Position size | risk / trail (~$26 at $197) | risk / trail (~$20 at $197) |
-| Hard cap on size | 20% of equity | 12% of equity |
-| Max positions | 1 (lowered from 4 on 2026-09-18 — hypothesis #6) | 1 |
-| New trades | agent's judgement | agent's judgement |
+| Hard cap on size | 20% of equity | 8% of equity |
+| Max positions | 1 (lowered from 4 on 2026-09-18 — hypothesis #6) | 6 (raised 1 -> 6 on 2026-09-18, OWNER DIRECTIVE) |
+| New trades | agent's judgement | QUOTA: >= 2 entries per UTC day |
 | Stop | 15% below high-water, ratcheted | 10% below high-water, ratcheted |
 | Target | NONE — the trail is the exit | NONE — the trail is the exit |
-| Time limit | none | none |
+| Time limit | none | 72h: if not >= +5% after 72h, close at market |
 | Screen timeframe | daily bars | hourly bars |
-| Hold horizon | weeks to months | days to weeks |
+| Hold horizon | weeks to months | hours to days |
 
 ### Size is DERIVED from risk, never fixed in dollars
 `position size = (equity * sleeve risk%) / trail distance`, then capped.
@@ -152,8 +154,13 @@ version had this backwards: it gave TACTICAL $49 against CORE's $20, i.e. it put
 2.5x the capital behind the sleeve with the structurally negative edge. See
 "Why there is no profit target" below.
 
-Total risk if every slot is filled: 1 CORE x 2.0% + 1 TACTICAL x 1.0% = 3.0% of
+Total risk if every slot is filled: 1 CORE x 2.0% + 6 TACTICAL x 0.5% = 5.0% of
 equity at risk simultaneously. That is the deliberate ceiling.
+
+Derived TACTICAL size at $200: ($200 x 0.005) / 0.10 = $10.00 per position.
+6 slots x $10 = $60 = 30% of budget; CORE $26.67 = 13%. Combined 43%, which
+sits under the unchanged 50% deployment ceiling, so the ceiling is NOT what
+binds the quota and must not be raised to accommodate it.
 
 **CORE max positions was lowered 4 -> 1 on 2026-09-18 (hypothesis #6,
 HYPOTHESIS-LOG.md, CONFIRMED).** Evidence, out of sample and unanimous: on a
@@ -269,6 +276,44 @@ The weekly review MUST NOT read a rise in trade count as evidence that the
 strategy improved or degraded. Frequency rose because the bot was asked more
 often. Grade expectancy per trade, not volume.
 
+## DAILY TRADE QUOTA (owner directive, 2026-09-18) — TACTICAL ONLY
+
+**MINIMUM 2 TACTICAL ENTRIES PER UTC DAY.** More is fine. This is a FLOOR on
+activity, and it overrides every discretionary "patience", "no catalyst", "cash
+is a position" and "nothing justified it" argument in this document.
+
+The owner set this knowing it contradicts the measured evidence in
+HYPOTHESIS-LOG.md (higher frequency tested strictly worse; nothing beat
+buy-and-hold BTC over 5.7 years). That trade-off is ACCEPTED and is not to be
+re-litigated in a run log. Do not spend paragraphs arguing against the quota —
+fill it, and let weekly-review grade the result on expectancy per trade.
+
+### How the quota is satisfied
+- execute runs 4x/day (00:07 / 06:07 / 12:07 / 18:07 UTC).
+- Each run counts TACTICAL entries already placed THIS UTC DAY from TRADE-LOG.
+- Target pacing: at least 1 entry by the 06:07 run, 2 by the 18:07 run.
+- The 18:07 run is the BACKSTOP: if fewer than 2 TACTICAL entries exist for the
+  day at that point, it MUST take the top-ranked passing screen names until the
+  count reaches 2, provided the HARD GATES below still pass.
+- Take the screen's top-ranked names first. Rank order is the tiebreak; do not
+  substitute judgement for rank.
+
+### The quota NEVER overrides these (they are hard, and a miss is logged, not forced)
+1. SPOT ONLY, long only, `"category":"spot"`, no leverage.
+2. `stopLoss` attached in the same order call. Never a naked buy.
+3. Circuit breaker tripped (realized losses today >= 5% of equity, or 5
+   consecutive tactical losses closed today).
+4. Monthly fee budget exhausted.
+5. TACTICAL slots all full (6) — but see the 72h time stop, which exists
+   specifically so slots recycle fast enough to keep the quota reachable.
+6. Deployment would exceed 50% of equity.
+7. No name passes the technical screen at all (a genuinely empty screen).
+8. Order value below the symbol's `minOrderAmt`, or spread > 0.5%.
+
+If the quota cannot be met because one of these 8 fired, that is a COMPLIANT
+day. Log which gate blocked it, with its number, in TRADE-LOG. "No catalyst" and
+"no conviction" are NOT on this list and are NOT valid quota misses.
+
 ## Trade frequency: the agent decides, the FEE BUDGET binds
 There is no fixed trades-per-day or trades-per-week cap. Open as many positions
 as the setups justify. What is capped is the thing that actually does the damage:
@@ -278,10 +323,15 @@ MEASURED friction: 0.65% per round trip (verified — a $12.31 BTC round trip co
 $0.08, taker fee both ways plus spread). BTC has the tightest spread in the
 universe, so 0.65% is a FLOOR and alts cost more.
 
-**MONTHLY FEE BUDGET: 1.0% of equity (~$2.00 at $200).** (v2: was 1.5% WEEKLY.)
+**MONTHLY FEE BUDGET: 4.0% of equity (~$8.00 at $200).** (v2: was 1.5% WEEKLY;
+v2.1 was 1.0% MONTHLY. Raised to 4.0% on 2026-09-18 by OWNER DIRECTIVE, because
+a >= 2 entries/day quota implies ~60 round trips/month; at the derived $10
+TACTICAL size and the measured 0.65% friction that is ~$3.90/month, and 4.0%
+leaves headroom for CORE and for wide-spread alts. This is a KNOWN, ACCEPTED
+drag of ~48%/yr at the ceiling against a benchmark that pays zero.)
 - Estimate the round-trip cost of every entry BEFORE placing it: notional x 0.65%
   (use more for a wide-spread alt) and add it to the running monthly total.
-- Track the total in each daily snapshot as "fees used this month: $X / $2.00".
+- Track the total in each daily snapshot as "fees used this month: $X / $8.00".
 - When the budget is exhausted, STOP OPENING NEW POSITIONS for the rest of the
   UTC month. Exits are always still allowed — never let a budget trap a loser.
 - The budget resets on the 1st, 00:00 UTC.
@@ -327,6 +377,13 @@ There is a deployment CEILING (50%, lowered from 85% 2026-09-17 — hypothesis
 #3, HYPOTHESIS-LOG.md, CONFIRMED) and no floor. Being 0% deployed is a valid,
 fully compliant state. Never open a position to "correct" deployment.
 
+**SCOPE (2026-09-18, OWNER DIRECTIVE):** this section governs DEPLOYMENT
+PERCENTAGE ONLY. It is not a licence to skip the TACTICAL quota. There is still
+no deployment FLOOR — but there IS now a TRADE-COUNT floor in TACTICAL (>= 2
+entries per UTC day). These do not conflict: 2 entries at the derived $10 size
+is 10% deployment, comfortably inside a 0-50% band. A run that ends the day
+under quota may not cite this section as its justification.
+
 The old 75-85% band was a floor as well as a ceiling, and it was dead letter
 from day one. Across its entire life the account sat at 0%, 29.6% and 29.7%
 deployed — never once inside the band — and every run spent a paragraph
@@ -363,7 +420,7 @@ Unbounded frequency plus a losing streak is how a small account dies in a day.
   itself. A breaker that fires on one ordinary stop is not a circuit breaker,
   it is an outage. At 1.5% risk per position it now takes ~3.3 stop-outs to
   trip, which is the intended "today is going badly" signal.
-- If 3 consecutive tactical trades close at a loss, stop opening tactical for
+- If 5 consecutive tactical trades close at a loss, stop opening tactical for
   the rest of the UTC day regardless of the budget.
 - Record either trip in TRADE-LOG with the trigger and the time.
 These exist because the agent judging its own frequency has no natural brake:
@@ -390,9 +447,12 @@ each individual trade can look reasonable while the sequence is ruinous.
 9. Never hold a stablecoin as a position
 10. Follow narrative momentum; exit a narrative after 2 consecutive failed
     trades in it (counted per sleeve)
-11. Patience > activity. Zero trades is a valid day, especially in CORE. "As many
-    trades as the setups justify" is NOT a mandate to trade — an empty screen
-    means no trades, and the fee budget is a ceiling, never a target to spend.
+11. Patience > activity — **CORE ONLY** (scoped 2026-09-18, OWNER DIRECTIVE).
+    In CORE, zero trades is a valid day and the fee budget is a ceiling, never a
+    target. In TACTICAL this rule DOES NOT APPLY: TACTICAL carries a hard
+    minimum of 2 entries per UTC day (see "DAILY TRADE QUOTA").  A TACTICAL run
+    may NOT cite patience, "cash is a position", or "no setups justified it" as
+    the reason it placed nothing while the screen still listed passing names.
 
 ## Technical entry filters (run `bash scripts/screen.sh`)
 Catalyst alone is not enough — news concentrates on coins that have ALREADY
@@ -504,18 +564,18 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - The sleeve is stated explicitly (CORE or TACTICAL) before sizing
 - CORE: positions after fill <= 1, cost ~$26 (run state.sh for the live number)
   (4 -> 1 on 2026-09-18, hypothesis #6; this line restates the sleeve table above)
-- TACTICAL: positions after fill <= 1, cost ~$20
+- TACTICAL: positions after fill <= 6, cost ~$10 each (run state.sh for the live number)
 - Estimated round-trip fee for THIS trade + fees already used THIS MONTH
-  <= 1.0% of equity (~$2.00). If it would breach, SKIP and log it.
+  <= 4.0% of equity (~$8.00). If it would breach, SKIP and log it.
 - Circuit breaker not tripped: realized losses today < 5% of equity, and not
-  3 consecutive tactical losses THAT CLOSED TODAY (UTC). The streak is scoped to
+  5 consecutive tactical losses THAT CLOSED TODAY (UTC). The streak is scoped to
   the UTC day and RESETS at 00:00 UTC. It does NOT carry across days.
   WHY THIS IS EXPLICIT: the streak used to be readable as permanent, and a
   permanent streak DEADLOCKS the sleeve — the only thing that clears it is a
   winning tactical trade, which the freeze itself prevents. The account sat
   frozen from 2026-09-15 for exactly this reason. Backtested: the permanent
   reading froze the sleeve for 400 straight days.
-- Combined positions after fill <= 2, total deployment <= 50% of equity
+- Combined positions after fill <= 7, total deployment <= 50% of equity
   (lowered from 85% 2026-09-17 — hypothesis #3, HYPOTHESIS-LOG.md, CONFIRMED)
 - Position size == (equity * risk%) / trail distance, capped at 20% (CORE) /
   12% (TACTICAL) of equity. Risk% is 2.0 CORE / 1.0 TACTICAL. NEVER a fixed
@@ -529,7 +589,17 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - qty >= that pair's `min_order_size` as well
 - Quoted spread <= 1% (BTC/ETH run ~0.02-0.04%; a wide spread means thin book)
 - `timeInForce` is `GTC`, and every order body carries `"category":"spot"`
-- A specific catalyst is documented in today's RESEARCH-LOG entry
+- CATALYST — SLEEVE-SCOPED (amended 2026-09-18, OWNER DIRECTIVE):
+  - CORE: a specific, dated, idiosyncratic catalyst IS still required, documented
+    in today's RESEARCH-LOG entry. CORE is the evidence-backed sleeve and its bar
+    does not move.
+  - TACTICAL: NO catalyst is required. The entry reason is the technical screen
+    itself. Record as the thesis: the screen rank, the 7d/30d momentum figures,
+    the SMA20 distance and the spread. "Ranked #3 of 45 on the tactical screen,
+    7d +4.9%, 2.1% above a rising SMA20, spread 0.05%" IS a sufficient and
+    complete thesis under this rule. Do NOT reject a TACTICAL candidate for
+    having "no idiosyncratic catalyst", for being "only beta to BTC", or for
+    being "extended" unless it actually fails the screen's own thresholds.
 - The coin PASSES its sleeve's technical screen (scripts/screen.sh)
 - The instrument is crypto (never a stock, never an option)
 
@@ -552,8 +622,14 @@ TACTICAL:
   stop, close at market
 - Up >= +20% -> ratchet stop to 8% below high-water
 - Otherwise -> keep stop 10% below high-water
-- NO profit target and NO 48h rule. A tactical position that is still trending
-  is a WINNER, not dead money; the trail decides when it is over.
+- NO profit target. A tactical position that is still trending is a WINNER,
+  not dead money; the trail decides when it is over.
+- **72h TIME STOP (added 2026-09-18, OWNER DIRECTIVE).** If a TACTICAL position
+  is not at least +5% above entry 72h after fill, close it at market and free
+  the slot. Rationale: with 6 slots and a >= 2 entries/day quota, slots must
+  recycle or the quota becomes unreachable within 3 days. This REPLACES the
+  old 'NO 48h rule' clause, which assumed a 1-slot sleeve with no quota.
+  A position already >= +5% is exempt and rides its trail with no time limit.
 - Thesis broken -> close immediately
 - Grandfathered v1 positions keep their tighter stop and are never widened.
 

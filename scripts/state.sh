@@ -74,12 +74,13 @@ print(f"EQUITY ${eq:.2f} (budget) | FREE ${_free:.2f} | DEPLOYED ${_deployed:.2f
 print(f"           account cash ${cash:,.2f} — NOT tradeable, budget is the ceiling")
 # Size is derived from risk, never fixed in dollars. Printing it here keeps the
 # arithmetic out of the run prompts, where it was previously re-derived by hand.
-core_risk, tac_risk = eq*0.020, eq*0.010
+core_risk, tac_risk = eq*0.020, eq*0.005
 core_sz = min(core_risk/0.15, eq*0.20)
-tac_sz  = min(tac_risk/0.10, eq*0.12)
+tac_sz  = min(tac_risk/0.10, eq*0.08)
 print(f"SIZE NOW   CORE ${core_sz:.2f} (15% trail, risk ${core_risk:.2f} = 2.0%, max 1)"
-      f" | TACTICAL ${tac_sz:.2f} (10% trail, risk ${tac_risk:.2f} = 1.0%, max 1)")
-print(f"           BOTH SLEEVES TRAIL. No profit target, no time limit, no target leg.")
+      f" | TACTICAL ${tac_sz:.2f} (10% trail, risk ${tac_risk:.2f} = 0.5%, max 6)")
+print(f"           BOTH SLEEVES TRAIL. No profit target, no target leg.")
+print(f"           CORE: no time limit | TACTICAL: 72h time stop unless >= +5%.")
 print()
 
 # --- positions, ages, stop coverage -------------------------------------------
@@ -265,9 +266,9 @@ print()
 # --- fee budget ---------------------------------------------------------------
 fees_mo = 0.0
 for m in re.finditer(r'Est\. round-trip fee \| \$([0-9.]+)', log):  fees_mo += float(m.group(1))
-budget = eq*0.010
+budget = eq*0.040
 month_start = today.replace(day=1)
-print(f"FEE BUDGET  ${fees_mo:.2f} / ${budget:.2f} used this MONTH (1.0% of equity)")
+print(f"FEE BUDGET  ${fees_mo:.2f} / ${budget:.2f} used this MONTH (4.0% of equity)")
 print(f"            {'HEADROOM $%.2f' % (budget-fees_mo) if fees_mo < budget else '*** EXHAUSTED — no new entries until the 1st ***'}")
 print(f"            month started {month_start}  [budget is a CEILING, expected burn is ~half]")
 print()
@@ -338,8 +339,8 @@ print()
 
 # --- circuit breaker ----------------------------------------------------------
 today_real = sum(a for a in day_amounts.get(f'{today}', []) if a < 0)  # losses only
-# The 3-loss streak is scoped to the UTC DAY and RESETS at 00:00 UTC
-# (TRADING-STRATEGY.md Buy-Side Gate: "3 consecutive tactical losses THAT
+# The 5-loss streak is scoped to the UTC DAY and RESETS at 00:00 UTC
+# (TRADING-STRATEGY.md Buy-Side Gate: "5 consecutive tactical losses THAT
 # CLOSED TODAY (UTC) ... It does NOT carry across days"). Counting it over all
 # history deadlocks the sleeve permanently: only a WIN clears the streak, and
 # the freeze itself prevents any trade that could produce one.
@@ -348,11 +349,28 @@ for _, a in reversed([t for t in closed_trades if t[0] == f'{today}']):
     if a < 0: losses_streak += 1
     else: break
 limit = eq*0.05
+# --- daily TACTICAL quota (owner directive 2026-09-18) ------------------------
+# Floor is 2 TACTICAL entries per UTC DAY. Counted from ENTRY section headers.
+_q_today = sum(1 for _d, _sl, _sy in SLEEVE_RE.findall(log)
+               if _sl == 'TACTICAL' and _d == f'{today}')
+_hh = int(now.strftime('%H'))
+_runs_left = sum(1 for _h in (0, 6, 12, 18) if _h >= _hh)
+_backstop = _hh >= 18
+print(f"DAILY QUOTA  TACTICAL entries today ({today}): {_q_today} / 2 minimum")
+if _q_today >= 2:
+    print("             status: MET")
+else:
+    print(f"             status: SHORT by {2-_q_today}"
+          f"{'  *** 18:07 BACKSTOP RUN - MUST FILL TO 2 ***' if _backstop else ''}")
+    print(f"             entry windows remaining today (incl. this one): {_runs_left}")
+print("             'no catalyst' / 'no conviction' / 'patience' are NOT valid misses")
+print()
+
 print(f"CIRCUIT BREAKER  realized losses TODAY ({today}) ${abs(today_real):.2f} vs ${limit:.2f} limit (5% of equity)")
 last_loss = closed_trades[-1][0] if closed_trades and closed_trades[-1][1] < 0 else None
 print(f"                 consecutive losing closes TODAY: {losses_streak} (streak resets 00:00 UTC)"
       f"{f'; most recent loss closed {last_loss}' if last_loss else ''}")
-print(f"                 status: {'TRIPPED — no new entries' if abs(today_real)>=limit or losses_streak>=3 else 'clear'}")
+print(f"                 status: {'TRIPPED — no new entries' if abs(today_real)>=limit or losses_streak>=5 else 'clear'}")
 print()
 
 # --- amendment trigger --------------------------------------------------------

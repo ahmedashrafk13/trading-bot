@@ -88,7 +88,7 @@ breaker wrongly. Sum today's REALIZED rows to evaluate the breaker.
 STEP B — Read the tail of memory/TRADE-LOG.md for the most recent daily snapshot
 (that is yesterday's equity, needed for the day-over-day figure). Count trades
 dated today, and ALL trades this MONTH (the 1st, 00:00 UTC onwards) so you can
-total the fees they cost — that running total is what the 1.0% (~$2.00) MONTHLY
+total the fees they cost — that running total is what the 4.0% (~$8.00) MONTHLY
 fee budget is measured against. It resets on the 1st, NOT on Monday. There is no
 trade-count cap any more.
 
@@ -108,7 +108,7 @@ STEP C — Pull final state and compute:
   negative means the correct action is to trade LESS, not to trade differently.
   If the quote call fails, say so explicitly in the row — never omit the
   benchmark silently and never carry yesterday's number forward.
-- Trades today by sleeve, and FEE BUDGET: "fees used this month $X / $2.00"
+- Trades today by sleeve, and FEE BUDGET: "fees used this month $X / $8.00"
 - Whether the circuit breaker tripped today (and at what time)
 - AMENDMENT TRIGGER: count closed trades since the last applied amendment
   (search TRADE-LOG/WEEKLY-REVIEW for the last "Rule changes applied" entry).
@@ -120,7 +120,7 @@ STEP C — Pull final state and compute:
 STEP D — Append a snapshot to memory/TRADE-LOG.md:
 ### YYYY-MM-DD — Daily Snapshot (Day N, UTC)
 **Portfolio:** $X | **Cash:** $X (X%) | **Day P&L:** ±$X (±X%) | **Cumulative:** ±$X (±X%)
-**vs BTC:** ±X% | **Fees today:** $X | **Fee budget:** $X / $2.00 used this month
+**vs BTC:** ±X% | **Fees today:** $X | **Fee budget:** $X / $8.00 used this month
 | Sleeve | Pair | Qty | Entry | Last | Unrealized | Stop trigger | Stop present? |
 **Notes:** one-paragraph plain-english summary.
 
