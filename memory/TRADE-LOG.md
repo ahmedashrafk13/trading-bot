@@ -1477,3 +1477,52 @@ position can or should carry a stop. `state.sh` SCAN-VERDICT: NO-ACTION.
 **Amendment trigger:** 3 closed trades since the last applied amendment (2026-09-10), 3 all-time. 3 < 10 → **not eligible, nothing amended.** `memory/TRADING-STRATEGY.md` untouched.
 
 **Notes:** Second consecutive fully flat day — no entries, no exits, no fees, 99.9% cash. The research run left CORE on a binding HOLD and TACTICAL blocked for want of a dated idiosyncratic catalyst, and nothing in the 6h since changed that; ARB still leads the screen while carrying a bearish 139.15M-token unlock on 09-23. The edge versus BTC improved 1.22pp this week purely by not trading into a falling benchmark, which is the "patience is the strategy" clause working as designed rather than luck. The one thing that genuinely needs owner attention is not a trading decision: the $200 budget figure `state.sh` reports is a cap and not a balance, so every "EQUITY" line in this log has to be hand-reconciled against realized rows to mean anything — that reconciliation is currently the most error-prone step in the whole routine and is logged to OBSERVATIONS.md.
+
+---
+
+## 2026-09-18 — Execute run (18:07 slot, run at 17:07 UTC broker clock)
+
+**STEP A — state & reconcile.** `state.sh`: EQUITY $200.00 (budget cap; account holds
+$179,007.19, not tradeable) | FREE $199.88 | DEPLOYED $0.12 = 0.1% (ceiling 50%, no floor)
+| OPEN POSITIONS 0 | `bybit.py orders spot` -> `[]`. Live state matches the TRADE-LOG tail
+exactly: flat, dust only (every balance below its symbol's `minOrderAmt`). No fill landed
+since the research run, no stop was hit, no drift. Stop coverage n/a — no position can or
+should carry a stop. Nothing to cut, re-attach or ratchet.
+Circuit breaker: realized losses today $0.00 vs $10.00 limit; 0 consecutive losing closes
+today (most recent loss closed 09-15) — **CLEAR**. The stale TRIPPED reading that recurred
+four times is gone; `state.sh` prints `clear` on its own now.
+
+**STEP B — evidence.** STANDING VERDICTS binding and unchallenged this run: altcoin median
+-21.2% vs BTC +157.4% over 5.7y (CONFIRMED); nothing tested beats buy-and-hold BTC; higher
+frequency and tighter stops both strictly worse; momentum inverted at <=1d (IC -0.012 test)
+but positive at 30d (+0.025 test). New row #9 (2026-09-18, `sig_momentum_skip_recent`)
+REJECTED — sign flips train-to-test. No reasoning below contradicts a verdict.
+
+**STEP C — screen.** `screen.sh` re-run live. Board unchanged in substance from the 16:16
+research run 51 min earlier: the top 7p movers (XPL, ETHFI, ARB, NEAR, UNI) are the names
+the CORE screen rejects on overextension, which is the short-horizon window where measured
+IC is NEGATIVE. TACTICAL shortlist 37 names.
+
+**STEP D — BUY GATE: NOT REACHED. No candidate advanced to sizing.**
+- CORE: today's RESEARCH-LOG puts CORE on a **binding HOLD** for the day. CORE entries
+  require the morning research plan and it advanced none. Gate closed by rule, not judgement.
+- TACTICAL: may be originated here, but only if the screen passes AND a catalyst is
+  documented in this run. **No fresh catalyst exists.** The only two dated events on the
+  board are both bearish supply releases (ZRO ~$26.4M unlock in the 09-14..09-20 window;
+  ARB 139.15M tokens on 09-23) and nothing new has landed in the 51 minutes since research.
+  Beta bounce off a +5.8% two-day BTC move is not an idiosyncratic catalyst.
+- Remaining gate conditions therefore never evaluated (no body composed, no size derived,
+  no spread/minOrderAmt check owed). Deployment 0.1% is far under the 50% ceiling; there is
+  NO floor, so this run does **not** buy to correct it.
+
+**STEP E — No order placed.** No buy, no naked buy, no stop cancelled, moved or widened.
+No `stopLoss`/`takeProfit` body was composed, so the standing execute.md-vs-CLAUDE.md
+target-leg wording conflict again did not have to be resolved.
+
+**STEP LEARN — No position closed this run**, so no `LESSON:` line is owed.
+
+**STEP G — No clickup notification** (nothing placed, nothing closed).
+
+**Net:** flat, $0.12 dust, ~99.9% cash, 0 resting orders, fee budget untouched at
+$0.52 / $2.00 this month (headroom $1.48). Third consecutive fully flat day. Cash is a
+position; a run that does nothing against a >60%-dominance alt tape is the system working.
