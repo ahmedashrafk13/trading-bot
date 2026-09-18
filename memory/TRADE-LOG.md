@@ -1603,3 +1603,70 @@ repaired, the two-call sequence is the only way to hold a stop at this venue.
 exchange, 4 TACTICAL slots free, CORE slot empty (binding HOLD from the 09-18 research run
 stands). Quota 2/2 — satisfied. Fees this run ~$0.02 equivalent; month-to-date unchanged
 band, headroom ample.
+
+---
+
+## 2026-09-18T20:29 UTC — execute (re-run, same 18:07 slot)
+
+Manual re-run ~20 min after the 20:07 execution. Full routine walked again.
+
+**STEP A — state & reconcile.** EQUITY $200.00 (budget) | FREE $179.85 | DEPLOYED $20.15 =
+10.1% (ceiling 50%). OPEN POSITIONS 2, both TACTICAL, both age 0.3h. Exchange state matches
+the TRADE-LOG tail exactly — same two fills, same two resting stops, no new fill, nothing
+closed, no drift.
+
+| Symbol | Qty held | Entry | Price | P&L | Stop coverage |
+|---|---|---|---|---|---|
+| OPUSDT | 84.895020 | 0.11764 | 0.1183 | +0.59% | 100% [OK] |
+| POLUSDT | 93.006900 | 0.10708 | 0.1073 | +0.17% | 100% [OK] |
+
+72h TACTICAL time stop: both at 0.3h of 72h — not due. Nothing to cut.
+Circuit breaker CLEAR ($0.00 realized today, 0 consecutive losing closes). Fee budget
+$0.52 / $8.00, headroom $7.48 — untouched this run, no fee-bearing order placed.
+
+**RATCHET — both stops moved UP.** High-water since fill taken from 1m klines bounded to
+bars after the fill timestamp (21 bars each): OP 0.11844, POL 0.10758. TACTICAL trail is 10%
+below high-water, ratcheted up only. Both were still sitting at 10% below ENTRY, so both
+were stale. Amended in place (`bybit.py amend`, one call each — no cancel/replace, so no
+unprotected window at any point):
+
+| Symbol | High-water | Stop was | Stop now | Limit now | Move |
+|---|---|---|---|---|---|
+| OPUSDT | 0.11844 | 0.10588 | 0.10660 | 0.10127 | +0.68% |
+| POLUSDT | 0.10758 | 0.09637 | 0.09682 | 0.09198 | +0.47% |
+
+Verified resting `Untriggered` at 100% of held qty after the amend. Limit legs stay 5%
+below trigger. Neither stop was widened; neither was moved down. Both remain ~9.8-9.9%
+below current price, clear of the 5%-minimum-gap rule.
+
+**Trail is 10%, NOT 8%.** `state.sh`'s advisory SCAN GATE printed both ratchets against an
+**8% trail** (`8% trail on $0.1183 = $0.1089`). That is wrong here: 8% only applies once a
+TACTICAL position is >= +20%, and these are +0.59% and +0.17%. Obeying it would have placed
+both stops ~2% tighter than the rulebook allows, against the CONFIRMED standing verdict that
+tighter stops are strictly worse. The gate is advisory/SHADOW MODE and runs must not obey it
+yet, which is what saved this. Logged to OBSERVATIONS.md.
+
+**STEP B — evidence.** Standing verdicts unchanged from the 20:07 run; nothing in this run
+rests on a REJECTED finding. Relevant here: tighter stops are strictly worse (CONFIRMED) —
+directly applied above in rejecting the 8% figure.
+
+**STEP C/D0 — screen & quota. QUOTA: 2/2 entries today — MET.** The floor is satisfied by
+the 20:07 POL and OP entries. The quota is a FLOOR, not a target, and trade count is the
+enemy (BTC buy-and-hold pays 0% in fees), so no third entry was sought.
+
+**STEP D — BUY GATE: not reached, no candidate advanced.**
+- CORE: binding HOLD from the 2026-09-18 research run stands — that run advanced no CORE
+  idea and CORE entries require the morning plan. Gate closed by rule, not judgement.
+- TACTICAL: quota already met; no rule requires a further entry and none was taken. This is
+  not a quota miss and not a discretionary skip — the floor is satisfied.
+
+**STEP E — no new order placed.** Only the two ratchet amends above. No buy, no naked buy,
+no stop cancelled, widened or moved down, no target leg anywhere.
+
+**STEP LEARN — no position closed this run**, so no `LESSON:` line is owed.
+
+**STEP G — no notification.** Nothing was placed or closed; a ratchet is neither.
+
+**Net:** unchanged at 2 TACTICAL positions, $20.15 deployed = 10.1% of budget, both stops
+tightened to a correct 10%-of-high-water trail and resting at 100% coverage. 4 TACTICAL
+slots free, CORE slot empty. Fees this run $0.00.
