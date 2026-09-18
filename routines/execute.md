@@ -139,23 +139,88 @@ STEP D — THE BUY GATE. Every condition must pass. State each one explicitly.
   and what kills the thesis. TACTICAL does not owe this — it is a screen-ranked
   trend entry with a 10% trail and a 72h time stop, not a conviction thesis.
 
-STEP E — PLACE THE ORDER WITH THE STOP ATTACHED. One call, never two.
-NEVER attach a `takeProfit`: neither sleeve has a profit target in v2 and the
-trail is the only exit (TRADING-STRATEGY.md, "Why there is no profit target").
+STEP E — PLACE THE ORDER, THEN THE STOP. TWO CALLS, IN THIS ORDER, BACK TO BACK.
 
-  python scripts/bybit.py order '{"category":"spot","symbol":"BTCUSDT","side":"Buy","orderType":"Market","qty":"<base qty>","stopLoss":"<sl>","tpslMode":"Full"}'
+**CORRECTED 2026-09-18 (defect found in live running).** This step previously
+said "attach the stop in ONE call, never two" with a `stopLoss` field in the buy
+body. **That does not work on this venue.** Bybit's SPOT endpoint rejects any
+order body containing `stopLoss` with `retCode 170130: Data sent for paramter ''
+is not valid` — with and without `tpslMode`, with `marketUnit` as quoteCoin and
+as baseCoin. Attached TP/SL is a DERIVATIVES feature; spot does not support it.
+Following the old wording literally made every entry impossible. Reproduction is
+in `memory/OBSERVATIONS.md` (2026-09-18, execute).
 
-`stopLoss` is MANDATORY on every entry. Never place a naked buy intending to add
-protection afterwards: between those two calls the position is unprotected, and
-that exact pattern is what left positions exposed in the paper era.
+The mechanism that works is the one `CLAUDE.md` "Strategy Hard Rules" already
+specified: a SEPARATE resting CONDITIONAL stop sell. Both files now agree.
 
-Verify with `python scripts/bybit.py orders spot` that the stop leg exists. If
-the order filled but the stop did not attach, close the position immediately.
+NEVER rest a `takeProfit` or any limit sell: neither sleeve has a profit target
+in v2, and a resting sell reserves the qty, which leaves the position unstopped.
+
+  # 1. the buy — NO stopLoss field, it will be rejected
+  python scripts/bybit.py order '{"category":"spot","symbol":"BTCUSDT","side":"Buy","orderType":"Market","qty":"<base qty>","marketUnit":"baseCoin"}'
+
+  # 2. IMMEDIATELY the protective stop, for 100% of the HELD qty
+  #    (held qty = filled qty MINUS the base-coin fee — read it from `holdings`,
+  #     never assume it equals the qty you asked for, or the stop is rejected)
+  python scripts/bybit.py order '{"category":"spot","symbol":"BTCUSDT","side":"Sell","orderType":"Limit","qty":"<held qty>","triggerPrice":"<trig>","price":"<trig*0.95>","orderFilter":"StopOrder","timeInForce":"GTC"}'
+
+### The unprotected window — rules, because it can no longer be eliminated
+Two calls means a real gap between fill and protection. It is now UNAVOIDABLE at
+this venue, so it is governed instead of pretended away:
+
+- Call 2 is sent IMMEDIATELY after call 1 returns. Nothing goes between them —
+  no logging, no screening, no commentary, no second candidate.
+- **NEVER send a buy you are not ready to protect.** Do NOT "probe" the API with
+  a live buy to discover which parameter it dislikes. A probe that fills is a
+  naked position. If you need to diagnose a rejection, vary the body on a
+  REJECTED call, or test shape on a sub-`minOrderAmt` qty that cannot fill — and
+  if you are unsure, STOP and log it instead.
+- Compute the stop price BEFORE sending the buy. If you cannot state the trigger
+  and limit up front, you are not ready to enter.
+- If call 2 fails for any reason, retry ONCE. If it fails again, CLOSE THE
+  POSITION AT MARKET immediately — do not leave it naked and do not "fix it next
+  run". Log the close and the reason.
+- Never batch: one symbol fully protected before the next symbol's buy is sent.
+
+Verify with `python scripts/bybit.py orders spot` that a resting `Untriggered`
+stop exists for 100% of held qty on every new position before moving on.
 
 STEP F — LOG. Append to `memory/TRADE-LOG.md`, tagged with its sleeve: UTC entry
 time, sleeve, symbol, side, qty, fill price, order value, stop (no target —
 v2 has none), thesis, fees. The sleeve tag is load-bearing — later runs use it to decide which
 rules apply.
+
+### THE ENTRY HEADER IS MACHINE-READ — GET THE FORMAT EXACTLY RIGHT
+`scripts/state.sh` parses this file to recover each position's SLEEVE, ENTRY
+PRICE and AGE. Prose does not feed it. If the format is wrong, state.sh silently
+prints `sleeve UNKNOWN`, `entry UNKNOWN`, `age unknown` — and then the 72h time
+stop cannot fire, gap enforcement cannot be evaluated, and the DAILY QUOTA
+counter reads 0 even though you just traded. That is exactly what happened on
+2026-09-18: two entries were placed and logged in full prose, and every parser
+missed all of them.
+
+For EVERY entry, emit BOTH of the following.
+
+1. A section header per symbol, on its own line, this shape exactly:
+
+   ### <YYYY-MM-DD>T<HH:MM> UTC — ENTRY — <CORE|TACTICAL> — <SYMBOL> BUY
+
+   Use a plain ASCII hyphen or an em-dash as the separator, `###` not `##`, and
+   the BARE symbol (`POL`, not `POLUSDT` and not `POL/USD`). One header per
+   symbol — two entries in a run means two headers, never one shared header.
+
+2. The STEP E fills table, which state.sh also reads as a fallback:
+
+   | UTC | Sleeve | Symbol | Side | Qty | Fill | Value | Fee | Stop (trigger/limit) | Target |
+
+   with one row per fill, UTC as `<YYYY-MM-DD>T<HH:MM>`, and Sleeve spelled
+   `CORE` or `TACTICAL`.
+
+After writing, RUN `bash scripts/state.sh` and confirm the new position shows a
+resolved sleeve, a real entry price and a known age, and that DAILY QUOTA counts
+your entries. If any of them reads UNKNOWN, your header is malformed — fix it
+before committing. This check is not optional; it is the only thing standing
+between a logged trade and an untracked one.
 
 STEP LEARN — SEED THE LEARNING LOOP. If any position CLOSED this run, append a
 one-line `LESSON:` to its TRADE-LOG entry: what you think caused the outcome,

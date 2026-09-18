@@ -127,6 +127,32 @@ for _ch in _chunks:
     if _p:
         entry_px[base(_h.group(3))] = float(_p.group(1).replace(',', ''))
 
+# --- FALLBACK: the STEP E fills table ----------------------------------------
+# Added 2026-09-18 after a live defect: the 20:07 execute run logged two real
+# entries (POL, OP) entirely in prose under a "## ..." header, so SLEEVE_RE
+# matched nothing and every position showed sleeve/entry/age UNKNOWN. That
+# silently disables the 72h time stop, gap enforcement AND the daily quota
+# counter. The STEP E table is structured, so parse it too and let it fill any
+# gap the headers left. Headers still WIN where both exist.
+#   | UTC | Sleeve | Symbol | Side | Qty | Fill | Value | Fee | Stop | Target |
+FILLS_RE = re.compile(
+    r'^\|\s*(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2})\s*\|'      # UTC date/time
+    r'\s*(CORE|TACTICAL)\s*\|'                                    # sleeve
+    r'\s*([A-Z0-9]+?)(?:USDT|/USDT?)?\s*\|'                       # symbol
+    r'\s*(?:Buy|BUY)\s*\|'                                        # side = Buy only
+    r'\s*([0-9][0-9,]*(?:\.[0-9]+)?)\s*\|'                       # qty
+    r'\s*\$?\s*([0-9][0-9,]*(?:\.[0-9]+)?)', re.M)               # fill price
+fills_tbl = []
+for _d, _t, _sl, _sy, _q, _px in FILLS_RE.findall(log):
+    fills_tbl.append((_d, _t, _sl, base(_sy), float(_px.replace(',', ''))))
+for _d, _t, _sl, _sy, _px in fills_tbl:
+    if _sy not in sleeves:
+        sleeves[_sy] = (_sl, dt.date.fromisoformat(_d))
+    if _sy not in entry_px:
+        entry_px[_sy] = _px
+    if _sy not in entry_times:
+        entry_times[_sy] = f'{_d}T{_t}'
+
 # On Bybit a protective stop rests as a CONDITIONAL sell: the exchange reports it
 # in /v5/order/realtime carrying a non-empty stopOrderType and a triggerPrice. A
 # plain limit sell with no trigger is a TARGET LEG, which v2 bans outright.
@@ -351,8 +377,10 @@ for _, a in reversed([t for t in closed_trades if t[0] == f'{today}']):
 limit = eq*0.05
 # --- daily TACTICAL quota (owner directive 2026-09-18) ------------------------
 # Floor is 2 TACTICAL entries per UTC DAY. Counted from ENTRY section headers.
-_q_today = sum(1 for _d, _sl, _sy in SLEEVE_RE.findall(log)
-               if _sl == 'TACTICAL' and _d == f'{today}')
+_q_syms = {(_d, base(_sy)) for _d, _sl, _sy in SLEEVE_RE.findall(log)
+            if _sl == 'TACTICAL'}
+_q_syms |= {(_d, _sy) for _d, _t, _sl, _sy, _px in fills_tbl if _sl == 'TACTICAL'}
+_q_today = sum(1 for _d, _sy in _q_syms if _d == f'{today}')
 _hh = int(now.strftime('%H'))
 _runs_left = sum(1 for _h in (0, 6, 12, 18) if _h >= _hh)
 _backstop = _hh >= 18

@@ -215,13 +215,26 @@ def cmd_kline(args):
 def cmd_order(args):
     """order '<json>' — places an order. Body is passed through to Bybit v5.
 
-    THE POINT OF BYBIT: takeProfit and stopLoss can both be attached here, so a
-    position carries both legs at once. On the previous venue only one order could
-    exist per symbol, and reconciling that is what the hourly scan routine was
-    for. Example:
+    SPOT DOES NOT SUPPORT ATTACHED TP/SL. This docstring previously claimed the
+    opposite — that attaching takeProfit/stopLoss to the entry was "the point of
+    Bybit" — and showed a category":"spot" example doing it. That is FALSE and was
+    corrected 2026-09-18 after it cost a live unprotected window. Bybit's spot
+    endpoint rejects ANY body containing stopLoss or takeProfit with
+    retCode 170130 ("Data sent for paramter '' is not valid"), with and without
+    tpslMode, and for either marketUnit. Attached TP/SL is a DERIVATIVES feature,
+    and this account is spot-only, so it is unreachable here by construction.
 
+    Protection on spot is a SEPARATE resting conditional sell, sent immediately
+    after the buy fills (routines/execute.md STEP E):
+
+      # entry — no stopLoss field
       {"category":"spot","symbol":"BTCUSDT","side":"Buy","orderType":"Market",
-       "qty":"0.001","takeProfit":"75000","stopLoss":"60000"}
+       "qty":"0.001","marketUnit":"baseCoin"}
+
+      # protection — 100% of HELD qty, limit 5% below the trigger
+      {"category":"spot","symbol":"BTCUSDT","side":"Sell","orderType":"Limit",
+       "qty":"0.000999","triggerPrice":"60000","price":"57000",
+       "orderFilter":"StopOrder","timeInForce":"GTC"}
     """
     if not args:
         die("usage: order '<json body>'")
@@ -234,6 +247,18 @@ def cmd_order(args):
         print("WARNING: non-spot category — leveraged products can lose more "
               "than the account holds, which no risk rule in this repo assumes.",
               file=sys.stderr)
+    # Fail LOUDLY and locally on attached TP/SL rather than letting the venue
+    # answer with retCode 170130 ("Data sent for paramter ''"), which names no
+    # field and reads like a malformed-JSON problem. That opaque error is what
+    # provoked a live naked-buy probe on 2026-09-18.
+    if body.get("category") == "spot":
+        _bad = [k for k in ("stopLoss", "takeProfit", "tpslMode") if k in body]
+        if _bad:
+            die("spot orders cannot carry attached TP/SL — remove "
+                f"{', '.join(_bad)}. Bybit spot rejects these with retCode 170130. "
+                "Place the entry WITHOUT them, then send a separate resting "
+                "conditional stop (orderFilter=StopOrder + triggerPrice) "
+                "immediately after the fill. See routines/execute.md STEP E.")
     out(request("POST", "/v5/order/create", body, private=True).get("result", {}))
 
 
