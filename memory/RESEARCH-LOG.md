@@ -1115,3 +1115,102 @@ buy-and-hold BTC. No part of today's reasoning rests on a REJECTED finding.
 **Fee budget:** $0.52 / $2.00 used this MONTH (headroom $1.48), month started
 2026-09-01. No entries this run — unchanged. The budget is a CEILING, not a
 target; BTC buy-and-hold, the benchmark, pays 0%.
+
+---
+
+## 2026-09-18 — Research (06:07 slot, run at 16:16 UTC, broker clock)
+
+**Account snapshot (scripts/state.sh):** EQUITY $200.00 (budget cap; account holds
+$179,007.19 — not tradeable) | FREE $199.88 | DEPLOYED $0.12 = 0.1% (ceiling 50%, no floor)
+| OPEN POSITIONS 0 | RESTING ORDERS 0 (`bybit.py orders spot` -> `[]`) | stop coverage n/a.
+Sizes now: CORE $26.67 (risk $4.00 = 2.0%, 15% trail, max 1) | TACTICAL $20.00 (risk $2.00
+= 1.0%, 10% trail, max 1). SCAN-VERDICT: NO-ACTION.
+STEP A reconcile: live state matches TRADE-LOG tail exactly — flat, dust only. No stop
+filled, no fill landed, no drift between runs. Nothing to stop, cut or ratchet.
+Circuit breaker CLEAR ($0.00 realized today vs $10.00). Breaker now prints `clear`; the
+stale 3-tactical-loss TRIPPED reading that recurred four times has cleared on its own
+with the 09-15 streak two days behind.
+
+**Market context:** BTC $80,973 on this screen vs $76,552 at the 09-17 snapshot — a
+**+5.8% two-day bounce**, and BTC now leads its own 7d at +3.5% with vol 0.7%. ETH
+$2,594 (+3.4%/7p). BTC dominance ~60.15% weekly close, above 60% for the first time in
+2026; Altcoin Season Index still depressed. ETF flows split: BTC ETFs taking inflows
+while ETH ETFs post a **third consecutive day of net outflows (~$39M)**. Macro unchanged
+from 09-17 — DXY and real yields remain the liquidity headwind; no new Fed event today.
+
+**Narratives — leading vs rolling over:**
+- LEADING: **privacy** (ZEC +2,496% y/y, sector +213% off the Oct-2025 high, the only
+  segment above that mark). NOT TRADEABLE HERE — ZEC is not in the 60-pair Bybit
+  universe `screen.sh` ranks, so the one genuinely leading narrative is unreachable.
+- LEADING (secondary): L2/alt beta bounce — ARB +53.6%/7p, NEAR +53.5%, UNI +46.5%,
+  BR +238.6%. All four FAIL the CORE screen on overextension, which is the filter
+  doing its job.
+- ROLLING OVER: memes (PEPE/SHIB pass only on the technical, no bid in the story),
+  DeFi and L1 both still below their prior-cycle marks.
+
+**CORE SHORTLIST (38, daily bars):** ENA OP PEPE HYPE INJ SKY AERO ZRO FLOCK APT ZIG
+ONDO XPL LIT AAVE SUI FET BCH ASTER DOT SOL AVAX WLD XLM JUP ADA SHIB HBAR LINK LTC BTC
+BNB MNT DOGE STETH ETH KII GRAM
+**TACTICAL SHORTLIST (39, hourly bars):** SOL XPL XRP TRUMP ETH STETH BTC AERO PEPE INJ
+NEAR ARB HYPE AAVE LINK DOGE VIRTUAL XLM AVAX PENGU PUMP ONDO MNT GRASS ADA BCH APT HBAR
+POL MON JUP SHIB BNB OP SUI LTC GRAM CRV KII
+
+**Ideas, tagged by sleeve:**
+- CORE — **NONE ADVANCED.** No shortlist name carries a dated, idiosyncratic catalyst.
+  The best-ranked names by 7p momentum that still pass (ENA +18.3%, OP +17.2%, PEPE
+  +15.7%, HYPE +14.9%) are all sector-beta moves off the same BTC bounce, not
+  name-specific events. Had one cleared, size would have been $26.67, stop 15% below
+  entry, no target. Rejected before sizing.
+- TACTICAL — **NONE ADVANCED.** ZRO is the only shortlist name with a dated catalyst
+  and it runs **bearish**: a ~$26.4M unlock inside the 09-14..09-20 window. ARB carries
+  its 139.15M-token (1.4% of supply) unlock on 09-23, five days out, and additionally
+  now FAILS the CORE screen at +53.6%/7p. Entering a 10%-trail long into the only two
+  dated events on the board, both of which are supply releases, is taking the wrong side
+  of the only information that exists. Rejected.
+- R:R after the measured 0.65% round-trip friction: not computed for any name — nothing
+  cleared the catalyst gate, so there is no entry to price. The 2:1-after-fees minimum
+  was never reached for evaluation.
+
+**EVIDENCE CHECK (STEP EVIDENCE):** Read the STANDING VERDICTS table before forming the
+view. Nothing in today's reasoning rests on a REJECTED finding. Relevant and binding:
+the altcoin universe has a CONFIRMED negative median (-21.2% vs BTC +157.4% over 5.7y)
+and every name this account can buy is an alt; nothing tested beats buy-and-hold BTC;
+higher frequency and tighter stops are both strictly worse. Momentum: inverted at <=1d
+(IC@1d -0.012 test) but POSITIVE at 30d (IC@30d +0.025 test) — the 09-16 correction,
+which this run does not contradict. Note the shape of today's board is exactly the
+short-horizon-reversal regime: the biggest 7p movers (BR, ARB, NEAR, UNI) are the names
+the CORE screen rejects, and buying them would be trading the horizon where the measured
+IC is NEGATIVE. Also noted: hypothesis #6 (1 CORE slot, PROMOTED 2026-09-18) states its
+own mechanism honestly — the preference for fewer slots is monotone and extrapolates
+toward zero exposure, so it is not evidence of a long edge and does not argue for
+filling the one remaining slot.
+
+**Risk factors:**
+- Dominance >60% with the alt-season index depressed: the CONFIRMED negative alt median
+  is being actively expressed, and every tradeable pair here is an alt.
+- The +5.8% two-day BTC bounce is precisely the <=1d/short-horizon window where measured
+  momentum is INVERTED. Chasing it is arguing against the repo's own evidence.
+- Two dated supply events inside the next five days (ZRO this week, ARB 09-23), both on
+  names that pass a screen.
+- ETH ETF outflows three days running while BTC takes inflows — rotation is into the
+  benchmark, not into what this account can buy.
+- The one leading narrative (privacy/ZEC) is outside the tradeable universe, so the
+  screen's top names are beta, not leadership.
+
+**Decision:**
+- CORE: **HOLD** — binding for the day. No shortlist name clears the idiosyncratic-
+  catalyst bar, and >60% dominance is the worst regime in which to add alt exposure.
+- TACTICAL: **HOLD** — recommendation only; a later execute run may originate if the
+  screen passes AND a fresh catalyst is documented then. What would have to change: a
+  dated, idiosyncratic catalyst on a shortlist name that is NOT ARB or ZRO (both carry
+  bearish supply events), plus dominance stalling below ~60%. Absent both, none.
+- Cash is a position. 0.1% deployed is valid and compliant; this run does NOT buy to
+  correct deployment.
+
+**Fee budget:** $0.52 / $2.00 used this MONTH (headroom $1.48), month started 2026-09-01.
+No entries this run — unchanged. The budget is a CEILING, not a target; BTC
+buy-and-hold, the benchmark, pays 0%.
+
+**Shadow log:** 77 rows appended (38 CORE + 39 TACTICAL passes, all skipped), priced from
+this screen run. Nothing scored — the oldest unscored rows are 2026-09-16, two days old,
+below the 5-day scoring window.
