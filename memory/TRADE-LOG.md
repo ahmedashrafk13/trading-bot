@@ -1918,3 +1918,70 @@ and all four open positions are the same L1/L2 alt-beta bet expressed four ways.
 
 **Net:** unchanged at 4 TACTICAL positions, $41.10 deployed = 20.5% of budget, all stops
 correct at 100% coverage. CORE slot empty, 2 TACTICAL slots free. Fee budget $0.52 / $8.00.
+
+## 2026-09-21T17:15 UTC — execute run — NO ENTRIES (quota already met 2/2)
+
+**STEP A — reconcile.** EQUITY $200.00 (budget cap; account holds $179,079.55, not
+tradeable). FREE $159.29 | DEPLOYED $40.71 = 20.4% of budget (ceiling 50%). `holdings`,
+`orders spot` and `fills spot` match the TRADE-LOG tail exactly — 4 TACTICAL positions,
+4 resting `Untriggered` conditional stops, 100% of held qty each, no target legs, no
+unlogged fill since 09-21T15:05. Nothing closed this run.
+
+**STEP A4 — 72h TACTICAL time stop: not due for any position.**
+- OP  — filled 09-18T20:10, age 69.1h, +6.1% vs entry -> **exempt** (>= +5%), rides trail.
+- POL — filled 09-18T20:10, age 69.1h, **+4.4% vs entry -> NOT exempt.** 72h falls at
+  **2026-09-21T20:10 UTC**, ~3h after this run. Cannot be closed early; the rule is 72h.
+  **Flagged for the next execute run: if POL is still < +5% at/after 20:10 UTC, cancel its
+  resting stop (id 2307087177345142016) then close at market.**
+- ARB, XPL — age 2.2h, nowhere near.
+
+**STEP B — evidence.** Read the STANDING VERDICTS table. Nothing this run contradicts one.
+Verdicts actually applied below: tighter stops are strictly worse (-44.8% -> -5.8% as the
+trail widens), and momentum IC is negative at <= 1d.
+
+**Ratchet check — real high-water marks from `bybit.py kline` (hourly, since fill), 10%
+trail (none of the four is +20% entry-to-high-water, so the 8% tighten does NOT apply):**
+
+| Symbol | Entry | High-water | 10% trail level | Resting stop | Action |
+|---|---|---|---|---|---|
+| ARB | 0.2381 | 0.24780 | 0.22302 | 0.21429 | **BLOCKED — see below** |
+| OP | 0.11764 | 0.13315 | 0.11983 | 0.11983 | none, already there |
+| POL | 0.10708 | 0.11460 | 0.10314 | 0.10314 | none, already there |
+| XPL | 0.10231 | 0.10412 | 0.09371 | 0.09216 | **RATCHETED UP -> 0.09371** |
+
+- **XPL ratcheted 0.09216 -> 0.09371** (limit 0.08902 = trigger*0.95), amended in place via
+  `/v5/order/amend`, no cancel/replace, so no unprotected window. Verified `Untriggered` at
+  97.5 = 100% of held qty. Gap to price ($0.1004) is 6.7%, clears the 5% minimum.
+- **ARB ratchet BLOCKED by hard rule 8** ("never place a stop within 5% of current price").
+  Its 10% trail level 0.22302 sits only 2.0% below the live price $0.22751. The stop was
+  therefore LEFT at 0.21429 (5.8% below price) rather than moved to some intermediate level
+  — an intermediate is not a level the rulebook derives, and manufacturing a tighter stop
+  runs directly against the CONFIRMED verdict that tighter stops are strictly worse. No
+  stop was moved down. Revisit when ARB's price rises enough for the trail to clear the 5%.
+
+**STEP D0 — DAILY QUOTA: 2/2 TACTICAL entries for 2026-09-21 (ARB, XPL at 15:05) ->
+MET.** The floor is satisfied; it is a minimum, not a target, and may not be cited to
+justify a third entry.
+
+**STEP D — no buy gate evaluated: no candidate was advanced.**
+- **CORE: HOLD, binding.** Today's RESEARCH-LOG carries no dated idiosyncratic catalyst on
+  any of the 28 CORE shortlist names; the only dated events on the board are bearish supply
+  releases (ARB unlock 09-23, XPL 63.2%-of-float unlock 09-25). CORE requires a catalyst, so
+  this is a rule-compliant CORE stand-down, not discretion.
+- **TACTICAL: quota met, no further entry.** This is NOT a quota miss and NOT a patience
+  argument — the floor of 2 was filled earlier today.
+
+**Risk still carried:** all four positions are the same L1/L2 alt-beta bet expressed four
+ways, into BTC dominance 59.1%, a confirmed negative-median alt universe, ~$900M of unlock
+supply this week (including XPL's own on 09-25) and the 09-25 ~$16.6B Deribit expiry.
+
+**STEP LEARN — no position closed this run**, so no `LESSON:` line is owed.
+
+**Fee budget:** $0.52 / $8.00 this month, headroom $7.48. This run spent **$0.00** — the
+amend is not fee-bearing and no order filled.
+
+**Circuit breaker:** CLEAR. $0.00 realized losses today vs the $10.00 limit; 0 consecutive
+losing closes today; most recent loss closed 2026-09-15.
+
+**Net:** 4 TACTICAL positions, $40.71 deployed = 20.4% of budget, every position stopped at
+100% coverage. CORE slot empty, 2 TACTICAL slots free.
