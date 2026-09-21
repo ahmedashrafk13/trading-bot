@@ -197,13 +197,17 @@ class Universe:
         self.h = np.full_like(self.o, np.nan)
         self.l = np.full_like(self.o, np.nan)
         self.c = np.full_like(self.o, np.nan)
+        # base-coin volume. Kept (previously discarded) so signals can use the
+        # one data dimension in the committed cache that nothing had read yet.
+        self.v = np.full_like(self.o, np.nan)
 
         for si, sym in enumerate(self.symbols):
-            for ts, o, h, l, c, _v in raw[sym]:
+            for ts, o, h, l, c, v in raw[sym]:
                 i = idx.get(ts - ts % st)
                 if i is not None:
                     self.o[si, i], self.h[si, i] = o, h
                     self.l[si, i], self.c[si, i] = l, c
+                    self.v[si, i] = v
 
         self.mark = _ffill(self.c)
         self.hours = np.array([dt.datetime.fromtimestamp(int(x), dt.timezone.utc).hour

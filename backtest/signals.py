@@ -269,6 +269,52 @@ def sig_momentum_skip_recent(u):
     return out
 
 
+def sig_amihud_illiquidity(u):
+    """Amihud (2002) illiquidity: mean |return| per unit of dollar volume, 20 bars.
+
+    NEW 2026-09-22. FIRST SIGNAL EVER TO READ THE VOLUME COLUMN — every prior
+    candidate in this file used only open/high/low/close, so volume was parsed
+    and thrown away by the loader until today. Amihud is the best-documented
+    cross-sectional factor outside price: illiquid assets are held at a
+    discount and earn a premium for it. Higher value = more illiquid = the
+    signal predicts HIGHER forward return if the premium exists in crypto.
+    """
+    c, v = u.mark, u.v
+    r = np.abs(_pct_change(c, 1))
+    dv = c * v
+    with np.errstate(divide="ignore", invalid="ignore"):
+        illiq = np.where(dv > 0, r / dv, np.nan)
+    out = np.full(c.shape, np.nan)
+    w = 20
+    for i in range(w, c.shape[1]):
+        win = illiq[:, i - w:i]
+        with np.errstate(invalid="ignore"):
+            out[:, i] = np.nanmean(win, axis=1)
+    # ranks are all that matter; log keeps the heavy tail from dominating
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.log(out)
+
+
+def sig_volume_surge(u):
+    """Relative volume: today's volume over its own 20-bar average.
+
+    NEW 2026-09-22. Second volume signal, and a different claim from Amihud:
+    not a liquidity premium but an ATTENTION measure. The retail-flow story
+    says abnormal turnover marks a coin the crowd has just found, and that
+    attention persists for days. Deliberately kept independent of the return
+    sign so it is not a momentum restatement in disguise.
+    """
+    v = u.v
+    out = np.full(v.shape, np.nan)
+    w = 20
+    for i in range(w, v.shape[1]):
+        with np.errstate(invalid="ignore"):
+            base = np.nanmean(v[:, i - w:i], axis=1)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            out[:, i] = np.where(base > 0, v[:, i] / base, np.nan)
+    return out
+
+
 def sig_random(u):
     """THE NULL. Any candidate that cannot beat this is luck."""
     rng = np.random.default_rng(0)
@@ -289,6 +335,8 @@ CANDIDATES = {
     "clv_accumulation": sig_clv_accumulation,
     "downside_vol_low": sig_downside_vol_low,
     "momentum_skip_recent": sig_momentum_skip_recent,
+    "amihud_illiquidity": sig_amihud_illiquidity,
+    "volume_surge": sig_volume_surge,
     "RANDOM (null baseline)": sig_random,
 }
 
@@ -345,6 +393,12 @@ COMPOSITES = {
     # tail only, leaving the lottery-shaped right tail unpenalised.
     "downside_vol": ["downside_vol_low"],
     "downside_vol_reversion": ["downside_vol_low", "below_sma20"],
+    # NEW 2026-09-22 (hypotheses #11/#12): the volume column, first use.
+    # amihud's IC is NEGATIVE and same-sign out of sample, so the tradable
+    # direction is INVERTED: buy the most LIQUID, not the most illiquid.
+    "liquidity": ["-amihud_illiquidity"],
+    "volume_surge": ["volume_surge"],
+    "liquidity_downside_vol": ["-amihud_illiquidity", "downside_vol_low"],
 }
 
 _BY_NAME = {
@@ -355,6 +409,8 @@ _BY_NAME = {
     "mean_reversion_24h": sig_mean_reversion_24h,
     "rel_strength_vs_btc": sig_rel_strength_btc,
     "breakout_20d": sig_breakout_20d,
+    "amihud_illiquidity": sig_amihud_illiquidity,
+    "volume_surge": sig_volume_surge,
 }
 
 
