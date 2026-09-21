@@ -2109,3 +2109,35 @@ supply this week (XPL holds its own 63.2%-of-float unlock on 09-25, four days ou
 **Net:** 3 TACTICAL positions, ~$29.78 deployed = 14.9% of budget (ceiling 50%, no floor),
 every position carrying a resting `Untriggered` stop at 100% of held qty. CORE slot empty,
 3 TACTICAL slots free. One close, one win, $0.40 realized.
+
+## 2026-09-21 — Daily Snapshot (Day 11, UTC 22:19)
+
+**Portfolio:** $193.97 | **Cash:** $164.26 (84.7%) | **Day P&L:** +$0.06 (+0.03%, 4-day delta vs 09-17) | **Cumulative:** -$6.03 (-3.02%)
+**vs BTC:** -15.38pp edge | **Fees today:** $0.01 | **Fee budget:** $0.53 / $8.00 used this month (headroom $7.47)
+
+| Sleeve | Pair | Qty | Entry | Last | Unrealized | Stop trigger | Stop present? |
+|--------|------|-----|-------|------|------------|---------------|---------------|
+| TACTICAL | ARBUSDT | 42.424653 | $0.23810 | $0.2240 | -5.94% (-$0.60) | $0.21429 | YES — 100% of held qty |
+| TACTICAL | OPUSDT | 84.895020 | $0.11764 | $0.1262 | +7.28% (+$0.73) | $0.11983 | YES — 100% of held qty |
+| TACTICAL | XPLUSDT | 97.502400 | $0.10231 | $0.0974 | -4.75% (-$0.47) | $0.09371 | YES — 100% of held qty |
+
+**Benchmark:** BTC/USD $86,688.40 (spot last) vs $77,153.29 Day-0 baseline (2026-09-10 19:39 UTC) = **+12.36% cumulative**. Bot cumulative **-3.02%**. **EDGE -15.38pp** — the worst edge recorded. BTC ran +6.79% in the last 24h alone while the bot sat 85% cash in three underperforming alts. The gap is almost entirely a *participation* gap, not a loss gap: the bot has lost only $6.03 in absolute terms, but it was flat or near-flat through the single largest BTC advance of the challenge window.
+
+**Trades today (2026-09-21 UTC):** 3 actions, 2 sleeve-TACTICAL entries + 1 exit.
+- 15:05 BUY ARB (TACTICAL, $10.10) — quota entry 1/2
+- 15:05 BUY XPL (TACTICAL, $9.97) — quota entry 2/2
+- 20:11 SELL POL (TACTICAL, 72h time stop, **REALIZED +$0.40**, fees $0.01)
+DAILY QUOTA: **2 / 2 — MET.**
+
+**STEP A invariants — all clean, no action taken this run.**
+- RECONCILE: 3 live positions match the TRADE-LOG tail exactly. No drift, no unexpected fill, nothing closed between runs.
+- RESTING LEG: all 3 carry exactly one `Untriggered` conditional stop at 100% of held qty. Zero naked, zero unreserved, zero split, zero v1 target legs.
+- HARD CUT: none due. TACTICAL threshold is -10%; worst position is ARB at -5.94%. No stop was gapped through (ARB $0.2240 > $0.21429, OP $0.1262 > $0.11983, XPL $0.0974 > $0.09371).
+- RATCHET: none due. `state.sh` SCAN-VERDICT NO-ACTION, and it agrees this run. OP is +13.2% off entry-to-high-water, below the +20% that would tighten it to 8%. ARB's correct 10% trail still sits inside the 5%-of-price no-stop band (the structural conflict logged 2026-09-21); XPL's resting stop is already ABOVE its 10% trail level and is never moved down.
+- 72h TIME STOP: OP is 74.2h old but **+7.28% >= +5%, exempt**. ARB and XPL are 7.2h old.
+
+**Circuit breaker:** CLEAR. Realized losses today $0.00 vs the $10.00 limit; today's only close was a +$0.40 win. 0 consecutive losing closes. Never tripped today.
+
+**Amendment trigger (informational):** 1 closed trade since the last applied amendment (2026-09-17); 4 closed all-time. Reference mark 10. Sample is THIN — no amendment made or argued for this run.
+
+**Notes:** A do-nothing run, correctly. Every guardrail held: three TACTICAL positions, all stopped at 100%, 14.9% deployed against a 50% ceiling, the daily quota met earlier in the day, the fee budget barely touched at 6.6% of the month's allowance. The account is safe. The strategy is not winning. The -15.38pp edge is now the dominant fact of this challenge and it did not come from bad trades — realized P&L across eleven days is -$6.03 on four closes, which is noise — it came from being 85%+ in cash through a +12.4% BTC move. The mission statement is explicit that a persistently negative edge argues for trading LESS, but that prescription assumes the edge is being lost to fees and churn; here it is being lost to *absence*, and trading less makes absence worse, not better. Fees are $0.53 of an $8.00 budget, so churn is demonstrably not the leak. The honest reading is that a 1-slot CORE sleeve gated on a dated idiosyncratic catalyst has produced zero CORE entries in eleven days while the benchmark compounded, and the TACTICAL sleeve's $10 positions are too small to close a 15pp gap even when they work. That is a structural observation for the Sunday weekly-review (next run 2026-09-22 18:37 UTC), not something to fix mid-run on a sample of four closes — the 2026-09-10..15 episode of six amendments on N=1 is the standing warning against exactly that reflex. Logged, not acted on.
