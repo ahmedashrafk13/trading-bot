@@ -1754,3 +1754,122 @@ of held qty. No position is naked.
 **Net:** 4 TACTICAL positions, $41.60 deployed = 20.8% of budget, 2 TACTICAL slots free,
 CORE slot empty (blocked — no research plan). Quota 2/2 MET. Fees this run ~$0.011 in base
 coin (~$0.011), fee budget still ~$7.47 free.
+
+---
+
+## 2026-09-21T15:02 UTC — research (late; scheduled 06:07, ran 15:02)
+
+**BLOCKER CLEARED FIRST.** Every signed Bybit call failed `retCode 10002` — local clock
+~2.3s ahead of Bybit's server, and Bybit rejects a signed timestamp more than ~1s ahead
+regardless of `recv_window`, so all 3 retries failed identically and `state.sh` died at its
+first call. Fixed in `scripts/bybit.py`: `X-BAPI-TIMESTAMP` is now anchored to the exchange
+clock (offset measured once per process off the public `/v5/market/time`, re-measured on a
+10002). Verified working before any trading action was taken. No trading rule touched.
+
+**STEP A — state & reconcile.** EQUITY $200.00 (budget) | FREE $178.53 | DEPLOYED $21.47 =
+10.7% (ceiling 50%). OPEN POSITIONS 2, both TACTICAL, both age 66.9h. Exchange state matches
+the TRADE-LOG tail exactly — same two fills, same two resting stops, nothing filled or
+closed since 09-18T20:29, no drift. Dust (ARB $0.0017 etc) is residue, not a position.
+
+| Symbol | Qty held | Entry | Price | P&L | Stop coverage |
+|---|---|---|---|---|---|
+| OPUSDT | 84.895020 | 0.11764 | 0.1275 | +8.40% | 100% [OK] |
+| POLUSDT | 93.006900 | 0.10708 | 0.1132 | +5.72% | 100% [OK] |
+
+**72h time stop — NOT due.** Both at 66.9h of 72h but the rule is "72h unless >= +5%", and
+both clear it (+8.40%, +5.72%). Neither closed for age. Handoff note for 18:07 execute: if
+either slips below +5% before ~20:07 the time stop re-arms.
+
+**No hard cut.** Both positions positive; nothing near the -10% TACTICAL cut level.
+
+Circuit breaker CLEAR ($0.00 realized today, 0 consecutive losing closes, last loss
+2026-09-15). Fee budget $0.52 / $8.00, headroom $7.48 — no fee-bearing order this run.
+
+**RATCHET — both stops moved UP.** High-water taken from 68 hourly bars since the
+09-18T20:07 fills: OP 0.13315, POL 0.11460. TACTICAL trail is 10% below high-water,
+ratcheted up only. Both stops were stale at the 09-18 levels. Amended in place
+(`bybit.py amend`, one call each — no cancel/replace, so no unprotected window):
+
+| Symbol | High-water | Stop was | Stop now | Limit now | Move |
+|---|---|---|---|---|---|
+| OPUSDT | 0.13315 | 0.10660 | 0.11983 | 0.11384 | +12.4% |
+| POLUSDT | 0.11460 | 0.09682 | 0.10314 | 0.09798 | +6.5% |
+
+Verified resting `Untriggered` at 100% of held qty after the amend. Limits sit 5% below
+trigger. Neither stop widened, neither moved down. Gap to current price 6.0% (OP) and 8.9%
+(POL), both clear of the 5%-minimum rule.
+
+**Trail is 10%, NOT 8% — again.** `state.sh`'s advisory SCAN GATE printed both ratchets
+against an 8% trail (`8% trail on $0.1275 = $0.1173`). Wrong here: 8% applies only at
+>= +20%, and entry-to-high-water is +13.2% (OP) and +7.0% (POL). Obeying it would have set
+both stops ~2% tighter than the rulebook allows, against the CONFIRMED verdict that tighter
+stops are strictly worse. The gate is SHADOW MODE and was not obeyed. This is the identical
+defect the 09-18 run logged; it is still present.
+
+**No entry this run.** Research runs do not originate entries. CORE: HOLD, binding for the
+day — no dated idiosyncratic catalyst on any of the 28 CORE-shortlist names, and the only
+two dated events (XPL 09-25 unlock at 63.2% of float, ARB 09-23) are bearish supply
+releases on names that pass. TACTICAL: quota is **0/2 for today with one window left
+(18:07)** — the ranked shortlist was handed to execute in RESEARCH-LOG.md
+(BR, LTC, CHIP, SUI, MNT, PIEVERSE, ADA, HBAR; XPL/ARB/BTC/STETH/POL excluded and why).
+
+**STEP LEARN — no position closed this run**, so no `LESSON:` line is owed.
+
+**Net:** unchanged at 2 TACTICAL positions, $21.47 deployed = 10.7% of budget, both stops
+ratcheted up to a correct 10%-of-high-water trail at 100% coverage. 4 TACTICAL slots free,
+CORE slot empty. Fees this run $0.00.
+
+### ADDENDUM 2026-09-21T15:10 UTC — an execute run landed DURING this research run
+
+Everything above was written against a 2-position account. While this run was between
+STEP C and STEP D, a concurrent `execute` run (commit `53bf98b`, "execute 2026-09-21T15:05
+— 2 TACTICAL entries (ARB, XPL), quota 2/2") opened **two new TACTICAL positions and met
+the daily quota**. The account is now 4 positions, not 2. The TACTICAL handoff above is
+therefore SPENT — the 18:07 window no longer needs to fill a quota, it reads 2/2.
+
+Re-read of `state.sh` after the fact:
+
+| Symbol | Qty | Entry | Price | P&L | Age | Stop | Coverage |
+|---|---|---|---|---|---|---|---|
+| ARB | 42.424653 | 0.2381 | 0.2371 | -0.44% | 0.1h | 0.2143 | 100% [OK] |
+| OP | 84.895020 | 0.11764 | 0.1279 | +8.70% | 67.0h | 0.11983 | 100% [OK] |
+| POL | 93.006900 | 0.10708 | 0.1136 | +6.12% | 67.0h | 0.10314 | 100% [OK] |
+| XPL | 97.502400 | 0.1023 | 0.1016 | -0.65% | 0.1h | 0.0922 | 100% [OK] |
+
+FREE $158.51 | DEPLOYED $41.49 = 20.7% of budget (ceiling 50%). **No position is naked**;
+all four carry a single resting conditional stop at 100% of held qty. My two ratchets on
+OP and POL survived the concurrent run intact. Nothing here is a safety problem.
+
+**But the two names it bought are the exact two this run disqualified, for a documented
+reason.** ARB and XPL were the ONLY two shortlist names carrying dated events, both
+bearish supply releases, and both were excluded from the ranked handoff above:
+
+- **XPL unlocks 63.2% of circulating supply on 2026-09-25 (~$158M)** — four days out, the
+  single largest scheduled event on the entire board.
+- **ARB unlocked 139.15M tokens on 2026-09-23** — two days out.
+
+This is not the execute run breaking a rule. Under the 2026-09-18 owner directive TACTICAL
+"needs NO catalyst — the technical screen is the thesis", and both names PASS the tactical
+screen, so the entries are compliant. The defect is structural: **nothing in the tactical
+path ever looks at the unlock calendar.** Research checks catalysts but does not enter;
+execute enters but is explicitly relieved of checking. A dated, known, bearish supply event
+on a held name can therefore be found by one run and bought by another on the same day.
+Logged to OBSERVATIONS.md — it needs a rule, not a one-off intervention.
+
+**No corrective trade taken, deliberately.** Both positions are ~$10 with a 10% stop, so
+the defined risk is ~$1.00 each against a $10.00 daily breaker — immaterial. Closing them
+would burn ~0.65% round-trip in real fees to override a compliant decision by another run
+on the basis of a story, against the CONFIRMED verdict that higher frequency is strictly
+worse. The stops are the right instrument here and they are in place. Flagged, not traded.
+
+**Handoff to the 18:07 execute run and to the weekly review:**
+- Quota is MET (2/2). Do not add a third entry to satisfy a floor that is already satisfied.
+- **XPL: the unlock is 09-25.** The stop at 0.0922 is the protection; verify it still rests
+  at 100% on every run between now and then, and do not widen it. A 63%-of-float event can
+  gap straight through a 5%-wide stop-limit band — that risk is accepted and stated, not
+  hedged.
+- ARB's unlock is 09-23, inside the 72h time-stop window for a position opened 09-21T15:05.
+- The two SHADOW-LOG rows written earlier this run for ARB and XPL ("not taken") were true
+  when written and were overtaken ~minutes later. Per the append-only rule they are left
+  standing rather than edited; the weekly review should treat both as TAKEN, not skipped,
+  when it scores the 09-21 cohort on 09-26.

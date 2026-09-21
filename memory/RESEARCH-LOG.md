@@ -1214,3 +1214,235 @@ buy-and-hold, the benchmark, pays 0%.
 **Shadow log:** 77 rows appended (38 CORE + 39 TACTICAL passes, all skipped), priced from
 this screen run. Nothing scored — the oldest unscored rows are 2026-09-16, two days old,
 below the 5-day scoring window.
+
+---
+
+## 2026-09-21 (Sun) — research
+
+**NOTE — LATE RUN.** Scheduled 06:07 UTC, actually executed 15:02 UTC (broker clock).
+No research run happened on 09-19 or 09-20; the last entry in this file is 09-18. Those
+two days had no plan, so no CORE entry was possible on either.
+
+**BLOCKER FOUND AND CLEARED (infrastructure, not strategy).** Every signed Bybit call
+failed `retCode 10002` on the first attempt of this run. Cause: this machine's clock runs
+**~2.3s AHEAD** of Bybit's server, and Bybit rejects any signed request timestamped more
+than ~1s ahead of its own clock — `recv_window` does not widen that side, so all three
+retries failed identically and `state.sh` died at its first call. Fixed in
+`scripts/bybit.py` by anchoring `X-BAPI-TIMESTAMP` to the exchange clock (offset measured
+once per process against the public `/v5/market/time`, re-measured on a 10002). Private
+calls verified working afterwards. This is exactly the failure mode `state.sh` warns about
+with "[local clock is NOT trusted]" — the wrapper was trusting it anyway.
+
+**Account snapshot (STEP A, from `scripts/state.sh`):**
+- EQUITY $200.00 (budget cap; account holds $179,049.62 — NOT tradeable)
+- FREE $178.53 | DEPLOYED $21.47 = **10.7%** of budget (ceiling 50%, no floor)
+- OPEN POSITIONS 2, both TACTICAL, both age 66.9h, both **stop coverage 100% [OK]**
+- Sizes now: CORE $26.67 (risk $4.00) | TACTICAL $10.00 (risk $1.00)
+
+| Symbol | Qty | Entry | Price | P&L | Age | Stop |
+|---|---|---|---|---|---|---|
+| OP | 84.895020 | 0.11764 | 0.1275 | **+8.40%** | 66.9h | 100% [OK] |
+| POL | 93.006900 | 0.10708 | 0.1132 | **+5.72%** | 66.9h | 100% [OK] |
+
+**RECONCILE:** exchange state matches the TRADE-LOG tail exactly — same two fills, same two
+resting stops, nothing filled or closed since 09-18T20:29. No drift. Dust balances (ARB
+$0.0017, others sub-cent) are residue, not positions.
+
+**72h TACTICAL time stop — NOT due, both exempt.** Both are at 66.9h of 72h, but the rule
+is "72h unless >= +5%" and both clear it (+8.40%, +5.72%). Neither is closed for age.
+Flagged for the 18:07 execute run: if either falls back below +5% before ~20:07 the time
+stop becomes live.
+
+**RATCHET — both stops moved UP** (amended in place, no cancel/replace, so no unprotected
+window). High-water from 68 hourly bars since the 09-18T20:07 fills:
+
+| Symbol | High-water | Stop was | Stop now | Limit now | Gap to price |
+|---|---|---|---|---|---|
+| OP | 0.13315 | 0.10660 | **0.11983** | 0.11384 | 6.0% |
+| POL | 0.11460 | 0.09682 | **0.10314** | 0.09798 | 8.9% |
+
+Trail is **10%, not 8%**: OP is +13.2% and POL +7.0% measured entry-to-high-water, both
+below the +20% that triggers the 8% tighten. `state.sh`'s advisory SCAN GATE again printed
+both ratchets against an 8% trail — the identical defect the 09-18 run caught and logged.
+It is SHADOW MODE and was not obeyed. Limits sit 5% below trigger; neither stop was widened
+or moved down; both clear the 5%-minimum-gap rule. Verified `Untriggered` at 100% of held
+qty after the amend.
+
+**Market context:**
+- BTC ~$85,991 (screen), ~+2.7%/7p. Trading above every major MA and outside the upper
+  Bollinger on multiple timeframes; daily RSI14 71.6, hourly 84.8 — **overbought on both**.
+- BTC dominance **59.1%**, total cap ~$2.88T. Down from >60% a week ago but still high.
+- ETH ~$2,742, +1.7%/7p — lagging BTC badly on the 7-period read.
+- ETF flows: BTC spot ETFs took a small net inflow (~$6.2M) in the week to 09-18, with a
+  ~$433M single-day inflow on the Friday. ETH ETFs positive but smaller. Flow is going to
+  the benchmark, not to what this account can buy.
+- Macro: Sept dot plot centres on 4.00-4.50% through 2027; no cuts priced for 2026. DXY
+  99.36. The 10y real yield at 2.5% is the flagged break-level for the bitcoin case.
+- Perplexity unavailable (`PERPLEXITY_API_KEY` not set, exit 0 with warning) — **fell back
+  to native WebSearch** for all of STEP B, as the routine directs.
+
+**Narratives — leading vs rolling over:**
+- LEADING: nothing idiosyncratic. The 7p table is a near-uniform beta melt-up — 57 of 60
+  pairs positive on 7p, the top decile (BR +126.8%, ZAMA +112.1%, ARB +75.6%, ZETA +73.9%,
+  NEAR +66.3%) is dispersion around one market move, not sector leadership.
+- The breadth itself is the signal: when everything is up 20-70% in a week, a screen PASS
+  carries almost no selection information.
+- ROLLING OVER: nothing cleanly. STRK (-9.2%/7p on the hourly read), ZETA (-10.0%),
+  VVV (-6.7%) are the only weak names.
+
+**Screen (STEP C, `scripts/screen.sh`, 60 pairs):**
+- **CORE SHORTLIST (28):** FET ZRO XPL LTC HBAR ADA POL HYPE DOGE SOL WLD CHIP LIT AAVE
+  LINK MNT BNB XLM BTC STETH ETH ICP ASTER XRP DATA KII TRX FLOCK
+  Top by daily 7p among passes: FET +24.2%, ZRO +23.2%, XPL +22.3%.
+  Note the shape — every one of the 20 biggest 7p movers **FAILS** CORE. The daily screen
+  is rejecting the extended names, which is it working as designed.
+- **TACTICAL SHORTLIST (43):** ARB XPL BR LTC CHIP SUI MNT PIEVERSE ADA HBAR SEI MON SOL
+  POL BTC BNB AAVE TRUMP ZAMA XLM GRAM XRP AERO ETH LINK ONDO STETH CRV KMNO APT ENA ASTER
+  ZRO AVAX LIT FLOCK CAP CC ICP DATA JTO UNI INJ
+  Top by hourly 7p: ARB +8.3%, XPL +7.3%, BR +7.0%, LTC +6.4%.
+
+**Dated catalysts found (all supply-side, all bearish):**
+- **XPL — 09-25, 63.2% of circulating supply unlocked, ~$158M.** This is the single
+  largest scheduled event on the board and XPL passes BOTH screens. Disqualified.
+- ARB — 09-23 unlock (139.15M tokens), on both shortlists. Disqualified.
+- Elsewhere this week: 0G (~$5.72M) and SENT (~$5.31M) 09-22, SOON (~$3.77M) 09-23,
+  SOSO (~$7.44M) 09-24, H (~$19.2M) 09-25 — none in the tradeable universe.
+- ~$900M of total unlock supply hits the market this week.
+
+**Ideas, tagged by sleeve:**
+- **CORE — NONE ADVANCED.** No shortlist name carries a dated, idiosyncratic catalyst. The
+  two names that DO have dated events (XPL, ARB) both have bearish ones. Had one cleared,
+  size would have been $26.67, stop 15% below entry, no target. Rejected before sizing, so
+  no R:R computed.
+- **TACTICAL — ranked shortlist handed to execute** (this run does not originate entries).
+  Excluded from the ranking: XPL and ARB (dated unlocks), BTC (the benchmark — paying
+  0.65% round-trip to track what buy-and-hold gets for 0%), STETH (duplicate ETH
+  exposure), POL (already held). Ranked by hourly 7p among what remains:
+  **1. BR  2. LTC  3. CHIP  4. SUI  5. MNT  6. PIEVERSE  7. ADA  8. HBAR**
+  Size $10.00 each, stop 10% below entry (entry is the first high-water mark), limit at
+  trigger*0.95, no target. R:R after the measured 0.65% round-trip friction is **unbounded
+  on the upside by construction** — the trail is the only exit, so there is no fixed target
+  to price a ratio against; the defined side is the ~10.65% all-in downside.
+  CAVEAT the execute run should read: BR is +126.8% on 7 daily periods and +412.7% on 30.
+  It tops the tactical list on the hourly screen while failing the daily one outright. It
+  is the highest-variance name on the board, not the best one.
+
+**EVIDENCE CHECK (STEP EVIDENCE):** Read the STANDING VERDICTS table before forming this
+view. Nothing here rests on a REJECTED finding. Binding and relevant:
+- The altcoin universe has a **CONFIRMED negative median** (-21.2% vs BTC +157.4% over
+  5.7y) and every pair this account can buy is an alt.
+- **Nothing tested beats buy-and-hold BTC** (best variant +27.3% vs BTC +157.4%).
+- **Higher frequency is strictly worse** (-49.4% even at zero fees) and **tighter stops are
+  strictly worse** (-44.8% -> -5.8% as the trail widens to none). Directly applied above in
+  rejecting the SCAN GATE's 8% figure.
+- Momentum is inverted at <=1d (IC@1d -0.012) but **positive at 30d** (IC@30d +0.025) —
+  the 09-16 correction. Today's board sits squarely in the inverted window: the biggest 7p
+  movers are what the CORE screen rejects, and chasing them trades the horizon where the
+  measured IC is negative. This run does not argue the measured IC is wrong.
+- Hypothesis #6 (1 CORE slot, PROMOTED 09-18) states its own mechanism honestly: the
+  preference for fewer slots is monotone and extrapolates toward zero exposure, so it is
+  "hold less of a universe with no long edge", NOT evidence of a long edge. It does not
+  argue for filling the single CORE slot.
+
+**SHADOW LOG — first scored cohort, and it argues AGAINST the gate.** The 13 rows from
+2026-09-16 hit T+5d today and were scored. **Every single one rose.** Median +21.9%,
+range +13.3% to +54.4%. Nine of twelve distinct names beat BTC's +13.3% over the same
+window. The two rejected for bearish unlocks did best of all (ARB +54.4%, and XTZ +41.2%).
+Read honestly: this is ONE five-day window inside a market-wide melt-up where 57 of 60
+pairs are green, so it measures the regime far more than it measures the gate — a random
+pick would also have been up. It is not evidence of skill in the skips and it is not a
+reason to loosen anything today. It IS the first real datapoint that the entry gate's
+rejections are expensive in a rising tape, and the weekly review should look at it against
+the 09-17 and 09-18 cohorts when those score (09-22 and 09-23). Logged, not acted on.
+
+**Risk factors:**
+- BTC overbought on both daily (RSI 71.6) and hourly (84.8) and outside the upper Bollinger
+  — the two open TACTICAL positions are long alt beta into that.
+- Dominance 59.1% with the alt-season index depressed: the CONFIRMED negative alt median is
+  the active regime, and both holdings are alts.
+- ~$900M of unlock supply this week, including XPL's 63.2%-of-float event on 09-25 — a
+  name that PASSES both screens. A screen pass is not a safety check for supply events.
+- Both holdings are 66.9h old against a 72h time stop, exempt only by being >= +5%. A
+  modest pullback in either re-arms the time stop mid-window with no run watching.
+- Breadth this extreme (57/60 green) means screen passes carry near-zero selection
+  information right now.
+- No cuts priced for 2026 and DXY ~99.4; the macro tailwind that drove this bounce is
+  priced, not pending.
+
+**Decision:**
+- **CORE: HOLD — binding for the day.** No name clears the dated-idiosyncratic-catalyst
+  bar; the only dated events on shortlisted names are bearish supply releases. 59.1%
+  dominance in a confirmed negative-median alt universe is the wrong regime to spend the
+  single CORE slot.
+- **TACTICAL: recommendation only, NOT a stand-down.** Quota is **0/2 for 2026-09-21 with
+  one entry window left (18:07)**. The execute run MUST fill it from the ranked list above
+  (or from its own fresh screen) — no catalyst is required, the technical screen is the
+  thesis, and 'patience' / 'no conviction' are CORE arguments that do not excuse a
+  TACTICAL miss. Only the 8 hard safety gates do. Budget, breaker and slots are all clear:
+  4 TACTICAL slots free, $178.53 cash, deployment would go to ~21% against a 50% ceiling.
+- Cash is a position; this run does not buy to correct deployment, and did not buy at all.
+
+**Fee budget:** **$0.52 / $8.00** used this MONTH (headroom $7.48), month started
+2026-09-01. Two ratchet amends this run cost $0.00 — amends are not fee-bearing. The budget
+is a CEILING, not a target; BTC buy-and-hold, the benchmark, pays 0%.
+
+**Circuit breaker:** CLEAR. $0.00 realized today vs the $10.00 limit; 0 consecutive losing
+closes; most recent loss closed 2026-09-15.
+
+**Shadow log:** 69 rows appended (27 CORE + 42 TACTICAL passes, all skipped), priced from
+this screen run; 13 rows from 09-16 scored. Next cohort to score: 09-17 (30 rows) on 09-22.
+
+### ADDENDUM 2026-09-21T15:10 UTC — an execute run landed DURING this research run
+
+Everything above was written against a 2-position account. While this run was between
+STEP C and STEP D, a concurrent `execute` run (commit `53bf98b`, "execute 2026-09-21T15:05
+— 2 TACTICAL entries (ARB, XPL), quota 2/2") opened **two new TACTICAL positions and met
+the daily quota**. The account is now 4 positions, not 2. The TACTICAL handoff above is
+therefore SPENT — the 18:07 window no longer needs to fill a quota, it reads 2/2.
+
+Re-read of `state.sh` after the fact:
+
+| Symbol | Qty | Entry | Price | P&L | Age | Stop | Coverage |
+|---|---|---|---|---|---|---|---|
+| ARB | 42.424653 | 0.2381 | 0.2371 | -0.44% | 0.1h | 0.2143 | 100% [OK] |
+| OP | 84.895020 | 0.11764 | 0.1279 | +8.70% | 67.0h | 0.11983 | 100% [OK] |
+| POL | 93.006900 | 0.10708 | 0.1136 | +6.12% | 67.0h | 0.10314 | 100% [OK] |
+| XPL | 97.502400 | 0.1023 | 0.1016 | -0.65% | 0.1h | 0.0922 | 100% [OK] |
+
+FREE $158.51 | DEPLOYED $41.49 = 20.7% of budget (ceiling 50%). **No position is naked**;
+all four carry a single resting conditional stop at 100% of held qty. My two ratchets on
+OP and POL survived the concurrent run intact. Nothing here is a safety problem.
+
+**But the two names it bought are the exact two this run disqualified, for a documented
+reason.** ARB and XPL were the ONLY two shortlist names carrying dated events, both
+bearish supply releases, and both were excluded from the ranked handoff above:
+
+- **XPL unlocks 63.2% of circulating supply on 2026-09-25 (~$158M)** — four days out, the
+  single largest scheduled event on the entire board.
+- **ARB unlocked 139.15M tokens on 2026-09-23** — two days out.
+
+This is not the execute run breaking a rule. Under the 2026-09-18 owner directive TACTICAL
+"needs NO catalyst — the technical screen is the thesis", and both names PASS the tactical
+screen, so the entries are compliant. The defect is structural: **nothing in the tactical
+path ever looks at the unlock calendar.** Research checks catalysts but does not enter;
+execute enters but is explicitly relieved of checking. A dated, known, bearish supply event
+on a held name can therefore be found by one run and bought by another on the same day.
+Logged to OBSERVATIONS.md — it needs a rule, not a one-off intervention.
+
+**No corrective trade taken, deliberately.** Both positions are ~$10 with a 10% stop, so
+the defined risk is ~$1.00 each against a $10.00 daily breaker — immaterial. Closing them
+would burn ~0.65% round-trip in real fees to override a compliant decision by another run
+on the basis of a story, against the CONFIRMED verdict that higher frequency is strictly
+worse. The stops are the right instrument here and they are in place. Flagged, not traded.
+
+**Handoff to the 18:07 execute run and to the weekly review:**
+- Quota is MET (2/2). Do not add a third entry to satisfy a floor that is already satisfied.
+- **XPL: the unlock is 09-25.** The stop at 0.0922 is the protection; verify it still rests
+  at 100% on every run between now and then, and do not widen it. A 63%-of-float event can
+  gap straight through a 5%-wide stop-limit band — that risk is accepted and stated, not
+  hedged.
+- ARB's unlock is 09-23, inside the 72h time-stop window for a position opened 09-21T15:05.
+- The two SHADOW-LOG rows written earlier this run for ARB and XPL ("not taken") were true
+  when written and were overtaken ~minutes later. Per the append-only rule they are left
+  standing rather than edited; the weekly review should treat both as TAKEN, not skipped,
+  when it scores the 09-21 cohort on 09-26.
