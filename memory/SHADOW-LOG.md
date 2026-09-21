@@ -24,19 +24,19 @@ RULES
 
 | date (UTC) | pair | sleeve | screen px | reason not taken | T+5d % | MFE % | scored |
 |---|---|---|---|---|---|---|---|
-| 2026-09-16 | UNI | CORE | 6.3393 | catalyst stale (~8d old, fee-switch burn), already priced +93%/30d, DeFi narrative has 1 tactical loss (UNI itself, 09-15) | | | |
-| 2026-09-16 | ARB | CORE | 0.1538 | same-day token unlock (~$13M, 0.93% supply) is a bearish overhang | | | |
-| 2026-09-16 | FIL | CORE | 0.8126 | no confirmed catalyst, momentum/speculation only | | | |
-| 2026-09-16 | XTZ | CORE | 0.2448 | catalysts (X mainnet, Etherlink 7.0) undated/ongoing | | | |
-| 2026-09-16 | ARB | TACTICAL | 0.1538 | same-day token unlock (~$13M, 0.93% supply) is a bearish overhang | | | |
-| 2026-09-16 | XRP | TACTICAL | 1.2944 | catalyst (CLARITY cloture) already failed 09-15, caused this week's tactical stop-out | | | |
-| 2026-09-16 | DOT | TACTICAL | 0.9508 | no catalyst found; L1/L2 narrative already has 1 tactical loss (09-14) | | | |
-| 2026-09-16 | WIF | TACTICAL | 0.1792 | meme narrative rolling over, no dated catalyst | | | |
-| 2026-09-16 | BTC | TACTICAL | 75943.8655 | shared FOMC/macro catalyst only, not idiosyncratic | | | |
-| 2026-09-16 | HYPE | TACTICAL | 77.2080 | unlock already happened Sept 6, priced in, no fresh trigger | | | |
-| 2026-09-16 | SOL | TACTICAL | 97.1300 | no dated catalyst found | | | |
-| 2026-09-16 | ETH | TACTICAL | 2403.9500 | shared FOMC/ETF-flow catalyst only; already the account's CORE exposure, would concentrate risk | | | |
-| 2026-09-16 | DOGE | TACTICAL | 0.0801 | meme narrative rolling over, no dated catalyst | | | |
+| 2026-09-16 | UNI | CORE | 6.3393 | catalyst stale (~8d old, fee-switch burn), already priced +93%/30d, DeFi narrative has 1 tactical loss (UNI itself, 09-15) | +39.8 | +39.9 | yes |
+| 2026-09-16 | ARB | CORE | 0.1538 | same-day token unlock (~$13M, 0.93% supply) is a bearish overhang | +54.4 | +54.4 | yes |
+| 2026-09-16 | FIL | CORE | 0.8126 | no confirmed catalyst, momentum/speculation only | +20.5 | +20.5 | yes |
+| 2026-09-16 | XTZ | CORE | 0.2448 | catalysts (X mainnet, Etherlink 7.0) undated/ongoing | +41.2 | +49.9 | yes |
+| 2026-09-16 | ARB | TACTICAL | 0.1538 | same-day token unlock (~$13M, 0.93% supply) is a bearish overhang | +54.4 | +54.4 | yes |
+| 2026-09-16 | XRP | TACTICAL | 1.2944 | catalyst (CLARITY cloture) already failed 09-15, caused this week's tactical stop-out | +15.9 | +15.9 | yes |
+| 2026-09-16 | DOT | TACTICAL | 0.9508 | no catalyst found; L1/L2 narrative already has 1 tactical loss (09-14) | +24.7 | +24.7 | yes |
+| 2026-09-16 | WIF | TACTICAL | 0.1792 | meme narrative rolling over, no dated catalyst | +38.0 | +38.0 | yes |
+| 2026-09-16 | BTC | TACTICAL | 75943.8655 | shared FOMC/macro catalyst only, not idiosyncratic | +13.3 | +13.3 | yes |
+| 2026-09-16 | HYPE | TACTICAL | 77.2080 | unlock already happened Sept 6, priced in, no fresh trigger | +21.8 | +21.8 | yes |
+| 2026-09-16 | SOL | TACTICAL | 97.1300 | no dated catalyst found | +21.9 | +21.9 | yes |
+| 2026-09-16 | ETH | TACTICAL | 2403.9500 | shared FOMC/ETF-flow catalyst only; already the account's CORE exposure, would concentrate risk | +14.0 | +14.0 | yes |
+| 2026-09-16 | DOGE | TACTICAL | 0.0801 | meme narrative rolling over, no dated catalyst | +21.0 | +21.0 | yes |
 | 2026-09-17 | ONDO | CORE | 0.3748 | closest CORE name (RWA/SEC roundtable 09-17) but catalyst undated and sector-shared, not idiosyncratic | | | |
 | 2026-09-17 | AAVE | CORE | 129.1600 | no dated catalyst; DeFi narrative not bid under >60% dominance | | | |
 | 2026-09-17 | FET | CORE | 0.1693 | AI narrative present but no dated idiosyncratic catalyst | | | |
@@ -144,3 +144,72 @@ RULES
 | 2026-09-18 | GRAM | TACTICAL | 1.3800 | no dated idiosyncratic catalyst | | | |
 | 2026-09-18 | CRV | TACTICAL | 0.3422 | no dated idiosyncratic catalyst | | | |
 | 2026-09-18 | KII | TACTICAL | 0.0820 | no dated catalyst; spread 0.35% — widest on the board | | | |
+| 2026-09-21 | FET | CORE | 0.2019 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | ZRO | CORE | 1.2172 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | XPL | CORE | 0.1021 | XPL unlock 09-25 = 63.2% of circulating supply (~$158M) — largest bearish supply event on the board | | | |
+| 2026-09-21 | LTC | CORE | 62.8200 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | HBAR | CORE | 0.0916 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | ADA | CORE | 0.2445 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | HYPE | CORE | 93.9500 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | SOL | CORE | 118.3700 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | WLD | CORE | 0.4446 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | DOGE | CORE | 0.0964 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | LIT | CORE | 4.9950 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | CHIP | CORE | 0.0475 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | AAVE | CORE | 145.4900 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | LINK | CORE | 13.0490 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | MNT | CORE | 0.6397 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | BNB | CORE | 799.5000 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | BTC | CORE | 86011.8000 | benchmark itself, not an alpha candidate; buying BTC spot pays fees to track what buy-and-hold gets for 0% | | | |
+| 2026-09-21 | XLM | CORE | 0.2099 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | STETH | CORE | 2739.6700 | wrapped/staked ETH proxy — duplicate exposure to ETH, no independent thesis | | | |
+| 2026-09-21 | ETH | CORE | 2739.9400 | shared ETF-flow catalyst only, not idiosyncratic | | | |
+| 2026-09-21 | ASTER | CORE | 0.7611 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | ICP | CORE | 2.9700 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | XRP | CORE | 1.4986 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | DATA | CORE | 0.2004 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | KII | CORE | 0.0813 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | TRX | CORE | 0.3448 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | FLOCK | CORE | 0.0716 | CORE HOLD binding for the day — no dated idiosyncratic catalyst; 1 CORE slot and 59.1% dominance is the worst regime to add alt beta | | | |
+| 2026-09-21 | ARB | TACTICAL | 0.2369 | ARB carries the 09-23 unlock (139.15M tokens); also the top-decile 7p mover, the horizon where measured IC is negative | | | |
+| 2026-09-21 | XPL | TACTICAL | 0.1021 | XPL unlock 09-25 = 63.2% of circulating supply (~$158M) — largest bearish supply event on the board | | | |
+| 2026-09-21 | BR | TACTICAL | 1.2083 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | LTC | TACTICAL | 62.8200 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | DOGE | TACTICAL | 0.0964 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | FET | TACTICAL | 0.2019 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | CHIP | TACTICAL | 0.0475 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | MNT | TACTICAL | 0.6397 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | SEI | TACTICAL | 0.0596 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | HBAR | TACTICAL | 0.0916 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | PIEVERSE | TACTICAL | 1.8459 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | MON | TACTICAL | 0.0261 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | ADA | TACTICAL | 0.2445 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | ZAMA | TACTICAL | 0.0995 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | AAVE | TACTICAL | 145.4900 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | BTC | TACTICAL | 86011.8000 | benchmark itself, not an alpha candidate; buying BTC spot pays fees to track what buy-and-hold gets for 0% | | | |
+| 2026-09-21 | SOL | TACTICAL | 118.3700 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | BNB | TACTICAL | 799.5000 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | TRUMP | TACTICAL | 2.1740 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | LINK | TACTICAL | 13.0490 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | GRAM | TACTICAL | 1.4380 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | ETH | TACTICAL | 2739.9400 | shared ETF-flow catalyst only, not idiosyncratic | | | |
+| 2026-09-21 | AERO | TACTICAL | 0.6893 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | STETH | TACTICAL | 2739.6700 | wrapped/staked ETH proxy — duplicate exposure to ETH, no independent thesis | | | |
+| 2026-09-21 | XRP | TACTICAL | 1.4986 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | ONDO | TACTICAL | 0.4477 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | CRV | TACTICAL | 0.3585 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | XLM | TACTICAL | 0.2099 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | APT | TACTICAL | 0.7816 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | ZRO | TACTICAL | 1.2172 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | ENA | TACTICAL | 0.2216 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | ASTER | TACTICAL | 0.7611 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | LIT | TACTICAL | 4.9950 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | FLOCK | TACTICAL | 0.0716 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | JTO | TACTICAL | 0.5140 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | UNI | TACTICAL | 8.8820 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | AVAX | TACTICAL | 11.1750 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | CAP | TACTICAL | 0.0457 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | INJ | TACTICAL | 7.8210 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | DATA | TACTICAL | 0.2004 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | CC | TACTICAL | 0.1156 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | ICP | TACTICAL | 2.9700 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |

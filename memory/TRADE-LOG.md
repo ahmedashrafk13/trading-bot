@@ -1670,3 +1670,87 @@ no stop cancelled, widened or moved down, no target leg anywhere.
 **Net:** unchanged at 2 TACTICAL positions, $20.15 deployed = 10.1% of budget, both stops
 tightened to a correct 10%-of-high-water trail and resting at 100% coverage. 4 TACTICAL
 slots free, CORE slot empty. Fees this run $0.00.
+
+---
+
+### 2026-09-21T15:05 UTC — ENTRY — TACTICAL — ARB BUY
+
+### 2026-09-21T15:05 UTC — ENTRY — TACTICAL — XPL BUY
+
+| UTC | Sleeve | Symbol | Side | Qty | Fill | Value | Fee | Stop (trigger/limit) | Target |
+|---|---|---|---|---|---|---|---|---|---|
+| 2026-09-21T15:05 | TACTICAL | ARB | Buy | 42.46 | 0.2381 | $10.11 | 0.04246 ARB | 0.21429 / 0.20357 | none (v2) |
+| 2026-09-21T15:05 | TACTICAL | XPL | Buy | 97.6 | 0.10231 | $9.99 | 0.0976 XPL | 0.09216 / 0.08755 | none (v2) |
+
+**STEP A — state & reconcile.** BLOCKED AT FIRST CALL, then repaired. Every private API
+call failed `retCode 10002` (timestamp). Measured against `/v5/market/time`: this machine's
+clock runs **+2.34s ahead** of Bybit. `recv_window` does not widen the ahead-side of the
+window (Bybit rejects `req_timestamp > server_time + 1000ms` regardless), so the existing
+retry-on-10002 could never succeed — it just re-sent an equally-skewed timestamp. Patched
+`scripts/bybit.py` to sign with the exchange's clock (one-shot offset probe, biased 1s early
+for flight time) instead of the local one. All calls then succeeded. Logged to OBSERVATIONS.
+
+Reconcile: `holdings` = OP + POL, matching TRADE-LOG. No fills since 2026-09-18T20:10, so
+nothing closed while the machine was off and no unlogged trade exists. Both stops present,
+`Untriggered`, at 100% of held qty.
+
+**72h time stop:** OP and POL both at 66.9h — under 72h, and both are >= +5% anyway
+(OP +8.6%, POL +5.5%), so both are exempt and keep riding the trail. No slot freed.
+
+**Ratchets applied** (both TACTICAL, 10% trail — neither has reached +20%, so the 8% tighten
+does NOT apply; the SHADOW-MODE scan gate again suggested 8% and was again correctly ignored):
+- OP: high-water $0.13315 -> stop $0.10660 -> **$0.11983** / limit $0.11383 (5.96% below spot)
+- POL: high-water $0.11460 -> stop $0.09682 -> **$0.10314** / limit $0.09798 (8.9% below spot)
+Both amended in place rather than cancel-and-replace, so protection was never interrupted.
+
+**STEP B — evidence.** No RESEARCH-LOG entry exists for 2026-09-19, -20 or -21 (latest is
+2026-09-18). **CORE is therefore blocked by rule** — CORE entries require the morning plan.
+TACTICAL requires no catalyst and may be originated here. Standing verdicts unchanged;
+nothing below rests on a REJECTED finding. Both entries are trend entries on a 10% trail
+with a 72h time stop, not a claim of edge — consistent with, not contradicting, the
+CONFIRMED verdict that nothing tested beats buy-and-hold BTC.
+
+**STEP D0 — QUOTA: 0/2 entries today (2026-09-21), and this is the last entry window ->
+BACKSTOP ACTIVE, must fill 2.** Worked the TACTICAL shortlist in RANK ORDER: ARB (#1),
+XPL (#2). No judgement substituted for rank. ARB carries a dated 09-23 token unlock noted in
+the 09-18 research run; that is NOT one of the 8 hard gates and "bearish catalyst" is not a
+valid quota miss, so rank order governed and ARB was taken. Flagged here for the next run,
+since the unlock lands inside ARB's 72h window.
+
+**STEP D — BUY GATE (each condition, both names):**
+1. `"category":"spot"` present in both bodies — yes. Market Buy, no leverage, long only.
+2. Positions after fill: 4 TACTICAL <= 6; combined 4 <= 7. PASS.
+3. Deployment after fill: $21.50 + $20.10 = $41.60 = 20.8% of $200 budget <= 50%. PASS.
+4. Size = ($200 * 0.5%) / 10% trail = $10.00; cap 8% = $16.00 -> $10.00 each. Risk-derived,
+   not a fixed dollar amount. PASS.
+5. Order value $10.11 / $9.99 >= `minOrderAmt` $5 for both. PASS.
+6. Spread ARB 0.068%, XPL 0.068% — both <= 0.5%. PASS.
+7. Circuit breaker: realized losses today $0.00 vs $10.00 limit; 0 consecutive losses today
+   (most recent loss closed 2026-09-15). Not tripped. PASS.
+8. Fee budget: $0.52 of $8.00 used this month, headroom $7.48. Not exhausted. PASS.
+9. Catalyst: TACTICAL requires none — the screen IS the thesis. Recorded below.
+
+**Screen evidence at entry** (TACTICAL shortlist of 43, ranked by 7-period move):
+- ARB — rank 1. 7p +7.8%, 30p +10.1%, +5.4% vs SMA20, vol 2.9%, spread 0.09%.
+- XPL — rank 2. 7p +6.8%, 30p +13.2%, +6.8% vs SMA20, vol 1.6%, spread 0.05%.
+
+**STEP E — two calls per symbol, buy then stop, back to back, one symbol fully protected
+before the next buy was sent.** No `stopLoss` field in any buy body (spot rejects it,
+`retCode 170130`). No `takeProfit`, no resting limit sell, no target leg. Stop trigger and
+limit were computed BEFORE each buy. No probe orders. Both stops sized to HELD qty read from
+`holdings` after the fill (ARB 42.4246 -> 42.42; XPL 97.5024 -> 97.5), i.e. net of the
+base-coin fee, not the requested qty.
+
+ARB filled at 0.2381 against an ask of 0.23549 (slippage), which left the pre-computed stop
+11.0% below the actual entry instead of 10%. Amended UP to 0.21429 / 0.20357 to match the
+rulebook's 10%-below-entry. Never moved down. XPL filled at 0.10231 vs 0.1024 quoted; its
+stop sits 9.9% below entry, inside spec, left alone.
+
+Verified via `orders spot`: four `Untriggered` stops resting, one per position, each at 100%
+of held qty. No position is naked.
+
+**STEP LEARN — no position closed this run**, so no `LESSON:` line is owed.
+
+**Net:** 4 TACTICAL positions, $41.60 deployed = 20.8% of budget, 2 TACTICAL slots free,
+CORE slot empty (blocked — no research plan). Quota 2/2 MET. Fees this run ~$0.011 in base
+coin (~$0.011), fee budget still ~$7.47 free.

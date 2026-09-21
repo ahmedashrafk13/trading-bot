@@ -76,6 +76,35 @@ def die(msg, code=1):
     raise SystemExit(code)
 
 
+# Bybit rejects any signed request whose timestamp is more than ~1s AHEAD of
+# their server clock, and recv_window does not widen that side of the window.
+# This machine's clock has run ~2.3s fast, which made every private call fail
+# with retCode 10002. Anchor to the exchange's own clock instead of trusting
+# the local one. Measured once per process against the public time endpoint.
+_TIME_OFFSET_MS = None
+
+
+def _server_offset_ms():
+    """Local-clock minus Bybit-clock, in ms. 0 if the probe fails."""
+    global _TIME_OFFSET_MS
+    if _TIME_OFFSET_MS is None:
+        _TIME_OFFSET_MS = 0
+        try:
+            t0 = time.time() * 1000
+            with urllib.request.urlopen(f"{BASE}/v5/market/time", timeout=10) as r:
+                srv = int(json.loads(r.read().decode())["time"])
+            t1 = time.time() * 1000
+            _TIME_OFFSET_MS = int((t0 + t1) / 2 - srv)
+        except Exception:
+            pass
+    return _TIME_OFFSET_MS
+
+
+def _now_ms():
+    """Timestamp in the exchange's frame, biased 1s early for flight time."""
+    return int(time.time() * 1000) - _server_offset_ms() - 1000
+
+
 def _sign(ts, payload):
     return hmac.new(SECRET.encode(),
                     f"{ts}{KEY}{RECV_WINDOW}{payload}".encode(),
@@ -85,7 +114,7 @@ def _sign(ts, payload):
 def request(method, path, params=None, private=False, retries=3):
     params = params or {}
     for attempt in range(retries):
-        ts = str(int(time.time() * 1000))
+        ts = str(_now_ms())
         if method == "GET":
             qs = urllib.parse.urlencode(params)
             url = f"{BASE}{path}" + (f"?{qs}" if qs else "")
@@ -122,6 +151,8 @@ def request(method, path, params=None, private=False, retries=3):
             msg = f"{method} {path} -> retCode {out.get('retCode')}: {out.get('retMsg')}"
             # 10002 = timestamp out of sync; retrying with a fresh one may work.
             if out.get("retCode") == 10002 and attempt < retries - 1:
+                global _TIME_OFFSET_MS
+                _TIME_OFFSET_MS = None  # re-measure the skew and try again
                 time.sleep(1)
                 continue
             die(msg)
