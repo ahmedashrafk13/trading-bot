@@ -1985,3 +1985,127 @@ losing closes today; most recent loss closed 2026-09-15.
 
 **Net:** 4 TACTICAL positions, $40.71 deployed = 20.4% of budget, every position stopped at
 100% coverage. CORE slot empty, 2 TACTICAL slots free.
+
+---
+
+### 2026-09-21T20:12 UTC — EXIT — TACTICAL — POL — 72h TIME STOP
+
+Closed at market by the 72h TACTICAL time stop (`routines/execute.md` STEP A.4).
+Filled 2026-09-18T20:10, so 72h fell at 2026-09-21T20:10 — this run began 20:11 UTC.
+At the gate POL was **+4.24%** vs entry (bid 0.11162 / entry 0.10708), i.e. **below the
++5% exemption**, so it was not exempt and the rule is mandatory. OP, filled in the same
+minute, was **+5.62%** and IS exempt — it keeps riding its trail.
+
+Resting stop `2307087177345142016` was CANCELLED BEFORE the market sell, per STEP A.4, so
+the two legs could not race. Cancel confirmed, then sell sent.
+
+| Field | Value |
+|---|---|
+| Exit time (UTC) | 2026-09-21T20:12 |
+| Exit type | market sell, 72h time stop (not a stop trigger) |
+| Qty | 93.0 of 93.0069 held (0.0069 POL dust left, $0.0008, below minOrderQty 0.1) |
+| Fill price | $0.11161 |
+| Exit proceeds | $10.37973 |
+| Sell fee | -$0.01038 (USDT) |
+| Cost basis | $9.96915 (93.1 @ $0.10708; buy fee 0.0931 POL taken in kind) |
+| Gross P&L | +$0.41058 |
+| **REALIZED P&L** | **$0.40** (+4.02% net) |
+| Order id | 2309263168041651456 |
+
+**Circuit breaker after this exit:** realized losses today $0.00 vs $10.00 limit → CLEAR.
+This close was a WIN, so the consecutive-tactical-loss streak stays at 0.
+
+**Narrative:** L1/L2 alt beta — profitable close, streak counter unaffected.
+
+LESSON: The 72h time stop and the +5% exemption were separated by 0.8pp on a position that
+was +5.72% at the 15:02 research run and +4.24% at the 20:11 gate — the exemption test is
+evaluated at a single instant against a price that moves ~1pp/hour, so which side of it a
+position lands on is close to arbitrary for anything in the +4-6% band. Falsifiable
+prediction: across the next ten TACTICAL closes, positions exiting in the +4-6% band will
+show no difference in forward 72h return between those closed by the time stop and those
+exempted — if true, the exemption threshold is adding noise, not selection, and belongs in
+the weekly review as a candidate for a band rather than a point test. Do NOT act on this
+run.
+
+---
+
+### 2026-09-21T20:11 UTC — EXECUTE — 72h time stop fired (POL), no entries, quota already met
+
+**Venue:** Bybit DEMO `api-demo.bybit.com`, `"category":"spot"` on every call. Spot only,
+long only, no leverage, nothing withdrawn or transferred.
+
+**STEP A — state and reconcile.** `state.sh` + `balance`/`holdings`/`orders`/`fills`.
+- EQUITY $200.00 (budget cap; account holds $179,056.52 — NOT tradeable). Exchange clock
+  2026-09-21 20:11 UTC; local clock not trusted.
+- DEPLOYED at open $40.32 = 20.2% of budget. 4 positions, all TACTICAL, CORE slot empty.
+- RECONCILE: `holdings` matched the TRADE-LOG tail exactly — ARB, OP, POL, XPL, same four
+  resting stops (`Untriggered`, 100% of held qty each). Nothing filled or closed while no
+  routine was running. No drift, no anomaly. Sub-cent dust (XRP, AR, UNI, CRV, ZK, CAKE,
+  0G) is residue, not positions.
+- STOP COVERAGE: all four at 100% before the run; three at 100% after (POL's was cancelled
+  as part of its close).
+- **72h TIME STOP:** OP and POL both filled 2026-09-18T20:10, both exactly 72.0h old.
+  OP +5.62% → **exempt**, no action. POL +4.24% → **NOT exempt, CLOSED AT MARKET**, logged
+  above. ARB and XPL are 5.1h old, nowhere near the limit.
+
+**STEP B — research and evidence.** Read today's RESEARCH-LOG entry (09-21, late run at
+15:02) and the STANDING VERDICTS table. Nothing this run does contradicts a verdict: the
+only action taken is a mandatory time-stop close, and no entry was argued for. The
+"tighter stops are strictly worse" verdict was applied directly in refusing the advisory
+SCAN GATE's 8% trail figure again (see ratchet below).
+
+**STEP C — screen and price.** No fresh fetch needed for an entry decision (quota met,
+CORE HOLD binding). Priced all four holdings live for the gap/ratchet checks; POL spread
+0.04%, well inside the 0.5% ceiling at the close.
+
+**GAP CHECK:** no position is below its stop trigger. ARB $0.2248 > $0.21429, OP $0.1242 >
+$0.11983, XPL $0.0998 > $0.09371. Nothing to cut for a gapped-through stop.
+
+**RATCHET — none due.** High-water recomputed from hourly bars since each fill:
+
+| Symbol | Entry | High-water | Entry→HW | Legal trail | Correct stop | Resting | Action |
+|---|---|---|---|---|---|---|---|
+| OP | 0.11764 | 0.13315 | +13.2% | 10% | 0.11983 | 0.11983 | none — already exact |
+| ARB | 0.23810 | 0.23823 | +0.1% | 10% | 0.21441 | 0.21429 | none — see below |
+| XPL | 0.10231 | 0.10279 | +0.5% | 10% | 0.09251 | 0.09371 | none — resting is HIGHER |
+
+- OP's trail is **10%, not 8%**: entry-to-high-water is +13.2%, below the +20% that
+  triggers the tighten. `state.sh`'s advisory SCAN GATE printed NO-ACTION this run, which
+  agrees for once; the 8%-trail defect it showed on 09-18 and 09-21 did not recur here.
+- ARB's mathematically correct 10% trail (0.21441) is $0.00012 above the resting stop —
+  a 0.06% improvement — and sits **4.6% below the current price**, inside the
+  "never place a stop within 5% of current price" rule. Blocked by a hard rule for a
+  rounding-level gain, so left alone.
+- XPL's resting stop (0.09371) is ABOVE its 10%-trail level (0.09251). **Never move a stop
+  down**, including to "correct" it to the v2 distance. Kept.
+
+**STEP D0 — DAILY QUOTA (TACTICAL).** `QUOTA: 2/2 entries today (2026-09-21) — MET.`
+ARB and XPL were both entered at 15:05 UTC this UTC day. This is the 18:07-slot run
+(executing 20:11). The floor is satisfied. It is a minimum, not a target, and the slot
+freed by POL's close may NOT be cited to justify a third entry.
+
+**STEP D — no buy gate evaluated: no candidate advanced.**
+- **CORE: HOLD, binding for the day.** Today's RESEARCH-LOG advances no CORE name — no
+  dated idiosyncratic catalyst on any of the 28 CORE shortlist names, and the only dated
+  events on the board are bearish supply releases (ARB unlock 09-23, XPL 63.2%-of-float
+  unlock 09-25). CORE requires a catalyst, so this is rule-compliance, not discretion.
+- **TACTICAL: quota met, no further entry.** NOT a quota miss and NOT a patience argument
+  — the floor of 2 was filled earlier today.
+
+**STEP LEARN:** POL closed this run; `LESSON:` line appended to its exit entry above. Not
+acted on this run.
+
+**Fee budget:** $0.52 → **$0.53** / $8.00 this month (POL's sell fee $0.01038). Headroom
+$7.47. The cancel was not fee-bearing.
+
+**Circuit breaker:** CLEAR. $0.00 realized losses today (today's only close was a +$0.40
+win); 0 consecutive losing closes today; most recent loss closed 2026-09-15.
+
+**Risk still carried:** three positions, all the same L1/L2 alt-beta bet expressed three
+ways, into BTC dominance 59.1%, a CONFIRMED negative-median alt universe, ~$900M of unlock
+supply this week (XPL holds its own 63.2%-of-float unlock on 09-25, four days out) and the
+09-25 ~$16.6B Deribit expiry.
+
+**Net:** 3 TACTICAL positions, ~$29.78 deployed = 14.9% of budget (ceiling 50%, no floor),
+every position carrying a resting `Untriggered` stop at 100% of held qty. CORE slot empty,
+3 TACTICAL slots free. One close, one win, $0.40 realized.
