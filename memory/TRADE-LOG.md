@@ -1873,3 +1873,48 @@ worse. The stops are the right instrument here and they are in place. Flagged, n
   when written and were overtaken ~minutes later. Per the append-only rule they are left
   standing rather than edited; the weekly review should treat both as TAKEN, not skipped,
   when it scores the 09-21 cohort on 09-26.
+
+### 2026-09-21T16:20 UTC — research RE-RUN (second research invocation this UTC day)
+
+**No order placed, cancelled or amended. Fees this run $0.00.**
+
+Reconciliation: live holdings match this log exactly — ARB 42.424653, OP 84.895020,
+POL 93.006900, XPL 97.502400. No fill and no stop execution since the 15:10 addendum.
+All four carry exactly ONE resting conditional stop at 100% of held qty; nothing naked,
+nothing split, no target legs. No sleeve hard cut triggered (worst is ARB -2.48% against
+the TACTICAL -10% cut).
+
+**Ratchet: none placed, and `state.sh`'s SCAN-VERDICT was deliberately not obeyed.** The
+gate flagged POL and XPL on an **8% trail**; the 8% trail is only earned at **+20%**, and
+POL is +5.93% while XPL is -1.97%, so 10% is the correct trail for both. Obeying the
+advisory gate would have set stops the rulebook does not authorise. This is the SAME
+SHADOW-MODE defect logged on 09-18 and again on 09-21-morning — still present, still not
+obeyed.
+
+Checked against real high-water marks (`bybit.py kline`): OP 0.13315 -> 0.11984 (resting
+0.1198, correct), POL 0.1146 -> 0.10314 (resting 0.1031, correct), ARB post-entry 0.23823
+-> 0.21441 (resting 0.2143, correct). XPL post-entry HWM 0.10279 -> 0.09251 vs resting
+0.0922 is a real but trivial +0.3% raise worth **$0.03**; declined, because a
+cancel-then-replace opens a window with no resting stop and that operational risk is not
+worth $0.03 four days before XPL's unlock. Judgement call, recorded as such — not an
+oversight. Next run should place it if the high-water rises materially.
+
+**CORE: HOLD, binding (unchanged from the morning run).** 27 CORE names pass the screen and
+none carries a dated idiosyncratic catalyst; the only two dated events on the board are
+bearish supply releases on names already held (XPL 09-25, ARB 09-23).
+
+**TACTICAL: quota MET 2/2** (ARB, XPL, opened 15:05 by execute `53bf98b`). Nothing
+originated — research runs never originate. Ranked handoff written to RESEARCH-LOG.md for
+the 18:07 window as OPTIONAL; the floor is already satisfied and may not be cited to
+justify a third entry.
+
+**New market facts since the morning run:** the Fed HIKED 25bp on 2026-09-16 to 3.75-4.00%
+(unanimous, first hike in three years, 16 of 18 officials see at least one more this year),
+and 2026-09-25 now carries BOTH the XPL unlock AND a ~$16.6B Deribit BTC+ETH options expiry.
+The screen shows 47 of 60 names passing — that is tape-wide beta, not selection information,
+and all four open positions are the same L1/L2 alt-beta bet expressed four ways.
+
+**STEP LEARN — no position closed this run**, so no `LESSON:` line is owed.
+
+**Net:** unchanged at 4 TACTICAL positions, $41.10 deployed = 20.5% of budget, all stops
+correct at 100% coverage. CORE slot empty, 2 TACTICAL slots free. Fee budget $0.52 / $8.00.

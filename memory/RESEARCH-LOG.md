@@ -1446,3 +1446,122 @@ worse. The stops are the right instrument here and they are in place. Flagged, n
   when written and were overtaken ~minutes later. Per the append-only rule they are left
   standing rather than edited; the weekly review should treat both as TAKEN, not skipped,
   when it scores the 09-21 cohort on 09-26.
+
+## 2026-09-21T16:20 UTC — RESEARCH RE-RUN (second research run this UTC day)
+
+A research run already completed today (commit `8b6d6c8`, plus its 15:10 addendum written
+after the concurrent `execute` run `53bf98b`). This is a SECOND scheduled invocation on the
+same UTC day. Everything below is a delta against that entry, not a replacement for it.
+
+### Account snapshot (scripts/state.sh, exchange clock 16:20 UTC)
+EQUITY $200.00 (budget cap; account holds $179,060.62 — not tradeable)
+FREE $158.90 | DEPLOYED $41.10 = 20.5% of budget (ceiling 50%, no floor)
+
+| Symbol | Qty | Entry | Price | P&L | Age | Stop | Coverage | Sleeve |
+|---|---|---|---|---|---|---|---|---|
+| ARB | 42.424653 | 0.2381 | 0.2322 | -2.48% | 1.3h | 0.2143 | 100% [OK] | TACTICAL |
+| OP | 84.895020 | 0.11764 | 0.1270 | +7.99% | 68.2h | 0.1198 | 100% [OK] | TACTICAL |
+| POL | 93.006900 | 0.10708 | 0.1134 | +5.93% | 68.2h | 0.1031 | 100% [OK] | TACTICAL |
+| XPL | 97.502400 | 0.1023 | 0.1003 | -1.97% | 1.3h | 0.0922 | 100% [OK] | TACTICAL |
+
+No position is naked. None is near its sleeve hard cut (TACTICAL -10%; worst is ARB at
+-2.48%). CORE slot empty. 2 TACTICAL slots free of 6.
+
+### STEP A — reconcile, stops, cut, ratchet
+- RECONCILE: live holdings match the TRADE-LOG tail exactly. No fill and no stop execution
+  between the 15:10 addendum and this run. No drift to log.
+- RESTING LEG: all 4 carry exactly ONE resting conditional stop at 100% of held qty. No
+  target legs, nothing split, nothing unreserved. No action.
+- HARD CUT: none triggered.
+- RATCHET: **no ratchet placed, and the advisory gate was deliberately NOT obeyed.**
+  - `state.sh` SCAN-VERDICT flagged POL and XPL as "ratchet may be due", both computed on
+    an **8% trail**. The 8% trail is only earned at **+20%** (TRADING-STRATEGY.md, TACTICAL
+    ratchet). POL is +5.93% and XPL is -1.97%, so the correct trail for both is 10%. The
+    gate is SHADOW MODE and advisory; obeying it would have moved stops to levels the
+    rulebook does not authorise. Same defect the 09-18 and 09-21-morning runs logged, still
+    present.
+  - Verified against actual high-water marks (`bybit.py kline`, daily + hourly):
+    OP HWM 0.13315 -> 10% = 0.11984 (resting 0.1198, already correct);
+    POL HWM 0.1146 -> 10% = 0.10314 (resting 0.1031, already correct);
+    ARB post-entry HWM ~0.23823 -> 10% = 0.21441 (resting 0.2143, already correct).
+  - XPL post-entry HWM 0.10279 -> 10% = 0.09251 vs resting 0.0922: a genuine but trivial
+    +0.3% improvement, worth **$0.03** on a $9.77 position. Declined deliberately — a
+    cancel-then-replace opens a brief window with no resting stop, and paying real
+    operational risk for $0.03 four days before XPL's unlock is a bad trade. A judgement
+    call, stated, not an oversight. The next run should place it if the high-water rises
+    materially.
+
+### Market context (STEP B — perplexity.sh has no API key, exits 0 with a warning; fell back to native WebSearch as the routine directs)
+- BTC ~$85.9k on the Bybit tape, ~$85k externally; **BTC.D ~59.1%**, total cap ~$2.88T.
+  Daily RSI14 ~71.6, hourly ~84.8 — overbought. Fear & Greed 70 ("Greed"), not euphoric.
+- ETH $2,762 on Bybit, above the ~$2,672 Fib level; a weekly close above opens $2,950-3,000.
+  Spot ETH ETFs on a **4th consecutive positive week**, ~$1.2-1.75B/month — but **72% of the
+  streak is BlackRock's ETHA alone**. Concentrated single-desk flow, not broad demand.
+- **MACRO IS THE NEW FACT AND IT IS HAWKISH:** the Fed **HIKED 25bp on 2026-09-16** to
+  3.75-4.00%, unanimous, first hike in three years, with 16 of 18 officials seeing at least
+  one more this year. Crypto is rallying INTO a tightening cycle — risk appetite running
+  against its own liquidity backdrop.
+- **2026-09-25 is a concentrated event day:** ~$16.6B Deribit BTC+ETH options expiry
+  ($14.63B BTC), call-biased with max pain $72-75k BELOW spot, AND the XPL unlock. Flash
+  PMIs land the same week.
+- Narratives leading: AI x DePIN, stablecoins/payment rails, RWA, modular infra, prediction
+  markets. L2s (OP, POL, ARB, MNT) are framed as distribution plays now, not scaling bets.
+  Memes are NOT a named leading narrative this month — though PEPE/WIF top today's tape.
+
+### Screen (STEP C — scripts/screen.sh, 60-coin universe)
+Breadth is extreme: **47 of 60 names pass at least one sleeve.** That is a tape-wide move,
+not selection information. CORE shortlist 27; TACTICAL shortlist 41.
+Top by 7-period: PEPE +18.8, WIF +16.3, FET +9.7, BR +9.0, LTC +6.3, ARB +5.8, SUI +5.4,
+HBAR +5.3, DOGE +5.1. Held names all still pass: ARB PASS/PASS, XPL PASS/PASS, POL PASS/PASS.
+
+### Ideas, tagged by sleeve
+**CORE — no idea advanced. HOLD, and it is BINDING for the rest of the day.**
+This morning's run already wrote a binding CORE HOLD; nothing since changes it. It also
+survives re-examination on the merits: 27 CORE names pass and not one carries a dated
+idiosyncratic catalyst. The only two dated events on the entire board are bearish supply
+releases (XPL 09-25, ARB 09-23). Size would be $26.67 at a 15% trail. Entering a 71-RSI
+tape four days before a $16.6B expiry, on a screen where 47/60 names pass, with the Fed
+actively hiking, is buying breadth at the top of its range for no idiosyncratic reason —
+and "momentum is strong" is argued against by this repo's own measured IC@1d of -0.012
+(STANDING VERDICTS). No CORE entry.
+
+**TACTICAL — quota is MET, 2/2 (ARB and XPL, opened 15:05 by `execute` 53bf98b).**
+Per TRADING-STRATEGY.md "DAILY TRADE QUOTA" 2 is a FLOOR, not a target, and it is satisfied.
+This run originates nothing (research runs never do). Ranked handoff for the 18:07 execute
+window **should it choose** to add beyond the floor — it is under no obligation to, and the
+quota may NOT be cited to justify a third entry:
+1. SUI 1.0286 (30p +27.6, vol 1.5%, spread 0.01%)  2. LTC 62.99 (7p +6.3, spread 0.02%)
+3. HBAR 0.0932  4. DOGE 0.0968  5. RENDER 1.8070  6. BCH 264.70  7. MNT 0.6387  8. ADA 0.2449
+Excluded: ARB/XPL/POL/OP already held; STETH duplicates ETH; ZETA (13.3% vol, 0.18% spread),
+FLOCK and KII fail the spread/vol side. Size for any entry is $10.00 DERIVED (risk $1.00 /
+10% trail) from `state.sh`, never fixed.
+
+### Risk factors
+- **XPL unlock 2026-09-25: 1.76B tokens, ~63.2% of circulating supply, ~$158M** — the
+  largest scheduled event on the board, four days out, on a name this account HOLDS. A
+  supply event that size can gap straight through the 5%-wide stop-limit band. The stop at
+  0.0922 is the protection and it rests at 100%; the gap risk is ACCEPTED and stated, not
+  hedged. A second XPL unlock (~29.7M, ~$28M) follows 09-28.
+- ARB follow-on vesting print 09-23, two days out, inside the 72h time-stop window for a
+  position opened 09-21T15:05.
+- 09-25 Deribit expiry is call-biased with max pain well below spot. Dealer delta-hedging
+  amplifies a move in EITHER direction — a volatility event, not a directional one.
+- Fed hiking into a risk rally. On a hawkish print, a 71-RSI tape with 47/60 names extended
+  unwinds fast and correlated.
+- **Concentration: 4/4 positions are TACTICAL L1/L2 alts.** There is no diversification
+  here, only four expressions of "alt beta up". Combined defined risk is ~$4.00 (2.0% of
+  budget) against a $10.00 daily breaker, so it is bounded — but it is one bet, not four.
+
+### Evidence check (STEP EVIDENCE)
+Nothing here rests on anything marked REJECTED in HYPOTHESIS-LOG.md. No entry is justified
+on short-horizon momentum (IC@1d -0.012, inverted), on one-sided volatility (#7 REJECTED),
+or on 12-2 momentum (#9 REJECTED). Adding nothing is consistent with the CONFIRMED verdicts
+that higher frequency is strictly worse and that the altcoin universe has a negative median.
+
+### Decision
+- **CORE: HOLD — binding for the day.** (Unchanged from the morning run.)
+- **TACTICAL: nothing originated here. Quota MET 2/2; the handoff above is optional.**
+
+### Fee budget
+$0.52 / $8.00 used this MONTH (4.0% of equity). Headroom $7.48. This run spent **$0.00** —
+no order was placed, cancelled or amended.

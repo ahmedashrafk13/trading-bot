@@ -213,3 +213,12 @@ RULES
 | 2026-09-21 | DATA | TACTICAL | 0.2004 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
 | 2026-09-21 | CC | TACTICAL | 0.1156 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
 | 2026-09-21 | ICP | TACTICAL | 2.9700 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (quota 0/2) | | | |
+| 2026-09-21 | PEPE | CORE | 0.000004871 | 16:20 re-run: newly top-ranked (7p +18.8%, +16.7% vs SMA20) but CORE is HOLD (binding) and fails the TACTICAL screen | | | |
+| 2026-09-21 | WIF | CORE | 0.2416 | 16:20 re-run: CORE HOLD binding; fails TACTICAL screen, so not reachable this run | | | |
+| 2026-09-21 | SUI | TACTICAL | 1.0286 | 16:20 re-run: TACTICAL quota already MET 2/2 today (ARB, XPL); no slot pressure to add | | | |
+| 2026-09-21 | RENDER | TACTICAL | 1.8000 | 16:20 re-run: TACTICAL quota already MET 2/2 today | | | |
+| 2026-09-21 | KMNO | TACTICAL | 0.03549 | 16:20 re-run: TACTICAL quota already MET 2/2 today | | | |
+| 2026-09-21 | BCH | TACTICAL | 264.7000 | 16:20 re-run: TACTICAL quota already MET 2/2 today | | | |
+| 2026-09-21 | JUP | TACTICAL | 0.3041 | 16:20 re-run: TACTICAL quota already MET 2/2 today | | | |
+| 2026-09-21 | PUMP | TACTICAL | 0.00438 | 16:20 re-run: TACTICAL quota already MET 2/2 today | | | |
+| 2026-09-21 | ZETA | CORE | 0.06115 | 16:20 re-run: CORE HOLD binding; 30p +62.8% on 13.3% vol and 0.18% spread — size/spread hostile anyway | | | |
