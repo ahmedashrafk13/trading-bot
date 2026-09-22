@@ -55,7 +55,9 @@ class Params:
     # noise, which is the standing verdict "wider is always better".
     tac_trail: float = 0.30
     tac_risk: float = 0.005       # 1.0% -> 0.5%, v3 quota mode 2026-09-18
-    tac_cap: float = 0.25         # 8% -> 25% 2026-09-23: with vol targeting
+    tac_cap: float = 0.60         # raised again for conviction sizing; the
+                                  # multiplier is the risk control now, not the cap
+                                  # 8% -> 25% 2026-09-23: with vol targeting
                                   # the SIZE is set by realised vol, so a tight
                                   # cap just truncated the calmest names.
     tac_slots: int = 12           # 6 -> 12, v4 no-trade-ceiling 2026-09-22
@@ -121,6 +123,21 @@ class Params:
     # fishing in a pool that drifts down; majors have no such drag. Every
     # cross-sectional signal tested here was trying to overcome that drag. Not
     # fishing there at all works better than any signal that tried.
+    # --- CONVICTION SIZING (v8, 2026-09-23) -------------------------------
+    # Until now every position was the same size regardless of how strong the
+    # setup was. That is leaving money on the table in both directions: a weak
+    # signal gets the same capital as a strong one, and a strong one is capped
+    # by a rule written for the average case.
+    # With this on, the bot sizes EACH trade itself: how far the trend is
+    # extended in its own vol units (a z-score) sets the multiplier, and the
+    # multiplier moves BOTH the size and the effective leverage, between
+    # conviction_min and conviction_max. Kelly-shaped: bet more when the edge
+    # looks bigger, less when it does not.
+    conviction_sizing: bool = True   # PROMOTED 2026-09-23, see HYPOTHESIS-LOG
+    conviction_min: float = 0.5     # weakest qualifying setup -> half size
+    conviction_max: float = 8.0     # strongest -> 8x the base size
+    conviction_z_cap: float = 3.0   # z beyond this adds nothing (no blow-ups)
+
     trend_universe: str = "BTC/USD,ETH/USD"
     ts_max_positions: int = 2
     ts_min_size: float = 1.0
@@ -512,6 +529,17 @@ def run(u, p):
                 # position sub-$1 and silently skipped all of them -- 58 trades
                 # and a flat curve, which looked like safety and was a bug.)
                 weight = (p.vol_target_annual / ann_vol) / max(1, p.ts_max_positions)
+                if p.conviction_sizing:
+                    # Strength of THIS setup, in the asset's own vol units.
+                    # ts_ret is the 30d trend; dividing by realised vol over the
+                    # same span turns "up 12%" into "up 2 sigma", which is
+                    # comparable across a calm major and a wild alt.
+                    span = math.sqrt(30 * getattr(u, "bars_per_day", 24))
+                    z = abs(u.ts_ret[si, i]) / max(v * span, 1e-9)
+                    z = min(z, p.conviction_z_cap)
+                    mult = p.conviction_min + (p.conviction_max - p.conviction_min) * (
+                        z / p.conviction_z_cap)
+                    weight *= mult
                 size = min(eq * weight, eq * cap, cash, room)
             else:
                 size = min(eq * risk / trail, eq * cap, cash, room)

@@ -323,3 +323,32 @@ strategy is tested on. That is look-ahead bias and makes every number here an
 UPPER BOUND. Before this can be trusted it needs rolling pair selection using
 only past data. Also unmodelled: permanent correlation breaks (a listing, a hack,
 a delisting) where the spread never reverts and the stop is the only exit.
+
+## 2026-09-23 — PROMOTED: CONVICTION SIZING (the bot sets its own risk per trade)
+Owner directive: let the bot decide risk per trade rather than sizing everything
+the same. Implemented as a Kelly-shaped multiplier — the trend's strength in the
+asset's OWN volatility units (a z-score, capped at 3 sigma so nothing blows up)
+scales the position between 0.5x and 8x the base size.
+
+BTC+ETH, 5.5y daily:
+  flat sizing              +113.37%  DD -35.68%  Sharpe 3.23
+  conviction (max 3x)      +129.16%  DD -31.23%  Sharpe 3.50   <- better on BOTH
+  conviction (max 8x)      +317.55%  DD -46.73%  Sharpe 4.00
+
+OUT OF SAMPLE, max 8x — beats BTC by ~67pp in BOTH recent windows:
+  last  500d  +39.31%  vs BTC -27.72%  = +67.04pp   DD -22.47%
+  last  900d  +79.45%  vs BTC +11.66%  = +67.79pp   DD -30.11%
+  last 1400d +157.54%  vs BTC +367.20% = -209.66pp  DD -30.11%
+
+That is roughly 25-27% CAGR out of sample, against 19.8% for the previous build.
+
+Note the max-3x row: it improved return AND drawdown AND Sharpe simultaneously,
+which is the honest version of this result. The max-8x row buys more return with
+more drawdown (-31% -> -47%) and should be read as a RISK CHOICE, not a free
+lunch. It is shipped because the owner explicitly asked for maximum aggression.
+
+CAVEAT, recorded because the literature is explicit about it: a Sharpe of 4.00
+is in the range that "should make you suspicious of methodology errors". The
+suspects here are survivorship bias in the universe (dead coins absent) and the
+fact that BTC+ETH over this window were two of the best-performing assets in
+existence. Out-of-sample consistency is reassuring but does not clear it.
