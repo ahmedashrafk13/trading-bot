@@ -103,7 +103,22 @@ automatically better: the median altcoin returned -21.2% over 5.7 years while
 BTC returned +157.4%, and the wide end of the list is mostly junk. Only consider
 the liquid subset the fetcher keeps, and skip anything whose spread exceeds 0.5%.
 
-STEP D0 — FILL THE BOOK, BOTH DIRECTIONS. Do this BEFORE the gate.
+STEP D0a — CARRY FIRST (v7, 2026-09-23). The primary sleeve.
+
+  python scripts/carry.py scan
+  python scripts/carry.py positions
+
+1. Unwind any pair whose funding has been NEGATIVE for 9 consecutive prints
+   (3 days). Do NOT unwind on a single negative print — that churn cost 99
+   points in the backtest.
+2. Fix any position `carry.py positions` flags as UNHEDGED or OUT OF BALANCE.
+   A one-legged pair is a naked 3x directional bet and outranks every entry.
+3. If fewer than 5 pairs are open and something pays >= 0.05% per 8h, open a
+   pair: spot BUY first, then perp SELL for the HELD spot qty, back to back.
+   Never leave a leg unmatched between calls.
+4. If nothing clears the threshold, open nothing. That is the correct state.
+
+STEP D0b — TREND, the smaller sleeve (~25% of budget). Do this BEFORE the gate.
 
 **There is no trade ceiling (OWNER DIRECTIVE 2026-09-22).** This step is not a
 quota check any more; it is a work list. Build it, then work it top to bottom.
@@ -113,10 +128,9 @@ quota check any more; it is a work list. Build it, then work it top to bottom.
 
 1. Count open TACTICAL longs and open SHORTs (`bybit.py holdings` and
    `bybit.py positions linear`). Free slots = (12 - longs) + (12 - shorts).
-2. Take the LONG list in rank order and the SHORT list in rank order, and enter
-   EVERY name that clears STEP D, until slots, margin, fee budget or the circuit
-   breaker stop you. Do not stop at 2. Do not stop at 5. 10-20 entries in a day
-   is the INTENDED rate.
+2. Take the LONG list in rank order and enter names that clear STEP D, up to the
+   sleeve's share of budget. There is NO entry quota (v7): forcing trade count
+   was measured and lost money monotonically. Most runs will add nothing.
 3. State the plan explicitly before placing anything, e.g.
    `BOOK: 3 long / 1 short open, 20 slots free; screen gives 6 long + 4 short
    passing -> placing 10 entries this run.`

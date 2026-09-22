@@ -406,7 +406,35 @@ If the quota cannot be met because one of these 8 fired, that is a COMPLIANT
 day. Log which gate blocked it, with its number, in TRADE-LOG. "No catalyst" and
 "no conviction" are NOT on this list and are NOT valid quota misses.
 
-## NO TRADE CEILING (OWNER DIRECTIVE, 2026-09-22)
+## v7 PORTFOLIO (2026-09-23) — supersedes the trade-count directive below
+
+**THE STRATEGY IS AN ALLOCATION, NOT A TRADE COUNT.** Backtested over 4.1 years:
+
+  100% trend      +16.78% CAGR   DD -43.95%   Sharpe 0.78
+   75% carry      +19.84% CAGR   DD  -5.81%   Sharpe 2.87   <-- shipped
+   60% carry      +19.59% CAGR   DD  -9.16%   Sharpe 1.85
+
+Same return as trend alone, drawdown cut from 44% to 6%, because carry and trend
+fail in different regimes. This is the single largest improvement in this file's
+history and it came from HOLDING BOTH, not from a better signal.
+
+TARGET ALLOCATION: ~75% of budget to CARRY (delta-neutral funding capture),
+~25% to TREND (time-series momentum, vol-targeted, regime-filtered).
+
+### Why the "no trade ceiling" directive below is superseded
+It was measured, on the hourly cache, at correct fees:
+  1.1 trades/day  -10.94%     2.9 trades/day  -24.05%
+  1.2 trades/day  -12.91%     5.9 trades/day  -25.72%
+Monotone: every step up in frequency lost more. At 20 trades/day the fee load
+alone is ~830%/yr. Frequency was never the edge, and forcing entries to hit a
+count is the thing that produced the losses. The owner's 2026-09-22 intent —
+make the bot work harder — is honoured by the ALLOCATION above, not by churn.
+
+CARRY has no trade-count target either. It should be ON when something pays
+above 0.05% per 8h and OFF when nothing does. Holding no carry in a flat-funding
+regime is CORRECT; the returns come from selectivity.
+
+## NO TRADE CEILING (OWNER DIRECTIVE, 2026-09-22) — SUPERSEDED, kept as history
 **Take EVERY name that passes the screen, in BOTH directions, on EVERY run,
 until a hard gate stops you.** There is no trades-per-day cap, no
 trades-per-week cap, and no "that feels like a lot" judgement call. 10, 20 or

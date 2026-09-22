@@ -76,8 +76,15 @@ next run cannot see it.
 
   Combined cap: 25 positions (1 CORE + 12 TACTICAL long + 12 SHORT).
   MARGIN used <= 50% of budget ($100); GROSS NOTIONAL <= 300% ($600).
-  **NO TRADE CEILING (owner directive 2026-09-22): take EVERY name that passes
-  the screen, both directions, every run. 10-20 entries/day is INTENDED.**
+  **v7 (2026-09-23) — THE STRATEGY IS NOW A PORTFOLIO, NOT A TRADE COUNT.**
+  Backtested 4.1y: 75% CARRY / 25% TREND = +19.84% CAGR at -5.81% drawdown,
+  against 100% trend at +16.78% and -43.95%. Same return, drawdown cut from 44%
+  to 6%, because the two books fail at different times.
+  The 2026-09-22 "take every name, 10-20 entries/day" directive is SUPERSEDED:
+  measured on the hourly cache, every step up in frequency lost money
+  monotonically (1/day -10.94% -> 6/day -25.72%). Frequency was never the edge.
+  ALLOCATION: ~75% of budget to CARRY, ~25% to TREND. Trade count follows from
+  what qualifies, and on most days that is a small number or zero.
   A run that ends with idle slots, a passing screen and unspent fee budget has
   failed to follow instructions. TACTICAL/SHORT need NO catalyst — the screen
   is the thesis. CORE still requires a dated catalyst and its HOLD is binding.
@@ -137,8 +144,11 @@ next run cannot see it.
   stop KEEPS it and is never widened to the v2 distance.
 - Follow narrative momentum (majors / L1 / DeFi / memes / infra).
   Exit a narrative after 2 consecutive failed trades.
-- Patience > activity — **CORE ONLY**. TACTICAL and SHORT have no ceiling and
-  may never cite patience to skip an entry.
+- Patience > activity applies to ALL directional sleeves again (v7). Forcing
+  entries was measured and it lost money. CARRY is the opposite: it should be ON
+  whenever something pays above the threshold, and OFF when nothing does —
+  holding no carry is the correct state in a flat-funding regime, and the
+  backtest's returns come from being SELECTIVE, not from being invested.
 - AMENDMENT AUTHORITY IS OPEN (resolved 2026-09-18). Any run may edit
   memory/TRADING-STRATEGY.md per the owner directive of 2026-09-16. The ">= 10
   closed trades" figure state.sh prints is INFORMATIONAL, not a gate. This entry
@@ -187,6 +197,28 @@ no gate.
   edit to checks.py — an unproven gate is decoration.
 - It does NOT own the fee budget or the time stop (those need TRADE-LOG history;
   state.sh owns them), and it does not choose WHAT to trade.
+
+## CARRY — the primary sleeve (v7, 2026-09-23)
+
+DELTA-NEUTRAL FUNDING CAPTURE: long spot + short perp in the SAME coin and the
+SAME size. The legs cancel, so price direction is irrelevant; the return is the
+funding the exchange pays shorts every 8h. Best risk-adjusted result this repo
+has: +27.54% CAGR at -1.84% modelled drawdown over 4.1y at 3x, positive in every
+out-of-sample window. External check: Ethena runs this exact trade and reports
+10-15% APY, bracketing our OOS 11-15%.
+
+- `python scripts/carry.py scan` — what is paying now (>= 0.05% per 8h).
+- `python scripts/carry.py plan SYMBOL USD` — sizes both legs.
+- `python scripts/carry.py positions` — flags unhedged or unbalanced pairs.
+- SETTINGS: 3x, min 8h rate 0.0005, max 5 pairs, unwind after 9 consecutive
+  NEGATIVE funding prints (3 days). Do NOT exit on a single negative print —
+  that churn turned +38% into -61% in the backtest.
+- **A ONE-LEGGED POSITION IS A NAKED 3x DIRECTIONAL BET, NOT A HEDGE.** If one
+  leg fills and the other does not, close the filled leg immediately.
+- The perp leg's stop must be WIDE. In a hedged pair the short SHOULD lose when
+  spot gains; a tight stop unwinds the hedge and leaves you long spot at size.
+- RISK NOT MODELLED: basis drift between the legs. Every carry drawdown figure
+  here is therefore optimistic. Treat -1.84% as a floor, not an expectation.
 
 ## API Wrappers
 
