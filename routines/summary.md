@@ -79,8 +79,17 @@ Then, if you need the raw detail:
 4. RATCHET (by SLEEVE — read the sleeve tag in TRADE-LOG):
    CORE: trail 15% below high-water; 12% once up +30%; 10% once up +40%.
    TACTICAL: trail 10% below high-water; 8% once up +20%.
-   NO profit target in either sleeve: never close a winner for reaching a level.
-   NO time limit in either sleeve: never close a position for age.
+   SHORT: trail 10% ABOVE the LOW-water mark, ratcheting DOWN only (every sign
+   flips; never move a short's stop UP).
+   NO profit target in any sleeve: never close a winner for reaching a level.
+   TIME LIMIT — CORRECTED 2026-09-22. This line previously read "NO time limit
+   in either sleeve: never close a position for age", which DENIED the time stop
+   that CLAUDE.md, state.sh and execute.md all enforce, and under which POL was
+   closed on 2026-09-21. The rule is:
+     CORE            -> no time limit, never closed for age.
+     TACTICAL/SHORT  -> 72h TIME STOP: if not >= +5% IN ITS FAVOUR 72h after
+                        fill, close at market and free the slot. A position
+                        already >= +5% in its favour is exempt and rides on.
    Never move any stop down — a grandfathered v1 position KEEPS its tighter stop
    and is never widened. Never place a stop within 5% of current price.
 Log every action to memory/TRADE-LOG.md. Any EXIT row MUST record:
@@ -97,10 +106,13 @@ fee budget is measured against. It resets on the 1st, NOT on Monday. There is no
 trade-count cap any more.
 
 STEP C — Pull final state and compute:
-  python scripts/bybit.py account
+  bash scripts/state.sh            # preferred: every guardrail number at once
+  python scripts/bybit.py balance  # raw equity/cash if you need it
+  (CORRECTED 2026-09-22: this said `bybit.py account`, which does not exist.)
 - Day P&L ($ and %) = today_equity - previous snapshot equity
 - Cumulative P&L ($ and %) vs $200 starting equity
-- BTC/USD over the same window (python scripts/bybit.py crypto-quote BTC/USD),
+- BTC over the same window (python scripts/bybit.py tickers spot BTCUSDT —
+  CORRECTED 2026-09-22: this said `crypto-quote BTC/USD`, which does not exist),
   so performance is measured against the real benchmark, not zero.
   THE BENCHMARK IS MANDATORY AND CUMULATIVE, not just the day's move:
     BTC baseline = $77,153.29 @ 2026-09-10 19:39 UTC (fixed, never re-based)

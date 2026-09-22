@@ -138,3 +138,21 @@ FIX: both now accept `SHORT`. Recount reads 23.
    so the banner is unclearable and fires on every future run. A permanently-on
    alarm is the kind that gets ignored on the day it is real.
 Left for weekly-review rather than edited mid-execute; neither blocked this run.
+
+## 2026-09-22 — three invented bybit.py subcommands fixed; audit now checks them
+The 2026-09-21 summary run flagged two, and a sweep found a third that had been
+open since 09-21:
+- `routines/summary.md` STEP C: `bybit.py account`      -> `balance` (or state.sh)
+- `routines/summary.md` STEP C: `bybit.py crypto-quote BTC/USD` -> `tickers spot BTCUSDT`
+- `routines/research.md` D2:    `bybit.py bars <PAIR> 1D`       -> `kline SYMUSDT D <limit>`
+The `bars` one meant every shadow-scoring attempt since 09-21 failed silently.
+
+Also fixed in summary.md STEP A4: "NO time limit in either sleeve: never close a
+position for age" — which DENIED the 72h time stop that CLAUDE.md, state.sh and
+execute.md all enforce, and under which POL had been closed two hours earlier.
+
+ROOT CAUSE of the class: a prompt may name any verb and nothing objects until a
+live run calls it and dies mid-routine. `scripts/audit-rules.py` now parses the
+COMMANDS dict out of bybit.py and fails on any prompt reference that is not in
+it, so an invented subcommand cannot reach a run again. Verified by probe: the
+check was confirmed to FAIL on a planted `bybit.py account` before being wired in.

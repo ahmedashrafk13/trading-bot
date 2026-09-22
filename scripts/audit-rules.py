@@ -95,6 +95,48 @@ SKIP = {'memory/TRADE-LOG.md', 'memory/RESEARCH-LOG.md', 'memory/WEEKLY-REVIEW.m
         'memory/SCAN-GATE-LOG.md', 'DAILY-SUMMARY.md'}
 
 
+# Subcommands scripts/bybit.py actually implements. A prompt can name ANY verb
+# and nothing objects until a live run calls it and dies mid-routine. That is how
+# `bybit.py account`, `crypto-quote` and `bars` all shipped and sat unfixed for
+# days. Parsed from bybit.py itself so this list cannot drift.
+def _valid_subcommands():
+    src = pathlib.Path('scripts/bybit.py')
+    if not src.exists():
+        return None
+    m = re.search(r'COMMANDS\s*=\s*\{(.*?)\}', src.read_text(encoding='utf-8'), re.S)
+    return set(re.findall(r'"([\w-]+)"\s*:', m.group(1))) if m else None
+
+
+# Words that follow "bybit.py" in ordinary prose rather than as a command.
+_PROSE = {'is', 'with', 'rejects', 'and', 'or', 'now', 'the', 'a', 'to', 'in',
+          'does', 'has', 'was', 'will', 'can', 'itself', 'locally', 'refuses'}
+
+
+def check_subcommands():
+    valid = _valid_subcommands()
+    if not valid:
+        return 0
+    bad = 0
+    targets = list(pathlib.Path('.').glob('routines/*.md'))
+    targets += list(pathlib.Path('.').glob('scripts/*.sh'))
+    targets += [pathlib.Path('CLAUDE.md')]
+    for p in targets:
+        if not p.exists():
+            continue
+        for i, line in enumerate(p.read_text(encoding='utf-8', errors='replace').splitlines(), 1):
+            if 'CORRECTED' in line or 'does not exist' in line:
+                continue
+            for m in re.finditer(r'bybit\.py\s+([a-zA-Z][\w-]*)', line):
+                c = m.group(1)
+                if c in valid or c in _PROSE or c.startswith('cmd_'):
+                    continue
+                print(f'  {p.as_posix()}:{i}  [invalid bybit.py subcommand] '
+                      f"'{c}' is not implemented")
+                print(f'      {line.strip()[:100]}')
+                bad += 1
+    return bad
+
+
 def main():
     root = pathlib.Path('.')
     files = [p for p in root.rglob('*.md') if '.git' not in p.parts
@@ -122,6 +164,7 @@ def main():
                     print(f'  {rel}:{i}  [{label}] {why}')
                     print(f'      {line.strip()[:100]}')
                     findings += 1
+    findings += check_subcommands()
     print(f'\n{findings} suspect line(s)')
     return 1 if findings else 0
 

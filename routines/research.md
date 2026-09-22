@@ -171,8 +171,12 @@ breaker, spread). Use the screen price, never a price looked up afterwards.
 
 Then SCORE any unscored row that is now >= 5 days old: fill in the % change from
 its screen price and the best close in the window, and mark it scored. Get the
-prices with `python scripts/bybit.py bars <PAIR> 1D` — one call per pair, and
-skip a pair whose bars are unavailable rather than guessing.
+prices with `python scripts/bybit.py kline SYMUSDT D <limit>` — one call per
+pair, and skip a pair whose bars are unavailable rather than guessing.
+(CORRECTED 2026-09-22: this said `bybit.py bars <PAIR> 1D`. There is no `bars`
+subcommand and `<PAIR>` is not the symbol format — it is `kline`, taking a
+Bybit symbol like `ARBUSDT`. Flagged in OBSERVATIONS on 2026-09-21 and unfixed
+until now, so every shadow-scoring attempt in that window failed.)
 
 This is the only source of statistical power this account has: ~4 real closes a
 month versus ~50 shadow observations. Do not skip it because nothing was traded.
