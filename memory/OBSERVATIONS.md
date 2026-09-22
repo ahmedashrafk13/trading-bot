@@ -156,3 +156,55 @@ live run calls it and dies mid-routine. `scripts/audit-rules.py` now parses the
 COMMANDS dict out of bybit.py and fails on any prompt reference that is not in
 it, so an invented subcommand cannot reach a run again. Verified by probe: the
 check was confirmed to FAIL on a planted `bybit.py account` before being wired in.
+
+## 2026-09-22 (execute, 20:12-20:18 UTC) — no wrapper path existed to RATCHET a perp stop
+`routines/execute.md` STEP E1 says, of a perp: "To ratchet, amend the position's
+stopLoss rather than resting a second order." `scripts/bybit.py` could not do that.
+- `bybit.py amend` posts to `/v5/order/amend`. That amends a LIVE order. The entry
+  order is filled and gone; its attached stop now lives on the POSITION, reachable
+  only via `/v5/position/trading-stop`, which the wrapper did not implement.
+- Consequence: from the moment the 23 perps opened on 2026-09-22T17:14, the trail
+  rule for the entire perp book was UNEXECUTABLE. Every short's stop would have sat
+  frozen 10% above ENTRY no matter how far the trade ran in favour, which converts
+  a trailing stop into a fixed one and silently deletes the only exit either sleeve
+  has (no sleeve has a profit target).
+- The failure mode this invites is worse than the frozen stop: a run that reads
+  "ratchet winners" as mandatory, finds no ratchet verb, and reaches for a second
+  resting order instead. That is explicitly banned and is exactly what left DOT
+  naked for 70h on the previous venue.
+- Note the class: this is the INVERSE of the 2026-09-22 "three invented subcommands"
+  defect. There the prompts named verbs `bybit.py` did not have; here the prompt
+  named a CAPABILITY it did not have, using a verb that does exist (`amend`) but
+  points at the wrong endpoint. `scripts/audit-rules.py` cannot catch this, because
+  `amend` IS in the COMMANDS dict — the name resolves and the semantics do not.
+- FIXED this run: added `bybit.py trailstop SYMBOL NEW_STOP` ->
+  `/v5/position/trading-stop`. It fetches side, mark and current stop from the
+  exchange and refuses, locally: a LONG stop that does not RISE, a SHORT stop that
+  does not FALL, a stop on the wrong side of the mark, and a stop within 5% of the
+  mark. Proven before use: raising a short's stop (GRASSUSDT 0.4803 -> 0.4900) was
+  REFUSED; lowering it to 0.4667 was accepted. 8 shorts ratcheted, 23/23 positions
+  re-verified with a non-zero stopLoss afterwards.
+- STILL OPEN for weekly-review: `trailstop`'s directional guard duplicates logic
+  that belongs in `scripts/checks.py` alongside the other 18 checks, and it has no
+  entry in `scripts/test_checks.py`. An unproven gate is decoration (CLAUDE.md).
+  It was verified by live probe this run, which is evidence but not a test.
+
+## 2026-09-22 (execute) — state.sh SIZE line restates two rules that v4/v5 superseded
+`scripts/state.sh` prints, every run:
+  `SIZE NOW   CORE $26.67 (15% trail, ...) | TACTICAL $10.00 (10% trail, risk $1.00 = 0.5%, max 6)`
+Two stale figures in one line, both contradicted by `CLAUDE.md` and
+`memory/TRADING-STRATEGY.md`:
+- **`max 6`** — the TACTICAL cap has been **12** since the v4 owner directive of
+  2026-09-22 (1 CORE + 12 TACTICAL + 12 SHORT, combined cap 25). The same script's
+  own PERP BOOK header prints "[12 SHORT slots, 12 TACTICAL-long slots]", so
+  state.sh contradicts ITSELF eight lines apart.
+- **`10% trail`** — the TACTICAL trail was widened to **30%** on 2026-09-23 (v5,
+  backtested +30.21% over 5.5y at 30% vs losses at 10%).
+Neither blocked this run: the book is full at 12/12, so the stale `max 6` could not
+have gated an entry, and no long needed a ratchet. But a future run that trusts the
+SIZE line over the rulebook would stop entering TACTICAL longs six slots early — the
+"idle slot + passing screen + fee headroom = DIRECTIVE BREACH" failure that the same
+script warns about lower down. state.sh is the file CLAUDE.md tells every run to
+trust FIRST and never re-derive by hand, which makes a stale restatement in it more
+dangerous than the same error in prose. Left for weekly-review (STEP E2) rather than
+patched mid-execute; flagged here so it is not rediscovered a third time.

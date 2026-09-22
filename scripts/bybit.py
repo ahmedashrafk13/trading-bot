@@ -408,6 +408,71 @@ def cmd_leverage(args):
             raise
 
 
+def cmd_trailstop(args):
+    """trailstop SYMBOL NEW_STOP — ratchet a LINEAR position's attached stopLoss.
+
+    The routines require ratcheting by amending the POSITION's stopLoss rather
+    than resting a second order (a second resting leg is what left DOT naked for
+    70h). `/v5/order/amend` cannot do that: the entry order is already filled and
+    the stop lives on the position, so the only correct endpoint is
+    `/v5/position/trading-stop`. Without this subcommand there was NO wrapper path
+    to ratchet a perp at all. Added 2026-09-22 (execute).
+
+    Refuses, locally, anything that is not a ratchet in the permitted direction:
+      - LONG  (Buy) : the new stop must be HIGHER than the current one.
+      - SHORT (Sell): the new stop must be LOWER than the current one.
+        "Never move a stop down" reads "never move a short's stop UP".
+    Also refuses a stop on the wrong side of the mark, or within 5% of it.
+    Direction and current values are read from the exchange, never from the
+    caller.
+    """
+    if len(args) < 2:
+        die("usage: trailstop SYMBOL NEW_STOP   (e.g. trailstop GRASSUSDT 0.4667)")
+    sym = args[0]
+    try:
+        new = float(args[1])
+    except ValueError:
+        die(f"stop must be a number, got {args[1]!r}")
+    if new <= 0:
+        die("stop must be > 0")
+
+    r = request("GET", "/v5/position/list",
+                {"category": "linear", "symbol": sym}, private=True)
+    rows = [p for p in r.get("result", {}).get("list", []) if float(p.get("size") or 0) != 0]
+    if not rows:
+        die(f"no open linear position in {sym} — nothing to ratchet")
+    pos = rows[0]
+    side = pos["side"]
+    mark = float(pos["markPrice"])
+    cur = float(pos.get("stopLoss") or 0)
+
+    if side == "Buy":
+        if new <= mark:
+            die(f"{sym} LONG: stop {new} is at/above the mark {mark} — wrong side")
+        if cur and new <= cur:
+            die(f"{sym} LONG: {new} does not RAISE the stop from {cur}. "
+                "Stops ratchet UP only; widening a loser is the breach this blocks.")
+        if (mark - new) / mark < 0.05:
+            die(f"{sym} LONG: stop {new} is {(mark-new)/mark*100:.2f}% below the "
+                "mark — inside the 5% minimum distance")
+    else:
+        if new <= mark:
+            die(f"{sym} SHORT: stop {new} is at/below the mark {mark} — wrong side")
+        if cur and new >= cur:
+            die(f"{sym} SHORT: {new} does not LOWER the stop from {cur}. "
+                "A short's stop ratchets DOWN only; raising it is the same breach "
+                "as widening a long.")
+        if (new - mark) / mark < 0.05:
+            die(f"{sym} SHORT: stop {new} is {(new-mark)/mark*100:.2f}% above the "
+                "mark — inside the 5% minimum distance")
+
+    body = {"category": "linear", "symbol": sym, "positionIdx": int(pos.get("positionIdx") or 0),
+            "stopLoss": args[1], "slTriggerBy": "LastPrice", "tpslMode": "Full"}
+    request("POST", "/v5/position/trading-stop", body, private=True)
+    out({"symbol": sym, "side": side, "stopLoss_was": cur,
+         "stopLoss_now": new, "mark": mark, "ratchet": "ok"})
+
+
 def cmd_amend(args):
     if not args:
         die("usage: amend '<json body>'")
@@ -469,6 +534,7 @@ COMMANDS = {
     "order": cmd_order, "amend": cmd_amend, "cancel": cmd_cancel,
     "orders": cmd_orders, "history": cmd_history, "fills": cmd_fills,
     "time": cmd_time, "funding": cmd_funding, "leverage": cmd_leverage,
+    "trailstop": cmd_trailstop,
 }
 
 if __name__ == "__main__":

@@ -2479,3 +2479,94 @@ ARB and XPL this morning. `cmd_positions` now sends `limit=200` and follows `nex
 to exhaustion. Re-verified after the fix: 23 of 23 positions present, 0 naked. Logged to
 OBSERVATIONS.md.
 
+
+---
+
+## 2026-09-22T20:12-20:18 UTC — EXECUTE RUN — 0 entries, 0 exits, 8 short stops ratcheted
+
+Exchange clock 2026-09-22 20:18 UTC (local machine reads 09-23; broker clock used).
+No `HALT_TRADING`. Fee budget $0.52 / $40.00, headroom $39.48. Circuit breaker clear
+(realized today $0.00 vs $10.00; 0 consecutive losing closes).
+
+**STEP A — reconcile.** Exchange matches TRADE-LOG with no drift.
+- Spot: OP 84.895020, TACTICAL, entry $0.1176, price $0.1300, **+10.48%**, age 96.1h.
+  Resting conditional stop `Untriggered` at trigger $0.11983, `orderType:"Market"`,
+  no `price` field, qty 84.89 = held qty floored to basePrecision — 100% covered.
+  XPL and ARB spot are dust only ($0.0002 / $0.0004); both were hard-cut on 2026-09-22
+  and the state.sh "REJECTED PROTECTIVE STOPS" banner for them is historical, not live.
+- Perps: 23 open, **0 naked** — every one carries a non-zero `stopLoss` (re-verified
+  after the ratchets below). 11 perp longs + 1 spot long = **12/12 TACTICAL**;
+  12/12 SHORT. Gross notional $224.88 / $600. Margin ~$85.9 / $100 (86% of ceiling).
+- No trades filled since the 17:14 batch. The 14 executions at 20:00 UTC are all
+  `execType: Funding`, netting **+$0.0014 received** (the short book is paid; the
+  long book pays). No closed trade to log, so STEP LEARN owes no `LESSON:`.
+- **72h TIME STOP:** all 23 perps are 3.0h old — not due. OP is 96.1h old but
+  +10.48% >= +5%, so it is exempt and keeps riding its trail.
+
+**RATCHET — 8 SHORT stops tightened DOWN.** Trail is 10% above the low-water mark,
+ratcheted DOWN only. Low-water taken as `min(entry, lows of the 18:00/19:00/20:00
+hourly bars)` — the 17:00 bar was excluded because it straddles the 17:14 entry and
+including it would have produced a stop tighter than the position ever justified.
+Every new stop is 7.4-9.8% above the mark, clearing the 5% minimum distance.
+
+| Symbol | low-water | stop was | stop now | change |
+|---|---|---|---|---|
+| GRASSUSDT    | 0.4243   | 0.4803   | 0.4667   | -2.83% |
+| CCUSDT       | 0.1119   | 0.12426  | 0.12309  | -0.94% |
+| DATAUSDT     | 0.2160   | 0.2396   | 0.2376   | -0.83% |
+| ENAUSDT      | 0.20347  | 0.22502  | 0.22381  | -0.54% |
+| AEROUSDT     | 0.6767   | 0.7484   | 0.7443   | -0.55% |
+| CRVUSDT      | 0.3519   | 0.3873   | 0.3870   | -0.08% |
+| 1000PEPEUSDT | 0.004845 | 0.005359 | 0.005329 | -0.56% |
+| ARBUSDT      | 0.2156   | 0.23732  | 0.23716  | -0.07% |
+
+Not ratcheted (low-water*1.10 is still ABOVE the resting stop, so tightening would
+have been a no-op or a widening): VVV, XPL, ZAMA, KAS.
+The 11 perp LONGS were NOT touched. Their stops sit 10% below entry, set under the
+pre-v5 rule. v5 widened the TACTICAL trail to 30%, but "never move a stop down"
+governs: a grandfathered tighter stop KEEPS it and is never widened to the new
+distance. A 30%-below-high-water trail is far below every one of these stops, so no
+upward ratchet is due either. No action was correct on all 11.
+
+**STEP D0 — BOOK FULL, BOTH DIRECTIONS. 0 entries placed.**
+`BOOK: 12 TACTICAL long / 12 SHORT open, 0 slots free; screen gives 18 long + 33
+short passing -> placing 0 entries this run.`
+The screens are NOT empty (long: HYPE UNI VVV DATA ZETA LIT ARB WLD LTC GRAM HBAR BR
+VIRTUAL SKR ZIG APT ICP OP; short: NEAR CC AERO XPL PUMP ENA PEPE SEI CRV SUI FIL ...),
+fee headroom is $39.48, and the breaker is clear. The entry rate is stopped by
+**hard gate #2 of TRADING-STRATEGY.md "What actually binds": slots full
+(12 TACTICAL + 12 SHORT)**, and by nothing else. This is a compliant idle run, not a
+discretionary one — no "patience", "no conviction" or "no catalyst" reasoning was
+used or is admissible here. Slots reopen when the 72h time stop fires from ~2026-09-25T17:14.
+
+**CORE — 0/1, left empty.** CORE is the one sleeve still gated on a dated
+idiosyncratic catalyst in today's RESEARCH-LOG, and the 2026-09-22 research run
+explicitly advanced no CORE idea (26 names pass the daily screen, none with a dated
+catalyst; the best-ranked, APT, carries a *negative* one — the September unlock
+cohort). Patience IS the strategy in CORE, so an empty CORE slot here is the system
+working as designed.
+
+**STEP B — standing verdicts.** Nothing this run contradicts them. No new position
+was opened, so no reasoning was advanced against "nothing tested beats buy-and-hold
+BTC" or the momentum IC findings. Tightening 8 short stops runs *with* the trail
+rules as written, not against the "wider is always better" verdict, which was
+measured on LONG trailing stops in the engine and has never been measured on the
+short book's inverted trail. Flagged, not acted on.
+
+**DEFECT FOUND AND FIXED THIS RUN.** `routines/execute.md` STEP E1 requires "amend the
+position's stopLoss rather than resting a second order" to ratchet a perp — and
+`scripts/bybit.py` had **no subcommand that could do it**. `amend` posts to
+`/v5/order/amend`, which cannot touch a filled order's attached stop; the stop lives
+on the POSITION and needs `/v5/position/trading-stop`. So for the 23 perps opened on
+2026-09-22 there was no wrapper path to ratchet at all, and the only rule-compliant
+alternatives were to leave every short's stop frozen at its entry distance forever or
+to rest a second order — which is explicitly banned and is what left DOT naked for 70h.
+Added `bybit.py trailstop SYMBOL NEW_STOP`, which reads side, mark and current stop
+FROM THE EXCHANGE (never from the caller) and refuses locally: a long stop that does
+not RISE, a short stop that does not FALL, a stop on the wrong side of the mark, and
+any stop within 5% of the mark. Verified before use — `trailstop GRASSUSDT 0.4900`
+(raising a short's stop, the v4 form of "never move a stop down") was REFUSED, and
+`0.4667` was accepted. Logged to OBSERVATIONS.md.
+
+**STEP G — no notification sent.** STEP G fires "only if you placed or closed
+something"; this run did neither.
