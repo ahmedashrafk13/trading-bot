@@ -235,3 +235,38 @@ HONEST LIMITS, so this is not over-claimed later:
   (spot and perp prices diverging), exchange risk, liquidation on the short leg
   if margin is mismanaged, and borrow limits on the spot leg.
 - It needs BOTH legs. The live account currently runs perps only.
+
+## 2026-09-23 — PORTFOLIO BLEND, and a Sharpe number that is NOT real
+Research on crypto quant funds is consistent that "the best quant funds are
+essentially portfolios of strategies, not a single algorithm" and that the
+category's ~1.53 median Sharpe comes largely from diversification. This repo
+spent its whole life hunting for THE signal, which was the wrong question.
+
+Blending the two books (daily returns, 4.1y):
+  100% trend      CAGR +16.78%  DD -43.95%  Sharpe 0.78
+   60% carry       CAGR +19.59%  DD  -9.16%  Sharpe 1.85
+   75% carry       CAGR +19.84%  DD  -5.81%  Sharpe 2.87
+  100% carry      CAGR +19.80%  DD  -1.78%  Sharpe 11.37   <-- NOT REAL
+
+**THE 11.37 SHARPE IS A MODELLING ARTIFACT AND MUST NOT BE PROMOTED.** The carry
+model credits funding as a smooth deterministic drip with NO variance on the
+hedge. Real carry books get their volatility from BASIS RISK -- the two legs
+drifting against each other -- which is not modelled at all here. The literature
+is explicit that a Sharpe above 3 in 2026 signals methodology error, and this is
+that error, self-inflicted.
+
+What survives scrutiny:
+  - CAGR ~11-20% is CREDIBLE. External check: Ethena runs this exact trade at
+    scale and publicly reports 10-15% APY, bracketing our OOS 11-15%.
+  - The -1.78% drawdown and 11+ Sharpe are NOT credible.
+  - The defensible allocation is 60-75% carry / 25-40% trend, where drawdown
+    (-6% to -9%) does not rest on the unmodelled assumption.
+
+NEXT WORK, in priority order, for whoever picks this up:
+  1. Model basis risk: fetch spot AND perp closes, mark the pair each bar, and
+     let the hedge drift. Until that exists every carry risk number here is
+     optimistic.
+  2. Build the live two-leg executor (scripts/carry.py is scan/plan only; it
+     does not place orders, deliberately).
+  3. Pairs trading / stat arb as a third sleeve -- published Sharpe 1.4-1.5,
+     market neutral, and genuinely uncorrelated with both of these.
