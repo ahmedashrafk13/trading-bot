@@ -87,3 +87,33 @@ These are settled. Do not re-propose them; test something new instead.
 | 11 | 2026-09-22 | STEP 4B self-generated signal — first use of the VOLUME column, which the loader discarded until this run | Amihud (2002) illiquidity, mean \|return\| per dollar of volume over 20 bars, is the best-documented non-price cross-sectional factor; if the liquidity premium exists in crypto, illiquid coins should earn higher forward returns | added `self.v` to the Universe loader + new `sig_amihud_illiquidity` -> `research.py --timeframe D`; then, if it clears RANDOM with the same sign in both halves, `run.py --set entry_signal=liquidity` at the P&L level | REJECTED | The IC is real and the sign is BACKWARDS: @168 bars train -0.0439 / test -0.0643 (t=-18.0), @24 -0.0183/-0.0475, @6 -0.0221/-0.0257 — same sign at every horizon in both halves, 3rd-strongest \|IC\| in the file. So crypto pays no illiquidity premium; the liquid names outperform. Traded in the direction the data supports (`liquidity` = -amihud), it still loses: -14.29% / DD -31.79% / Sharpe -1.33 vs the momentum baseline +4.78% / DD -24.80% / +0.79. Combined with the best signal on file, `liquidity_downside_vol` = -1.78% / DD -21.63% — better drawdown, still below baseline return. No short leg proposed, so the skew check does not apply. This is the standing verdict "cross-sectional selection cannot be monetized long-only" reproduced on a non-price dimension for the first time. |
 | 12 | 2026-09-22 | STEP 4B self-generated signal (second volume construction, independent of return sign so it is not momentum restated) | Relative volume — today's volume over its own 20-bar mean — measures ATTENTION rather than liquidity, and attention persists, so high relative turnover should predict higher forward return | new `sig_volume_surge` -> `research.py --timeframe D`; falsified unless it beats RANDOM with the same sign in both halves, then `run.py --set entry_signal=volume_surge` | REJECTED | Clears the null cleanly and consistently — @168 bars train +0.0307 / test +0.0296 (t=+8.6), @24 +0.0141/+0.0235 (t=+7.1), @6 +0.0104/+0.0108 (t=+3.2), positive at every horizon in both halves — and is still not tradable: -11.27% / DD -34.32% / Sharpe -0.70, on 711 trades vs the baseline's 506. The attention story survives as a statistical fact and dies on friction; raising the trade count by 40% to harvest a ~0.03 IC is the frequency mistake the standing verdicts already price. |
 | 13 | 2026-09-22 | STEP 5 standing-assumption test — the TACTICAL entry volatility band ceiling `tac_vol_hi` = 6%, never tested since it was written | The 6% ceiling is an origin-story number. If the universe's lottery-shaped right tail is where the money is (CONFIRMED), the ceiling is discarding the winners and LOOSENING it should improve return | `run.py --timeframe D --set tac_vol_hi=k` for k in {0.030,0.045,0.060,0.090,0.200}; falsified if any k beats the shipped 0.060 on return | REJECTED | The hypothesis is backwards and the shipped value survives. 0.060 = +4.78% / DD -24.80% / Sharpe +0.79; loosening is clearly harmful on BOTH metrics (0.090 = -20.24% / DD -36.91%; 0.200 = -20.05% / DD -36.42%); tightening also loses return (0.045 = -4.65%, 0.030 = -3.65%) though 0.030 gives the best drawdown of the sweep, -16.04%. Caveat recorded against over-reading this: the curve is NON-MONOTONE with its peak at exactly the incumbent value, which is the shape of a lucky number rather than a robustly-identified optimum, and only the full period was run. The actionable part — do not widen the band — holds in both directions of the metric. No change made. |
+
+## 2026-09-23 — THE FEE CONSTANT WAS 6x TOO HIGH (not a hypothesis; a defect)
+`Params.fee_bps` was 35.0/side with 10.0 spread — the SPOT-era figure measured on
+a $12 BTC spot round trip (0.65% round trip). The account moved to linear PERPS
+on 2026-09-22 and nobody updated it.
+
+MEASURED from 39 real perp fills on this account: **0.0550% per side on every
+symbol**, 0.0572% average = **0.114% round trip**. Six times cheaper.
+
+Consequence: every backtest run between 2026-09-22 and 2026-09-23 overstated
+friction by ~6x, and every conclusion of the form "the signal has gross edge but
+fees eat it" was computed against a cost that does not exist. Corrected in
+engine.py with the measurement recorded inline.
+
+Effect on the best signal, full hourly period:
+  downside_vol @ 35bps = -54.59%   ->   @ 5.5bps = -39.63%   (+15 points)
+
+## 2026-09-23 — SURVIVORSHIP BIAS IN THE BACKTEST UNIVERSE (open defect)
+At a 30% trail and correct fees the RANDOM null returns -16.07% against BTC's
+-36.35% — a coin flip "beating" the benchmark by 20 points on 982 trades. That
+is not possible in an unbiased universe.
+
+Cause: `data/bars/` holds the coins that are liquid enough to sit in the top 60
+by turnover TODAY. Coins that delisted or died are absent, so every long-only
+strategy here inherits a tailwind that was not available live.
+
+CONSEQUENCE FOR EVERY RESULT IN THIS FILE: "EDGE vs BTC" is not trustworthy on
+this cache. The only defensible metric is SIGNAL minus RANDOM NULL at identical
+settings, which is what backtest/bakeoff.py now reports. Fixing the bias needs a
+point-in-time universe (delisted symbols included), which Bybit does not serve.

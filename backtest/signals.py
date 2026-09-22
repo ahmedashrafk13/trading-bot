@@ -315,6 +315,55 @@ def sig_volume_surge(u):
     return out
 
 
+# --------------------------------------------------------- NON-PRICE signals
+# Added 2026-09-23. Every signal above is derived from OHLCV, the most
+# picked-over data that exists, and momentum on it scores AT the random null.
+# The one time a new dimension was read (volume) it produced the best signal in
+# the file. These use open interest and the long/short account ratio, which no
+# price series can reconstruct.
+
+def sig_oi_divergence(u):
+    """Price up on RISING open interest = new money. Price up on FALLING OI =
+    shorts covering, which exhausts when the last short is out.
+
+    A price series cannot tell those apart; this can. Scored so that
+    "advancing on real participation" ranks high.
+    """
+    import numpy as np
+    ret = _pct_change(u.mark, 24)
+    doi = _pct_change(u.oi, 24)
+    return np.sign(ret) * doi
+
+
+def sig_oi_surge(u):
+    """Open interest building faster than usual: positioning is being added,
+    direction agnostic. A crowding-BUILD detector."""
+    return _pct_change(u.oi, 24)
+
+
+def sig_crowd_contrarian(u):
+    """Fade the crowd. A high long-ratio means most accounts are already long,
+    so the marginal buyer is gone and a flush has fuel. Inverted, so 'few
+    accounts are long' ranks HIGH."""
+    return -u.long_ratio
+
+
+def sig_crowd_shift(u):
+    """CHANGE in the long ratio rather than its level. Positioning that is
+    rotating is more informative than positioning that is merely extreme --
+    a level can sit extreme for weeks."""
+    return -_pct_change(u.long_ratio, 24)
+
+
+def sig_oi_price_squeeze(u):
+    """The classic short squeeze setup: price falling while open interest
+    RISES = shorts piling into a falling market. Those positions are fuel."""
+    import numpy as np
+    ret = _pct_change(u.mark, 24)
+    doi = _pct_change(u.oi, 24)
+    return np.where((ret < 0) & (doi > 0), doi, np.nan)
+
+
 def sig_random(u):
     """THE NULL. Any candidate that cannot beat this is luck."""
     rng = np.random.default_rng(0)
@@ -399,9 +448,28 @@ COMPOSITES = {
     "liquidity": ["-amihud_illiquidity"],
     "volume_surge": ["volume_surge"],
     "liquidity_downside_vol": ["-amihud_illiquidity", "downside_vol_low"],
+    # THE NULL, as a tradable composite (2026-09-23). Every result must be
+    # compared against this at the SAME exposure. Without it, "beat BTC" is
+    # meaningless in a falling market: holding nothing beats a -36% benchmark,
+    # so any config that merely trades LESS scores well for no good reason.
+    "random": ["random_null"],
+    # NON-PRICE composites, 2026-09-23.
+    "oi_divergence": ["oi_divergence"],
+    "oi_surge": ["oi_surge"],
+    "crowd_contrarian": ["crowd_contrarian"],
+    "crowd_shift": ["crowd_shift"],
+    "oi_squeeze": ["oi_squeeze"],
+    "crowd_liquidity": ["crowd_contrarian", "-amihud_illiquidity"],
+    "oi_downside_vol": ["oi_divergence", "downside_vol_low"],
 }
 
 _BY_NAME = {
+    "random_null": sig_random,
+    "oi_divergence": sig_oi_divergence,
+    "oi_surge": sig_oi_surge,
+    "crowd_contrarian": sig_crowd_contrarian,
+    "crowd_shift": sig_crowd_shift,
+    "oi_squeeze": sig_oi_price_squeeze,
     "downside_vol_low": sig_downside_vol_low,
     "low_volatility": sig_low_vol,
     "below_sma20": sig_dist_from_sma,

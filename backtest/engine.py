@@ -31,6 +31,7 @@ import math
 import os
 from dataclasses import dataclass
 
+import pathlib
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -89,8 +90,17 @@ class Params:
     start_equity: float = 200.0
 
     # --- costs ---
-    fee_bps: float = 35.0      # per side; 0.65-0.70% round trip as measured live
-    spread_bps: float = 10.0   # per side, stands in for the unavailable quote data
+    # CORRECTED 2026-09-23. These were the SPOT-era numbers (35bps/side, 0.65%
+    # round trip) measured on a $12 BTC spot round trip in September. The account
+    # moved to linear PERPS on 2026-09-22, where the taker fee is ~6x lower, and
+    # nobody updated this -- so every backtest since then overstated friction by
+    # about 6x and every "fees kill the edge" conclusion was computed at the
+    # wrong cost. Measured from 39 real perp fills on this account: 0.0550% per
+    # side on every symbol, 0.0572% average including one maker/taker mix.
+    fee_bps: float = 5.5       # per side, linear perp taker (measured)
+    spread_bps: float = 2.0    # per side; liquid perps quote far tighter than spot
+    # Spot is still ~10bps/side if a spot sleeve is ever re-enabled.
+    spot_fee_bps: float = 10.0
 
     # --- CORE screen (daily bars) ---
     core_mom_periods: int = 30
@@ -234,6 +244,35 @@ class Universe:
                     self.o[si, i], self.h[si, i] = o, h
                     self.l[si, i], self.c[si, i] = l, c
                     self.v[si, i] = v
+
+        # --- NON-PRICE dimensions (2026-09-23) -------------------------------
+        # Open interest and the long/short account ratio, from data/flow/.
+        # Absent for symbols with no perp listing and for hours before the
+        # fetch window, so both stay NaN and any signal using them simply has
+        # no opinion there rather than a fabricated one.
+        self.oi = np.full_like(self.o, np.nan)
+        self.long_ratio = np.full_like(self.o, np.nan)
+        _flow = pathlib.Path(__file__).resolve().parent.parent / "data" / "flow"
+        if _flow.exists():
+            for si, sym in enumerate(self.symbols):
+                coin = sym.replace("-USD", "").replace("/USD", "")
+                f = _flow / f"{coin}USDT.json"
+                if not f.exists():
+                    continue
+                try:
+                    rec = json.loads(f.read_text(encoding="utf-8"))
+                except Exception:
+                    continue
+                for row in rec.get("open_interest", []):
+                    i = idx.get(row["t"] - row["t"] % st)
+                    if i is not None:
+                        self.oi[si, i] = row["oi"]
+                for row in rec.get("long_ratio", []):
+                    i = idx.get(row["t"] - row["t"] % st)
+                    if i is not None:
+                        self.long_ratio[si, i] = row["buy"]
+            self.oi = _ffill(self.oi)
+            self.long_ratio = _ffill(self.long_ratio)
 
         self.mark = _ffill(self.c)
         self.hours = np.array([dt.datetime.fromtimestamp(int(x), dt.timezone.utc).hour
@@ -529,11 +568,23 @@ def run(u, p):
         if p.short_enabled and not tac_frozen and u.hours[i] % p.tac_every_hours == 0:
             free = p.short_slots - sum(1 for q in pos if q.sleeve == "SHORT")
             if free > 0:
-                ok = ((u.tac_mom[:, i] < -p.tac_min_mom)
-                      & (np.abs(u.tac_dsma[:, i]) <= p.tac_ext_band)
-                      & (u.tac_vol[:, i] >= p.tac_vol_lo)
-                      & (u.tac_vol[:, i] <= p.tac_vol_hi))
-                rank_by = -u.tac_mom[:, i]      # most negative momentum ranks first
+                if alt_score is not None:
+                    # Short the BOTTOM of whatever signal the longs buy at the
+                    # top. Ignoring entry_signal here (the original version did)
+                    # meant the short book always traded raw momentum no matter
+                    # what the long book was told to use — so a signal test could
+                    # never actually reach the short side.
+                    lo_cut = np.nanquantile(
+                        np.where(np.isnan(alt_score), np.nan, alt_score),
+                        p.signal_top_frac, axis=0)
+                    ok = alt_score[:, i] <= lo_cut[i]
+                    rank_by = -alt_score[:, i]   # weakest score ranks first
+                else:
+                    ok = ((u.tac_mom[:, i] < -p.tac_min_mom)
+                          & (np.abs(u.tac_dsma[:, i]) <= p.tac_ext_band)
+                          & (u.tac_vol[:, i] >= p.tac_vol_lo)
+                          & (u.tac_vol[:, i] <= p.tac_vol_hi))
+                    rank_by = -u.tac_mom[:, i]  # most negative momentum first
                 for si in _rank(ok, rank_by, held, free):
                     pending.append(("SHORT", si))
                     held.add(si)
