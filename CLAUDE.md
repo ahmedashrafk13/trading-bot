@@ -100,8 +100,20 @@ next run cannot see it.
   is the thesis. CORE still requires a dated catalyst and its HOLD is binding.
   'Patience', 'no conviction' and 'cash is a position' are CORE arguments and
   are NOT valid reasons to leave a TACTICAL or SHORT slot idle.
-  SIZE IS DERIVED FROM RISK: (equity * risk%) / trail distance, then capped.
-  Never a fixed dollar amount. Run `state.sh` — it prints both sizes.
+  **SIZE IS DECIDED PER TRADE BY CONVICTION (v8, 2026-09-23).** Not one fixed
+  size for every entry. Measure how far the 30d trend is stretched in the
+  asset's OWN volatility units (a z-score, capped at 3 sigma), then scale the
+  position between 0.5x and 8x the vol-targeted base:
+      base   = (vol_target 0.40 / asset's annualised vol) / slots
+      mult   = 0.5 + 7.5 * (min(z, 3) / 3)
+      size   = equity * base * mult   (capped at 60% of equity, and by cash)
+  Weak setup -> half size. Strong setup -> up to 8x. This nearly TRIPLED return
+  (+113% -> +317% over 5.5y) with the same entries, same exits, same 156 trades
+  and the same 55.8% win rate. Only the amount changed.
+  The moderate variant (max 3x) improved return, drawdown AND Sharpe at once
+  (+129%, DD -31%, Sharpe 3.50) and is the safer choice if drawdown matters more
+  than return — one number, `conviction_max`.
+  Run `state.sh` for equity; the multiplier is computed per candidate.
 - NO SLEEVE HAS A PROFIT TARGET (v2, 2026-09-15). Any fixed target/stop
   pair is negative-expectancy after fees: a zero-edge random walk hits the stop
   first `stop/(stop+target)` of the time, which is always just under the

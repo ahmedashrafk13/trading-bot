@@ -156,7 +156,12 @@ STEP D — THE BUY GATE. Every condition must pass. State each one explicitly.
 - MARGIN used after fill <= 50% of budget ($100); GROSS NOTIONAL (long + short
   as absolute values, NOT netted) <= 300% of budget ($600). There is NO minimum
   — but under the no-ceiling directive, idle slots are a failure, not a state
-- size = (equity * sleeve risk%) / stop distance, then capped
+- SIZE IS PER-TRADE CONVICTION (v8), not a fixed figure. Compute the 30d trend
+  in the asset's own vol units (z, capped at 3), then
+  mult = 0.5 + 7.5 * (z / 3); size = equity * vol_target_base * mult.
+  State the z and the multiplier in the log for every entry, so a later run can
+  see WHY a position was the size it was. A weak setup taking full size is the
+  defect this rule exists to prevent.
 - order value >= the symbol's `minOrderAmt` from `instruments`
 - spread <= 0.5%
 - the circuit breaker is not tripped (realized losses today < 5% of equity, and
