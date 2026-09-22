@@ -3,7 +3,7 @@
 # momentum, trend position and volatility, so entry decisions start from data
 # rather than from whichever coin the news happened to mention.
 #
-# Usage: bash scripts/screen.sh [--json] [--sleeve core|tactical|all] [--top N]
+# Usage: bash scripts/screen.sh [--json] [--sleeve core|tactical|short|all] [--top N]
 #
 # Prints a ranked table plus a PASS/FAIL verdict per sleeve's technical filters.
 # Read-only: no orders, no writes.
@@ -18,7 +18,7 @@ while [[ $# -gt 0 ]]; do
     --json) FORMAT="json"; shift ;;
     --sleeve) SLEEVE="${2:?}"; shift 2 ;;
     --top) TOP="${2:?}"; shift 2 ;;
-    *) echo "usage: bash scripts/screen.sh [--json] [--sleeve core|tactical|all] [--top N]" >&2; exit 1 ;;
+    *) echo "usage: bash scripts/screen.sh [--json] [--sleeve core|tactical|short|all] [--top N]" >&2; exit 1 ;;
   esac
 done
 
@@ -29,12 +29,15 @@ if [[ "$SLEEVE" == "all" ]]; then
   "$0" --sleeve core     --top "$TOP" $([[ $FORMAT == json ]] && echo --json)
   echo
   "$0" --sleeve tactical --top "$TOP" $([[ $FORMAT == json ]] && echo --json)
+  echo
+  "$0" --sleeve short    --top "$TOP" $([[ $FORMAT == json ]] && echo --json)
   exit 0
 fi
 case "$SLEEVE" in
   core)     TF="D"  ;;
   tactical) TF="60" ;;
-  *) echo "unknown sleeve: $SLEEVE (core|tactical|all)" >&2; exit 1 ;;
+  short)    TF="60" ;;
+  *) echo "unknown sleeve: $SLEEVE (core|tactical|short|all)" >&2; exit 1 ;;
 esac
 
 FORMAT="$FORMAT" SLEEVE="$SLEEVE" TF="$TF" TOP="$TOP" python - <<'PY'
@@ -145,11 +148,22 @@ for turnover, sym, coin, t in cands:
     if not (0.4 <= vol <= 6.0):  tac_ok, _ = False, tac_why.append('vol outside band')
     if not (spread <= 0.5):      tac_ok, _ = False, tac_why.append('spread>0.5%')
 
+    # SHORT (hourly bars): the exact mirror of TACTICAL. Perps let this account
+    # sell weakness, so a name failing TACTICAL for being DOWN is not a reject —
+    # it is the other side of the book. Same vol band and same spread ceiling,
+    # because the friction is direction-blind.
+    shrt_ok, shrt_why = True, []
+    if not (m7 < 0):             shrt_ok, _ = False, shrt_why.append('short-mom>=0')
+    if not (-8 <= dsma <= 8):    shrt_ok, _ = False, shrt_why.append('too far from SMA20')
+    if not (0.4 <= vol <= 6.0):  shrt_ok, _ = False, shrt_why.append('vol outside band')
+    if not (spread <= 0.5):      shrt_ok, _ = False, shrt_why.append('spread>0.5%')
+
     rows.append(dict(symbol=sym, coin=coin, last=last, m7=m7, m30=m30, dsma=dsma,
                      vol=vol, spread=spread, turnover24h=turnover,
                      sma20_rising=sma_rising,
                      core_pass=core_ok, core_fail=core_why,
-                     tactical_pass=tac_ok, tactical_fail=tac_why))
+                     tactical_pass=tac_ok, tactical_fail=tac_why,
+                     short_pass=shrt_ok, short_fail=shrt_why))
 
 dropped = [c[2] for c in cands if len([x for x in closes.get(c[1], []) if x == x]) < 21]
 if dropped:
@@ -166,15 +180,29 @@ if fmt == 'json':
     print(json.dumps(rows, indent=2)); raise SystemExit
 
 print(f'UNIVERSE SCREEN [{TF}] — {len(rows)} of the top {TOP} coins by 24h turnover, >=21 periods')
-print(f"{'coin':9}{'last':>13}{'7p%':>8}{'30p%':>8}{'vsSMA20':>9}{'vol%':>7}{'spr%':>7}  {'CORE':<6}{'TACTICAL':<9}")
-print('-' * 92)
+print(f"{'coin':9}{'last':>13}{'7p%':>8}{'30p%':>8}{'vsSMA20':>9}{'vol%':>7}{'spr%':>7}  {'CORE':<6}{'TACTICAL':<9}{'SHORT':<6}")
+print('-' * 98)
 for r in rows:
     cf = 'PASS' if r['core_pass'] else 'fail'
     tf_ = 'PASS' if r['tactical_pass'] else 'fail'
+    sf = 'PASS' if r['short_pass'] else 'fail'
     print(f"{r['coin']:9}{r['last']:>13,.4f}{r['m7']:>8.1f}{r['m30']:>8.1f}"
-          f"{r['dsma']:>9.1f}{r['vol']:>7.1f}{r['spread']:>7.2f}  {cf:<6}{tf_:<9}")
+          f"{r['dsma']:>9.1f}{r['vol']:>7.1f}{r['spread']:>7.2f}  {cf:<6}{tf_:<9}{sf:<6}")
 print()
-key = 'core_pass' if sleeve == 'core' else 'tactical_pass'
+key = {'core': 'core_pass', 'short': 'short_pass'}.get(sleeve, 'tactical_pass')
 passes = [r['coin'] for r in rows if r[key]]
+if sleeve == 'short':
+    # Weakest first: the short book is ranked by how NEGATIVE the momentum is,
+    # so rank 1 is the worst performer, not the best.
+    passes = [r['coin'] for r in sorted(rows, key=lambda r: (r['m7'] if r['m7'] == r['m7'] else 999))
+              if r['short_pass']]
 print(f'{sleeve.upper()} SHORTLIST ({len(passes)}):', ' '.join(passes) or '(none)')
+
+# Both directions in one call, so an execute run does not have to re-screen to
+# find the other side of the book.
+_longs  = [r['coin'] for r in rows if r['tactical_pass']]
+_shorts = [r['coin'] for r in sorted(rows, key=lambda r: (r['m7'] if r['m7'] == r['m7'] else 999))
+           if r['short_pass']]
+print(f'  -> LONG candidates ({len(_longs)}):', ' '.join(_longs) or '(none)')
+print(f'  -> SHORT candidates ({len(_shorts)}):', ' '.join(_shorts) or '(none)')
 PY

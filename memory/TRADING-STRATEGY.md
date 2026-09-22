@@ -1,10 +1,22 @@
 # Trading Strategy — Crypto
 
 ## Mission
-Grow a Bybit spot crypto account (currently the DEMO endpoint
-`api-demo.bybit.com`; treat every rule as if it were live). CRYPTO SPOT ONLY — no perps, no
-leverage, no stocks, no options, ever. Benchmark is BTC buy-and-hold, not the S&P 500: beating a rising BTC is the
-only result that justifies active trading.
+Grow a Bybit crypto account (currently the DEMO endpoint
+`api-demo.bybit.com`; treat every rule as if it were live). CRYPTO ONLY — no
+stocks, no options, ever. Benchmark is BTC buy-and-hold, not the S&P 500.
+
+**v4, OWNER DIRECTIVE 2026-09-22 — PERPS, SHORTS AND LEVERAGE ARE ENABLED.**
+The account may now trade Bybit USDT **linear perpetuals** in BOTH directions,
+at up to **5x** leverage (3x default). The spot-only / long-only mandate that
+governed v1-v3 is REVOKED by the owner. Two things follow, and they are the
+whole reason this is survivable:
+- A perp can lose MORE than the position is worth. Liquidation is now a real
+  failure mode that spot did not have. Every opening perp order therefore
+  carries an ATTACHED `stopLoss` — `scripts/bybit.py` refuses the order
+  otherwise, locally, before it reaches the venue.
+- Beating a rising BTC is no longer the only way to win. A short book can pay
+  in a falling tape, which is exactly what v1-v3 could not do — it lost 3.02%
+  while sitting 15.38pp behind BTC with no way to profit from the downside.
 
 ## Capital & Constraints
 - Starting capital: ~$200
@@ -12,11 +24,22 @@ only result that justifies active trading.
   ~$179k; it is NOT the trading capital. All %-of-equity rules in this file are
   percentages of the $200 budget. Enforced in scripts/state.sh via
   TRADING_BUDGET_USD.
-- Platform: Bybit v5 UNIFIED account, SPOT ONLY. DEMO endpoint
-  (`api-demo.bybit.com`, per `.env`) — treated with live-money discipline.
+- Platform: Bybit v5 UNIFIED account, **spot AND linear perpetuals**. DEMO
+  endpoint (`api-demo.bybit.com`, per `.env`) — live-money discipline.
 - Instruments: Bybit USDT spot pairs ONLY (~394 listed; only the liquid end is
   tradable at this account size — see `scripts/screen.sh`)
-- Account type: spot, long only. Spot cannot short.
+- Account type: spot (long only) **and linear perps (long AND short)**. Shorts
+  are placed as perp `side: Sell`; spot still cannot short and never will.
+- LEVERAGE: default **3x**, hard cap **5x** (`MAX_LEVERAGE` in
+  `scripts/bybit.py` refuses anything higher). Leverage multiplies the position,
+  NOT the risk budget: the risk % per trade below is unchanged, so 3x buys a
+  position 3x the size on the SAME dollar risk only because the stop sits 3x
+  closer in percentage terms. It is not free size.
+- LIQUIDATION CLEARANCE: the stop must always trigger well before liquidation.
+  At Nx leverage the account is wiped by a move of roughly 100/N %, so the stop
+  distance must never exceed **half** of that (at 3x: liquidation ~33%, stop
+  must be <= 16%). A candidate whose required stop is wider than that clearance
+  is REJECTED, or the leverage is lowered until it fits. This is a hard gate.
 - Max position size: 20% of equity CORE / 12% TACTICAL — and those are CAPS, not
   targets. Actual size is derived from risk: (equity * sleeve risk%) / stop
   distance, where risk% is 2.0 CORE / 1.0 TACTICAL. (This line restates the
@@ -53,7 +76,10 @@ IMMUTABLE list, nor to anything this file marks **OWNER DIRECTIVE**. As of
 2026-09-18 those are:
 - the $200 `TRADING_BUDGET_USD` cap
 - the TACTICAL DAILY TRADE QUOTA of >= 2 entries per UTC day
-- SPOT ONLY / long only / no leverage / never withdraw
+- never withdraw or transfer funds
+- the 5x LEVERAGE CAP and the liquidation-clearance rule
+- (the former SPOT ONLY / long only / no leverage directive was REVOKED by the
+  owner on 2026-09-22 and replaced by the two lines above)
 
 A run may ARGUE against any of these in `memory/OBSERVATIONS.md` or as a
 hypothesis, and weekly-review may recommend a change — but only the owner
@@ -102,10 +128,15 @@ These are not preferences, they are verified facts about the platform or the
 mandate. A "rule improvement" that violates one produces orders the API rejects,
 or changes what this bot is:
 1. CRYPTO ONLY. No stocks, no options, ever.
-2. Long only — spot cannot short. SPOT ONLY: every order body carries
-   `"category":"spot"`. Never linear/inverse, never leverage.
-3. Protection is attached AT ENTRY as `stopLoss` on the entry order, held
-   server-side by the exchange.
+2. CATEGORY: `"spot"` or `"linear"` ONLY. Never `inverse`, never `option`.
+   Shorts are linear perps; spot orders remain long-only because spot has no
+   borrow. (v1-v3 read "SPOT ONLY, long only, never leverage" — REVOKED by
+   OWNER DIRECTIVE 2026-09-22.)
+3. Protection is server-side and exists from the moment the position does.
+   On LINEAR that is an attached `stopLoss` on the entry order (linear supports
+   it; `bybit.py` rejects an opening perp order without one). On SPOT it is a
+   SEPARATE resting conditional sell immediately after the fill, because spot
+   rejects attached TP/SL with retCode 170130.
 4. Orders use `"timeInForce":"GTC"`.
 5. Order value >= the pair's `minOrderAmt` from `bybit.py instruments spot`.
 6. Stops are sized from the ACTUAL held qty (buy fees are taken in kind).
@@ -113,8 +144,9 @@ or changes what this bot is:
    DISTANCE; it may never remove the requirement or allow a naked position.
 8. Never move a stop down, and never widen a stop on an open losing position.
 9. No stablecoins as positions.
-10. A fee budget must EXIST and may never exceed 1.5% of equity per month. The review
-    may tune it below that; it may not remove it or raise it past the ceiling.
+10. A fee budget must EXIST. The 1.5%/month ceiling this rule once named was
+    raised to 20%/month by OWNER DIRECTIVE 2026-09-22. The review may tune it
+    BELOW the owner's figure only with evidence; it may never remove it.
 11. The daily circuit breaker must EXIST. Thresholds are tunable; removal is not.
 12. This section itself, and the requirement to log amendments with evidence.
 
@@ -155,18 +187,38 @@ Capital is split so that "more trades" and "let good trades run" can coexist
 without fighting each other. A 15% trailing stop implies week-long holds; 2-3
 trades a day implies hour-long holds. They cannot be the same position.
 
-| | CORE (primary) | TACTICAL (experimental) |
-|---|---|---|
-| RISK per position | 2.0% of equity | 0.5% of equity |
-| Position size | risk / trail (~$26 at $197) | risk / trail (~$20 at $197) |
-| Hard cap on size | 20% of equity | 8% of equity |
-| Max positions | 1 (lowered from 4 on 2026-09-18 — hypothesis #6) | 6 (raised 1 -> 6 on 2026-09-18, OWNER DIRECTIVE) |
-| New trades | agent's judgement | QUOTA: >= 2 entries per UTC day |
-| Stop | 15% below high-water, ratcheted | 10% below high-water, ratcheted |
-| Target | NONE — the trail is the exit | NONE — the trail is the exit |
-| Time limit | none | 72h: if not >= +5% after 72h, close at market |
-| Screen timeframe | daily bars | hourly bars |
-| Hold horizon | weeks to months | hours to days |
+There are now THREE sleeves. SHORT is the mirror of TACTICAL and exists only
+because perps were enabled on 2026-09-22.
+
+| | CORE (primary) | TACTICAL (long) | SHORT (perp) |
+|---|---|---|---|
+| Instrument | spot | spot or linear | **linear perp only** |
+| Direction | long | long | **short (side: Sell)** |
+| Leverage | 1x (spot) | 1x-3x | 3x default, 5x cap |
+| RISK per position | 2.0% of equity | 0.5% of equity | 0.5% of equity |
+| Position size | risk / trail (~$26) | risk / trail (~$10) | risk / trail (~$10) |
+| Hard cap on size | 20% of equity | 8% of equity | 8% of equity |
+| Max positions | 1 | **12** (was 6) | **12** |
+| New trades | agent's judgement | **NO CAP — take every passing name** | **NO CAP** |
+| Stop | 15% below high-water | 10% below high-water | **10% ABOVE low-water** |
+| Target | NONE — the trail is the exit | NONE | NONE |
+| Time limit | none | **24h unless >= +5%** (was 72h) | **24h unless >= +5%** |
+| Screen timeframe | daily bars | hourly bars | hourly bars |
+| Hold horizon | weeks to months | hours to days | hours to days |
+
+### The SHORT sleeve is TACTICAL with every sign flipped
+Read every trailing-stop rule in this file as "adverse direction". A short's
+high-water mark is a LOW-water mark: the stop sits 10% ABOVE the lowest price
+seen since entry, and ratchets DOWN only, never up. "Never move a stop down"
+becomes "never move a short's stop UP". Getting this backwards widens the stop
+on a losing short, which is the one thing rule 8 forbids in either direction.
+
+Short entries come from `bash scripts/screen.sh --sleeve short`, which ranks the
+universe weakest-first — rank 1 is the WORST 7-period performer, not the best.
+
+Funding matters now and did not before: a short PAYS funding when the rate is
+negative and RECEIVES it when positive. Check `bybit.py funding SYMBOL` before
+entering; a short into deeply negative funding bleeds while it waits.
 
 ### Size is DERIVED from risk, never fixed in dollars
 `position size = (equity * sleeve risk%) / trail distance`, then capped.
@@ -302,6 +354,9 @@ often. Grade expectancy per trade, not volume.
 
 ## DAILY TRADE QUOTA (owner directive, 2026-09-18) — TACTICAL ONLY
 
+**SUPERSEDED 2026-09-22 by "NO TRADE CEILING" below — 2/day is still a floor,
+but it now sits far below the expected rate and should never bind.**
+
 **MINIMUM 2 TACTICAL ENTRIES PER UTC DAY.** More is fine. This is a FLOOR on
 activity, and it overrides every discretionary "patience", "no catalyst", "cash
 is a position" and "nothing justified it" argument in this document.
@@ -323,14 +378,16 @@ fill it, and let weekly-review grade the result on expectancy per trade.
   substitute judgement for rank.
 
 ### The quota NEVER overrides these (they are hard, and a miss is logged, not forced)
-1. SPOT ONLY, long only, `"category":"spot"`, no leverage.
-2. `stopLoss` attached in the same order call. Never a naked buy.
+1. Category is `spot` or `linear` only; leverage <= 5x; liquidation clearance
+   satisfied (stop distance <= half the liquidation distance).
+2. Protection exists from entry: attached `stopLoss` on linear, or an
+   immediate resting conditional sell on spot. Never a naked position.
 3. Circuit breaker tripped (realized losses today >= 5% of equity, or 5
    consecutive tactical losses closed today).
 4. Monthly fee budget exhausted.
-5. TACTICAL slots all full (6) — but see the 72h time stop, which exists
-   specifically so slots recycle fast enough to keep the quota reachable.
-6. Deployment would exceed 50% of equity.
+5. Slots all full (12 TACTICAL / 12 SHORT / 1 CORE) — but see the 24h time
+   stop, which exists specifically so slots recycle fast.
+6. Margin used would exceed 50% of budget, or gross notional 300%.
 7. No name passes the technical screen at all (a genuinely empty screen).
 8. Order value below the symbol's `minOrderAmt`, or spread > 0.5%.
 
@@ -338,21 +395,66 @@ If the quota cannot be met because one of these 8 fired, that is a COMPLIANT
 day. Log which gate blocked it, with its number, in TRADE-LOG. "No catalyst" and
 "no conviction" are NOT on this list and are NOT valid quota misses.
 
-## Trade frequency: the agent decides, the FEE BUDGET binds
-There is no fixed trades-per-day or trades-per-week cap. Open as many positions
-as the setups justify. What is capped is the thing that actually does the damage:
-cumulative friction.
+## NO TRADE CEILING (OWNER DIRECTIVE, 2026-09-22)
+**Take EVERY name that passes the screen, in BOTH directions, on EVERY run,
+until a hard gate stops you.** There is no trades-per-day cap, no
+trades-per-week cap, and no "that feels like a lot" judgement call. 10, 20 or
+more entries in a UTC day is the INTENDED behaviour, not an anomaly for
+weekly-review to flag.
+
+The owner asked for maximum activity on 2026-09-22 with the evidence explicitly
+in view: HYPOTHESIS-LOG.md records that higher frequency tested strictly worse,
+and the account is -3.02% against a benchmark that pays zero fees. That
+trade-off is ACCEPTED and is NOT to be re-litigated in a run log. A run that
+ends with idle slots, a passing screen and unspent fee budget has FAILED to
+follow instructions — "patience", "no conviction", "nothing justified it" and
+"cash is a position" remain CORE-only arguments and are invalid here.
+
+### What actually binds, and nothing else does
+In priority order. Only these may stop an entry:
+1. No stop can be placed that satisfies liquidation clearance.
+2. Slots full (12 TACTICAL + 12 SHORT + 1 CORE).
+3. Margin ceiling reached (below).
+4. Monthly fee budget exhausted.
+5. Circuit breaker tripped.
+6. The screen is genuinely empty in that direction.
+7. `minOrderAmt` / spread failures on that specific symbol.
+
+Slot recycling is what makes a high count reachable: the time stop was cut
+72h -> **24h** on 2026-09-22 so a position that has not moved >= +5% in a day
+frees its slot for the next candidate. 24 slots recycling daily is what a
+10-20 entries/day rate actually requires — without it, slots fill on day one
+and the rate collapses to zero, which is exactly what happened under v3.
+
+### Margin ceiling replaces the deployment ceiling (leverage made it meaningless)
+The old rule was "deployment <= 50% of equity", which counted NOTIONAL. At 3x
+that would cap the book at 16.7% of the budget and strangle the directive. It
+is replaced by two separate limits:
+- **MARGIN USED <= 50% of the $200 budget ($100).** This is the real solvency
+  constraint — it is the cash the exchange is holding.
+- **GROSS NOTIONAL <= 300% of budget ($600)**, long + short added as absolute
+  values. Being 12 long and 12 short is close to market-neutral in net terms
+  but carries FULL risk on both books; netting them would understate it.
+
+## Trade frequency: what the FEE BUDGET costs
+What is capped is the thing that actually does the damage: cumulative friction.
 
 MEASURED friction: 0.65% per round trip (verified — a $12.31 BTC round trip cost
 $0.08, taker fee both ways plus spread). BTC has the tightest spread in the
 universe, so 0.65% is a FLOOR and alts cost more.
 
-**MONTHLY FEE BUDGET: 4.0% of equity (~$8.00 at $200).** (v2: was 1.5% WEEKLY;
-v2.1 was 1.0% MONTHLY. Raised to 4.0% on 2026-09-18 by OWNER DIRECTIVE, because
-a >= 2 entries/day quota implies ~60 round trips/month; at the derived $10
-TACTICAL size and the measured 0.65% friction that is ~$3.90/month, and 4.0%
-leaves headroom for CORE and for wide-spread alts. This is a KNOWN, ACCEPTED
-drag of ~48%/yr at the ceiling against a benchmark that pays zero.)
+**MONTHLY FEE BUDGET: 20.0% of equity (~$40.00 at $200).** (v2: 1.5% WEEKLY;
+v2.1: 1.0% MONTHLY; v3: 4.0%. Raised to 20.0% on 2026-09-22 by OWNER DIRECTIVE
+to fund the no-ceiling mandate.) The arithmetic, stated plainly because it is
+the largest single cost this strategy now carries: 15 entries/day x 30 days at
+the derived $10 size and the measured 0.65% round-trip friction is ~$29/month,
+i.e. ~14.6% of the budget PER MONTH. Perps add funding payments on top, charged
+8-hourly, which spot never paid.
+
+This is a KNOWN, ACCEPTED drag of roughly **240%/yr at the ceiling** against a
+benchmark that pays zero. No realistic edge covers that. The owner set it
+anyway; weekly-review grades expectancy per trade and does NOT get to lower this
+number back down on its own authority — it is an OWNER DIRECTIVE.
 - Estimate the round-trip cost of every entry BEFORE placing it: notional x 0.65%
   (use more for a wide-spread alt) and add it to the running monthly total.
 - Track the total in each daily snapshot as "fees used this month: $X / $8.00".
@@ -648,12 +750,14 @@ TACTICAL:
 - Otherwise -> keep stop 10% below high-water
 - NO profit target. A tactical position that is still trending is a WINNER,
   not dead money; the trail decides when it is over.
-- **72h TIME STOP (added 2026-09-18, OWNER DIRECTIVE).** If a TACTICAL position
-  is not at least +5% above entry 72h after fill, close it at market and free
-  the slot. Rationale: with 6 slots and a >= 2 entries/day quota, slots must
-  recycle or the quota becomes unreachable within 3 days. This REPLACES the
-  old 'NO 48h rule' clause, which assumed a 1-slot sleeve with no quota.
-  A position already >= +5% is exempt and rides its trail with no time limit.
+- **24h TIME STOP (72h -> 24h on 2026-09-22, OWNER DIRECTIVE).** If a TACTICAL
+  or SHORT position is not at least +5% IN ITS FAVOUR 24h after fill, close it
+  at market and free the slot. For a short, "+5% in its favour" means the price
+  is 5% BELOW entry. Rationale: 24 slots must recycle DAILY to sustain the
+  no-trade-ceiling mandate; at 72h the book fills once and the entry rate
+  collapses to zero, which is what happened under v3. This REPLACES the old
+  'NO 48h rule' clause, which assumed a 1-slot sleeve with no quota.
+  A position already >= +5% in its favour is exempt and rides its trail.
 - Thesis broken -> close immediately
 - Grandfathered v1 positions keep their tighter stop and are never widened.
 

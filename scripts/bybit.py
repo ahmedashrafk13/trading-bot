@@ -274,10 +274,26 @@ def cmd_order(args):
     except json.JSONDecodeError as e:
         die(f"order body is not valid JSON: {e}")
     body.setdefault("category", "spot")
-    if body.get("category") != "spot":
-        print("WARNING: non-spot category — leveraged products can lose more "
-              "than the account holds, which no risk rule in this repo assumes.",
-              file=sys.stderr)
+    cat = body.get("category")
+    if cat not in ("spot", "linear"):
+        die(f"category '{cat}' is not enabled here. Use 'spot' or 'linear' "
+            "(USDT perpetuals). Inverse and option are out of mandate.")
+    if cat == "linear":
+        # Perps were enabled by OWNER DIRECTIVE 2026-09-22 so the account can
+        # take the short side. They can lose more than the notional, so the two
+        # things that make that survivable are enforced here rather than left to
+        # a routine: protection must be attached to the OPENING order, and
+        # leverage is capped. An exit (reduceOnly) needs neither.
+        _reduce = bool(body.get("reduceOnly"))
+        if not _reduce and not body.get("stopLoss"):
+            die("linear (perp) OPENING orders must carry an attached "
+                '"stopLoss" — a leveraged position with no stop can be '
+                "liquidated for more than the position is worth. Unlike spot, "
+                "linear DOES support attached TP/SL, so attach it to the entry "
+                "itself; do not open first and protect second. "
+                "Set reduceOnly:true if this order is an exit.")
+        if body.get("side") not in ("Buy", "Sell"):
+            die('linear orders need an explicit "side" of Buy (long) or Sell (short).')
     # Fail LOUDLY and locally on attached TP/SL rather than letting the venue
     # answer with retCode 170130 ("Data sent for paramter ''"), which names no
     # field and reads like a malformed-JSON problem. That opaque error is what
@@ -291,6 +307,41 @@ def cmd_order(args):
                 "conditional stop (orderFilter=StopOrder + triggerPrice) "
                 "immediately after the fill. See routines/execute.md STEP E.")
     out(request("POST", "/v5/order/create", body, private=True).get("result", {}))
+
+
+MAX_LEVERAGE = 5.0
+
+
+def cmd_leverage(args):
+    """leverage SYMBOL X — set leverage on a linear (perp) symbol.
+
+    Capped locally at MAX_LEVERAGE (5x, OWNER DIRECTIVE 2026-09-22). Bybit will
+    happily accept 25x+; this account's risk rules assume a stop is reachable
+    before liquidation, which stops being true at high leverage. Bybit returns
+    retCode 110043 "leverage not modified" when the value is already set — that
+    is a SUCCESS, not an error, and is reported as such.
+    """
+    if len(args) < 2:
+        die("usage: leverage SYMBOL X   (e.g. leverage BTCUSDT 3)")
+    sym = args[0]
+    try:
+        lev = float(args[1])
+    except ValueError:
+        die(f"leverage must be a number, got {args[1]!r}")
+    if lev < 1 or lev > MAX_LEVERAGE:
+        die(f"leverage {lev}x is outside the permitted 1-{MAX_LEVERAGE:g}x band "
+            "(OWNER DIRECTIVE 2026-09-22). Raising this cap is an owner decision.")
+    body = {"category": "linear", "symbol": sym,
+            "buyLeverage": str(lev), "sellLeverage": str(lev)}
+    try:
+        out(request("POST", "/v5/position/set-leverage", body, private=True).get("result", {}))
+    except SystemExit:
+        raise
+    except Exception as e:
+        if "110043" in str(e):
+            out({"symbol": sym, "leverage": str(lev), "note": "already set (110043)"})
+        else:
+            raise
 
 
 def cmd_amend(args):
@@ -353,7 +404,7 @@ COMMANDS = {
     "tickers": cmd_tickers, "instruments": cmd_instruments, "kline": cmd_kline,
     "order": cmd_order, "amend": cmd_amend, "cancel": cmd_cancel,
     "orders": cmd_orders, "history": cmd_history, "fills": cmd_fills,
-    "time": cmd_time, "funding": cmd_funding,
+    "time": cmd_time, "funding": cmd_funding, "leverage": cmd_leverage,
 }
 
 if __name__ == "__main__":

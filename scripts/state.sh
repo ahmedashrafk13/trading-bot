@@ -19,6 +19,9 @@ python scripts/bybit.py balance      > "$TMP/bal.json"
 python scripts/bybit.py holdings     > "$TMP/hold.json"
 python scripts/bybit.py orders spot  > "$TMP/ord.json"
 python scripts/bybit.py tickers spot > "$TMP/tick.json"
+# v4 2026-09-22: perps are live, so the perp book must be visible here or every
+# SHORT is invisible to reconciliation. Never let this fail the whole run.
+python scripts/bybit.py positions linear > "$TMP/perp.json" 2>/dev/null || echo '[]' > "$TMP/perp.json"
 
 python - "$TMP" <<'PY'
 import json, re, sys, datetime as dt
@@ -28,6 +31,11 @@ clock  = json.loads((t/'clock.json').read_text())
 bal    = json.loads((t/'bal.json').read_text())
 hold   = json.loads((t/'hold.json').read_text())
 orders = json.loads((t/'ord.json').read_text())
+try:
+    perps = json.loads((t/'perp.json').read_text())
+except Exception:
+    perps = []
+perps = [p for p in (perps or []) if float(p.get('size') or 0) != 0]
 ticks  = json.loads((t/'tick.json').read_text())
 
 # NEVER trust the local clock — this machine is known to be 12h fast.
@@ -292,11 +300,41 @@ print()
 # --- fee budget ---------------------------------------------------------------
 fees_mo = 0.0
 for m in re.finditer(r'Est\. round-trip fee \| \$([0-9.]+)', log):  fees_mo += float(m.group(1))
-budget = eq*0.040
+budget = eq*0.200   # 4.0% -> 20.0% on 2026-09-22 (OWNER DIRECTIVE, no trade ceiling)
 month_start = today.replace(day=1)
-print(f"FEE BUDGET  ${fees_mo:.2f} / ${budget:.2f} used this MONTH (4.0% of equity)")
+print(f"FEE BUDGET  ${fees_mo:.2f} / ${budget:.2f} used this MONTH (20.0% of equity)")
 print(f"            {'HEADROOM $%.2f' % (budget-fees_mo) if fees_mo < budget else '*** EXHAUSTED — no new entries until the 1st ***'}")
-print(f"            month started {month_start}  [budget is a CEILING, expected burn is ~half]")
+print(f"            month started {month_start}  [~240%/yr of drag at the ceiling — owner-accepted]")
+print(f"            perps also pay FUNDING 8-hourly, which is NOT counted above")
+print()
+
+# --- perp book (v4, 2026-09-22) -----------------------------------------------
+# Longs AND shorts. A perp with no stopLoss is liquidation-exposed and is the
+# single most urgent thing this script can report, so it is flagged loudly.
+print(f"PERP BOOK   {len(perps)} open position(s)  [12 SHORT slots, 12 TACTICAL-long slots]")
+_gross = 0.0
+_naked = []
+for _p in perps:
+    _sym  = _p.get('symbol', '?')
+    _side = _p.get('side', '?')            # Buy = long, Sell = SHORT
+    _dir  = 'SHORT' if _side == 'Sell' else 'long'
+    _sz   = float(_p.get('size') or 0)
+    _val  = float(_p.get('positionValue') or 0)
+    _lev  = _p.get('leverage') or '?'
+    _sl   = (_p.get('stopLoss') or '').strip()
+    _pnl  = float(_p.get('unrealisedPnl') or 0)
+    _liq  = _p.get('liqPrice') or '-'
+    _gross += abs(_val)
+    _flag = '' if (_sl and _sl not in ('0', '0.0')) else '  *** NO STOPLOSS — LIQUIDATION EXPOSED ***'
+    if _flag: _naked.append(_sym)
+    print(f"            {_dir:<5} {_sym:<12} sz {_sz:<12g} ${_val:>8.2f} @{_lev}x  "
+          f"SL {_sl or '(none)':<12} liq {_liq:<12} uPnL ${_pnl:+.2f}{_flag}")
+_margin_cap, _notional_cap = eq*0.50, eq*3.00
+print(f"            GROSS NOTIONAL ${_gross:.2f} / ${_notional_cap:.2f} (300% of budget)"
+      f"{'  *** OVER ***' if _gross > _notional_cap else ''}")
+if _naked:
+    print(f"            *** {len(_naked)} UNPROTECTED PERP(S): {' '.join(_naked)} — "
+          "attach a stopLoss THIS RUN or close them. This outranks every entry. ***")
 print()
 
 # --- closed trades ------------------------------------------------------------
@@ -384,14 +422,17 @@ _q_today = sum(1 for _d, _sy in _q_syms if _d == f'{today}')
 _hh = int(now.strftime('%H'))
 _runs_left = sum(1 for _h in (0, 6, 12, 18) if _h >= _hh)
 _backstop = _hh >= 18
-print(f"DAILY QUOTA  TACTICAL entries today ({today}): {_q_today} / 2 minimum")
-if _q_today >= 2:
-    print("             status: MET")
-else:
-    print(f"             status: SHORT by {2-_q_today}"
-          f"{'  *** 18:07 BACKSTOP RUN - MUST FILL TO 2 ***' if _backstop else ''}")
+# v4 2026-09-22: the 2/day QUOTA became a floor far below the intended rate.
+# There is NO CEILING — this line now reports the count and the free slots, and
+# treats an idle book with a live screen as the failure state.
+print(f"TRADE COUNT  TACTICAL+SHORT entries today ({today}): {_q_today}  [NO CEILING]")
+print(f"             floor 2/day (should never bind); target is EVERY passing name")
+if _q_today < 2:
+    print(f"             status: below the 2/day floor"
+          f"{'  *** 18:07 BACKSTOP RUN ***' if _backstop else ''}")
     print(f"             entry windows remaining today (incl. this one): {_runs_left}")
 print("             'no catalyst' / 'no conviction' / 'patience' are NOT valid misses")
+print("             an idle slot + a passing screen + fee headroom = DIRECTIVE BREACH")
 print()
 
 print(f"CIRCUIT BREAKER  realized losses TODAY ({today}) ${abs(today_real):.2f} vs ${limit:.2f} limit (5% of equity)")
