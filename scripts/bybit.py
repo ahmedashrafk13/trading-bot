@@ -173,10 +173,22 @@ def cmd_balance(args):
 
 
 def cmd_positions(args):
+    """All open positions. PAGINATED: the v5 default page size is 20 and the
+    endpoint silently truncates, so a book larger than 20 used to report a
+    SHORT list with no error -- which would hide a naked position. Always walk
+    the cursor."""
     cat = args[0] if args else "spot"
-    r = request("GET", "/v5/position/list",
-                {"category": cat, "settleCoin": "USDT"}, private=True)
-    out(r.get("result", {}).get("list", []))
+    rows, cursor = [], None
+    while True:
+        p = {"category": cat, "settleCoin": "USDT", "limit": 200}
+        if cursor:
+            p["cursor"] = cursor
+        res = request("GET", "/v5/position/list", p, private=True).get("result", {})
+        rows.extend(res.get("list", []))
+        cursor = res.get("nextPageCursor") or None
+        if not cursor:
+            break
+    out(rows)
 
 
 def cmd_holdings(args):

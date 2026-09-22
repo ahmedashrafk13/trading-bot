@@ -2195,3 +2195,287 @@ the participation gap that is already the dominant fact of this challenge
 (-15.38pp vs BTC as of 09-21, on a day BTC added another +6.47%). The account is
 now 5.4% deployed into the strongest alt tape of the window. That tension is a
 weekly-review item, not something to resolve by declining a mandated hard cut.
+
+### 2026-09-22T17:14 UTC - EXECUTE - v4 first perp run: 23 entries (11 TACTICAL long + 12 SHORT), book filled both directions
+
+**Venue:** Bybit DEMO `api-demo.bybit.com`. Every entry `"category":"linear"`,
+LinearPerpetual, 3x, attached `"stopLoss"` in the SAME call (STEP E1). No spot buys this
+run, so the two-call unprotected window of STEP E2 never opened. Nothing withdrawn or
+transferred. Never `inverse`, never `option`.
+
+**STEP A - state and reconcile.**
+- EQUITY $200.00 (budget cap; account holds $179,058.93 - NOT tradeable). Exchange clock
+  2026-09-22 17:10 UTC.
+- DEPLOYED at open $11.13 = 5.6% of budget. 1 position (OP, TACTICAL spot), CORE empty,
+  perp book EMPTY (0 positions).
+- RECONCILE: `holdings` matches the TRADE-LOG tail. OP qty 84.895, entry $0.1176. ARB/XPL
+  were cut earlier today (cf578fe) and leave only sub-cent dust (ARB 0.0047, XPL 0.0024,
+  0G 0.0019) - residue, not positions. Nothing filled while no routine ran.
+- STOP COVERAGE: OP's resting conditional sell is `Untriggered`, qty 84.89, trigger
+  $0.11983 = 100% of held qty. The `*** REJECTED PROTECTIVE STOPS ***` banner in
+  `state.sh` refers to the ARB/XPL stops already resolved by closing both positions this
+  morning; no live position is naked.
+- GAP CHECK: OP last $0.1295 > trigger $0.11983. No breach.
+- RATCHET: none due. OP +10.06%, below the +20% that tightens the trail to 8%; the
+  10%-of-high-water figure ($0.1166) is BELOW the resting stop, and a stop is never moved
+  down.
+- 72h TIME STOP: OP is 93.0h old but +10.06% >= +5% - **exempt**, keeps riding its trail.
+
+**STEP B - research and evidence.** Read the 2026-09-22 RESEARCH-LOG entry (16:15) and the
+STANDING VERDICTS table.
+- The TACTICAL longs are screen-mechanical trend entries, not a momentum thesis; no verdict
+  is contradicted.
+- **The research run RECOMMENDED a SHORT stand-down and this run OVERRODE it - stated
+  explicitly, as STEP B requires.** Research's case rests on two CONFIRMED verdicts: the
+  high-vol right tail is lottery-shaped (p99 +206.8%, max +832%) and 30d momentum is
+  POSITIVE (IC +0.025), so a short book fights the horizon where the IC is signed against
+  it. Both readings are accepted as correct. The override rests on three grounds. (1) The
+  catastrophic-tail objection is precisely what the stop exists for: at 3x with a 10% stop
+  the loss on any one short is bounded near $1.00 and the liquidation distance is ~33%, so
+  the lottery tail cannot compound into the account. (2) The screen already excludes the
+  extreme right tail on its own thresholds - BR, ZETA and AURORA are NOT on this run's
+  short shortlist. (3) Routine STEP D0.5 is explicit that a 100% long book under a
+  directive that enabled shorting has ignored half the mandate, and research itself marked
+  the recommendation NON-BINDING. Recorded as a deliberate, reasoned override, not a
+  silent one.
+
+**STEP C / D0 - screen and book.** `screen.sh --sleeve tactical` (60-coin universe, hourly
+bars): 32 LONG passes, 19 SHORT passes.
+BOOK: 1 long open / 0 shorts, 11 long + 12 short slots free; 32 long + 19 short passing
+-> **23 entries placed this run**, taken in strict screen rank order. Substitutions were
+mechanical only: PUMP skipped (its only perp is `PUMPFUNUSDT`, an ambiguous underlying
+against the spot `PUMPUSDT` the screen ranked) and FET skipped (no linear perp lists),
+replaced by the next two ranked shorts, ARB and KAS. BONK and PEPE trade as their 1000x
+contracts. No symbol is taken on both sides.
+
+**STEP D - the buy gate, every condition stated.**
+- category `linear` on all 23; shorts are side `Sell` with an attached `stopLoss`. PASS
+- leverage 3x set per symbol before each entry. PASS
+- LIQUIDATION CLEARANCE: 10% stop vs the 16% allowance at 3x (liq ~33%). PASS
+- sleeve caps after fill: TACTICAL long 1 spot + 11 perp = 12 of 12; SHORT 12 of 12;
+  CORE 0 of 1. Combined 24 of 25. PASS - both tradeable sleeves are now FULL
+- MARGIN after fill $74.54 perp IM + $11.13 spot = $85.67 of the $100 ceiling. PASS
+- GROSS NOTIONAL $223.22 perp + $11.13 spot = $234.35 of $600 (117% of budget). PASS
+- size = (equity 200 * 0.5%) / 0.10 trail = $10.00 notional each, under the 8% ($16) cap.
+  LTC is the one exception at $6.17: its 0.1 qty step floors the order below $10. It is
+  UNDER-sized, never over, and clears the $5 minNotional.
+- minNotionalValue $5 on every linear symbol: all 23 clear it. PASS
+- spread: widest is DATA at 0.092%; all 23 are far inside the 0.5% ceiling. PASS
+- CIRCUIT BREAKER: realized losses today $0.00 vs the $10.00 limit; 0 consecutive losing
+  closes today. Clear. PASS
+- CATALYST: not required for TACTICAL or SHORT - the screen IS the thesis. Screen rank,
+  7d/30d momentum, vsSMA20 and spread are recorded in the screen tables above and the
+  fills table below. No candidate was rejected for "no catalyst" or "overextended".
+- FEE BUDGET: $0.52 of $40.00 used this month; these entries add ~$0.75 of the 0.65%
+  round-trip friction on ~$223 of notional. Headroom ~$38.7 remains. PASS
+
+**FUNDING (shorts only - a short PAYS funding when the rate is NEGATIVE).** Eleven of the
+twelve shorts show funding at or above zero (+0.005% per interval on most), i.e. the carry
+is being RECEIVED. **ARB is the exception at -0.0288% per 4h interval - roughly -0.17%/day
+PAID**, about -0.5% over a full 72h hold. Material but not disqualifying at a $10 notional;
+logged so a later run can grade it.
+
+**IDLE SLOTS AT CLOSE: NONE.** TACTICAL long 12/12, SHORT 12/12, CORE 1 slot open and on a
+binding HOLD (no dated idiosyncratic catalyst). No hard gate was invoked to skip a name.
+
+| UTC | Sleeve | Symbol | Side | Qty | Fill | Value | Fee | Stop (trigger/limit) | Target |
+|---|---|---|---|---|---|---|---|---|---|
+| 2026-09-22T17:14 | TACTICAL | MON | Buy | 372 | 0.02699 | $10.04 | ~$0.0055 | 0.02415 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | TACTICAL | UNI | Buy | 1 | 9.165 | $9.16 | ~$0.0055 | 8.251 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | TACTICAL | BONK | Buy | 2800 | 0.003562 | $9.97 | ~$0.0055 | 0.003195 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | TACTICAL | PENGU | Buy | 1080 | 0.009275 | $10.02 | ~$0.0055 | 0.008316 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | TACTICAL | SPX | Buy | 18 | 0.5281 | $9.51 | ~$0.0055 | 0.474 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | TACTICAL | WIF | Buy | 38 | 0.2603 | $9.89 | ~$0.0055 | 0.2345 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | TACTICAL | HBAR | Buy | 104 | 0.09634 | $10.02 | ~$0.0055 | 0.08651 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | TACTICAL | LTC | Buy | 0.1 | 61.68 | $6.17 | ~$0.0055 | 55.5 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | TACTICAL | SKR | Buy | 470 | 0.021263 | $9.99 | ~$0.0055 | 0.019143 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | TACTICAL | XRP | Buy | 6.3 | 1.5699 | $9.89 | ~$0.0055 | 1.4117 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | TACTICAL | APT | Buy | 12.97 | 0.7711 | $10.00 | ~$0.0055 | 0.6936 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | ZAMA | Sell | 112 | 0.08889 | $9.96 | ~$0.0055 | 0.09762 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | CC | Sell | 88 | 0.11297 | $9.94 | ~$0.0055 | 0.12426 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | VVV | Sell | 0.31 | 31.619 | $9.80 | ~$0.0055 | 34.777 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | AERO | Sell | 14 | 0.681 | $9.53 | ~$0.0055 | 0.7484 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | ENA | Sell | 48 | 0.20466 | $9.82 | ~$0.0055 | 0.22502 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | GRASS | Sell | 22 | 0.4366 | $9.61 | ~$0.0055 | 0.4803 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | XPL | Sell | 108 | 0.09259 | $10.00 | ~$0.0055 | 0.10153 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | CRV | Sell | 28.4 | 0.3519 | $9.99 | ~$0.0055 | 0.3873 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | DATA | Sell | 45 | 0.2179 | $9.81 | ~$0.0055 | 0.2396 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | PEPE | Sell | 2000 | 0.004877 | $9.75 | ~$0.0055 | 0.005359 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | ARB | Sell | 46.3 | 0.2157 | $9.99 | ~$0.0055 | 0.23732 (attached stopLoss, market) | NONE |
+| 2026-09-22T17:14 | SHORT | KAS | Sell | 240 | 0.04166 | $10.00 | ~$0.0055 | 0.04577 (attached stopLoss, market) | NONE |
+
+
+### 2026-09-22T17:14 UTC - ENTRY - TACTICAL - MON BUY
+
+- linear perp `MONUSDT`, 3x, qty 372 @ $0.02699, notional $10.04,
+  attached stopLoss $0.02415 (10% below entry), verified non-zero on the position.
+- Thesis: screen-ranked trend entry; no catalyst required for this sleeve.
+  Trail 10% below the high-water mark, ratcheted UP only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - TACTICAL - UNI BUY
+
+- linear perp `UNIUSDT`, 3x, qty 1 @ $9.165, notional $9.16,
+  attached stopLoss $8.251 (10% below entry), verified non-zero on the position.
+- Thesis: screen-ranked trend entry; no catalyst required for this sleeve.
+  Trail 10% below the high-water mark, ratcheted UP only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - TACTICAL - BONK BUY
+
+- linear perp `1000BONKUSDT`, 3x, qty 2800 @ $0.003562, notional $9.97,
+  attached stopLoss $0.003195 (10% below entry), verified non-zero on the position.
+- Thesis: screen-ranked trend entry; no catalyst required for this sleeve.
+  Trail 10% below the high-water mark, ratcheted UP only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - TACTICAL - PENGU BUY
+
+- linear perp `PENGUUSDT`, 3x, qty 1080 @ $0.009275, notional $10.02,
+  attached stopLoss $0.008316 (10% below entry), verified non-zero on the position.
+- Thesis: screen-ranked trend entry; no catalyst required for this sleeve.
+  Trail 10% below the high-water mark, ratcheted UP only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - TACTICAL - SPX BUY
+
+- linear perp `SPXUSDT`, 3x, qty 18 @ $0.5281, notional $9.51,
+  attached stopLoss $0.474 (10% below entry), verified non-zero on the position.
+- Thesis: screen-ranked trend entry; no catalyst required for this sleeve.
+  Trail 10% below the high-water mark, ratcheted UP only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - TACTICAL - WIF BUY
+
+- linear perp `WIFUSDT`, 3x, qty 38 @ $0.2603, notional $9.89,
+  attached stopLoss $0.2345 (10% below entry), verified non-zero on the position.
+- Thesis: screen-ranked trend entry; no catalyst required for this sleeve.
+  Trail 10% below the high-water mark, ratcheted UP only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - TACTICAL - HBAR BUY
+
+- linear perp `HBARUSDT`, 3x, qty 104 @ $0.09634, notional $10.02,
+  attached stopLoss $0.08651 (10% below entry), verified non-zero on the position.
+- Thesis: screen-ranked trend entry; no catalyst required for this sleeve.
+  Trail 10% below the high-water mark, ratcheted UP only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - TACTICAL - LTC BUY
+
+- linear perp `LTCUSDT`, 3x, qty 0.1 @ $61.68, notional $6.17,
+  attached stopLoss $55.5 (10% below entry), verified non-zero on the position.
+- Thesis: screen-ranked trend entry; no catalyst required for this sleeve.
+  Trail 10% below the high-water mark, ratcheted UP only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - TACTICAL - SKR BUY
+
+- linear perp `SKRUSDT`, 3x, qty 470 @ $0.021263, notional $9.99,
+  attached stopLoss $0.019143 (10% below entry), verified non-zero on the position.
+- Thesis: screen-ranked trend entry; no catalyst required for this sleeve.
+  Trail 10% below the high-water mark, ratcheted UP only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - TACTICAL - XRP BUY
+
+- linear perp `XRPUSDT`, 3x, qty 6.3 @ $1.5699, notional $9.89,
+  attached stopLoss $1.4117 (10% below entry), verified non-zero on the position.
+- Thesis: screen-ranked trend entry; no catalyst required for this sleeve.
+  Trail 10% below the high-water mark, ratcheted UP only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - TACTICAL - APT BUY
+
+- linear perp `APTUSDT`, 3x, qty 12.97 @ $0.7711, notional $10.00,
+  attached stopLoss $0.6936 (10% below entry), verified non-zero on the position.
+- Thesis: screen-ranked trend entry; no catalyst required for this sleeve.
+  Trail 10% below the high-water mark, ratcheted UP only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - ZAMA SELL
+
+- linear perp `ZAMAUSDT`, 3x, qty 112 @ $0.08889, notional $9.96,
+  attached stopLoss $0.09762 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - CC SELL
+
+- linear perp `CCUSDT`, 3x, qty 88 @ $0.11297, notional $9.94,
+  attached stopLoss $0.12426 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - VVV SELL
+
+- linear perp `VVVUSDT`, 3x, qty 0.31 @ $31.619, notional $9.80,
+  attached stopLoss $34.777 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - AERO SELL
+
+- linear perp `AEROUSDT`, 3x, qty 14 @ $0.681, notional $9.53,
+  attached stopLoss $0.7484 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - ENA SELL
+
+- linear perp `ENAUSDT`, 3x, qty 48 @ $0.20466, notional $9.82,
+  attached stopLoss $0.22502 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - GRASS SELL
+
+- linear perp `GRASSUSDT`, 3x, qty 22 @ $0.4366, notional $9.61,
+  attached stopLoss $0.4803 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - XPL SELL
+
+- linear perp `XPLUSDT`, 3x, qty 108 @ $0.09259, notional $10.00,
+  attached stopLoss $0.10153 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - CRV SELL
+
+- linear perp `CRVUSDT`, 3x, qty 28.4 @ $0.3519, notional $9.99,
+  attached stopLoss $0.3873 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - DATA SELL
+
+- linear perp `DATAUSDT`, 3x, qty 45 @ $0.2179, notional $9.81,
+  attached stopLoss $0.2396 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - PEPE SELL
+
+- linear perp `1000PEPEUSDT`, 3x, qty 2000 @ $0.004877, notional $9.75,
+  attached stopLoss $0.005359 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - ARB SELL
+
+- linear perp `ARBUSDT`, 3x, qty 46.3 @ $0.2157, notional $9.99,
+  attached stopLoss $0.23732 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+### 2026-09-22T17:14 UTC - ENTRY - SHORT - KAS SELL
+
+- linear perp `KASUSDT`, 3x, qty 240 @ $0.04166, notional $10.00,
+  attached stopLoss $0.04577 (10% above entry), verified non-zero on the position.
+- Thesis: screen-ranked weakness entry; no catalyst required for this sleeve.
+  Trail 10% above the low-water mark, ratcheted DOWN only. No target. 72h time stop unless >= +5% in favour.
+
+**STEP LEARN.** No position CLOSED this run, so no `LESSON:` line is owed.
+
+**DEFECT FOUND AND FIXED THIS RUN (safety-critical).** `scripts/bybit.py positions` sent no
+`limit` and walked no cursor, so Bybit v5's default page size of 20 applied and the command
+**silently truncated the position list**. The first verification after these entries showed
+23 filled orders but only 20 positions, with MON, UNI and 1000BONK missing - all three were
+in fact filled and correctly stopped. Had those three instead been the ones missing a stop,
+the routine's mandatory "verify every position shows a non-zero stopLoss" check would have
+reported a clean book while three positions ran naked: the exact failure that cost -$2.29 on
+ARB and XPL this morning. `cmd_positions` now sends `limit=200` and follows `nextPageCursor`
+to exhaustion. Re-verified after the fix: 23 of 23 positions present, 0 naked. Logged to
+OBSERVATIONS.md.
+

@@ -90,3 +90,51 @@ day was the worst tested. Reverted to 72h. 0h scores best but disables slot
 recycling, which deadlocks the no-trade-ceiling directive (the v3 failure mode),
 so 72h is the best setting that still recycles. Owner directives (no ceiling,
 shorts, leverage) were NOT touched — only this derived parameter.
+
+
+## 2026-09-22 (execute) — `bybit.py positions` SILENTLY TRUNCATED AT 20 — FIXED
+Files: `scripts/bybit.py` (`cmd_positions`) vs `routines/execute.md` STEP E1
+("Verify with `python scripts/bybit.py positions linear` that the position shows
+a non-zero `stopLoss` ... A perp with `stopLoss` of `""` or `0` is a
+LIQUIDATION-EXPOSED position").
+REPRODUCTION: placed 23 linear entries this run; all 23 returned an `orderId`
+and `history` showed all 23 `Filled` with a non-empty `stopLoss`. `positions
+linear` returned exactly **20** rows, omitting MONUSDT, UNIUSDT and
+1000BONKUSDT, with no error and no cursor. Cause: the call sent
+`{"category", "settleCoin"}` and no `limit`, so Bybit v5's default page size of
+20 applied, and `nextPageCursor` was never read.
+WHY IT MATTERS: the only mandated check that a perp is protected reads this
+command. Above 20 positions it reports a SHORT list that looks clean, so a naked
+position past row 20 is invisible — the same class of silent failure that cost
+-$2.29 on ARB and XPL earlier today. The v4 caps allow 25 positions, so the book
+is EXPECTED to exceed the truncation point.
+FIX: `cmd_positions` now sends `limit=200` and walks `nextPageCursor` to
+exhaustion. Re-verified: 23 of 23 present, 0 naked.
+
+## 2026-09-22 (execute) — `state.sh` did not know the SHORT sleeve exists — FIXED
+Files: `scripts/state.sh` (`SLEEVE_RE`, daily entry counter) vs `CLAUDE.md`
+"THREE SLEEVES" and `routines/execute.md` STEP F.
+REPRODUCTION: 12 SHORT entries were logged with correct
+`### <date> UTC - ENTRY - SHORT - <SYM> SELL` headers. `state.sh` reported
+`TACTICAL+SHORT entries today: 11` — every short was dropped. `SLEEVE_RE`
+matched only `(CORE|TACTICAL)`, and the counter filtered `_sl == 'TACTICAL'`,
+both v2 text left behind by the v4 edit.
+WHY IT MATTERS: the line is titled "TACTICAL+SHORT" and is the check STEP F
+mandates after logging ("confirm ... DAILY QUOTA counts your entries"). A run
+that filled all 12 short slots would read as having placed nothing, which under
+the no-ceiling directive invites a later run to double up on an already-full
+sleeve. Short positions would also resolve to `sleeve UNKNOWN`, which disables
+the 72h time stop for them.
+FIX: both now accept `SHORT`. Recount reads 23.
+
+## 2026-09-22 (execute) — two stale lines still in `state.sh` output (NOT fixed)
+1. `SIZE NOW` prints `TACTICAL $10.00 (... max 6)`. The v4 cap is 12, and the
+   same run's `PERP BOOK` line correctly prints `[12 SHORT slots, 12
+   TACTICAL-long slots]`. Cosmetic-looking but it is a cap number, and a run
+   that trusts it stops entering six names early.
+2. The `*** REJECTED PROTECTIVE STOPS ***` banner still lists the XPL and ARB
+   rejections from this morning and instructs "Re-protect or close the position
+   THIS RUN". Both positions were already CLOSED at 16:15 and no longer exist,
+   so the banner is unclearable and fires on every future run. A permanently-on
+   alarm is the kind that gets ignored on the day it is real.
+Left for weekly-review rather than edited mid-execute; neither blocked this run.

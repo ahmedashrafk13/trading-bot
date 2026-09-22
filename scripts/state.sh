@@ -124,7 +124,7 @@ entry_times = {base(k): v for k, v in re.findall(
 # Later entries win, so a symbol re-entered in the other sleeve resolves to its CURRENT sleeve.
 sleeves = {}
 SLEEVE_RE = re.compile(
-    r'###\s*(\d{4}-\d{2}-\d{2})[^\n]*?ENTRY\s*[—-]\s*(CORE|TACTICAL)\s*[—-]\s*([A-Z0-9]+)(?:/USDT?|USDT)?\b')
+    r'###\s*(\d{4}-\d{2}-\d{2})[^\n]*?ENTRY\s*[—-]\s*(CORE|TACTICAL|SHORT)\s*[—-]\s*([A-Z0-9]+)(?:/USDT?|USDT)?\b')
 for d, sl, sy in SLEEVE_RE.findall(log):
     sleeves[base(sy)] = (sl, dt.date.fromisoformat(d))
 
@@ -441,9 +441,12 @@ for _, a in reversed([t for t in closed_trades if t[0] == f'{today}']):
 limit = eq*0.05
 # --- daily TACTICAL quota (owner directive 2026-09-18) ------------------------
 # Floor is 2 TACTICAL entries per UTC DAY. Counted from ENTRY section headers.
+# v4 2026-09-22: SHORT is a tradeable sleeve and its entries count too. Before
+# this, 12 shorts placed in one run reported as 0 and the line read "idle book".
 _q_syms = {(_d, base(_sy)) for _d, _sl, _sy in SLEEVE_RE.findall(log)
-            if _sl == 'TACTICAL'}
-_q_syms |= {(_d, _sy) for _d, _t, _sl, _sy, _px in fills_tbl if _sl == 'TACTICAL'}
+            if _sl in ('TACTICAL', 'SHORT')}
+_q_syms |= {(_d, _sy) for _d, _t, _sl, _sy, _px in fills_tbl
+            if _sl in ('TACTICAL', 'SHORT')}
 _q_today = sum(1 for _d, _sy in _q_syms if _d == f'{today}')
 _hh = int(now.strftime('%H'))
 _runs_left = sum(1 for _h in (0, 6, 12, 18) if _h >= _hh)
