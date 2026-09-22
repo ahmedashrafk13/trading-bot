@@ -50,7 +50,28 @@ OPEN_COST = 0.0010 + 0.00055
 ROUND_TRIP = OPEN_COST * 2
 
 
+def hedgeable():
+    """Symbols with BOTH a perp and a SPOT market.
+
+    *** THIS FILTER IS NOT OPTIONAL. *** Carry is long spot + short perp. A perp
+    with no spot listing CANNOT BE HEDGED, so "carrying" it is really just a
+    naked leveraged short wearing a carry costume.
+
+    Found 2026-09-23 the hard way: after widening the funding cache from 52 to
+    235 symbols the backtest jumped to +48% CAGR (and +88% over 180d), which
+    looked like the best result of the project. Nine of the ten highest-funding
+    names turned out to have NO SPOT MARKET. The extreme funding is exactly WHY
+    -- perp-only tokens have no arbitrageur to hold the rate down, which is the
+    same reason the trade is impossible there.
+    """
+    f = ROOT / "data" / "hedgeable.json"
+    if not f.exists():
+        return None
+    return set(json.loads(f.read_text(encoding="utf-8")))
+
+
 def load():
+    allow = hedgeable()
     out = {}
     for f in sorted(FUND.glob("*.json")):
         try:
@@ -60,6 +81,9 @@ def load():
         rates = d.get("rates") or []
         if len(rates) < 100:
             continue
+        sym = d.get("symbol") or f.stem
+        if allow is not None and sym not in allow:
+            continue        # perp-only: cannot be hedged, so cannot be carried
         out[d.get("symbol") or f.stem] = {int(t): float(r) for t, r in rates}
     return out
 

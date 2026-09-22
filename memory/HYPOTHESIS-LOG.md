@@ -352,3 +352,39 @@ is in the range that "should make you suspicious of methodology errors". The
 suspects here are survivorship bias in the universe (dead coins absent) and the
 fact that BTC+ETH over this window were two of the best-performing assets in
 existence. Out-of-sample consistency is reassuring but does not clear it.
+
+## 2026-09-23 — CARRY: two corrections, both DOWNWARD. Read before allocating.
+
+### 1. The expanded-universe result was untradable
+Widening the funding cache 52 -> 235 symbols produced +48.23% CAGR full period
+and +88.58% over 180d. It looked like the best result of the project.
+
+NINE OF THE TEN HIGHEST-FUNDING NAMES HAVE NO SPOT MARKET ON BYBIT.
+Carry is long spot + short perp. A perp with no spot listing cannot be hedged,
+so "carrying" it is a naked leveraged short wearing a carry costume. And the
+reason those names pay extreme funding is exactly that no arbitrageur can hold
+the rate down — the same reason the trade is impossible there. The most
+attractive number in the file was the most impossible.
+Fixed: backtest/funding_carry.py now filters to symbols in data/hedgeable.json
+(both a perp AND a spot market). 235 -> 133 tradable symbols.
+
+### 2. Carry is REGIME-DEPENDENT and is currently NEGATIVE
+Hedgeable-only, 3x, min_rate 0.0005, 5 slots:
+  full 4.1y    +37.62% CAGR   DD  -7.55%   funding +$566.17
+  last  365d   +14.84% CAGR   DD  -7.69%   funding  +$35.27
+  last  180d   -11.72% CAGR   DD -22.88%   funding   -$9.26   <-- NEGATIVE
+
+The last six months LOST money: the book paid more funding than it collected.
+Funding has compressed and frequently gone negative, and the 3-day hysteresis
+that correctly prevents churn also holds through sustained negative regimes.
+
+CONSEQUENCE FOR THE SHIPPED ALLOCATION: the 75% carry / 25% trend split was
+chosen on the older, flattering numbers. On the last 180 days of TRADABLE data
+that allocation loses. Do NOT run 75% carry without a regime gate that turns the
+sleeve off when funding is broadly negative — that gate does not exist yet and
+is the single most important open item.
+
+WHAT SURVIVES: carry is real and pays +37.62% over the full period, but it is a
+REGIME trade, not an all-weather income stream. It earns when leverage is
+crowded long and bleeds when it is not. Ethena's public 10-15% APY is a
+multi-year average across both regimes, which is the honest expectation.
