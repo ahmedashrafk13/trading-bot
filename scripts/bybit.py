@@ -342,6 +342,34 @@ def cmd_order(args):
                 "Place the entry WITHOUT them, then send a separate resting "
                 "conditional stop (orderFilter=StopOrder + triggerPrice) "
                 "immediately after the fill. See routines/execute.md STEP E.")
+    # ---- DETERMINISTIC GATE (scripts/checks.py) -------------------------
+    # Unbypassable by construction: every order goes through this function, so
+    # there is no path that places an OPENING order without being checked.
+    # Exits are never blocked. Set BYBIT_SKIP_GATE=1 only for gate tests.
+    if not os.environ.get("BYBIT_SKIP_GATE"):
+        try:
+            import checks
+        except ImportError:
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            import checks
+        try:
+            if not checks.is_exit(body) and body.get("category") == "linear":
+                # The gate needs the order's notional; derive it rather than
+                # trusting a caller-supplied figure.
+                try:
+                    _mk = float(request("GET", "/v5/market/tickers",
+                                        {"category": "linear",
+                                         "symbol": body.get("symbol", "")}
+                                        )["result"]["list"][0]["markPrice"])
+                    body.setdefault("_notional", float(body.get("qty") or 0) * _mk)
+                except Exception:
+                    pass
+            verdict = checks.check_order(body, checks.live_fetch())
+            body.pop("_notional", None)
+            print(f"GATE: {verdict}", file=sys.stderr)
+        except checks.GateReject as e:
+            die(str(e))
+
     out(request("POST", "/v5/order/create", body, private=True).get("result", {}))
 
 

@@ -160,6 +160,32 @@ next run cannot see it.
   valid reason to skip an entry. Only the 7 hard gates in TRADING-STRATEGY.md
   ("What actually binds") excuse an idle slot.
 
+## The deterministic gate (scripts/checks.py) — added 2026-09-22
+
+Every rule that has cost this account money is now enforced in CODE, not in a
+prompt. `scripts/bybit.py order` calls `checks.check_order()` before any order
+reaches the venue, so there is NO path that opens a position without passing it.
+You cannot talk your way past it and neither can a run that misreads a rulebook.
+
+It blocks: HALT_TRADING kill switch, out-of-mandate category, a perp with no
+attached stopLoss, leverage > 5x, a stop outside half the liquidation distance,
+a stop on the WRONG SIDE of the mark, the 5%-of-budget daily realized breaker,
+gross notional > 300%, margin > 50% (measured AFTER the fill), full slots,
+duplicate and opposing positions in one symbol.
+
+It NEVER blocks an exit. reduceOnly closes and spot protective sells pass every
+check even with the breaker tripped — a gate that can trap a loser is worse than
+no gate.
+
+- **KILL SWITCH:** `touch HALT_TRADING` stops all new entries immediately, no
+  restart. `rm HALT_TRADING` resumes. Exits keep working throughout.
+- The gate fetches equity, marks, leverage and positions ITSELF. It never trusts
+  a number supplied by the caller.
+- `python scripts/test_checks.py` proves all 18 checks fire. Run it after any
+  edit to checks.py — an unproven gate is decoration.
+- It does NOT own the fee budget or the time stop (those need TRADE-LOG history;
+  state.sh owns them), and it does not choose WHAT to trade.
+
 ## API Wrappers
 
 Use python scripts/bybit.py, bash scripts/perplexity.sh, bash scripts/clickup.sh.
