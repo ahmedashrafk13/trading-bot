@@ -24,3 +24,6 @@ __pycache__/
 /data/fetch.out
 /data/sweep-results.json
 /data/fetch*.out
+
+# generated dashboard, regenerate with scripts/dashboard.py
+dashboard.html
