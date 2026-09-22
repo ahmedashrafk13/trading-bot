@@ -295,3 +295,31 @@ overcome the drift. The failure was never signal quality; it was the universe.
 
 CARRY is unaffected and still uses the whole universe: it is market-neutral, so
 altcoin drift cannot touch it, and the richest funding is usually paid on alts.
+
+## 2026-09-23 — PAIRS / STAT-ARB: viable third sleeve, NOT shipped live
+Built because published crypto stat-arb runs Sharpe ~1.4-1.5 market-neutral, and
+because its return driver is uncorrelated with both existing sleeves:
+  TREND needs a sustained move (fails in chop)
+  CARRY needs crowded leverage paying funding (fails when funding is flat)
+  PAIRS needs correlated coins to diverge then converge — it works BEST in chop,
+        which is exactly when trend bleeds.
+
+14 mean-reverting pairs found on 208 days of hourly data (corr > 0.70,
+half-life 12h-14d). Best: LINK/SOL (0.841, 13.2d), DOGE/PEPE, DOGE/SHIB.
+
+  z_in=2.5 z_out=0.0 : +12.79% CAGR, DD -5.75%,  93 trades, win 49.5%
+  z_in=3.0 z_out=0.5 :  +5.86% CAGR, DD -11.45%, 239 trades, win 54.0%
+  z_in=1.5 z_out=0.25:  +5.85% CAGR, DD -10.96%, 198 trades, win 60.1%
+  z_in=2.0 z_out=0.5 : -20.49% CAGR, DD -19.16%, 290 trades, win 52.8%
+
+FIRST VERSION WAS WRONG and is worth recording: it scored P&L with a hand-waved
+formula (`(entry_z - z)/|entry_z| * 0.02`) rather than actual leg returns, and
+reported -66.76%. Replacing it with the real calculation — long leg return minus
+short leg return, halved for the two legs — flipped the best config to +12.79%.
+Approximating P&L in a backtest is not a shortcut, it is a fabrication.
+
+NOT PROMOTED TO LIVE, for one reason: pairs are selected on the SAME data the
+strategy is tested on. That is look-ahead bias and makes every number here an
+UPPER BOUND. Before this can be trusted it needs rolling pair selection using
+only past data. Also unmodelled: permanent correlation breaks (a listing, a hack,
+a delisting) where the spread never reverts and the stop is the only exit.
