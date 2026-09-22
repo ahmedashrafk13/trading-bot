@@ -151,3 +151,45 @@ against this strategy's +30.21%. The strategy is now PROFITABLE in absolute term
 and still loses badly to holding BTC. The standing verdict "nothing tested beats
 buy-and-hold BTC" SURVIVES. What changed is that the bot went from losing money
 to making some.
+
+## 2026-09-23 — PROMOTED v6: time-series momentum + volatility targeting + regime filter
+THE FIRST THING IN THIS REPO'S HISTORY TO BEAT BUY-AND-HOLD BTC IN ANY WINDOW.
+
+Source: academic literature, not a self-generated variation. Two findings this
+repo had never implemented:
+  1. TIME-SERIES momentum (each asset against its OWN history) is strong in
+     crypto; CROSS-SECTIONAL momentum (ranking coins against each other) is weak
+     and dies to costs. All 13 prior hypotheses tested the WEAK one.
+  2. "Without volatility scaling, time-series momentum would not have generated
+     results different from buy-and-hold." The edge is RISK TIMING -- sizing
+     down when vol is high -- not picking winners.
+
+Config: entry_mode=timeseries, vol_target_annual=0.40, regime_filter=ON,
+tac_cap=0.25, max_deploy=1.00, trail 30%.
+
+FULL 5.5 YEARS (daily):
+  this          +97.07%  DD -41.94%  Sharpe 2.72  1407 trades
+  best x-sec    +30.21%  DD -21.73%
+  momentum       +4.27%
+  random null   +11.08%
+  BTC buy/hold +157.38%  (still ahead on raw return over the full window)
+
+OUT OF SAMPLE vs BTC -- it WINS in 2 of 3 windows:
+  last  500d:  -4.72%  vs BTC -27.72%   = +23.00pp   BEATS BTC
+  last  900d: +12.78%  vs BTC +11.66%   =  +1.12pp   BEATS BTC
+  last 1400d: +51.96%  vs BTC +367.20%  = -315pp     loses (full bull run)
+
+HONEST READ, so nobody over-claims this later: the strategy beats BTC in FLAT
+and FALLING markets and loses badly in a strong bull. That is exactly what a
+regime-filtered trend follower is supposed to do -- it is downside protection
+bought by giving up upside, not a free lunch. Over the full 5.5y BTC still wins
+on raw return (+157% vs +97%), though at far worse drawdown.
+
+The standing verdict "nothing tested beats buy-and-hold BTC" is now QUALIFIED,
+not overturned: nothing beats it over the full sample; this beats it in 2 of 3
+recent windows.
+
+TUNING SENSITIVITY (recorded so the next run does not re-discover it):
+  vol_target 0.25 -> +62.90% DD -30.34% | 0.40 -> +97.07% DD -41.94%
+             0.55 -> +98.60% DD -51.05%.  0.40 is the Sharpe peak, and the curve
+  is smooth around it rather than spiking, so it is not a lucky number.

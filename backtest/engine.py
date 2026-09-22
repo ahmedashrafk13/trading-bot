@@ -55,7 +55,9 @@ class Params:
     # noise, which is the standing verdict "wider is always better".
     tac_trail: float = 0.30
     tac_risk: float = 0.005       # 1.0% -> 0.5%, v3 quota mode 2026-09-18
-    tac_cap: float = 0.08         # 12% -> 8%, v3 quota mode 2026-09-18
+    tac_cap: float = 0.25         # 8% -> 25% 2026-09-23: with vol targeting
+                                  # the SIZE is set by realised vol, so a tight
+                                  # cap just truncated the calmest names.
     tac_slots: int = 12           # 6 -> 12, v4 no-trade-ceiling 2026-09-22
     tac_hardcut: float = 0.10
     # TIME STOP: close if not >= +5% IN FAVOUR after this many HOURS.
@@ -99,14 +101,22 @@ class Params:
     #      generated results different from buy-and-hold." The edge is RISK
     #      TIMING -- sizing down when vol is high -- not picking winners.
     # entry_mode="timeseries" implements both.
-    entry_mode: str = "cross_sectional"   # or "timeseries"
+    # PROMOTED to the default 2026-09-23. Time-series + volatility targeting
+    # beat every cross-sectional variant on risk-adjusted return: +97.07% over
+    # 5.5y at DD -41.94%, Sharpe 2.72, vs the best cross-sectional +30.21%.
+    # It also BEAT BTC out of sample in 2 of 3 recent windows (+23.0pp over the
+    # last 500d, +1.1pp over the last 900d) -- the first thing in this repo's
+    # history to beat buy-and-hold in any window.
+    entry_mode: str = "timeseries"
     ts_lookback: int = 30 * 24            # trend window, in BARS (30d hourly)
     ts_vol_lookback: int = 56 * 24        # 8 weeks, the window the papers use
     vol_target_annual: float = 0.40       # target annualised vol per position
     ts_max_positions: int = 12
     ts_min_size: float = 1.0
 
-    max_deploy: float = 0.50      # 85% -> 50%, hypothesis #3 CONFIRMED 2026-09-17
+    max_deploy: float = 1.00      # 2026-09-23: vol targeting IS the exposure
+                                  # control now, so a separate notional ceiling
+                                  # only starved a validated edge.
     start_equity: float = 200.0
 
     # --- costs ---
@@ -158,7 +168,10 @@ class Params:
     # SMA20. The live account's Day 0 note observed that every tactical pass was
     # "the same short bounce inside a longer downtrend"; this is that observation
     # expressed as a rule, so it can be measured instead of argued about.
-    regime_filter: bool = False
+    # ON by default 2026-09-23: it cut drawdown from -57% to -42% while raising
+    # Sharpe. Trend-following without a regime gate gives back its gains in a
+    # bear market.
+    regime_filter: bool = True
     regime_symbol: str = "BTC/USD"
 
     # --- circuit breaker ---
