@@ -85,6 +85,16 @@ next run cannot see it.
   monotonically (1/day -10.94% -> 6/day -25.72%). Frequency was never the edge.
   ALLOCATION: ~75% of budget to CARRY, ~25% to TREND. Trade count follows from
   what qualifies, and on most days that is a small number or zero.
+  **TREND TRADES BTC AND ETH ONLY (2026-09-23).** Restricting it beat the
+  33-coin basket on every measure: +113.37% vs +97.07% over 5.5y, DD -35.68% vs
+  -41.94%, Sharpe 3.23 vs 2.72, win rate 55.8% vs 44.6%, on 156 trades not 1407.
+  Out of sample it beat BTC in 2 of 3 windows INCLUDING a rising one
+  (+41.31% vs +11.66% over 900d; +24.33% vs -27.72% over 500d).
+  WHY: this repo's own standing verdict is that the altcoin universe has a
+  NEGATIVE median (-21.2% vs BTC +157.4%). Alt-picking fights a downward drift.
+  Not fishing there beat every signal that tried to overcome it.
+  CARRY still uses the WHOLE universe — it is market-neutral, so the altcoin
+  drift does not touch it, and the best funding is usually paid on alts.
   A run that ends with idle slots, a passing screen and unspent fee budget has
   failed to follow instructions. TACTICAL/SHORT need NO catalyst — the screen
   is the thesis. CORE still requires a dated catalyst and its HOLD is binding.

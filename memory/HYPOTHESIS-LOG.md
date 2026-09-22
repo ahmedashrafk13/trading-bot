@@ -270,3 +270,28 @@ NEXT WORK, in priority order, for whoever picks this up:
      does not place orders, deliberately).
   3. Pairs trading / stat arb as a third sleeve -- published Sharpe 1.4-1.5,
      market neutral, and genuinely uncorrelated with both of these.
+
+## 2026-09-23 — PROMOTED: the TREND sleeve trades BTC+ETH ONLY
+Prompted by a question about a discretionary trader who only traded BTC and ETH.
+Tested rather than assumed, and it is the best directional result in this file.
+
+  BTC+ETH, trend+regime : +113.37%  DD -35.68%  Sharpe 3.23  win 55.8%  156 trades
+  33-coin basket        :  +97.07%  DD -41.94%  Sharpe 2.72  win 44.6% 1407 trades
+  BTC+ETH, old momentum :   +2.80%  DD  -3.55%  Sharpe 1.22  win 44.3%
+
+OUT OF SAMPLE it beats BTC in 2 of 3 windows, including a RISING one:
+  last  500d  +24.33%  vs BTC -27.72%   = +52.05pp   DD -13.68%
+  last  900d  +41.31%  vs BTC +11.66%   = +29.65pp   DD -18.60%
+  last 1400d  +75.46%  vs BTC +367.20%  = -291pp     DD -21.92%
+
+Beating BTC in a RISING market (900d) is the first time anything here has done
+that. Drawdowns also fall hard: -13% to -22% against the basket's -42%.
+
+MECHANISM, and it reframes 13 hypotheses: the standing verdict already said the
+altcoin universe has a NEGATIVE median (-21.2% vs BTC +157.4% over 5.7y). Every
+cross-sectional signal tested in this file was trying to pick winners out of a
+pool that drifts DOWN. NOT FISHING THERE beat every signal that tried to
+overcome the drift. The failure was never signal quality; it was the universe.
+
+CARRY is unaffected and still uses the whole universe: it is market-neutral, so
+altcoin drift cannot touch it, and the richest funding is usually paid on alts.

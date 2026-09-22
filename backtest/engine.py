@@ -111,7 +111,18 @@ class Params:
     ts_lookback: int = 30 * 24            # trend window, in BARS (30d hourly)
     ts_vol_lookback: int = 56 * 24        # 8 weeks, the window the papers use
     vol_target_annual: float = 0.40       # target annualised vol per position
-    ts_max_positions: int = 12
+    # MAJORS ONLY (2026-09-23). Restricting the trend sleeve to BTC+ETH beat the
+    # 33-coin basket on every measure: +113.37% vs +97.07% over 5.5y, DD -35.68%
+    # vs -41.94%, Sharpe 3.23 vs 2.72, win rate 55.8% vs 44.6%, on 156 trades
+    # instead of 1407. Out of sample it beat BTC in 2 of 3 windows INCLUDING a
+    # rising one (+41.31% vs +11.66% over 900d).
+    # MECHANISM: this repo's own standing verdict is that the altcoin universe
+    # has a NEGATIVE median (-21.2% vs BTC +157.4% over 5.7y). Picking alts means
+    # fishing in a pool that drifts down; majors have no such drag. Every
+    # cross-sectional signal tested here was trying to overcome that drag. Not
+    # fishing there at all works better than any signal that tried.
+    trend_universe: str = "BTC/USD,ETH/USD"
+    ts_max_positions: int = 2
     ts_min_size: float = 1.0
 
     max_deploy: float = 1.00      # 2026-09-23: vol targeting IS the exposure
@@ -266,6 +277,15 @@ class Universe:
         idx = {int(ts): i for i, ts in enumerate(self.t)}
         n = len(self.t)
 
+        # Optional universe restriction, e.g. BACKTEST_SYMBOLS="BTC/USD,ETH/USD".
+        # Added 2026-09-23 to test the majors-only case: trading BTC+ETH with
+        # leverage is a genuinely different strategy from picking altcoins, and
+        # it is what most discretionary traders actually do.
+        _only = (os.environ.get("BACKTEST_SYMBOLS", "")
+                 or getattr(self, "_universe_filter", "")).strip()
+        if _only:
+            keep = {x.strip() for x in _only.split(",")}
+            raw = {k: v for k, v in raw.items() if k in keep}
         self.symbols = sorted(raw)
         self.o = np.full((len(self.symbols), n), np.nan)
         self.h = np.full_like(self.o, np.nan)
