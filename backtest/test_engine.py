@@ -24,6 +24,14 @@ from engine import Params, Universe, run
 HOUR = 3600
 T0 = 1735689600   # 2025-01-01T00:00:00Z, a UTC midnight so day maths is clean
 
+
+# NOTE (2026-09-23): every Params(**PIN, ...) below pins tac_trail and entry_signal
+# explicitly. These tests assert ENGINE INVARIANTS (gap fills, ratchet direction,
+# short sign conventions), not tuning choices, so they must not move when the
+# shipped defaults are re-tuned -- which is exactly what happened when the
+# default signal changed momentum -> liquidity and the trail 0.10 -> 0.30.
+PIN = dict(tac_trail=0.10, entry_signal="momentum")
+
 FAILS = []
 
 
@@ -82,7 +90,7 @@ def main():
             px = 10.0
             bars[i] = (px, px, px, px)
         u = make_universe({"AAA/USD": bars, "BTC/USD": flat(n, 1000.0)}, tmp)
-        p = Params(core_slots=1, tac_slots=0, core_trail=0.15, start_equity=200.0)
+        p = Params(**PIN, core_slots=1, tac_slots=0, core_trail=0.15, start_equity=200.0)
         _, trades = run(u, p)
         gapped = [t for t in trades if t.symbol == "AAA/USD"]
         check("gap through stop fills at the open, not the stop price",
@@ -97,7 +105,7 @@ def main():
         bars = flat(pre, 100.0) + ramp(24 * 30, 100.0, 0.3) + ramp(24 * 20, 316.0, -0.6)
         n = len(bars)
         u = make_universe({"AAA/USD": bars, "BTC/USD": flat(n, 1000.0)}, tmp)
-        p = Params(core_slots=1, tac_slots=0, start_equity=200.0)
+        p = Params(**PIN, core_slots=1, tac_slots=0, start_equity=200.0)
         _, trades = run(u, p)
         t = [x for x in trades if x.symbol == "AAA/USD"]
         # entry was near 100 on a rising ramp to 300; a 15% trail from a ~300 HWM
@@ -115,7 +123,7 @@ def main():
         spike = n - 30
         bars[spike] = (100.0, 500.0, 100.0, 100.0)
         u = make_universe({"AAA/USD": bars, "BTC/USD": flat(n, 1000.0)}, tmp)
-        p = Params(core_slots=1, tac_slots=1, start_equity=200.0)
+        p = Params(**PIN, core_slots=1, tac_slots=1, start_equity=200.0)
         eq, trades = run(u, p)
         gain = [t for t in trades if t.symbol == "AAA/USD" and t.ret > 0.5]
         check("cannot capture a fully-reversed one-bar spike (no lookahead)",
@@ -126,7 +134,7 @@ def main():
         n = 24 * 60
         bars = ramp(24 * 35, 100.0, 0.1) + flat(n - 24 * 35, 103.4)
         u = make_universe({"AAA/USD": bars, "BTC/USD": flat(n, 1000.0)}, tmp)
-        p = Params(core_slots=1, tac_slots=0, start_equity=200.0, fee_bps=35, spread_bps=10)
+        p = Params(**PIN, core_slots=1, tac_slots=0, start_equity=200.0, fee_bps=35, spread_bps=10)
         eq, trades = run(u, p)
         rt = [t for t in trades if abs(t.exit / t.entry - 1) < 0.005]
         check("a flat round trip loses money to fees",
@@ -148,7 +156,7 @@ def main():
         # engine must convert it to 24 bars. Pinned explicitly because the old
         # code compared HOURS to a BAR index, which silently made the rule mean
         # 72 DAYS on the daily cache (HYPOTHESIS-LOG #10, "UNTESTABLE").
-        p = Params(core_slots=0, tac_slots=6, start_equity=200.0,
+        p = Params(**PIN, core_slots=0, tac_slots=6, start_equity=200.0,
                    tac_vol_lo=0.0, tac_vol_hi=9.9, tac_ext_band=9.9)
         eq, trades = run(u, p)
         ts = [t for t in trades if t.reason == "time_stop"]
@@ -160,7 +168,7 @@ def main():
         # and it must NOT fire on a position that is up >= 5%
         bars_up = ramp(24 * 35, 100.0, 0.1) + ramp(n - 24 * 35, 103.4, 0.05)
         u2 = make_universe({"AAA/USD": bars_up, "BTC/USD": flat(n, 1000.0)}, tmp)
-        _eq2, trades2 = run(u2, Params(core_slots=0, tac_slots=6, start_equity=200.0,
+        _eq2, trades2 = run(u2, Params(**PIN, core_slots=0, tac_slots=6, start_equity=200.0,
                                        tac_vol_lo=0.0, tac_vol_hi=9.9, tac_ext_band=9.9))
         early = [t for t in trades2 if t.reason == "time_stop" and t.ret >= 0.05]
         check("time stop spares a position already >= +5%",
@@ -173,7 +181,7 @@ def main():
         series["BTC/USD"] = flat(n, 1000.0)
         u = make_universe(series, tmp)
         # LIVE sleeve geometry (v3): CORE 1 slot, TACTICAL 6, deployment 50%.
-        p = Params(start_equity=200.0, max_deploy=0.50, core_slots=1, tac_slots=6)
+        p = Params(**PIN, start_equity=200.0, max_deploy=0.50, core_slots=1, tac_slots=6)
         eq, trades = run(u, p)
         # reconstruct concurrent holdings from the trade list
         events = []
@@ -197,7 +205,7 @@ def main():
         # A universe that only falls must never produce a profit.
         n = 24 * 90
         u = make_universe({"AAA/USD": ramp(n, 300.0, -0.1), "BTC/USD": flat(n, 1000.0)}, tmp)
-        p = Params(start_equity=200.0)
+        p = Params(**PIN, start_equity=200.0)
         eq, trades = run(u, p)
         check("a monotonically falling market cannot be profitable",
               eq[~np.isnan(eq)][-1] <= 200.0 + 1e-6,
@@ -211,7 +219,7 @@ def main():
 
         # 8a. Shorts must MAKE money in a falling market...
         u = make_universe({"AAA/USD": ramp(n, 300.0, -0.1), "BTC/USD": flat(n, 1000.0)}, tmp)
-        p = Params(start_equity=200.0, core_slots=0, tac_slots=0,
+        p = Params(**PIN, start_equity=200.0, core_slots=0, tac_slots=0,
                    short_enabled=True, short_slots=6, regime_filter=False,
                    tac_vol_lo=0.0, tac_vol_hi=9.9, tac_ext_band=9.9,
                    short_funding_bps_8h=0.0)

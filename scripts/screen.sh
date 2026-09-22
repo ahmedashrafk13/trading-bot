@@ -174,7 +174,14 @@ if expected and len(rows) < expected * 0.8:
     print(f'WARNING: only {len(rows)} of {expected} symbols scored — the screen may be '
           'working from incomplete data. Check the kline fetch before trusting it.', file=sys.stderr)
 
-rows.sort(key=lambda r: (r['m7'] if r['m7'] == r['m7'] else -999), reverse=True)
+# RANK BY LIQUIDITY, not momentum (2026-09-23). Backtested on 5.5 years of daily
+# bars with the fee and warm-up defects corrected: ranking by momentum scores AT
+# OR BELOW a random null in every window; ranking by turnover (the INVERSE of the
+# academic illiquidity premium -- crypto pays no premium for illiquidity, the
+# liquid names outperform) beats the null by +19.1pp over 5.5y, +8.8pp on the
+# last 500d and +8.3pp on the last 900d, same sign every window.
+rows.sort(key=lambda r: (r['turnover24h'] if r['turnover24h'] == r['turnover24h'] else -1),
+          reverse=True)
 
 if fmt == 'json':
     print(json.dumps(rows, indent=2)); raise SystemExit

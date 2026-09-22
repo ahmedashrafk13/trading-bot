@@ -50,7 +50,10 @@ class Params:
     core_slots: int = 1           # 4 -> 1, hypothesis #6 CONFIRMED 2026-09-18
     core_hardcut: float = 0.15
 
-    tac_trail: float = 0.10
+    # 0.10 -> 0.30 (2026-09-23). Validated on the daily cache with the warm-up
+    # and fee defects corrected: a 30% trail stops the stop from harvesting
+    # noise, which is the standing verdict "wider is always better".
+    tac_trail: float = 0.30
     tac_risk: float = 0.005       # 1.0% -> 0.5%, v3 quota mode 2026-09-18
     tac_cap: float = 0.08         # 12% -> 8%, v3 quota mode 2026-09-18
     tac_slots: int = 12           # 6 -> 12, v4 no-trade-ceiling 2026-09-22
@@ -85,6 +88,23 @@ class Params:
     # Perp funding, charged 8-hourly. A short RECEIVES it when the rate is
     # positive (the usual case) and PAYS when negative. Spot never paid this.
     short_funding_bps_8h: float = 1.0
+
+    # --- TIME-SERIES / VOLATILITY-TARGETED MODE (v5, 2026-09-23) -----------
+    # The literature is consistent on two points this bot has never implemented:
+    #   1. TIME-SERIES momentum (is THIS asset trending against ITS OWN history)
+    #      is strong in crypto; CROSS-SECTIONAL momentum (rank coins against each
+    #      other) is weak and does not survive costs. Everything this repo has
+    #      tested for 13 hypotheses was cross-sectional -- the weak one.
+    #   2. "Without volatility scaling, time-series momentum would not have
+    #      generated results different from buy-and-hold." The edge is RISK
+    #      TIMING -- sizing down when vol is high -- not picking winners.
+    # entry_mode="timeseries" implements both.
+    entry_mode: str = "cross_sectional"   # or "timeseries"
+    ts_lookback: int = 30 * 24            # trend window, in BARS (30d hourly)
+    ts_vol_lookback: int = 56 * 24        # 8 weeks, the window the papers use
+    vol_target_annual: float = 0.40       # target annualised vol per position
+    ts_max_positions: int = 12
+    ts_min_size: float = 1.0
 
     max_deploy: float = 0.50      # 85% -> 50%, hypothesis #3 CONFIRMED 2026-09-17
     start_equity: float = 200.0
@@ -125,7 +145,12 @@ class Params:
     # both halves of the data (t = -13), i.e. it is not merely edgeless, it is
     # inverted. "lowvol_reversion" is the composite the same test ranked best:
     # prefer calm coins trading below their own SMA20.
-    entry_signal: str = "momentum"
+    # SIGNAL CHANGED 2026-09-23: momentum -> liquidity. Momentum scores AT OR BELOW
+    # the random null in every window tested; liquidity (buy the most liquid, the
+    # INVERSE of the academic illiquidity premium) beats the null by +19.1pp over
+    # 5.5y, +8.8pp on the last 500d and +8.3pp on the last 900d -- same sign in
+    # every window, which is this repo's own bar for an amendment.
+    entry_signal: str = "liquidity"
     signal_top_frac: float = 0.25   # only the best quartile of the cross-section
 
     # --- regime gate (OFF by default = the strategy as it is shipped today) ---
@@ -287,6 +312,16 @@ class Universe:
         the future happens in the engine at fill time, never here.
         """
         c = self.mark
+        # TIME-SERIES inputs (v5). Both are per-symbol against that symbol's OWN
+        # history -- no ranking against other coins anywhere in them.
+        # Lookbacks are stated in DAYS and converted using the cache's own bar
+        # spacing, so the same rule means 30 days on hourly AND on daily bars.
+        _bars_day = max(1, int(round(86400 / max(1, int(np.median(np.diff(self.t)))))))
+        self.bars_per_day = _bars_day
+        self.ts_ret = _pct_change(c, 30 * _bars_day)     # own 30d trend
+        _r1 = _pct_change(c, 1)
+        self.ts_vol = _roll_std(_r1, 56 * _bars_day)     # own 8-week realised vol
+
         self.tac_mom = _pct_change(c, 7)
         self.tac_dsma = c / _sma(c, 20) - 1.0
         self.tac_vol = _roll_std(_pct_change(c, 1), 14)
@@ -379,7 +414,12 @@ def run(u, p):
     _sec_per_bar = _dt / 1000.0 if _dt > 100_000 else _dt
     _bars_per_hour = 3600.0 / max(1e-9, _sec_per_bar)
     _time_stop_bars = max(1, int(round(p.tac_time_stop_h * _bars_per_hour)))
-    warm = 24 * 31          # 30 completed daily bars before CORE can speak
+    # UNITS FIX (2026-09-23), same family as the time-stop defect: this was
+    # hardcoded as 24*31 BARS meaning "31 days of hourly bars". On the DAILY
+    # cache that silently became 744 DAYS of warm-up -- 37% of the 5.5-year
+    # history discarded, and any --days window under 744 produced ZERO trades
+    # while reporting a clean +0.00%.
+    warm = 31 * getattr(u, "bars_per_day", 24)
     regime_si = (u.symbols.index(p.regime_symbol)
                  if p.regime_symbol in u.symbols else None)
 
@@ -420,7 +460,28 @@ def run(u, p):
             deployed = sum(q.qty * u.mark[q.si, i] for q in pos)
             eq = cash + deployed
             room = max(0.0, p.max_deploy * eq - deployed)
-            size = min(eq * risk / trail, eq * cap, cash, room)
+            if p.entry_mode == "timeseries":
+                # VOLATILITY TARGETING. Size is inversely proportional to the
+                # asset's own realised vol, so every position contributes the
+                # same risk regardless of how wild the coin is. The papers are
+                # blunt that this, not the entry signal, is where the edge is:
+                # unscaled time-series momentum does not beat buy-and-hold.
+                bars_per_year = getattr(u, 'bars_per_day', 24) * 365
+                v = u.ts_vol[si, i]
+                if not (v == v) or v <= 0:
+                    continue
+                ann_vol = v * math.sqrt(bars_per_year)
+                # Standard vol targeting: weight = target_vol / asset_vol, then
+                # divided across the slots so the PORTFOLIO targets vol_target,
+                # not each position separately. Crypto runs 80-150% annualised,
+                # so a 40% target with 12 slots gives ~3% of equity per name.
+                # (First version multiplied by tac_risk as well, which made every
+                # position sub-$1 and silently skipped all of them -- 58 trades
+                # and a flat curve, which looked like safety and was a bug.)
+                weight = (p.vol_target_annual / ann_vol) / max(1, p.ts_max_positions)
+                size = min(eq * weight, eq * cap, cash, room)
+            else:
+                size = min(eq * risk / trail, eq * cap, cash, room)
             if size < 1.0:          # ~$1 exchange minimum order value
                 continue
             qty = (size / px) * (1 - cost)   # buy fee taken in kind
@@ -546,7 +607,31 @@ def run(u, p):
                     pending.append(("CORE", si))
                     held.add(si)
 
-        if not tac_frozen and u.hours[i] % p.tac_every_hours == 0:
+        # ---- 4a-TS. TIME-SERIES origination (v5, 2026-09-23).
+        # No ranking. Each symbol is judged ONLY against its own history: is it
+        # above its own 30d trend, and is its own vol measurable. That is the
+        # construction the literature finds strong, and the one this repo has
+        # never run.
+        if (p.entry_mode == "timeseries" and not tac_frozen
+                and u.hours[i] % p.tac_every_hours == 0):
+            free = p.ts_max_positions - sum(1 for q in pos if q.sleeve == "TACTICAL")
+            if free > 0:
+                trending = np.where(u.ts_ret[:, i] > 0)[0]
+                # Prefer the CALMEST trending names: vol targeting already sizes
+                # them down, but a lower-vol trend is a cleaner one to hold.
+                order = sorted(trending, key=lambda si_: (
+                    u.ts_vol[si_, i] if u.ts_vol[si_, i] == u.ts_vol[si_, i] else 9e9))
+                for si in order:
+                    if free <= 0:
+                        break
+                    if si in held or not np.isfinite(u.ts_vol[si, i]):
+                        continue
+                    pending.append(("TACTICAL", si))
+                    held.add(si)
+                    free -= 1
+
+        if (p.entry_mode != "timeseries"
+                and not tac_frozen and u.hours[i] % p.tac_every_hours == 0):
             free = p.tac_slots - sum(1 for q in pos if q.sleeve == "TACTICAL")
             if free > 0:
                 if alt_score is not None:

@@ -120,8 +120,10 @@ next run cannot see it.
   perp entries carry `"category":"linear"` + an attached `"stopLoss"`.
 - CORE: trail 15% below high-water, ratcheted UP only; tighten to 12% at +30%,
   to 10% at +40%.
-- TACTICAL: trail 10% below high-water, ratcheted UP only; tighten to 8% at
-  +20%. Initial stop is 10% below ENTRY (entry is the first high-water mark).
+- TACTICAL: trail **30%** below high-water, ratcheted UP only (10% -> 30% on
+  2026-09-23). A 10% trail sits inside crypto noise and harvests it: the
+  standing verdict is 'wider is always better'. Backtested +30.21% over 5.5y
+  at a 30% trail vs losses at 10%. Initial stop is 30% below ENTRY.
 - SHORT (perp): EVERY SIGN FLIPS. Trail 10% ABOVE the LOW-water mark, ratcheted
   DOWN only. Initial stop 10% ABOVE entry. "Never move a stop down" reads
   "never move a short's stop UP" — widening a losing short is the same breach.

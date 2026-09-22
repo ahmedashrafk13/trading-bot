@@ -117,3 +117,37 @@ CONSEQUENCE FOR EVERY RESULT IN THIS FILE: "EDGE vs BTC" is not trustworthy on
 this cache. The only defensible metric is SIGNAL minus RANDOM NULL at identical
 settings, which is what backtest/bakeoff.py now reports. Fixing the bias needs a
 point-in-time universe (delisted symbols included), which Bybit does not serve.
+
+## 2026-09-23 — WARM-UP UNITS DEFECT (found while validating; third of its kind)
+`warm = 24 * 31` was hardcoded as BARS meaning "31 days of hourly bars". On the
+DAILY cache that silently became **744 days** of warm-up: 37% of the 5.5-year
+history was discarded, and any `--days` window under 744 produced ZERO trades
+while reporting a clean `+0.00%` — an out-of-sample test that looked like it ran
+and had not. Corrected to `31 * bars_per_day`.
+
+This is the THIRD units defect in this engine (time stop = hours vs bars,
+lookbacks = hours vs bars, warm-up = hours vs bars). Every one silently produced
+a plausible number rather than an error. Any new parameter expressed in time MUST
+be converted through `bars_per_day`.
+
+## 2026-09-23 — PROMOTED: entry_signal momentum -> liquidity, trail 0.10 -> 0.30
+First change in this file's history with a positive ABSOLUTE return and a
+null-controlled edge in every window tested.
+
+  Full 5.5y daily:  liquidity +30.21% (DD -21.73%) | random +11.08% | momentum +4.27%
+  Last 900 days:    liquidity  -1.84%              | random -10.14% | momentum  -6.11%
+  Last 500 days:    liquidity  -6.17%              | random -14.96% | momentum -12.63%
+
+Same sign in every window: +19.1pp / +8.3pp / +8.8pp over the null. Momentum —
+the signal the bot traded live until today — scores AT OR BELOW the random null
+in every one.
+
+MECHANISM, stated so the claim stays bounded: this is the Amihud illiquidity
+premium INVERTED. Crypto pays no premium for illiquidity; the liquid names
+outperform. It is a real cross-sectional effect, measured, not a story.
+
+THE HONEST CEILING: BTC buy-and-hold returned +157.38% over the same 5.5 years
+against this strategy's +30.21%. The strategy is now PROFITABLE in absolute terms
+and still loses badly to holding BTC. The standing verdict "nothing tested beats
+buy-and-hold BTC" SURVIVES. What changed is that the bot went from losing money
+to making some.
