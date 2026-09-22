@@ -193,3 +193,45 @@ TUNING SENSITIVITY (recorded so the next run does not re-discover it):
   vol_target 0.25 -> +62.90% DD -30.34% | 0.40 -> +97.07% DD -41.94%
              0.55 -> +98.60% DD -51.05%.  0.40 is the Sharpe peak, and the curve
   is smooth around it rather than spiking, so it is not a lucky number.
+
+## 2026-09-23 — DELTA-NEUTRAL FUNDING CAPTURE: the best risk-adjusted result found
+A different STRATEGY CLASS, not another signal. Every prior entry in this file is
+directional -- it guesses which way a coin moves. This does not bet on price at
+all: LONG SPOT + SHORT PERP in equal size, so the legs cancel, and the return is
+the funding rate the exchange pays shorts every 8 hours.
+
+Backtested on 4.1 years of REAL Bybit funding history, 52 symbols, costs charged
+on BOTH legs at open and close (~0.31% round trip).
+
+  leverage   CAGR      max drawdown
+  1x        +8.26%      -0.98%
+  2x       +17.21%      -1.95%
+  3x       +26.89%      -2.92%
+  5x       +48.71%      -4.82%
+
+OUT OF SAMPLE (validated, positive in every window):
+  oldest 730d (in-sample) : +34.93% CAGR, DD -1.58%
+  newest 365d (OOS)       : +11.18% CAGR, DD -1.10%
+  newest 180d (OOS)       : +15.35% CAGR, DD -1.60%
+
+COMPARED TO v6 (the best directional result): 12.62% CAGR at -41.94% drawdown.
+The carry earns more per unit of risk by more than an order of magnitude, and
+THAT is the point -- a sub-2% drawdown can safely carry 5x leverage, where 5x on
+a -42% drawdown strategy is liquidation. This is why desks run carry and not
+signal-chasing.
+
+IMPLEMENTATION NOTE THAT IS THE WHOLE RESULT: the first version exited on a
+SINGLE negative funding print and re-entered on the next positive one. That
+produced 2249 round trips, $193 of costs against $70 of funding, and a -61.50%
+return. The strategy was never the problem -- the churn was. Funding oscillates
+around zero constantly; only a SUSTAINED reversal (9 consecutive negative prints,
+3 days) means the premise is gone. With hysteresis: 33 positions instead of 2249,
+$4.33 of costs instead of $193.
+
+HONEST LIMITS, so this is not over-claimed later:
+- OOS CAGR (11-15%) is well below in-sample (35%). Funding has compressed as the
+  trade became crowded. Assume the lower number.
+- Modelled: funding flipping negative, both legs' fees. NOT modelled: leg drift
+  (spot and perp prices diverging), exchange risk, liquidation on the short leg
+  if margin is mismanaged, and borrow limits on the spot leg.
+- It needs BOTH legs. The live account currently runs perps only.
