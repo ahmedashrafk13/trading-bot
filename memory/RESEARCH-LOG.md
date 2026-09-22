@@ -1565,3 +1565,156 @@ that higher frequency is strictly worse and that the altcoin universe has a nega
 ### Fee budget
 $0.52 / $8.00 used this MONTH (4.0% of equity). Headroom $7.48. This run spent **$0.00** —
 no order was placed, cancelled or amended.
+
+## 2026-09-22 — Research (UTC 16:15, broker clock)
+
+> Run context: scheduled research run. Perplexity unconfigured (exit 0 with
+> `PERPLEXITY_API_KEY not set`) — native WebSearch fallback used, as the routine
+> permits. Credential check `bybit.py time` returned retCode 0.
+> **Routine/rulebook version conflict:** `routines/research.md` is still v1 text
+> (SPOT ONLY / long only / no leverage, 4 CORE + 6 TACTICAL, 4% fee budget,
+> 2/day quota) while `memory/TRADING-STRATEGY.md` and `CLAUDE.md` are v4
+> (perps, shorts, 5x, 1 CORE + 12 TACTICAL + 12 SHORT, 20% fee budget, no
+> ceiling). Logged to OBSERVATIONS.md. No trade was originated on the contested
+> ground, so the conflict did not change this run's actions.
+
+### Account (from scripts/state.sh, budget basis $200)
+- Equity $200.00 (budget) | FREE $171.11 -> ~$189.06 after the two cuts below
+- DEPLOYED $28.89 = 14.4% -> $10.82 = 5.4% (ceiling 50%, no floor)
+- Positions after STEP A: **1** (OP, TACTICAL, stop @100%)
+- Fee budget $0.52 + $0.018 this run / $40.00 month — headroom ~$39.46
+- Circuit breaker: realized today -$2.29 vs -$10.00 limit — CLEAR (2 consecutive losses, 1 short of the 3-streak halt)
+- Perp book: 0 positions, gross notional $0 / $600
+
+### STEP A invariants — ACTION TAKEN (2 hard cuts)
+- RECONCILE: 3 live positions matched the TRADE-LOG tail on qty/entry. **Drift
+  found:** ARB and XPL had NO resting stop (`*** NAKED ***`, 100% unreserved)
+  despite the 2026-09-21 snapshot recording both at "YES — 100% of held qty".
+  The stops are gone and no stop fill is recorded for either; the 09-21 20:11
+  execute run's order activity is the likely point of loss. OP's stop is intact
+  and `Untriggered` at $0.11983.
+- HARD CUT: both naked positions were ALSO past the TACTICAL -10% threshold
+  (ARB -10.65%, XPL -10.85%), so STEP 3 fired on both. Sold at market. Nothing
+  to cancel first — there was no resting leg.
+- RATCHET: none due. OP +8.28%, below the +20% that tightens it to 8%.
+- TIME STOP: OP 92.1h old but +8.28% >= +5%, exempt.
+
+### Market Context
+- **BTC $86,225 spot (screen) / ~$86,624 quoted, +6.47% on the day** — first
+  print above $86k since January; still 31.3% below the $126,080 ATH. 24h volume
+  $56.2B, futures OI $61.4B (+7.2% / 30d).
+- BTC dominance not printed for today; it has oscillated 53-64% through 2026 and
+  crossed 60% earlier this year. The screen shows BTC at the BOTTOM of the
+  7-period ranking (-0.0%) while alts print +30-90% — dominance is FALLING hard.
+- **ETH broke $2.7K** ($2,735.92 on the screen), approaching $3,000.
+- Macro: risk-on. Brent at a half-month low, US 10y **4.93%**. UNGA 81 runs
+  09-22..28; NY Fed's Williams (permanent FOMC voter) speaks today. Next real
+  catalysts are **PCE 09-30** and the **10-02 jobs report**.
+- ETF flows: $433.0M net inflow into US spot BTC ETFs on 09-18; the week overall
+  "barely stayed positive". Sept 3 saw $731M, the biggest day since 2026-01-14.
+- **Unlocks: $4.7B in September** ($1.2B cliff / $3.5B linear), led by SUI
+  ($153M, 1.3% of float), APT, ARB and ENA. XPL's own 63.2%-of-float unlock lands
+  09-25, three days out — relevant to the XPL cut just executed.
+- **$648M of SHORT positions were liquidated in 24h.** This is the single most
+  important number in this entry; see the SHORT sleeve note.
+
+### Narratives
+- LEADING: L1 beta, violently — NEAR +90% (7p), AVAX +53.5%, SUI +45.5%,
+  SEI +44.8%. DeFi close behind (UNI +44.3% / +103% 30p, ENA +46.8%, AERO +29.1%).
+- ALSO LEADING: small-cap infra/AI lottery tickets — AURORA +504%, BR +319%,
+  ZAMA +88%, ZETA +65%, FLOCK +37.9% / +172% 30p.
+- ROLLING OVER: nothing is rolling over on the daily. On the HOURLY screen the
+  majors (BTC, ETH, BNB, SOL, LINK) are flat-to-negative while alts run — this is
+  a rotation OUT of majors, not a market top.
+- Narrative-exit rule: L2 (ARB, XPL) just took two consecutive losses and is on
+  the exit list for re-entry purposes.
+
+### Shortlists (scripts/screen.sh, this run)
+- **CORE (26, daily bars):** APT BONK ONDO ZRO AERO ADA KAS ZIG WLD DOGE FIL HYPE
+  XRP SHIB XLM SOL MNT LTC LIT LINK ICP AAVE DATA ETH BTC BNB
+  Top by 7p%: APT +40.0% (30p +20.1, vsSMA20 +19.7, vol 7.2%, spread 0.05%),
+  BONK +37.2%, ONDO +30.3%, AERO +29.1%, ADA +27.5%.
+- **TACTICAL long (17, hourly bars):** MON UNI FIL AVAX BONK HBAR LTC XRP ZIG WIF
+  APT VIRTUAL MNT AAVE ADA DOGE GRAM
+  Ranked head: MON (7p +4.9%, 30p +2.8, vsSMA20 +3.7, vol 1.0%, spr 0.04%),
+  UNI (+3.6 / +1.8 / +1.9, spr 0.03%), HBAR (+2.3 / +8.2 / +2.8, spr 0.04%),
+  FIL (+2.1 / +1.9 / +1.1, spr 0.05%), BONK (+2.1 / +7.9 / +1.4, spr 0.06%).
+- **SHORT (33, hourly, weakest-first):** BR GRASS ZAMA AERO CC ZETA ENA VVV XPL
+  PEPE DATA PUMP ARB SUI CRV ONDO NEAR SHIB ASTER KAS PENGU INJ SEI SKR LINK ICP
+  HYPE SOL LIT TRUMP XLM JTO SPX
+
+### Ideas, tagged by sleeve
+**CORE — no idea advanced.** Size would be $26.67 (risk $4.00 = 2.0%, 15% trail).
+The screen offers 26 passes, but CORE requires a DATED IDIOSYNCRATIC catalyst and
+none of the 26 has one — today's move is undifferentiated beta off a macro
+risk-on impulse, which is exactly the "news concentrates on what has already
+moved" trap STEP C warns about. APT is the best-ranked name and carries a
+*negative* dated catalyst (the September unlock cohort). Decision below.
+
+**TACTICAL (long) — handed to execute as a ranked list, no catalyst required.**
+Size $10.00 each (risk $1.00 = 0.5%, 10% trail). Stop = entry * 0.90 as the
+trigger, with the limit at trigger * 0.95. R:R is unbounded by construction (no
+target, trail only), so the 2:1-after-fees test is met by any name whose 10%
+trail clears the 0.65% round trip — all 17 do. The binding constraint is spread,
+and the five below are all <= 0.06%.
+  1. MON $0.0265 — stop trig $0.02385, limit $0.02266
+  2. UNI $9.1820 — stop trig $8.2638, limit $7.8506
+  3. HBAR $0.0969 — stop trig $0.08721, limit $0.08285
+  4. FIL $1.0069 — stop trig $0.90621, limit $0.86090
+  5. BONK sub-cent; use the live quote — stop trig entry * 0.90
+MON / UNI / HBAR / FIL are deliberately NOT the L2 narrative that just produced
+two consecutive losses.
+
+**SHORT (perp) — RECOMMEND STAND-DOWN THIS RUN. Non-binding.**
+This is the one place where I argue against taking a passing screen, so the
+reasoning is stated explicitly rather than as "no conviction":
+- $648M of shorts were liquidated in the last 24h. The screen ranks 33 names as
+  short candidates because they are weak *on the hourly* — measured inside the
+  squeeze that just destroyed the previous cohort of shorts.
+- HYPOTHESIS-LOG standing verdict, CONFIRMED: high-vol names are lottery-shaped
+  (p99 +206.8%, max +832%) and "shorting them is right most days and
+  catastrophic occasionally." The top of the short list is BR (+319% 7p), GRASS,
+  ZAMA (+88%), ZETA (+65%) — these ARE that right tail.
+- Standing verdict, CONFIRMED: momentum is inverted only at <= 1 day; at 30 days
+  it is POSITIVE (IC +0.025). Every top short candidate has a strongly positive
+  30-period reading, so the short book would be fighting the horizon where the
+  measured IC is on the other side.
+- Liquidation clearance is satisfiable at 3x (10% stop vs the 16% allowance), so
+  this is a signal objection, not a mechanical one.
+If execute disagrees and opens shorts, the mechanics it must use: `bybit.py
+leverage SYM 3` first, `category: linear`, an attached `stopLoss` at entry * 1.10,
+and `bybit.py funding SYM` checked first — a short PAYS funding when funding is
+negative, and funding is likely deeply positive-to-the-longs after a +6.5% day,
+which favours the short carry. That carry is real and is the strongest argument
+against my own recommendation here.
+
+### Risk Factors
+- Two consecutive realized losses today. A third trips the circuit breaker and
+  halts entries for the rest of the UTC day.
+- The stop-disappearance defect is unexplained. Until the cause is known, every
+  run must verify stop presence from `state.sh` and never from the prior log.
+- $4.7B of September unlock supply, concentrated in SUI / APT / ARB / ENA — four
+  names that appear on today's shortlists.
+- BTC +6.47% in a day is a large move, and 1-day mean reversion is the one thing
+  this repo has CONFIRMED (IC@1d -0.012). Fresh longs would be opened into that.
+- Deployment is 5.4% against a 50% ceiling after the cuts — the participation gap
+  that produced the -15.38pp edge is now WIDER, not narrower.
+
+### Evidence check (STEP EVIDENCE)
+Nothing in this plan rests on a REJECTED verdict. The TACTICAL hand-off is
+screen-mechanical, not a momentum argument. The SHORT stand-down is argued FROM
+two CONFIRMED verdicts rather than against them. The CORE HOLD is the documented
+default. **New evidence generated this run:** the 09-17 shadow cohort scored
+below — 27 of 28 up over 5 days, median ~+19% — is the strongest signal yet that
+this account's leak is non-participation, not selection.
+
+### Decision
+- **CORE: HOLD.** Binding for the UTC day. No dated idiosyncratic catalyst.
+- **TACTICAL: TRADE — recommendation only, non-binding.** Execute originates from
+  the screen alone. Ranked list handed over above; 0 entries so far today against
+  a 2/day floor and 11 free slots. An idle slot on this screen is a breach.
+- **SHORT: stand-down RECOMMENDED, non-binding**, on the evidence above. Execute
+  may override; if it does, the funding carry is the honest argument for it.
+
+### Fee budget
+$0.538 of $40.00 used this month (1.3%). Headroom ~$39.46. Churn is not the leak.

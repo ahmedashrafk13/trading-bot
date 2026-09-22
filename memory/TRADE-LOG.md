@@ -2141,3 +2141,57 @@ DAILY QUOTA: **2 / 2 — MET.**
 **Amendment trigger (informational):** 1 closed trade since the last applied amendment (2026-09-17); 4 closed all-time. Reference mark 10. Sample is THIN — no amendment made or argued for this run.
 
 **Notes:** A do-nothing run, correctly. Every guardrail held: three TACTICAL positions, all stopped at 100%, 14.9% deployed against a 50% ceiling, the daily quota met earlier in the day, the fee budget barely touched at 6.6% of the month's allowance. The account is safe. The strategy is not winning. The -15.38pp edge is now the dominant fact of this challenge and it did not come from bad trades — realized P&L across eleven days is -$6.03 on four closes, which is noise — it came from being 85%+ in cash through a +12.4% BTC move. The mission statement is explicit that a persistently negative edge argues for trading LESS, but that prescription assumes the edge is being lost to fees and churn; here it is being lost to *absence*, and trading less makes absence worse, not better. Fees are $0.53 of an $8.00 budget, so churn is demonstrably not the leak. The honest reading is that a 1-slot CORE sleeve gated on a dated idiosyncratic catalyst has produced zero CORE entries in eleven days while the benchmark compounded, and the TACTICAL sleeve's $10 positions are too small to close a 15pp gap even when they work. That is a structural observation for the Sunday weekly-review (next run 2026-09-22 18:37 UTC), not something to fix mid-run on a sample of four closes — the 2026-09-10..15 episode of six amendments on N=1 is the standing warning against exactly that reflex. Logged, not acted on.
+
+## 2026-09-22 — Research run (UTC 16:15) — 2 HARD CUTS, both on NAKED positions
+
+**STEP A found the highest-priority condition in the routine: two of three
+positions carried NO resting stop at all.**
+
+`scripts/state.sh` reported ARB and XPL as `*** NAKED — no resting stop at all ***`
+with 100.0% unreserved, confirmed against `bybit.py orders spot` (the only
+`Untriggered` conditional order on the book was OP's). The 2026-09-21 daily
+snapshot recorded BOTH as "YES — 100% of held qty". No stop-fill appears in
+`bybit.py fills spot` for either symbol. So the orders were lost, not triggered.
+Cause unidentified — the 09-21 20:11 execute run (which closed POL and amended
+XPL's stop) is the only order activity between the two observations.
+
+Both were also past the TACTICAL -10% hard cut, so STEP A.3 applied independently
+of the missing stops. Cancelled nothing (no resting leg existed); sold at market.
+
+| Sleeve | Pair | Side | Qty | Entry | Exit | Exit time (UTC) | Realized P&L | Fees | Reason |
+|--------|------|------|-----|-------|------|-----------------|--------------|------|--------|
+| TACTICAL | ARBUSDT | SELL | 42.42 | $0.23810 | $0.21303 | 2026-09-22 16:15:38 | **REALIZED -$1.12** | $0.0515 | HARD CUT -10.65% (<= -10% TACTICAL) + NAKED |
+| TACTICAL | XPLUSDT | SELL | 97.50 | $0.10231 | $0.09136 | 2026-09-22 16:15:43 | **REALIZED -$1.17** | $0.1065 | HARD CUT -10.85% (<= -10% TACTICAL) + NAKED |
+
+Realized detail — ARB: proceeds $9.0367 vs $10.0999 cost basis on the 42.42 sold
+= -$1.0632 gross, fees $0.04246 (entry) + $0.00904 (exit) = $0.0515, **net -$1.115**.
+Residual dust 0.005 ARB (~$0.001) left unsold, below min order size.
+XPL: proceeds $8.9076 vs $9.9752 cost basis on the 97.5 sold = -$1.0676 gross,
+fees $0.0976 (entry) + $0.00891 (exit) = $0.1065, **net -$1.174**.
+Residual dust 0.1 XPL (~$0.009).
+
+**XPL context:** its 63.2%-of-float unlock lands 2026-09-25, three days out. The
+cut removes that exposure as a side effect rather than by design.
+
+**Remaining position:** OP (TACTICAL) 84.895020 @ $0.11764 entry, $0.1274 last,
+**+8.28%**, resting conditional stop `Untriggered` trigger $0.11983 / limit
+$0.11383 at 100% of held qty — verified present this run. Age 92.1h; exempt from
+the 72h time stop because it is >= +5%. Ratchet NOT due (+8.28% is below the +20%
+that tightens the trail to 8%); the existing stop is already ABOVE the 10%-trail
+level and is never moved down.
+
+**Circuit breaker:** realized losses today **-$2.29** vs the -$10.00 limit —
+CLEAR. Consecutive losing closes today: **2**. A third loss halts entries for the
+remainder of the UTC day. This is the closest the breaker has come to tripping.
+
+**Book after this run:** 1 position, $10.82 deployed = 5.4% of the $200 budget
+(ceiling 50%, no floor). CORE slot empty. Fee budget $0.538 / $40.00 (1.3%).
+
+**Narrative note:** L2 (ARB, XPL) has now produced two consecutive losses and is
+on the narrative-exit list — no L2 re-entry until the streak is broken elsewhere.
+
+**Note on deployment:** these two cuts were correct and mandatory, but they widen
+the participation gap that is already the dominant fact of this challenge
+(-15.38pp vs BTC as of 09-21, on a day BTC added another +6.47%). The account is
+now 5.4% deployed into the strongest alt tape of the window. That tension is a
+weekly-review item, not something to resolve by declining a mandated hard cut.

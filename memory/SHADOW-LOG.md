@@ -37,36 +37,36 @@ RULES
 | 2026-09-16 | SOL | TACTICAL | 97.1300 | no dated catalyst found | +21.9 | +21.9 | yes |
 | 2026-09-16 | ETH | TACTICAL | 2403.9500 | shared FOMC/ETF-flow catalyst only; already the account's CORE exposure, would concentrate risk | +14.0 | +14.0 | yes |
 | 2026-09-16 | DOGE | TACTICAL | 0.0801 | meme narrative rolling over, no dated catalyst | +21.0 | +21.0 | yes |
-| 2026-09-17 | ONDO | CORE | 0.3748 | closest CORE name (RWA/SEC roundtable 09-17) but catalyst undated and sector-shared, not idiosyncratic | | | |
-| 2026-09-17 | AAVE | CORE | 129.1600 | no dated catalyst; DeFi narrative not bid under >60% dominance | | | |
-| 2026-09-17 | FET | CORE | 0.1693 | AI narrative present but no dated idiosyncratic catalyst | | | |
-| 2026-09-17 | HYPE | CORE | 83.4100 | Sept-6 unlock already priced, no fresh trigger | | | |
-| 2026-09-17 | DOT | CORE | 1.0798 | no catalyst; L1 narrative already carries a tactical loss (09-14) | | | |
-| 2026-09-17 | INJ | CORE | 5.7340 | no dated catalyst | | | |
-| 2026-09-17 | JUP | CORE | 0.2335 | no dated catalyst | | | |
-| 2026-09-17 | XLM | CORE | 0.1863 | no dated catalyst | | | |
-| 2026-09-17 | LTC | CORE | 53.9100 | no dated catalyst | | | |
-| 2026-09-17 | AVAX | CORE | 7.6190 | no dated catalyst | | | |
-| 2026-09-17 | BNB | CORE | 735.1000 | no dated catalyst | | | |
-| 2026-09-17 | ASTER | CORE | 0.7460 | no dated catalyst | | | |
-| 2026-09-17 | AERO | CORE | 0.5873 | no dated catalyst; negative 7p momentum | | | |
-| 2026-09-17 | FLOCK | CORE | 0.0679 | no dated catalyst; -5.1%/7p | | | |
-| 2026-09-17 | PIEVERSE | CORE | 1.2949 | leads CORE on momentum (+12.9%/7p) but no catalyst found; widest spread on the shortlist (0.16%) | | | |
-| 2026-09-17 | ARB | TACTICAL | 0.1774 | dated BEARISH catalyst: 139.15M-token unlock (1.4% supply) on 09-23 | | | |
-| 2026-09-17 | CRV | TACTICAL | 0.3312 | no catalyst; DeFi narrative not bid | | | |
-| 2026-09-17 | NEAR | TACTICAL | 3.0010 | no dated catalyst | | | |
-| 2026-09-17 | BR | TACTICAL | 0.6734 | no dated catalyst; spread 0.19% | | | |
-| 2026-09-17 | PEPE | TACTICAL | 0.0000 | meme narrative rolling over, no dated catalyst | | | |
-| 2026-09-17 | SHIB | TACTICAL | 0.0000 | meme narrative rolling over, no dated catalyst | | | |
-| 2026-09-17 | LINK | TACTICAL | 11.3610 | no dated catalyst | | | |
-| 2026-09-17 | ENA | TACTICAL | 0.1550 | no dated catalyst | | | |
-| 2026-09-17 | ADA | TACTICAL | 0.2028 | no dated catalyst | | | |
-| 2026-09-17 | HBAR | TACTICAL | 0.0756 | no dated catalyst | | | |
-| 2026-09-17 | BCH | TACTICAL | 232.7000 | no dated catalyst | | | |
-| 2026-09-17 | POL | TACTICAL | 0.0977 | no dated catalyst | | | |
-| 2026-09-17 | XPL | TACTICAL | 0.0862 | no dated catalyst | | | |
-| 2026-09-17 | APT | TACTICAL | 0.5809 | no dated catalyst | | | |
-| 2026-09-17 | WLD | TACTICAL | 0.3809 | no dated catalyst | | | |
+| 2026-09-17 | ONDO | CORE | 0.3748 | closest CORE name (RWA/SEC roundtable 09-17) but catalyst undated and sector-shared, not idiosyncratic | +13.7 | +22.2 | yes |
+| 2026-09-17 | AAVE | CORE | 129.1600 | no dated catalyst; DeFi narrative not bid under >60% dominance | +10.1 | +13.0 | yes |
+| 2026-09-17 | FET | CORE | 0.1693 | AI narrative present but no dated idiosyncratic catalyst | +19.7 | +21.1 | yes |
+| 2026-09-17 | HYPE | CORE | 83.4100 | Sept-6 unlock already priced, no fresh trigger | +13.6 | +13.6 | yes |
+| 2026-09-17 | DOT | CORE | 1.0798 | no catalyst; L1 narrative already carries a tactical loss (09-14) | +8.0 | +11.7 | yes |
+| 2026-09-17 | INJ | CORE | 5.7340 | no dated catalyst | +33.2 | +38.3 | yes |
+| 2026-09-17 | JUP | CORE | 0.2335 | no dated catalyst | +24.5 | +28.2 | yes |
+| 2026-09-17 | XLM | CORE | 0.1863 | no dated catalyst | +13.8 | +15.7 | yes |
+| 2026-09-17 | LTC | CORE | 53.9100 | no dated catalyst | +13.4 | +15.0 | yes |
+| 2026-09-17 | AVAX | CORE | 7.6190 | no dated catalyst | +45.6 | +48.5 | yes |
+| 2026-09-17 | BNB | CORE | 735.1000 | no dated catalyst | +6.8 | +8.7 | yes |
+| 2026-09-17 | ASTER | CORE | 0.7460 | no dated catalyst | -4.2 | +2.9 | yes |
+| 2026-09-17 | AERO | CORE | 0.5873 | no dated catalyst; negative 7p momentum | +15.0 | +19.0 | yes |
+| 2026-09-17 | FLOCK | CORE | 0.0679 | no dated catalyst; -5.1%/7p | +34.3 | +34.3 | yes |
+| 2026-09-17 | PIEVERSE | CORE | 1.2949 | leads CORE on momentum (+12.9%/7p) but no catalyst found; widest spread on the shortlist (0.16%) | +36.5 | +42.7 | yes |
+| 2026-09-17 | ARB | TACTICAL | 0.1774 | dated BEARISH catalyst: 139.15M-token unlock (1.4% supply) on 09-23 | +20.1 | +27.2 | yes |
+| 2026-09-17 | CRV | TACTICAL | 0.3312 | no catalyst; DeFi narrative not bid | +5.4 | +11.2 | yes |
+| 2026-09-17 | NEAR | TACTICAL | 3.0010 | no dated catalyst | +48.1 | +48.1 | yes |
+| 2026-09-17 | BR | TACTICAL | 0.6734 | no dated catalyst; spread 0.19% | +56.0 | +76.9 | yes |
+| 2026-09-17 | PEPE | TACTICAL | 0.0000 | meme narrative rolling over, no dated catalyst | n/a | n/a | unscorable |
+| 2026-09-17 | SHIB | TACTICAL | 0.0000 | meme narrative rolling over, no dated catalyst | n/a | n/a | unscorable |
+| 2026-09-17 | LINK | TACTICAL | 11.3610 | no dated catalyst | +13.5 | +16.0 | yes |
+| 2026-09-17 | ENA | TACTICAL | 0.1550 | no dated catalyst | +32.2 | +39.9 | yes |
+| 2026-09-17 | ADA | TACTICAL | 0.2028 | no dated catalyst | +22.2 | +22.2 | yes |
+| 2026-09-17 | HBAR | TACTICAL | 0.0756 | no dated catalyst | +27.5 | +27.5 | yes |
+| 2026-09-17 | BCH | TACTICAL | 232.7000 | no dated catalyst | +38.5 | +38.5 | yes |
+| 2026-09-17 | POL | TACTICAL | 0.0977 | no dated catalyst | +9.8 | +14.8 | yes |
+| 2026-09-17 | XPL | TACTICAL | 0.0862 | no dated catalyst | +6.2 | +13.8 | yes |
+| 2026-09-17 | APT | TACTICAL | 0.5809 | no dated catalyst | +31.5 | +36.8 | yes |
+| 2026-09-17 | WLD | TACTICAL | 0.3809 | no dated catalyst | +17.7 | +20.3 | yes |
 | 2026-09-18 | ENA | CORE | 0.1654 | no dated catalyst; 40.63M unlock already cleared 09-02 | | | |
 | 2026-09-18 | OP | CORE | 0.1121 | no dated idiosyncratic catalyst | | | |
 | 2026-09-18 | PEPE | CORE | 0.0000 | no dated idiosyncratic catalyst | | | |
@@ -222,3 +222,75 @@ RULES
 | 2026-09-21 | JUP | TACTICAL | 0.3041 | 16:20 re-run: TACTICAL quota already MET 2/2 today | | | |
 | 2026-09-21 | PUMP | TACTICAL | 0.00438 | 16:20 re-run: TACTICAL quota already MET 2/2 today | | | |
 | 2026-09-21 | ZETA | CORE | 0.06115 | 16:20 re-run: CORE HOLD binding; 30p +62.8% on 13.3% vol and 0.18% spread — size/spread hostile anyway | | | |
+| 2026-09-22 | APT | CORE | 0.7669 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | BONK | CORE | sub-cent (see screen) | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | ONDO | CORE | 0.4276 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | ZRO | CORE | 1.2985 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | AERO | CORE | 0.6787 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | ADA | CORE | 0.2493 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | KAS | CORE | 0.0415 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | ZIG | CORE | 0.0498 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | WLD | CORE | 0.4497 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | DOGE | CORE | 0.0993 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | FIL | CORE | 1.0069 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | HYPE | CORE | 94.9500 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | XRP | CORE | 1.5588 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | XLM | CORE | 0.2128 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | SOL | CORE | 116.9800 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | MNT | CORE | 0.6525 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | LTC | CORE | 61.3100 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | LIT | CORE | 4.7750 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | LINK | CORE | 12.9470 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | ICP | CORE | 2.9370 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | AAVE | CORE | 142.7700 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | DATA | CORE | 0.2152 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | ETH | CORE | 2735.9200 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | BTC | CORE | 86225.3000 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | BNB | CORE | 786.5000 | CORE HOLD binding for the UTC day (no dated idiosyncratic catalyst); research run does not originate entries | | | |
+| 2026-09-22 | MON | TACTICAL | 0.0265 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | UNI | TACTICAL | 9.1820 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | FIL | TACTICAL | 1.0069 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | AVAX | TACTICAL | 11.1680 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | HBAR | TACTICAL | 0.0969 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | LTC | TACTICAL | 61.3100 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | XRP | TACTICAL | 1.5588 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | ZIG | TACTICAL | 0.0498 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | WIF | TACTICAL | 0.2570 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | APT | TACTICAL | 0.7669 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | VIRTUAL | TACTICAL | 0.7239 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | MNT | TACTICAL | 0.6525 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | AAVE | TACTICAL | 142.7700 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | ADA | TACTICAL | 0.2493 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | DOGE | TACTICAL | 0.0993 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | GRAM | TACTICAL | 1.4340 | research run does not originate entries; handed to the 18:07 execute run as ranked shortlist (0/2 floor, 11 slots free) | | | |
+| 2026-09-22 | BR | SHORT | 1.0504 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | GRASS | SHORT | 0.4225 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | ZAMA | SHORT | 0.0880 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | AERO | SHORT | 0.6787 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | CC | SHORT | 0.1131 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | ZETA | SHORT | 0.0553 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | ENA | SHORT | 0.2053 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | VVV | SHORT | 31.2690 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | XPL | SHORT | 0.0921 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | DATA | SHORT | 0.2152 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | PUMP | SHORT | 0.0044 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | ARB | SHORT | 0.2140 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | SUI | SHORT | 1.0002 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | CRV | SHORT | 0.3501 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | ONDO | SHORT | 0.4276 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | NEAR | SHORT | 4.4370 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | ASTER | SHORT | 0.7169 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | KAS | SHORT | 0.0415 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | PENGU | SHORT | 0.0090 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | INJ | SHORT | 7.6590 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | SEI | SHORT | 0.0611 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | SKR | SHORT | 0.0209 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | LINK | SHORT | 12.9470 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | ICP | SHORT | 2.9370 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | HYPE | SHORT | 94.9500 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | SOL | SHORT | 116.9800 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | LIT | SHORT | 4.7750 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | TRUMP | SHORT | 2.1610 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | XLM | SHORT | 0.2128 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | JTO | SHORT | 0.5053 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
+| 2026-09-22 | SPX | SHORT | 0.5200 | SHORT stand-down RECOMMENDED: $648M of shorts liquidated in 24h, 30d momentum IC is POSITIVE (+0.025), high-vol right tail is CONFIRMED catastrophic to short | | | |
