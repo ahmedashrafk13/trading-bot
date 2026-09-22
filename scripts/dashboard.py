@@ -81,6 +81,9 @@ def collect():
 
     rejected = [o for o in hist if o.get("orderStatus") == "Rejected"
                 and (o.get("stopOrderType") or "").startswith("Stop")]
+    longs = [r for r in rows if r["dir"] == "LONG"]
+    shorts = [r for r in rows if r["dir"] == "SHORT"]
+    margin = sum(float(p.get("positionIM") or 0) for p in perps)
     return {
         "generated": now.strftime("%Y-%m-%d %H:%M UTC"),
         "rows": rows, "gross": gross, "upnl": upnl,
@@ -89,6 +92,16 @@ def collect():
         "spot_orders": len(orders),
         "rejected": len(rejected),
         "budget": BUDGET,
+        "margin": margin,
+        "wins": sum(1 for r in rows if r["pnl"] > 0),
+        "longs": len(longs), "shorts": len(shorts),
+        "longPnl": sum(r["pnl"] for r in longs),
+        "shortPnl": sum(r["pnl"] for r in shorts),
+        # Measured from the backtests, not guessed: the trend sleeve took 156
+        # trades in 5.5 years on BTC/ETH and carry opened 26 pairs in 4.1 years.
+        # That is ~0.1/day combined, which is ~1/week.
+        "expected_per_week": 1,
+        "expected_per_month": 4,
     }
 
 
@@ -198,10 +211,60 @@ def render(d):
     return h
 
 
+def serve(port):
+    """Local server so the React app can poll for live state.
+
+    Bound to 127.0.0.1 deliberately: this endpoint exposes account data read
+    with your API keys and must not be reachable from the network.
+    """
+    import http.server
+    import socketserver
+
+    app = os.path.join(HERE, "dashboard_app.html")
+
+    class H(http.server.BaseHTTPRequestHandler):
+        def log_message(self, *a):
+            pass
+
+        def do_GET(self):
+            if self.path.startswith("/api/state"):
+                payload = json.dumps(collect()).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("Content-Length", str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+                return
+            body = open(app, "rb").read()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+    socketserver.TCPServer.allow_reuse_address = True
+    with socketserver.TCPServer(("127.0.0.1", port), H) as srv:
+        url = f"http://127.0.0.1:{port}/"
+        print(f"dashboard live at {url}   (Ctrl+C to stop)")
+        print("  refreshes itself every 20s")
+        webbrowser.open(url)
+        try:
+            srv.serve_forever()
+        except KeyboardInterrupt:
+            print("stopped")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-open", action="store_true")
+    ap.add_argument("--serve", action="store_true",
+                    help="run the live React dashboard on localhost")
+    ap.add_argument("--port", type=int, default=8787)
     a = ap.parse_args()
+    if a.serve:
+        serve(a.port)
+        return
     out = os.path.join(ROOT, "dashboard.html")
     d = collect()
     open(out, "w", encoding="utf-8").write(render(d))

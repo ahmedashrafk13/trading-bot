@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trading Bot</title>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+:root{--bg:#0b0e14;--card:#141922;--line:#232a36;--fg:#e6edf3;--dim:#7d8896;
+--up:#3fb950;--down:#f85149;--warn:#d29922;--accent:#58a6ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:14px/1.5 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif}
+#root{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;
+flex-wrap:wrap;gap:10px;margin-bottom:20px}
+h1{font-size:21px;margin:0;letter-spacing:-.01em}
+.sub{color:var(--dim);font-size:12px}
+.dot{width:7px;height:7px;border-radius:99px;background:var(--up);
+display:inline-block;margin-right:6px;animation:p 2s infinite}
+@keyframes p{50%{opacity:.35}}
+.hero{background:linear-gradient(180deg,#171d28,#131822);border:1px solid var(--line);
+border-radius:14px;padding:22px;margin-bottom:14px}
+.heroTop{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+.big{font-size:40px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.bar{height:8px;background:#0c1017;border-radius:99px;overflow:hidden;margin-top:16px}
+.fill{height:100%;border-radius:99px;transition:width .5s}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px}
+.k{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em}
+.v{font-size:23px;font-weight:650;margin-top:5px;font-variant-numeric:tabular-nums}
+.s{color:var(--dim);font-size:11.5px;margin-top:3px}
+.up{color:var(--up)}.down{color:var(--down)}.warn{color:var(--warn)}.acc{color:var(--accent)}
+table{width:100%;border-collapse:collapse}
+.tw{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th{text-align:left;font-size:10.5px;color:var(--dim);text-transform:uppercase;
+letter-spacing:.07em;padding:11px;border-bottom:1px solid var(--line);font-weight:600}
+td{padding:11px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#181e29}
+.tag{font-size:10px;padding:2.5px 8px;border-radius:99px;font-weight:700;letter-spacing:.03em}
+.long{background:rgba(63,185,80,.14);color:var(--up)}
+.short{background:rgba(248,81,73,.14);color:var(--down)}
+.alert{padding:13px 15px;border-radius:12px;margin-bottom:14px;font-weight:600;font-size:13px}
+.bad{background:rgba(248,81,73,.1);border:1px solid var(--down);color:var(--down)}
+.good{background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.4);color:var(--up)}
+.sec{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;
+margin:22px 0 9px;font-weight:600}
+.note{color:var(--dim);font-size:12.5px;line-height:1.75;background:var(--card);
+border:1px solid var(--line);border-radius:12px;padding:15px;margin-top:14px}
+.mini{height:5px;background:#0c1017;border-radius:99px;overflow:hidden;width:62px;display:inline-block;
+vertical-align:middle;margin-left:7px}
+@media(max-width:700px){.hide{display:none}.big{font-size:32px}#root{padding:14px 12px 40px}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect} = React;
+const money = n => (n<0?"-":"")+"$"+Math.abs(n).toFixed(2);
+const pct = n => (n>=0?"+":"")+n.toFixed(2)+"%";
+
+function App(){
+  const [d,setD] = useState(window.__DATA__||null);
+  const [t,setT] = useState(new Date());
+  useEffect(()=>{
+    const load = () => fetch("/api/state?"+Date.now())
+      .then(r=>r.json()).then(j=>{setD(j);setT(new Date());})
+      .catch(()=>{});
+    load();
+    const id = setInterval(load, 20000);   // live poll
+    return ()=>clearInterval(id);
+  },[]);
+  if(!d) return <div style={{padding:40,color:"#7d8896"}}>Loading…</div>;
+
+  const budget = d.budget, pnl = d.upnl, pnlPct = budget? pnl/budget*100 : 0;
+  const deployPct = budget? Math.min(100, d.margin/budget*100) : 0;
+  const good = pnl>=0;
+
+  return (<>
+    <div className="hdr">
+      <div>
+        <h1>Trading Bot</h1>
+        <div className="sub"><span className="dot"/>live · updated {t.toLocaleTimeString()} · demo account</div>
+      </div>
+      <div className="sub">budget {money(budget)} · BTC ${d.btc.toLocaleString()}</div>
+    </div>
+
+    {d.unprotected.length>0
+      ? <div className="alert bad">{d.unprotected.length} UNPROTECTED POSITION(S): {d.unprotected.join(", ")} — no stop attached. Fix before anything else.</div>
+      : d.rejected>0
+      ? <div className="alert bad">{d.rejected} rejected protective stop(s) in recent history — a stop that fires and is REJECTED leaves no fill and no trace.</div>
+      : <div className="alert good">All {d.rows.length} positions carry a stop. No rejected stops.</div>}
+
+    <div className="hero">
+      <div className="heroTop">
+        <div>
+          <div className="k">Profit / loss on your {money(budget)}</div>
+          <div className={"big "+(good?"up":"down")}>{money(pnl)}</div>
+          <div className={"s "+(good?"up":"down")}>{pct(pnlPct)} · unrealised, positions still open</div>
+        </div>
+        <div style={{textAlign:"right"}}>
+          <div className="k">Account value</div>
+          <div className="big">{money(budget+pnl)}</div>
+          <div className="s">{d.rows.length} open · {money(d.margin)} margin used</div>
+        </div>
+      </div>
+      <div className="bar"><div className="fill" style={{width:deployPct+"%",
+        background:good?"linear-gradient(90deg,#238636,#3fb950)":"linear-gradient(90deg,#8b2c28,#f85149)"}}/></div>
+      <div className="s">{deployPct.toFixed(1)}% of budget committed as margin (ceiling 50%)</div>
+    </div>
+
+    <div className="grid">
+      <div className="card"><div className="k">Winners</div>
+        <div className="v up">{d.wins}<span style={{fontSize:15,color:"var(--dim)"}}>/{d.rows.length}</span></div>
+        <div className="s">{d.rows.length? (d.wins/d.rows.length*100).toFixed(0):0}% in profit</div></div>
+      <div className="card"><div className="k">Longs</div>
+        <div className={"v "+(d.longPnl>=0?"up":"down")}>{money(d.longPnl)}</div>
+        <div className="s">{d.longs} positions</div></div>
+      <div className="card"><div className="k">Shorts</div>
+        <div className={"v "+(d.shortPnl>=0?"up":"down")}>{money(d.shortPnl)}</div>
+        <div className="s">{d.shorts} positions</div></div>
+      <div className="card"><div className="k">Gross notional</div>
+        <div className="v">${d.gross.toFixed(0)}</div>
+        <div className="s">cap ${(budget*3).toFixed(0)} (300%)</div></div>
+      <div className="card"><div className="k">Expected trades</div>
+        <div className="v acc">{d.expected_per_week}<span style={{fontSize:15,color:"var(--dim)"}}>/wk</span></div>
+        <div className="s">{d.expected_per_month}/month · see note</div></div>
+    </div>
+
+    <div className="sec">Open positions</div>
+    {d.rows.length===0
+      ? <div className="note">Flat — nothing open. For the carry sleeve this is a valid state: it only trades when funding pays enough.</div>
+      : <div className="tw"><table>
+        <thead><tr><th>Symbol</th><th>Side</th><th className="hide">Lev</th><th>Value</th>
+        <th>P&amp;L</th><th>%</th><th className="hide">To stop</th><th className="hide">Age</th></tr></thead>
+        <tbody>{d.rows.map(r=>{
+          const c = r.pnl>=0?"up":"down";
+          return (<tr key={r.symbol}>
+            <td><b>{r.symbol.replace("USDT","")}</b></td>
+            <td><span className={"tag "+(r.dir==="SHORT"?"short":"long")}>{r.dir}</span></td>
+            <td className="hide">{r.lev}x</td>
+            <td>${r.value.toFixed(2)}</td>
+            <td className={c}>{money(r.pnl)}</td>
+            <td className={c}>{pct(r.pct)}</td>
+            <td className="hide">{r.sl_dist!=null? <>{r.sl_dist.toFixed(1)}%
+              <span className="mini"><span style={{display:"block",height:"100%",
+                width:Math.max(4,Math.min(100,r.sl_dist*5))+"%",background:"var(--warn)"}}/></span></>
+              : <span className="down">NO STOP</span>}</td>
+            <td className="hide">{r.age}</td>
+          </tr>);})}</tbody></table></div>}
+
+    <div className="note">
+      <b>How many trades to expect.</b> This bot trades rarely on purpose — roughly{" "}
+      <b>{d.expected_per_week} per week</b> ({d.expected_per_month}/month). The trend sleeve
+      took 156 trades in 5.5 years on BTC/ETH; carry opened 26 pairs in 4.1 years and holds
+      them for weeks while funding accrues. Higher frequency was measured and lost money at
+      every step (1/day −10.9% → 6/day −25.7%), so a quiet day is the design, not a fault.<br/><br/>
+      <b>To stop</b> is how far price must move against a position before its stop fires.
+      <b> Age</b> counts toward the 72h time stop: not up 5% in its favour by then and it closes.
+    </div>
+  </>);
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
