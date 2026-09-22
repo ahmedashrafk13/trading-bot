@@ -298,6 +298,30 @@ def cmd_order(args):
     # answer with retCode 170130 ("Data sent for paramter ''"), which names no
     # field and reads like a malformed-JSON problem. That opaque error is what
     # provoked a live naked-buy probe on 2026-09-18.
+    # 2026-09-22 ROOT CAUSE: ARB and XPL both sat unprotected for ~20h because
+    # their conditional stops TRIGGERED and were then REJECTED — they did not
+    # "vanish", which is what the run log concluded from `fills` showing nothing
+    # (a rejected order produces no fill). Two independent defects, both fixed
+    # here rather than in a prompt:
+    #   ARB: stop qty 42.42 > held 42.41754 (buy fee taken IN KIND, then the qty
+    #        was ROUNDED UP instead of floored) -> insufficient balance on trigger.
+    #   XPL: qty was fine; the activated order was a LIMIT priced 5% below the
+    #        trigger, which the venue would not accept at activation.
+    # A conditional MARKET sell has no limit price to reject and no reserve, so
+    # it removes both vectors. Verified accepted on spot 2026-09-22.
+    if body.get("category") == "spot" and body.get("orderFilter") == "StopOrder":
+        if body.get("orderType") == "Limit":
+            die("spot protective stops must be orderType=Market, not Limit. A "
+                "triggered LIMIT stop can be rejected AT ACTIVATION (this left "
+                "ARB and XPL naked for ~20h on 2026-09-22 and cost -$2.29), and "
+                "a rejected activation is silent — it produces no fill. Use "
+                '{"orderType":"Market","orderFilter":"StopOrder",'
+                '"triggerPrice":"<trig>"} and drop the "price" field.')
+        if "price" in body:
+            die("a spot conditional MARKET stop must not carry a \"price\" — "
+                "remove it. The 5%-below-trigger limit price is exactly what "
+                "was rejected on activation on 2026-09-22.")
+
     if body.get("category") == "spot":
         _bad = [k for k in ("stopLoss", "takeProfit", "tpslMode") if k in body]
         if _bad:

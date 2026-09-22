@@ -211,7 +211,7 @@ NEVER rest a `takeProfit` or any limit sell: no sleeve has a profit target, and 
   # 2. IMMEDIATELY the protective stop, for 100% of the HELD qty
   #    (held qty = filled qty MINUS the base-coin fee — read it from `holdings`,
   #     never assume it equals the qty you asked for, or the stop is rejected)
-  python scripts/bybit.py order '{"category":"spot","symbol":"BTCUSDT","side":"Sell","orderType":"Limit","qty":"<held qty>","triggerPrice":"<trig>","price":"<trig*0.95>","orderFilter":"StopOrder","timeInForce":"GTC"}'
+  python scripts/bybit.py order '{"category":"spot","symbol":"SYMUSDT","side":"Sell","orderType":"Market","qty":"<held qty, FLOORED to basePrecision>","triggerPrice":"<trig>","orderFilter":"StopOrder","timeInForce":"GTC"}'
 
 ### The unprotected window — rules, because it can no longer be eliminated
 Two calls means a real gap between fill and protection. It is now UNAVOIDABLE at

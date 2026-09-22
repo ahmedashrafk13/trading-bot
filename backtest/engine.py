@@ -52,12 +52,31 @@ class Params:
     tac_trail: float = 0.10
     tac_risk: float = 0.005       # 1.0% -> 0.5%, v3 quota mode 2026-09-18
     tac_cap: float = 0.08         # 12% -> 8%, v3 quota mode 2026-09-18
-    tac_slots: int = 6            # 1 -> 6, v3 quota mode 2026-09-18
+    tac_slots: int = 12           # 6 -> 12, v4 no-trade-ceiling 2026-09-22
     tac_hardcut: float = 0.10
-    # TACTICAL 72h time stop (v3): close if not >= +5% after 72 hourly bars.
-    # Without this the 6-slot sleeve fills and never recycles.
-    tac_time_stop_h: int = 72
+    # TIME STOP: close if not >= +5% IN FAVOUR after this many HOURS.
+    # 72 -> 24 on 2026-09-22 (v4): 24 slots must recycle daily or the book fills
+    # once and the entry rate collapses to zero.
+    # UNITS DEFECT FIXED 2026-09-22: this was compared against a BAR index, so on
+    # the daily cache "72" meant 72 DAYS and fired 3 times in 4.1 years — which
+    # is why HYPOTHESIS-LOG #10 recorded the rule as UNTESTABLE. It is now
+    # converted to bars via the cache's own bar spacing.
+    tac_time_stop_h: int = 24
     tac_time_stop_min: float = 0.05
+
+    # --- SHORT sleeve (v4, 2026-09-22; perps enabled by owner directive) ---
+    # The mirror of TACTICAL. Modelled at 1x notional: leverage changes margin
+    # efficiency, not P&L per unit of notional, and the live risk rule sizes from
+    # risk/trail regardless of leverage. Funding is charged separately below.
+    short_enabled: bool = False    # opt-in so every historical result stays reproducible
+    short_trail: float = 0.10      # stop sits 10% ABOVE the low-water mark
+    short_risk: float = 0.005
+    short_cap: float = 0.08
+    short_slots: int = 12
+    short_hardcut: float = 0.10
+    # Perp funding, charged 8-hourly. A short RECEIVES it when the rate is
+    # positive (the usual case) and PAYS when negative. Spot never paid this.
+    short_funding_bps_8h: float = 1.0
 
     max_deploy: float = 0.50      # 85% -> 50%, hypothesis #3 CONFIRMED 2026-09-17
     start_equity: float = 200.0
@@ -279,15 +298,19 @@ def _roll_std(a, w):
 
 # ---------------------------------------------------------------- the engine
 class Position:
+    # `dir` is +1 for a long and -1 for a SHORT (v4). For a short, `hwm` holds
+    # the LOW-water mark and the stop ratchets DOWN — every sign flips.
     __slots__ = ("sleeve", "si", "qty", "entry", "entry_t", "entry_i",
-                 "stop", "hwm", "trail", "hardcut")
+                 "stop", "hwm", "trail", "hardcut", "dir")
 
-    def __init__(self, sleeve, si, qty, entry, entry_t, entry_i, trail, hardcut):
+    def __init__(self, sleeve, si, qty, entry, entry_t, entry_i, trail, hardcut,
+                 dir=1):
         self.sleeve, self.si, self.qty = sleeve, si, qty
         self.entry, self.entry_t, self.entry_i = entry, entry_t, entry_i
         self.trail, self.hardcut = trail, hardcut
-        self.hwm = entry
-        self.stop = entry * (1 - trail)
+        self.dir = dir
+        self.hwm = entry                       # LOW-water mark when dir == -1
+        self.stop = entry * (1 - dir * trail)  # below entry long, ABOVE it short
 
 
 def run(u, p):
@@ -301,6 +324,15 @@ def run(u, p):
     cur_day = u.days[0]
 
     cost = (p.fee_bps + p.spread_bps) / 10000.0
+    # UNITS FIX (2026-09-22): the time stop is written in HOURS but the loop
+    # indexes BARS. Derive the cache's bar spacing instead of assuming hourly —
+    # assuming it is what made the rule untestable on the daily cache.
+    # Both the committed cache and the synthetic test bars carry SECONDS, but
+    # Bybit also serves milliseconds, so normalise rather than assume.
+    _dt = float(np.median(np.diff(u.t))) if len(u.t) > 1 else 3600.0
+    _sec_per_bar = _dt / 1000.0 if _dt > 100_000 else _dt
+    _bars_per_hour = 3600.0 / max(1e-9, _sec_per_bar)
+    _time_stop_bars = max(1, int(round(p.tac_time_stop_h * _bars_per_hour)))
     warm = 24 * 31          # 30 completed daily bars before CORE can speak
     regime_si = (u.symbols.index(p.regime_symbol)
                  if p.regime_symbol in u.symbols else None)
@@ -329,10 +361,15 @@ def run(u, p):
             px = u.o[si, i]
             if math.isnan(px) or any(q.si == si for q in pos):
                 continue
-            trail = p.core_trail if sleeve == "CORE" else p.tac_trail
-            risk = p.core_risk if sleeve == "CORE" else p.tac_risk
-            cap = p.core_cap if sleeve == "CORE" else p.tac_cap
-            hardcut = p.core_hardcut if sleeve == "CORE" else p.tac_hardcut
+            d = -1 if sleeve == "SHORT" else 1
+            trail = {"CORE": p.core_trail, "TACTICAL": p.tac_trail,
+                     "SHORT": p.short_trail}[sleeve]
+            risk = {"CORE": p.core_risk, "TACTICAL": p.tac_risk,
+                    "SHORT": p.short_risk}[sleeve]
+            cap = {"CORE": p.core_cap, "TACTICAL": p.tac_cap,
+                   "SHORT": p.short_cap}[sleeve]
+            hardcut = {"CORE": p.core_hardcut, "TACTICAL": p.tac_hardcut,
+                       "SHORT": p.short_hardcut}[sleeve]
 
             deployed = sum(q.qty * u.mark[q.si, i] for q in pos)
             eq = cash + deployed
@@ -341,8 +378,9 @@ def run(u, p):
             if size < 1.0:          # ~$1 exchange minimum order value
                 continue
             qty = (size / px) * (1 - cost)   # buy fee taken in kind
-            cash -= size
-            pos.append(Position(sleeve, si, qty, px, int(u.t[i]), i, trail, hardcut))
+            cash -= size                     # a short reserves `size` as margin
+            pos.append(Position(sleeve, si, qty, px, int(u.t[i]), i, trail,
+                                hardcut, dir=d))
         pending = []
 
         # ---- 2. manage open positions
@@ -353,41 +391,77 @@ def run(u, p):
             exit_px = None
             exit_reason = None
 
-            # the stop resting from the PREVIOUS bar governs this bar
-            if lo <= q.stop:
-                exit_px = min(op, q.stop)      # a gap through the stop fills at the open
-                exit_reason = "trail_stop"
-            elif cl / q.entry - 1 <= -q.hardcut:
+            # the stop resting from the PREVIOUS bar governs this bar.
+            # LONG: stop is below, triggered by the low, gaps fill at/below it.
+            # SHORT: stop is ABOVE, triggered by the HIGH, gaps fill at/above it.
+            if q.dir == 1:
+                if lo <= q.stop:
+                    exit_px = min(op, q.stop)
+                    exit_reason = "trail_stop"
+            else:
+                if hi >= q.stop:
+                    exit_px = max(op, q.stop)
+                    exit_reason = "trail_stop"
+
+            # `favour` is return IN THE POSITION'S OWN DIRECTION: +5% means the
+            # trade is winning whether it is long or short.
+            favour = q.dir * (cl / q.entry - 1)
+            if exit_px is None and favour <= -q.hardcut:
                 exit_px = cl
                 exit_reason = "hard_cut"
-            elif (q.sleeve == "TACTICAL"
+            elif (exit_px is None
+                  and q.sleeve in ("TACTICAL", "SHORT")
                   and p.tac_time_stop_h > 0
-                  and i - q.entry_i >= p.tac_time_stop_h
-                  and cl / q.entry - 1 < p.tac_time_stop_min):
-                # v3 72h time stop: a tactical position that has not earned
-                # +5% in 72h gives its slot back to the daily quota.
+                  and i - q.entry_i >= _time_stop_bars
+                  and favour < p.tac_time_stop_min):
+                # v4 24h time stop, in real hours (see _time_stop_bars): a
+                # position that has not earned +5% in its own direction gives
+                # its slot back.
                 exit_px = cl
                 exit_reason = "time_stop"
 
             if exit_px is not None:
-                proceeds = q.qty * exit_px * (1 - cost)
-                pnl = proceeds - q.qty * q.entry
-                cash += proceeds
+                notional = q.qty * q.entry
+                if q.dir == 1:
+                    proceeds = q.qty * exit_px * (1 - cost)
+                    pnl = proceeds - notional
+                    cash += proceeds
+                else:
+                    # SHORT: profit is entry - exit. Margin (`notional`) comes
+                    # back, plus the move, minus the exit-side cost.
+                    pnl = q.qty * (q.entry - exit_px) - q.qty * exit_px * cost
+                    cash += notional + pnl
                 day_realized += min(0.0, pnl)
                 trades.append(Trade(q.sleeve, u.symbols[q.si], q.entry_t, int(u.t[i]),
                                     q.entry, exit_px, q.qty, pnl,
-                                    exit_px / q.entry - 1, exit_reason, i - q.entry_i))
-                if q.sleeve == "TACTICAL":
+                                    q.dir * (exit_px / q.entry - 1), exit_reason,
+                                    i - q.entry_i))
+                if q.sleeve in ("TACTICAL", "SHORT"):
                     tac_streak = tac_streak + 1 if pnl < 0 else 0
                 pos.remove(q)
                 continue
 
-            # ratchet AFTER the stop check, and only ever upward
-            if hi > q.hwm:
-                q.hwm = hi
-                q.stop = max(q.stop, q.hwm * (1 - q.trail))
+            # ratchet AFTER the stop check, and only ever in the FAVOURABLE
+            # direction: a long's stop rises, a SHORT's stop falls. Never the
+            # reverse — widening a losing position is the breach rule 8 forbids.
+            if q.dir == 1:
+                if hi > q.hwm:
+                    q.hwm = hi
+                    q.stop = max(q.stop, q.hwm * (1 - q.trail))
+            else:
+                if lo < q.hwm:                 # hwm is the LOW-water mark
+                    q.hwm = lo
+                    q.stop = min(q.stop, q.hwm * (1 + q.trail))
+                # funding accrues 8-hourly on the perp leg
+                if p.short_funding_bps_8h and (i % max(1, int(round(8 * _bars_per_hour)))) == 0:
+                    cash += q.qty * u.mark[q.si, i] * p.short_funding_bps_8h / 10000.0
 
-        deployed = sum(q.qty * u.mark[q.si, i] for q in pos)
+        # A long's market value is its mark; a SHORT's is its margin plus the
+        # unrealised move (marking it at `mark` would report a falling short as
+        # a shrinking asset instead of a growing profit).
+        deployed = sum(q.qty * u.mark[q.si, i] if q.dir == 1
+                       else q.qty * q.entry + q.qty * (q.entry - u.mark[q.si, i])
+                       for q in pos)
         eq = cash + deployed
         equity[i] = eq
         if i < warm or i + 1 >= len(u.t):
@@ -442,14 +516,38 @@ def run(u, p):
                     pending.append(("TACTICAL", si))
                     held.add(si)
 
+        # ---- 4b. SHORT origination (v4, 2026-09-22). The exact mirror of
+        # TACTICAL: same vol band, same extension band, same cadence, but it
+        # wants NEGATIVE momentum and ranks WEAKEST-first.
+        if p.short_enabled and not tac_frozen and u.hours[i] % p.tac_every_hours == 0:
+            free = p.short_slots - sum(1 for q in pos if q.sleeve == "SHORT")
+            if free > 0:
+                ok = ((u.tac_mom[:, i] < -p.tac_min_mom)
+                      & (np.abs(u.tac_dsma[:, i]) <= p.tac_ext_band)
+                      & (u.tac_vol[:, i] >= p.tac_vol_lo)
+                      & (u.tac_vol[:, i] <= p.tac_vol_hi))
+                rank_by = -u.tac_mom[:, i]      # most negative momentum ranks first
+                for si in _rank(ok, rank_by, held, free):
+                    pending.append(("SHORT", si))
+                    held.add(si)
+
     # close survivors at the final mark so the equity curve is comparable
     i = len(u.t) - 1
     for q in pos:
         px = u.mark[q.si, i]
-        proceeds = q.qty * px * (1 - cost)
-        cash += proceeds
+        notional = q.qty * q.entry
+        if q.dir == 1:
+            proceeds = q.qty * px * (1 - cost)
+            pnl = proceeds - notional
+            cash += proceeds
+        else:
+            # SHORT: same direction-aware close as the in-loop exit above.
+            # Marking a short like a long here reported a WINNING short as a
+            # loss and flipped its `ret` sign.
+            pnl = q.qty * (q.entry - px) - q.qty * px * cost
+            cash += notional + pnl
         trades.append(Trade(q.sleeve, u.symbols[q.si], q.entry_t, int(u.t[i]), q.entry,
-                            px, q.qty, proceeds - q.qty * q.entry, px / q.entry - 1,
+                            px, q.qty, pnl, q.dir * (px / q.entry - 1),
                             "end_of_test", i - q.entry_i))
     equity[i] = cash
     return equity, trades

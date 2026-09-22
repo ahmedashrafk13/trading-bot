@@ -140,6 +140,17 @@ or changes what this bot is:
 4. Orders use `"timeInForce":"GTC"`.
 5. Order value >= the pair's `minOrderAmt` from `bybit.py instruments spot`.
 6. Stops are sized from the ACTUAL held qty (buy fees are taken in kind).
+7a. PROTECTIVE STOPS ARE CONDITIONAL **MARKET** ORDERS (2026-09-22). A spot
+    stop carries `orderType: Market`, `orderFilter: StopOrder`, `triggerPrice`,
+    and NO `price` field. The old form — a Limit priced 5% below the trigger —
+    is ACCEPTED at placement and REJECTED at activation, which is silent: a
+    rejected activation produces no fill, so every fill-based check reads clean
+    while the position is naked. That is what left ARB and XPL unprotected for
+    ~20h on 2026-09-22 for a realized -$2.29.
+7b. STOP QTY IS **FLOORED** TO THE SYMBOL'S `basePrecision`, from the HELD qty.
+    Spot buy fees are taken IN KIND, so held < ordered. ARB's stop was sized
+    42.42 against 42.41754 held — rounded UP by 0.00246 — and was rejected for
+    insufficient balance the moment it fired. Always floor, never round.
 7. Every position must carry a resting stop. The review may change the stop
    DISTANCE; it may never remove the requirement or allow a naked position.
 8. Never move a stop down, and never widen a stop on an open losing position.
@@ -554,7 +565,7 @@ each individual trade can look reasonable while the sequence is ruinous.
 
 ## Core Rules
 1. CRYPTO ONLY — no stocks, no options, ever
-2. Long only — never attempt a short
+2. Longs may be spot or perp; SHORTS ARE PERPS ONLY (spot has no borrow)
 3. Deployment <= 50% (lowered from 85% 2026-09-17 — hypothesis #3,
    HYPOTHESIS-LOG.md, CONFIRMED). There is NO deployment floor — see "Cash is
    a position".
@@ -681,7 +692,8 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - What is the specific catalyst? (unlock, upgrade, listing, ETF flow, macro)
 - Is the narrative in momentum, or is it rolling over?
 - Where is the hard cut in dollars (15% CORE / 10% TACTICAL below entry)?
-- Where is the initial stop (triggerPrice, and limit price = trigger * 0.95)?
+- Where is the initial stop (triggerPrice; the stop is a conditional MARKET
+  sell with NO limit price — a limit stop is rejected at activation, 2026-09-22)?
 - There is NO target to state. Do not compute an R:R ratio against an invented
   target — a trend-follow has no denominator. State instead: what would have to
   happen for this to run 30%+, and what kills the thesis?
@@ -690,9 +702,9 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
 - The sleeve is stated explicitly (CORE or TACTICAL) before sizing
 - CORE: positions after fill <= 1, cost ~$26 (run state.sh for the live number)
   (4 -> 1 on 2026-09-18, hypothesis #6; this line restates the sleeve table above)
-- TACTICAL: positions after fill <= 6, cost ~$10 each (run state.sh for the live number)
+- TACTICAL: positions after fill <= 12; SHORT: <= 12. ~$10 each (run state.sh)
 - Estimated round-trip fee for THIS trade + fees already used THIS MONTH
-  <= 4.0% of equity (~$8.00). If it would breach, SKIP and log it.
+  <= 20.0% of equity (~$40.00). If it would breach, SKIP and log it.
 - Circuit breaker not tripped: realized losses today < 5% of equity, and not
   5 consecutive tactical losses THAT CLOSED TODAY (UTC). The streak is scoped to
   the UTC day and RESETS at 00:00 UTC. It does NOT carry across days.
@@ -701,8 +713,9 @@ EXCLUDED as positions (stablecoins, no upside): USDC, USDG, USDT
   winning tactical trade, which the freeze itself prevents. The account sat
   frozen from 2026-09-15 for exactly this reason. Backtested: the permanent
   reading froze the sleeve for 400 straight days.
-- Combined positions after fill <= 7, total deployment <= 50% of equity
-  (lowered from 85% 2026-09-17 — hypothesis #3, HYPOTHESIS-LOG.md, CONFIRMED)
+- Combined positions after fill <= 25 (1 CORE + 12 TACTICAL + 12 SHORT);
+  MARGIN used <= 50% of budget and GROSS NOTIONAL <= 300% (v4 2026-09-22,
+  replacing the old notional deployment ceiling, which leverage made meaningless)
 - Position size == (equity * risk%) / trail distance, capped at 20% (CORE) /
   12% (TACTICAL) of equity. Risk% is 2.0 CORE / 1.0 TACTICAL. NEVER a fixed
   dollar amount — read both sizes off `state.sh`.

@@ -3,14 +3,18 @@
 ## Overview
 - What: Autonomous CRYPTO trading bot
 - Starting capital: ~$200
-- Platform: **Bybit v5, UNIFIED account, SPOT ONLY**, endpoint
+- Platform: **Bybit v5, UNIFIED account, spot AND linear perps**, endpoint
   https://api.bybit.com. **THIS IS LIVE MONEY.** P&L is real and a bug has a
   price. Nothing in this repo may describe the account as PAPER.
 - The API key carries **Read + Trade only**. Withdraw must never be enabled. If
   a key is ever pasted into a chat, screenshot, commit or log, rotate it.
-- SPOT ONLY. Every order body carries `"category":"spot"`. Perpetual/linear
-  products can lose more than the account holds and nothing in this repo's risk
-  machinery assumes that is possible.
+- CATEGORY is `"spot"` or `"linear"` ONLY — never inverse, never option.
+  SHORTS ARE PERPS (spot has no borrow). Leverage 3x default, 5x hard cap.
+  v4, OWNER DIRECTIVE 2026-09-22, superseding the old spot-only mandate.
+  A perp CAN lose more than the position and CAN be liquidated, so the risk
+  machinery now assumes it: every opening perp order carries an attached
+  `stopLoss` (enforced in scripts/bybit.py), and the stop must sit within HALF
+  the liquidation distance.
 - Duration: [your challenge window]
 - Strategy: Swing trading crypto USD pairs. CRYPTO ONLY — no stocks, no options.
 - Benchmark: BTC/USD buy-and-hold

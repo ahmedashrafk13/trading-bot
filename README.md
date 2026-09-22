@@ -5,8 +5,8 @@ there is no separate Python process. Every scheduled run is a fresh Claude invoc
 clones this repo, reads `memory/`, pulls live Bybit state, acts, writes memory, and pushes to
 `main`.
 
-**Crypto spot only. No perps, no leverage, ever. Long only.** A LIVE Bybit
-UNIFIED spot account — this is real money — benchmarked against BTC
+**Crypto spot AND linear perps. LONG AND SHORT. Leverage <=5x (v4, 2026-09-22
+owner directive).** A LIVE Bybit UNIFIED account — this is real money — benchmarked against BTC
 buy-and-hold.
 
 Two sleeves: **CORE** (~$120, 3 positions, 20% ratcheted trail, no time limit,

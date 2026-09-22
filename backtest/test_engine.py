@@ -144,14 +144,18 @@ def main():
         # The tactical screen has a volatility band that a smooth synthetic
         # ramp cannot pass, so relax the SCREEN here — this test targets the
         # time stop, not entry selection.
+        # v4: the limit is 24 HOURS and these synthetic bars are hourly, so the
+        # engine must convert it to 24 bars. Pinned explicitly because the old
+        # code compared HOURS to a BAR index, which silently made the rule mean
+        # 72 DAYS on the daily cache (HYPOTHESIS-LOG #10, "UNTESTABLE").
         p = Params(core_slots=0, tac_slots=6, start_equity=200.0,
                    tac_vol_lo=0.0, tac_vol_hi=9.9, tac_ext_band=9.9)
         eq, trades = run(u, p)
         ts = [t for t in trades if t.reason == "time_stop"]
-        check("TACTICAL 72h time stop fires on a flat position",
+        check("TACTICAL 24h time stop fires on a flat position",
               bool(ts), f"{len(ts)} time_stop exit(s)")
-        check("time stop never fires before 72 bars",
-              all(t.bars_held >= 72 for t in ts),
+        check("time stop never fires before 24 hourly bars",
+              all(t.bars_held >= 24 for t in ts),
               f"earliest={min((t.bars_held for t in ts), default=None)}")
         # and it must NOT fire on a position that is up >= 5%
         bars_up = ramp(24 * 35, 100.0, 0.1) + ramp(n - 24 * 35, 103.4, 0.05)
@@ -198,6 +202,52 @@ def main():
         check("a monotonically falling market cannot be profitable",
               eq[~np.isnan(eq)][-1] <= 200.0 + 1e-6,
               f"end={eq[~np.isnan(eq)][-1]:.2f}")
+
+        # ---------------------------------------------------------------- 8
+        # SHORT sleeve (v4, 2026-09-22). A sign error in a short book does not
+        # crash — it silently invents profit, which is the single most dangerous
+        # bug class in a backtester. Each check below pins one sign.
+        n = 24 * 90
+
+        # 8a. Shorts must MAKE money in a falling market...
+        u = make_universe({"AAA/USD": ramp(n, 300.0, -0.1), "BTC/USD": flat(n, 1000.0)}, tmp)
+        p = Params(start_equity=200.0, core_slots=0, tac_slots=0,
+                   short_enabled=True, short_slots=6, regime_filter=False,
+                   tac_vol_lo=0.0, tac_vol_hi=9.9, tac_ext_band=9.9,
+                   short_funding_bps_8h=0.0)
+        eq_s, tr_s = run(u, p)
+        shorts = [t for t in tr_s if t.sleeve == "SHORT"]
+        check("SHORT sleeve opens positions in a falling market",
+              bool(shorts), f"{len(shorts)} short trade(s)")
+        check("a short that falls to its target is profitable",
+              all(t.pnl > 0 for t in shorts if t.exit < t.entry) if shorts else False,
+              f"{[round(t.pnl,3) for t in shorts if t.exit < t.entry][:5]}")
+        check("SHORT return is reported in the position's own direction",
+              all((t.ret > 0) == (t.exit < t.entry) for t in shorts) if shorts else False,
+              "ret must be POSITIVE when a short's exit is below its entry")
+
+        # 8b. ...and must LOSE money in a rising one. The mirror check is what
+        # catches a sign flip that 8a alone would pass.
+        u2 = make_universe({"AAA/USD": ramp(n, 100.0, 0.1), "BTC/USD": flat(n, 1000.0)}, tmp)
+        eq_r, tr_r = run(u2, p)
+        rising = [t for t in tr_r if t.sleeve == "SHORT"]
+        check("a short cannot profit in a monotonically RISING market",
+              all(t.pnl <= 0 for t in rising) if rising else True,
+              f"{[round(t.pnl,3) for t in rising][:5]}")
+
+        # 8c. A short's stop sits ABOVE entry and may only ratchet DOWN.
+        check("SHORT never exits above its initial stop level",
+              all(t.exit <= t.entry * (1 + p.short_trail) * 1.02
+                  for t in shorts if t.reason == "trail_stop") if shorts else True,
+              "a short stopping out far above entry means the stop widened")
+
+        # 8d. Equity must stay positive with a short book open.
+        check("equity never goes negative with shorts enabled",
+              bool(np.nanmin(eq_s) > 0), f"min={np.nanmin(eq_s):.2f}")
+
+        # 8e. Shorts are OFF by default, so every pre-v4 result stays reproducible.
+        check("short sleeve is opt-in (off by default)",
+              Params().short_enabled is False, "Params().short_enabled")
 
     finally:
         engine.BARS_ROOT = orig

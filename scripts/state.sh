@@ -22,6 +22,10 @@ python scripts/bybit.py tickers spot > "$TMP/tick.json"
 # v4 2026-09-22: perps are live, so the perp book must be visible here or every
 # SHORT is invisible to reconciliation. Never let this fail the whole run.
 python scripts/bybit.py positions linear > "$TMP/perp.json" 2>/dev/null || echo '[]' > "$TMP/perp.json"
+# 2026-09-22: a stop that TRIGGERS and is then REJECTED leaves no fill, so
+# nothing in this script noticed ARB/XPL going naked for ~20h. Read order
+# history so a rejected stop is impossible to miss.
+python scripts/bybit.py history spot > "$TMP/hist.json" 2>/dev/null || echo '[]' > "$TMP/hist.json"
 
 python - "$TMP" <<'PY'
 import json, re, sys, datetime as dt
@@ -36,6 +40,10 @@ try:
 except Exception:
     perps = []
 perps = [p for p in (perps or []) if float(p.get('size') or 0) != 0]
+try:
+    hist = json.loads((t/'hist.json').read_text())
+except Exception:
+    hist = []
 ticks  = json.loads((t/'tick.json').read_text())
 
 # NEVER trust the local clock — this machine is known to be 12h fast.
@@ -88,7 +96,7 @@ tac_sz  = min(tac_risk/0.10, eq*0.08)
 print(f"SIZE NOW   CORE ${core_sz:.2f} (15% trail, risk ${core_risk:.2f} = 2.0%, max 1)"
       f" | TACTICAL ${tac_sz:.2f} (10% trail, risk ${tac_risk:.2f} = 0.5%, max 6)")
 print(f"           BOTH SLEEVES TRAIL. No profit target, no target leg.")
-print(f"           CORE: no time limit | TACTICAL: 72h time stop unless >= +5%.")
+print(f"           CORE: no time limit | TACTICAL+SHORT: 24h time stop unless >= +5% in favour.")
 print()
 
 # --- positions, ages, stop coverage -------------------------------------------
@@ -139,7 +147,7 @@ for _ch in _chunks:
 # Added 2026-09-18 after a live defect: the 20:07 execute run logged two real
 # entries (POL, OP) entirely in prose under a "## ..." header, so SLEEVE_RE
 # matched nothing and every position showed sleeve/entry/age UNKNOWN. That
-# silently disables the 72h time stop, gap enforcement AND the daily quota
+# silently disables the 24h time stop, gap enforcement AND the trade-count line
 # counter. The STEP E table is structured, so parse it too and let it fill any
 # gap the headers left. Headers still WIN where both exist.
 #   | UTC | Sleeve | Symbol | Side | Qty | Fill | Value | Fee | Stop | Target |
@@ -307,6 +315,24 @@ print(f"            {'HEADROOM $%.2f' % (budget-fees_mo) if fees_mo < budget els
 print(f"            month started {month_start}  [~240%/yr of drag at the ceiling — owner-accepted]")
 print(f"            perps also pay FUNDING 8-hourly, which is NOT counted above")
 print()
+
+# --- REJECTED STOPS (added 2026-09-22 after the ARB/XPL naked-for-20h incident)
+# A conditional stop that fires and is then REJECTED produces NO fill, so every
+# fill-based check reads clean while the position is actually unprotected. This
+# is the loudest thing this script prints, because it is the failure mode that
+# has now cost money twice.
+_rej = [o for o in (hist or [])
+        if o.get('orderStatus') == 'Rejected'
+        and (o.get('stopOrderType') or o.get('orderFilter') or '').startswith('Stop')]
+if _rej:
+    print("*** REJECTED PROTECTIVE STOPS — THESE POSITIONS WERE/ARE NAKED ***")
+    for _o in _rej:
+        _ts = dt.datetime.fromtimestamp(int(_o.get('updatedTime') or 0)/1000, dt.timezone.utc)
+        print(f"    {_ts:%Y-%m-%d %H:%M} UTC  {_o.get('symbol'):10} qty {_o.get('qty'):>12} "
+              f"trigger {_o.get('triggerPrice') or '-'}  (activated, then REJECTED — no fill)")
+    print("    A rejected activation is SILENT: it leaves no fill, so nothing else catches it.")
+    print("    Re-protect or close the position THIS RUN before considering any entry.")
+    print()
 
 # --- perp book (v4, 2026-09-22) -----------------------------------------------
 # Longs AND shorts. A perp with no stopLoss is liquidation-exposed and is the

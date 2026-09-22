@@ -33,6 +33,27 @@ BAD = [
     ('resting take-profit', r'entry\s*\*\s*1\.14|fill\s*\*\s*1\.14|rests its \+?14% TARGET|resting LIMIT at the \+14%',
      'no resting take-profit exists'),
     ('blanket -15% cut', r'any position at unrealized_plpc <= -0\.15', 'TACTICAL cuts at -10%'),
+    # --- v4, 2026-09-22: perps/shorts/leverage enabled, trade ceiling removed.
+    # The v4 commit missed routines/research.md entirely and this audit could not
+    # catch it, because no pattern described the OLD wording. These are those
+    # patterns. Add one for every rule you change, or the audit is decorative.
+    ('v1 spot-only mandate', r'SPOT ONLY|spot only, long only|never a short|never perps'
+     r'|no perpetuals|Long only\.', 'v4 enables linear perps, shorts and leverage <=5x'),
+    ('v1 long-only mandate', r'never attempt a short|long only, never|Long only\.',
+     'shorts are enabled via linear perps since 2026-09-22'),
+    ('old fee budget 4%', r'4\.0% \(~\$8\.00\)|\$8\.00 MONTHLY|4\.0% of equity \(~\$8',
+     'fee budget is 20.0% (~$40.00)/month since 2026-09-22'),
+    ('old 2/day quota as a ceiling-era rule', r'>= 2 TACTICAL entries/day quota|/ 2 minimum',
+     'there is NO trade ceiling; 2/day is a floor that should never bind'),
+    ('old 72h time stop', r'72h time stop|72h TIME STOP|>= 72h after fill',
+     'time stop is 24h since 2026-09-22'),
+    ('old sleeve counts', r'TACTICAL 6(?![0-9])|6-position TACTICAL|4-position CORE|combined <= 7',
+     'CORE 1 / TACTICAL 12 / SHORT 12'),
+    ('REJECTED STOP SHAPE - limit stop, rejected at activation',
+     '"orderType":"Limit".*"orderFilter":"StopOrder"|price":"<trig[*]0[.]95>|trigger [*] 0[.]95',
+     'spot stops are conditional MARKET orders with no price field (2026-09-22)'),
+    ('deployment ceiling superseded by margin', r'deployment <= 50% of equity|total deployment after fill',
+     'v4 uses MARGIN <=50% of budget + GROSS NOTIONAL <=300%'),
     # `\bused this week` is anchored: without the word boundary it also matched
     # "ca-used this week's ..." in SHADOW-LOG.md data rows (false positive,
     # found 2026-09-17 weekly review).
@@ -62,6 +83,13 @@ BAD = [
 # (that is what a log of superseded rules is for), so scanning them produces
 # nothing but false positives. Added HYPOTHESIS/OBSERVATIONS/SHADOW/SCAN-GATE
 # 2026-09-17: no run obeys these files, it only appends to them.
+# A line that NARRATES a repealed rule ("v1-v3 read X — REVOKED", "superseding
+# the old Y") is documentation, not a stale restatement. Without this the audit
+# flags its own changelog and trains you to ignore it.
+HISTORY = ('REVOKED', 'superseded', 'SUPERSEDED', 'v1-v3 read', 'previously',
+           'used to', 'was REVOKED', 'no longer', 'replacing the old',
+           'historical note', 'Historical note')
+
 SKIP = {'memory/TRADE-LOG.md', 'memory/RESEARCH-LOG.md', 'memory/WEEKLY-REVIEW.md',
         'memory/HYPOTHESIS-LOG.md', 'memory/OBSERVATIONS.md', 'memory/SHADOW-LOG.md',
         'memory/SCAN-GATE-LOG.md', 'DAILY-SUMMARY.md'}
@@ -86,6 +114,8 @@ def main():
             # Lines that EXPLAIN the old rule are fine; lines that INSTRUCT are not.
             if re.search(r'removed|was |old |legacy |since 2026-09-15|NEVER infer|no longer|expired|REJECTED|STALE|SUPERSEDED|BANNED|grandfathered|v1 ',
                          line, re.I):
+                continue
+            if any(h.lower() in line.lower() for h in HISTORY):
                 continue
             for label, pat, why in BAD:
                 if re.search(pat, line, re.I):

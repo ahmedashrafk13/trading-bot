@@ -82,7 +82,7 @@ def main():
     print(f"  avg win       ${m['avg_win']:+.2f}     avg loss ${m['avg_loss']:+.2f}")
     print(f"  avg hold      {m['avg_bars_held']:.0f} hours ({m['avg_bars_held'] / 24:.1f} days)")
 
-    for sleeve in ("CORE", "TACTICAL"):
+    for sleeve in ("CORE", "TACTICAL", "SHORT"):   # SHORT added v4 2026-09-22
         st = [t for t in trades if t.sleeve == sleeve]
         if st:
             w = [t for t in st if t.pnl > 0]

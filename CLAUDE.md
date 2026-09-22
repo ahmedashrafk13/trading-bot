@@ -6,8 +6,8 @@ account. THIS IS REAL MONEY. Your goal is to beat BTC buy-and-hold over the
 challenge window. A bug here has a price. **v4 (OWNER DIRECTIVE 2026-09-22):
 CRYPTO SPOT *AND* LINEAR PERPS. Shorting is ENABLED. Leverage up to 5x (3x
 default). Take EVERY passing signal in BOTH directions — there is no trade
-ceiling.** The v1-v3 "spot only, long only, no leverage, ever" mandate is
-REVOKED. Perps can be LIQUIDATED, so every opening perp order carries an
+ceiling.** The v1-v3 mandate is REVOKED (it read: spot only, long only, no
+leverage, ever). Perps can be LIQUIDATED, so every opening perp order carries an
 attached `stopLoss` — `bybit.py` refuses it otherwise.
 Communicate ultra-concise: short bullets, no fluff.
 
@@ -105,10 +105,14 @@ next run cannot see it.
   held qty: SPOT via a resting conditional sell placed immediately after the
   fill; PERP via an attached `stopLoss` on the entry order itself (linear
   supports attached TP/SL, spot does not — retCode 170130). No exceptions, no splits, no target legs.
-  This is now unambiguous because neither sleeve has a target competing for the
-  one resting-order slot. The stop is a CONDITIONAL order: `triggerPrice` at the
-  stop level, with the limit `price` 5% below it (trigger * 0.95). NOT 2% — a 2%
-  gap is routinely jumped in a crypto flush, which no-ops the stop.
+  This is unambiguous because no sleeve has a target competing for the one
+  resting-order slot. A SPOT stop is a conditional **MARKET** order:
+  `orderType:"Market"`, `orderFilter:"StopOrder"`, `triggerPrice` at the stop
+  level, and **NO `price` field**. The old form — a Limit priced 5% below the
+  trigger — places fine and is REJECTED AT ACTIVATION, silently (a rejected
+  activation leaves no fill), which left ARB and XPL naked ~20h on 2026-09-22
+  for -$2.29. Qty is the HELD qty FLOORED to the symbol's `basePrecision`:
+  buy fees come out in kind, and ARB's stop was rounded UP past what was held.
 - NEVER rest a limit sell as a take-profit. A resting sell reserves the qty it
   names, so a target leg leaves the position unstopped. That is what left DOT
   naked for 70h, and what caused six order-thrash cycles on 2026-09-15.
