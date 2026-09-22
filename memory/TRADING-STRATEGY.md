@@ -213,7 +213,7 @@ because perps were enabled on 2026-09-22.
 | New trades | agent's judgement | **NO CAP — take every passing name** | **NO CAP** |
 | Stop | 15% below high-water | 10% below high-water | **10% ABOVE low-water** |
 | Target | NONE — the trail is the exit | NONE | NONE |
-| Time limit | none | **24h unless >= +5%** (was 72h) | **24h unless >= +5%** |
+| Time limit | none | **72h unless >= +5%** | **72h unless >= +5% in favour** |
 | Screen timeframe | daily bars | hourly bars | hourly bars |
 | Hold horizon | weeks to months | hours to days | hours to days |
 
@@ -396,7 +396,7 @@ fill it, and let weekly-review grade the result on expectancy per trade.
 3. Circuit breaker tripped (realized losses today >= 5% of equity, or 5
    consecutive tactical losses closed today).
 4. Monthly fee budget exhausted.
-5. Slots all full (12 TACTICAL / 12 SHORT / 1 CORE) — but see the 24h time
+5. Slots all full (12 TACTICAL / 12 SHORT / 1 CORE) — but see the 72h time
    stop, which exists specifically so slots recycle fast.
 6. Margin used would exceed 50% of budget, or gross notional 300%.
 7. No name passes the technical screen at all (a genuinely empty screen).
@@ -432,10 +432,11 @@ In priority order. Only these may stop an entry:
 7. `minOrderAmt` / spread failures on that specific symbol.
 
 Slot recycling is what makes a high count reachable: the time stop was cut
-72h -> **24h** on 2026-09-22 so a position that has not moved >= +5% in a day
-frees its slot for the next candidate. 24 slots recycling daily is what a
-10-20 entries/day rate actually requires — without it, slots fill on day one
-and the rate collapses to zero, which is exactly what happened under v3.
+kept at **72h**. A position that has not moved >= +5% in its favour frees its
+slot for the next candidate. Some slot recycling is what a 10-20 entries/day
+rate requires — without any time stop, slots fill on day one and the rate
+collapses to zero, which is exactly what happened under v3. It was briefly cut
+to 24h on 2026-09-22; that was then measured and reverted. MEASURED 2026-09-22 (hourly cache, after the engine units bug was fixed): 0h -66.67% | 24h -83.97% (DD -99.54%) | 48h -78.67% | 72h -75.24% | 168h -69.33%. Shorter is monotonically worse; 24h was the WORST setting tested. Reverted to 72h. 0h scores best but stops slots recycling, which deadlocks the no-ceiling directive.
 
 ### Margin ceiling replaces the deployment ceiling (leverage made it meaningless)
 The old rule was "deployment <= 50% of equity", which counted NOTIONAL. At 3x
@@ -763,8 +764,8 @@ TACTICAL:
 - Otherwise -> keep stop 10% below high-water
 - NO profit target. A tactical position that is still trending is a WINNER,
   not dead money; the trail decides when it is over.
-- **24h TIME STOP (72h -> 24h on 2026-09-22, OWNER DIRECTIVE).** If a TACTICAL
-  or SHORT position is not at least +5% IN ITS FAVOUR 24h after fill, close it
+- **72h TIME STOP.** MEASURED 2026-09-22 (hourly cache, after the engine units bug was fixed): 0h -66.67% | 24h -83.97% (DD -99.54%) | 48h -78.67% | 72h -75.24% | 168h -69.33%. Shorter is monotonically worse; 24h was the WORST setting tested. Reverted to 72h. 0h scores best but stops slots recycling, which deadlocks the no-ceiling directive.
+  If a TACTICAL or SHORT position is not at least +5% IN ITS FAVOUR 72h after fill, close it
   at market and free the slot. For a short, "+5% in its favour" means the price
   is 5% BELOW entry. Rationale: 24 slots must recycle DAILY to sustain the
   no-trade-ceiling mandate; at 72h the book fills once and the entry rate

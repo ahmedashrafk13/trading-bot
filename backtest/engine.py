@@ -61,7 +61,14 @@ class Params:
     # the daily cache "72" meant 72 DAYS and fired 3 times in 4.1 years — which
     # is why HYPOTHESIS-LOG #10 recorded the rule as UNTESTABLE. It is now
     # converted to bars via the cache's own bar spacing.
-    tac_time_stop_h: int = 24
+    # MEASURED 2026-09-22 on the hourly cache, once the units bug above was
+    # fixed and the rule became testable for the first time:
+    #   0h -66.67% | 24h -83.97% (DD -99.54%) | 48h -78.67% | 72h -75.24% | 168h -69.33%
+    # Monotone: shorter is worse at every step. 24h was the worst setting tested.
+    # Reverted 24 -> 72. 0h scores best but disables slot recycling entirely,
+    # which deadlocks the no-trade-ceiling directive (the v3 failure), so 72h is
+    # the best setting that still recycles.
+    tac_time_stop_h: int = 72
     tac_time_stop_min: float = 0.05
 
     # --- SHORT sleeve (v4, 2026-09-22; perps enabled by owner directive) ---

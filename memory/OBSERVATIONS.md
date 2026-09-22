@@ -70,3 +70,23 @@ ceiling. End-to-end verification on the DEMO account, not a strategy trade:
 Local guards verified to fire BEFORE the venue: opening perp without stopLoss,
 leverage >5x, category inverse/option, and the pre-existing spot attached-TP/SL
 guard. No naked-position path was exercised.
+
+## 2026-09-22 — OP's live stop carried the REJECTED shape; replaced
+`orders spot` showed OPUSDT resting as `Limit qty 84.89 trig 0.11983 price
+0.11383` — the exact shape that was rejected at activation on ARB and XPL hours
+earlier. It would have failed the same way had OP traded down to 0.11983.
+Cancelled and re-placed as a conditional MARKET stop (same trigger, qty 84.89
+floored to OPUSDT basePrecision 0.01 from 84.89502 held). Verified resting
+`Untriggered Market qty 84.89 trig 0.11983 price 0`.
+LESSON: fixing the rule does not fix orders ALREADY RESTING under the old rule.
+Any stop-mechanism change must re-place every live stop in the same run.
+
+## 2026-09-22 — 24h time stop measured and REVERTED to 72h
+The engine units bug (HOURS compared to a BAR index) is fixed, so the time stop
+became testable for the first time. Hourly cache, full period:
+  0h -66.67% | 24h -83.97% (DD -99.54%) | 48h -78.67% | 72h -75.24% | 168h -69.33%
+Monotone — shorter is worse at every step, and the 24h value set earlier that
+day was the worst tested. Reverted to 72h. 0h scores best but disables slot
+recycling, which deadlocks the no-trade-ceiling directive (the v3 failure mode),
+so 72h is the best setting that still recycles. Owner directives (no ceiling,
+shorts, leverage) were NOT touched — only this derived parameter.

@@ -96,7 +96,7 @@ tac_sz  = min(tac_risk/0.10, eq*0.08)
 print(f"SIZE NOW   CORE ${core_sz:.2f} (15% trail, risk ${core_risk:.2f} = 2.0%, max 1)"
       f" | TACTICAL ${tac_sz:.2f} (10% trail, risk ${tac_risk:.2f} = 0.5%, max 6)")
 print(f"           BOTH SLEEVES TRAIL. No profit target, no target leg.")
-print(f"           CORE: no time limit | TACTICAL+SHORT: 24h time stop unless >= +5% in favour.")
+print(f"           CORE: no time limit | TACTICAL+SHORT: 72h time stop unless >= +5% in favour.")
 print()
 
 # --- positions, ages, stop coverage -------------------------------------------
@@ -147,7 +147,7 @@ for _ch in _chunks:
 # Added 2026-09-18 after a live defect: the 20:07 execute run logged two real
 # entries (POL, OP) entirely in prose under a "## ..." header, so SLEEVE_RE
 # matched nothing and every position showed sleeve/entry/age UNKNOWN. That
-# silently disables the 24h time stop, gap enforcement AND the trade-count line
+# silently disables the 72h time stop, gap enforcement AND the trade-count line
 # counter. The STEP E table is structured, so parse it too and let it fill any
 # gap the headers left. Headers still WIN where both exist.
 #   | UTC | Sleeve | Symbol | Side | Qty | Fill | Value | Fee | Stop | Target |

@@ -70,7 +70,7 @@ next run cannot see it.
   | Max positions | 1 | 12 | 12 |
   | Stop | 15% below high-water | 10% below high-water | 10% ABOVE low-water |
   | Target | NONE — the trail is the exit | NONE | NONE |
-  | Time limit | none | 24h unless >= +5% | 24h unless >= +5% |
+  | Time limit | none | 72h unless >= +5% | 72h unless >= +5% in favour |
   | Screen bars | daily | hourly | hourly |
   | Hold horizon | weeks to months | hours to days | hours to days |
 
@@ -126,9 +126,10 @@ next run cannot see it.
   DOWN only. Initial stop 10% ABOVE entry. "Never move a stop down" reads
   "never move a short's stop UP" — widening a losing short is the same breach.
   Check `bybit.py funding SYM` first: a short pays funding when it is negative.
-- TIME STOP 24h (cut from 72h on 2026-09-22): close any TACTICAL or SHORT
-  position not >= +5% in its favour after 24h. This is what recycles slots fast
-  enough for the no-ceiling mandate — without it the book fills and count dies.
+- TIME STOP 72h: close any TACTICAL or SHORT position not >= +5% IN ITS FAVOUR
+  after 72h. This recycles slots for the no-ceiling mandate — without a time
+  stop the book fills once and the entry rate dies.
+  MEASURED 2026-09-22 (hourly cache, after the engine units bug was fixed): 0h -66.67% | 24h -83.97% (DD -99.54%) | 48h -78.67% | 72h -75.24% | 168h -69.33%. Shorter is monotonically worse; 24h was the WORST setting tested. Reverted to 72h. 0h scores best but stops slots recycling, which deadlocks the no-ceiling directive.
 - Never place a stop within 5% of current price. NEVER move a stop down —
   this applies to grandfathered positions too: a v1 position carrying a tighter
   stop KEEPS it and is never widened to the v2 distance.

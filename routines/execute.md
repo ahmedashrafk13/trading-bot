@@ -72,8 +72,8 @@ STEP A — STATE AND RECONCILE. Every run, before anything else.
 3. For every holding, confirm the exchange still shows a `stopLoss`. If one is
    missing, either re-attach it or close the position. An unprotected position
    while the laptop is off is the single largest risk in this setup.
-4. **24h TIME STOP (TACTICAL only, added 2026-09-18).** For every TACTICAL
-   holding, compute hours since fill from its TRADE-LOG entry. If >= 24h AND the
+4. **72h TIME STOP (TACTICAL *and* SHORT since v4).** For every TACTICAL/SHORT
+   holding, compute hours since fill from its TRADE-LOG entry. If >= 72h AND the
    position is not at least +5% above entry, CLOSE IT AT MARKET and free the
    slot. A position already >= +5% is exempt and keeps riding its trail.
    This is what makes the 6-slot / 2-per-day quota sustainable — without slot
@@ -158,7 +158,7 @@ STEP D — THE BUY GATE. Every condition must pass. State each one explicitly.
     short PAYS funding while it is negative, which is a real holding cost.
 - for CORE only: you can state what would have to happen for this to run 30%+,
   and what kills the thesis. TACTICAL does not owe this — it is a screen-ranked
-  trend entry with a 10% trail and a 24h time stop, not a conviction thesis.
+  trend entry with a 10% trail and a 72h time stop, not a conviction thesis.
 
 STEP E — PLACE THE ORDER AND ITS PROTECTION. **The number of calls depends on
 the category, and getting this backwards is the single most expensive mistake
