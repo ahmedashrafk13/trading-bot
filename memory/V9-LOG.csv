@@ -1,0 +1,13 @@
+run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,fee
+2026-09-24 18:13,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-24 18:13,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-24 18:13,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-24 18:13,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-24 18:13,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-24 18:13,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-24 18:13,ADAUSDT,-67.24,-67.24,approve,crowd long-heavy z+1.64 after Mastercard-news rally; no hack/delisting/unlock or macro print in the 6h hold,274,0.2457,1.0,0.01346
+2026-09-24 18:13,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-24 18:13,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-24 18:13,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-24 18:13,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-24 18:13,DOTUSDT,49.27,49.27,approve,crowd short-heavy z-1.93 into ETF/squeeze rally; no event risk found in the 6h hold,42.5,1.1584,1.0,0.00985

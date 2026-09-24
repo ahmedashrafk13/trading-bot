@@ -1,0 +1,9 @@
+{
+  "run_id": "2026-09-24 18:13",
+  "decisions": [
+    {"symbol": "ADAUSDT", "action": "approve", "reason": "crowd long-heavy z+1.64 after Mastercard-news rally; no hack/delisting/unlock or macro print in the 6h hold"},
+    {"symbol": "DOTUSDT", "action": "approve", "reason": "crowd short-heavy z-1.93 into ETF/squeeze rally; no event risk found in the 6h hold"}
+  ],
+  "claude_trades": [],
+  "keep": []
+}
