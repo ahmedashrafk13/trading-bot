@@ -1,6 +1,9 @@
 {
- "start_equity": 179032.14026977,
+ "start_equity": 129079.0237911,
  "start_utc": "2026-09-24 15:54",
  "note": "fresh $200 start after flattening all legacy positions (owner 2026-09-24)",
- "peak_pnl": 0.0
+ "peak_pnl": 0.0,
+ "start_equity_usd_old": 179032.14026977,
+ "basis": "usdt_equity",
+ "rebased_utc": "2026-09-24 18:42"
 }

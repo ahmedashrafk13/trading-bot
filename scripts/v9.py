@@ -567,8 +567,38 @@ def ensure_stops(added):
 
 
 def total_equity():
-    r = B.request("GET", "/v5/account/wallet-balance", {"accountType": "UNIFIED"}, private=True)
-    return float(r["result"]["list"][0]["totalEquity"])
+    """P&L basis, in USDT: the USDT coin's equity (wallet balance + unrealised
+    P&L of the USDT perps). NOT the account's USD totalEquity - the demo wallet
+    also holds ~$50k USDC, and a 0.05% peg wobble moved that figure ~$90, close
+    enough to the -$100 auto-halt to trip it on noise (found by the first live
+    run, 2026-09-24). Fees and funding on USDT perps settle in USDT, so every
+    trading effect is in here and nothing else is."""
+    r = B.request("GET", "/v5/account/wallet-balance", {"accountType": "UNIFIED", "coin": "USDT"},
+                  private=True)
+    coin = r["result"]["list"][0]["coin"][0]
+    return float(coin.get("equity") or 0) or (float(coin.get("walletBalance") or 0)
+                                               + float(coin.get("unrealisedPnl") or 0))
+
+
+def _migrate_pnl_basis():
+    """One-off: state recorded before the fix holds a USD start_equity. Re-baseline
+    in USDT so today's P&L = open positions' uPnL minus the fees already paid."""
+    st = jload(STATE, {}) or {}
+    if "start_equity" not in st or st.get("basis") == "usdt_equity":
+        return
+    held = positions()
+    upnl = sum(float(p.get("unrealisedPnl") or 0) for p in held.values())
+    fees = 0.0
+    if os.path.exists(LOG):
+        for line in open(LOG, encoding="utf-8").read().splitlines()[1:]:
+            try:
+                fees += float(line.rsplit(",", 1)[1])
+            except (ValueError, IndexError):
+                pass
+    st.update({"start_equity_usd_old": st["start_equity"], "basis": "usdt_equity",
+               "start_equity": total_equity() - upnl + fees, "peak_pnl": 0.0,
+               "rebased_utc": utc(now_s())})
+    jdump(st, STATE)
 
 
 # ----------------------------------------------------------------- commands
@@ -794,7 +824,7 @@ def cmd_execute(args):
             print(f"  STOP PROBLEM: {p}", file=sys.stderr)
     st = jload(STATE, {}) or {}
     if "start_equity" not in st:
-        st.update({"start_equity": total_equity(), "start_utc": utc(now_s())})
+        st.update({"start_equity": total_equity(), "start_utc": utc(now_s()), "basis": "usdt_equity"})
         jdump(st, STATE)
     print(json.dumps({"dry": dry, "orders_close": len(jobs_close), "orders_open": len(jobs_open),
                       "fills": fills, "stop_problems": problems,
@@ -851,6 +881,7 @@ def cmd_flatten_legacy(args):
 
 
 def cmd_status(_args):
+    _migrate_pnl_basis()
     held = positions()
     st = jload(STATE, {}) or {}
     eq = total_equity()
@@ -876,6 +907,7 @@ HALT_FILE = os.path.join(ROOT, "HALT_TRADING")
 def drawdown_guard():
     """P&L since the v9 start and from its peak, on the $200 budget. Creates the
     kill-switch file at -50% of budget so a losing streak cannot run unattended."""
+    _migrate_pnl_basis()
     st = jload(STATE, {}) or {}
     if "start_equity" not in st:
         return []
