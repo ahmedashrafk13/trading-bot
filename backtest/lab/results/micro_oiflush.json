@@ -1,0 +1,302 @@
+{
+ "name": "micro_oiflush",
+ "description": "OI FLUSH reversal on the 12 metrics majors: 1h dOI <= -3 sigma (trailing 30d), 1-bar decision lag, fade the event bar's return.",
+ "mechanism": "Forced liquidations (proxied by sharp OI drops) overshoot and revert.",
+ "universe": "12 Binance-metrics majors",
+ "timeframe": "1h events (6h-cadence variant also measured)",
+ "n_trials": 9,
+ "stage": "screen only (Step 1)",
+ "control": "matched bars with the same |r_1h|/sigma bucket AND the same sign of r_1h, with no OI drop (dOI > -1 sigma)",
+ "ic_table": {
+  "6h": {
+   "train": {
+    "events_raw_reversal": {
+     "n": 1811,
+     "mean_bp": -2.7,
+     "t": -0.4,
+     "hit": 0.523
+    },
+    "excess_vs_matched_control": {
+     "n": 1604,
+     "mean_bp": -2.5,
+     "t": -0.38,
+     "hit": 0.515
+    },
+    "excess_day_clustered": {
+     "n_clusters": 456,
+     "mean_bp": 14.6,
+     "t_nw": 1.98
+    },
+    "cadence6h_raw_reversal": {
+     "n": 1811,
+     "mean_bp": -2.8,
+     "t": -0.42,
+     "hit": 0.533
+    },
+    "cadence6h_day_clustered": {
+     "n_clusters": 459,
+     "mean_bp": 13.1,
+     "t_nw": 1.57
+    }
+   },
+   "test": {
+    "events_raw_reversal": {
+     "n": 1169,
+     "mean_bp": 32.0,
+     "t": 3.64,
+     "hit": 0.534
+    },
+    "excess_vs_matched_control": {
+     "n": 810,
+     "mean_bp": 7.9,
+     "t": 0.8,
+     "hit": 0.504
+    },
+    "excess_day_clustered": {
+     "n_clusters": 300,
+     "mean_bp": 11.4,
+     "t_nw": 1.06
+    },
+    "cadence6h_raw_reversal": {
+     "n": 1169,
+     "mean_bp": 24.4,
+     "t": 2.48,
+     "hit": 0.518
+    },
+    "cadence6h_day_clustered": {
+     "n_clusters": 313,
+     "mean_bp": 12.2,
+     "t_nw": 1.05
+    }
+   }
+  },
+  "24h": {
+   "train": {
+    "events_raw_reversal": {
+     "n": 1472,
+     "mean_bp": 27.7,
+     "t": 2.05,
+     "hit": 0.546
+    },
+    "excess_vs_matched_control": {
+     "n": 1304,
+     "mean_bp": 45.5,
+     "t": 3.27,
+     "hit": 0.554
+    },
+    "excess_day_clustered": {
+     "n_clusters": 436,
+     "mean_bp": 48.2,
+     "t_nw": 2.69
+    },
+    "cadence6h_raw_reversal": {
+     "n": 1472,
+     "mean_bp": 32.8,
+     "t": 2.31,
+     "hit": 0.548
+    },
+    "cadence6h_day_clustered": {
+     "n_clusters": 440,
+     "mean_bp": 31.1,
+     "t_nw": 1.57
+    }
+   },
+   "test": {
+    "events_raw_reversal": {
+     "n": 957,
+     "mean_bp": 68.9,
+     "t": 3.81,
+     "hit": 0.533
+    },
+    "excess_vs_matched_control": {
+     "n": 674,
+     "mean_bp": -61.8,
+     "t": -3.23,
+     "hit": 0.411
+    },
+    "excess_day_clustered": {
+     "n_clusters": 288,
+     "mean_bp": -43.3,
+     "t_nw": -1.57
+    },
+    "cadence6h_raw_reversal": {
+     "n": 957,
+     "mean_bp": 41.1,
+     "t": 2.42,
+     "hit": 0.534
+    },
+    "cadence6h_day_clustered": {
+     "n_clusters": 303,
+     "mean_bp": 31.1,
+     "t_nw": 1.17
+    }
+   }
+  },
+  "72h": {
+   "train": {
+    "events_raw_reversal": {
+     "n": 1040,
+     "mean_bp": -1.6,
+     "t": -0.06,
+     "hit": 0.51
+    },
+    "excess_vs_matched_control": {
+     "n": 938,
+     "mean_bp": 29.4,
+     "t": 1.05,
+     "hit": 0.521
+    },
+    "excess_day_clustered": {
+     "n_clusters": 371,
+     "mean_bp": 30.3,
+     "t_nw": 0.76
+    },
+    "cadence6h_raw_reversal": {
+     "n": 1040,
+     "mean_bp": 8.0,
+     "t": 0.3,
+     "hit": 0.505
+    },
+    "cadence6h_day_clustered": {
+     "n_clusters": 377,
+     "mean_bp": 4.8,
+     "t_nw": 0.11
+    }
+   },
+   "test": {
+    "events_raw_reversal": {
+     "n": 698,
+     "mean_bp": 81.9,
+     "t": 2.65,
+     "hit": 0.497
+    },
+    "excess_vs_matched_control": {
+     "n": 494,
+     "mean_bp": -141.3,
+     "t": -4.12,
+     "hit": 0.379
+    },
+    "excess_day_clustered": {
+     "n_clusters": 235,
+     "mean_bp": -115.1,
+     "t_nw": -2.11
+    },
+    "cadence6h_raw_reversal": {
+     "n": 698,
+     "mean_bp": 91.0,
+     "t": 2.96,
+     "hit": 0.516
+    },
+    "cadence6h_day_clustered": {
+     "n_clusters": 254,
+     "mean_bp": 52.1,
+     "t_nw": 0.93
+    }
+   }
+  }
+ },
+ "by_year_excess_all": {
+  "6h": {
+   "2021": {
+    "n": 7,
+    "mean_bp": 69.5,
+    "t": 0.98,
+    "hit": 0.429
+   },
+   "2022": {
+    "n": 859,
+    "mean_bp": -40.8,
+    "t": -3.41,
+    "hit": 0.463
+   },
+   "2023": {
+    "n": 944,
+    "mean_bp": 7.9,
+    "t": 1.15,
+    "hit": 0.516
+   },
+   "2024": {
+    "n": 789,
+    "mean_bp": 32.0,
+    "t": 2.98,
+    "hit": 0.535
+   },
+   "2025": {
+    "n": 380,
+    "mean_bp": -0.4,
+    "t": -0.02,
+    "hit": 0.479
+   }
+  },
+  "24h": {
+   "2021": {
+    "n": 7,
+    "mean_bp": -18.9,
+    "t": -0.15,
+    "hit": 0.429
+   },
+   "2022": {
+    "n": 676,
+    "mean_bp": -4.6,
+    "t": -0.18,
+    "hit": 0.516
+   },
+   "2023": {
+    "n": 788,
+    "mean_bp": 47.5,
+    "t": 3.64,
+    "hit": 0.553
+   },
+   "2024": {
+    "n": 637,
+    "mean_bp": 92.2,
+    "t": 4.02,
+    "hit": 0.54
+   },
+   "2025": {
+    "n": 320,
+    "mean_bp": 6.7,
+    "t": 0.23,
+    "hit": 0.494
+   }
+  },
+  "72h": {
+   "2021": {
+    "n": 7,
+    "mean_bp": -211.3,
+    "t": -1.26,
+    "hit": 0.429
+   },
+   "2022": {
+    "n": 487,
+    "mean_bp": -154.3,
+    "t": -3.23,
+    "hit": 0.456
+   },
+   "2023": {
+    "n": 548,
+    "mean_bp": 66.0,
+    "t": 2.47,
+    "hit": 0.502
+   },
+   "2024": {
+    "n": 452,
+    "mean_bp": 81.9,
+    "t": 2.06,
+    "hit": 0.491
+   },
+   "2025": {
+    "n": 244,
+    "mean_bp": -18.1,
+    "t": -0.37,
+    "hit": 0.459
+   }
+  }
+ },
+ "result": "fails: excess over the direction-matched control in the TEST half is +7.9 bp (6h, day-clustered t 1.06), -61.8 bp (24h) and -141 bp (72h); signs flip between halves and 2022 is negative at every horizon (spec needed the same sign in >= 4 of 5 years). With an |r|-only control (not direction-matched) the test half looked strongly positive (t ~7) - that was bull-market drift on 95%-long events plus cross-coin clustering, not a reversal edge.",
+ "verdict": "fails",
+ "caveats": [
+  "Events cluster across coins in cascades: iid t-stats overstate by ~2-3x; day-clustered t reported."
+ ],
+ "oos_sharpe": null
+}

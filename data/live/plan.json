@@ -1,0 +1,146 @@
+{
+ "run_id": "2026-09-24 16:08",
+ "decided_at_bar_close": "2026-09-24 12:00",
+ "budget": 200.0,
+ "vol_target": 0.55,
+ "gross_cap": 2.4,
+ "rows": [
+  {
+   "symbol": "BTCUSDT",
+   "z_crowd": 0.32,
+   "ls_ratio": 1.256,
+   "ret_24h": -0.0254,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 84102.74,
+   "funding_8h": 6.446e-05
+  },
+  {
+   "symbol": "ETHUSDT",
+   "z_crowd": 1.06,
+   "ls_ratio": 2.848,
+   "ret_24h": -0.0295,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 2671.79,
+   "funding_8h": 6.995e-05
+  },
+  {
+   "symbol": "SOLUSDT",
+   "z_crowd": -0.28,
+   "ls_ratio": 1.879,
+   "ret_24h": -0.0318,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 116.03,
+   "funding_8h": -7.326e-05
+  },
+  {
+   "symbol": "BNBUSDT",
+   "z_crowd": -0.92,
+   "ls_ratio": 2.162,
+   "ret_24h": -0.0163,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 778.3,
+   "funding_8h": -9.261e-05
+  },
+  {
+   "symbol": "XRPUSDT",
+   "z_crowd": 0.6,
+   "ls_ratio": 2.464,
+   "ret_24h": -0.0658,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 1.5059,
+   "funding_8h": -0.00012577
+  },
+  {
+   "symbol": "DOGEUSDT",
+   "z_crowd": 0.95,
+   "ls_ratio": 2.663,
+   "ret_24h": -0.0673,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 0.09522,
+   "funding_8h": 0.0001
+  },
+  {
+   "symbol": "ADAUSDT",
+   "z_crowd": 1.32,
+   "ls_ratio": 2.256,
+   "ret_24h": -0.0606,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 0.2465,
+   "funding_8h": -4.663e-05
+  },
+  {
+   "symbol": "AVAXUSDT",
+   "z_crowd": 0.61,
+   "ls_ratio": 2.318,
+   "ret_24h": -0.0892,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 10.325,
+   "funding_8h": -0.00011979
+  },
+  {
+   "symbol": "LINKUSDT",
+   "z_crowd": -0.34,
+   "ls_ratio": 1.524,
+   "ret_24h": -0.044,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 12.707,
+   "funding_8h": 0.0001
+  },
+  {
+   "symbol": "LTCUSDT",
+   "z_crowd": -0.25,
+   "ls_ratio": 2.276,
+   "ret_24h": 0.0615,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 73.67,
+   "funding_8h": 0.0001
+  },
+  {
+   "symbol": "TRXUSDT",
+   "z_crowd": -0.13,
+   "ls_ratio": 1.221,
+   "ret_24h": -0.0096,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 0.3391,
+   "funding_8h": -0.00020006
+  },
+  {
+   "symbol": "DOTUSDT",
+   "z_crowd": -1.43,
+   "ls_ratio": 1.729,
+   "ret_24h": -0.0368,
+   "weight": 0.0,
+   "target_usd": 0.0,
+   "current_usd": 0.0,
+   "mark": 1.1603,
+   "funding_8h": 0.0001
+  }
+ ],
+ "non_strategy_positions": {},
+ "data_warnings": [],
+ "risk": [
+  "P&L since v9 start $+0.00 (+0.0% of budget); from peak $+0.00"
+ ]
+}

@@ -1,0 +1,115 @@
+{
+ "name": "micro_flowz_xs",
+ "description": "PIT top-20 cross-sectional rank of the TIME-SERIES-residualised taker-flow z (pre-registered signal a, XS form).",
+ "mechanism": "Residual (not explained by the same-window return) taker buying predicts relative returns.",
+ "universe": "pit_top20",
+ "timeframe": "6h decisions (features from 1h klines)",
+ "n_trials": 12,
+ "stage": "screen only (Step 1)",
+ "gate": "same sign train vs test AND |t| >= 2 in the test half (FM with rank(r_W), rank(r7d) controls, NW)",
+ "ic_table": {
+  "W4_6h_train": {
+   "ic_z": 0.0032,
+   "t_ic_z": 0.96,
+   "fm_rank_z_ctl": 0.0045,
+   "t_fm_z_ctl_nw": 1.32,
+   "t_fm_z_ctl_nonoverlap_mean": 1.32,
+   "periods": 5602
+  },
+  "W4_6h_test": {
+   "ic_z": -0.0043,
+   "t_ic_z": -0.8,
+   "fm_rank_z_ctl": -0.0022,
+   "t_fm_z_ctl_nw": -0.38,
+   "t_fm_z_ctl_nonoverlap_mean": -0.38,
+   "periods": 2184
+  },
+  "W4_24h_train": {
+   "ic_z": 0.0068,
+   "t_ic_z": 1.79,
+   "fm_rank_z_ctl": 0.0064,
+   "t_fm_z_ctl_nw": 1.71,
+   "t_fm_z_ctl_nonoverlap_mean": 0.95,
+   "periods": 5599
+  },
+  "W4_24h_test": {
+   "ic_z": -0.0053,
+   "t_ic_z": -0.97,
+   "fm_rank_z_ctl": -0.0031,
+   "t_fm_z_ctl_nw": -0.51,
+   "t_fm_z_ctl_nonoverlap_mean": -0.26,
+   "periods": 2181
+  },
+  "W4_72h_train": {
+   "ic_z": 0.0076,
+   "t_ic_z": 1.66,
+   "fm_rank_z_ctl": 0.0063,
+   "t_fm_z_ctl_nw": 1.39,
+   "t_fm_z_ctl_nonoverlap_mean": 0.53,
+   "periods": 5591
+  },
+  "W4_72h_test": {
+   "ic_z": 0.0006,
+   "t_ic_z": 0.09,
+   "fm_rank_z_ctl": 0.001,
+   "t_fm_z_ctl_nw": 0.14,
+   "t_fm_z_ctl_nonoverlap_mean": 0.05,
+   "periods": 2173
+  },
+  "W24_6h_train": {
+   "ic_z": 0.0014,
+   "t_ic_z": 0.41,
+   "fm_rank_z_ctl": 0.0006,
+   "t_fm_z_ctl_nw": 0.19,
+   "t_fm_z_ctl_nonoverlap_mean": 0.18,
+   "periods": 5599
+  },
+  "W24_6h_test": {
+   "ic_z": -0.009,
+   "t_ic_z": -1.66,
+   "fm_rank_z_ctl": -0.0079,
+   "t_fm_z_ctl_nw": -1.37,
+   "t_fm_z_ctl_nonoverlap_mean": -1.36,
+   "periods": 2184
+  },
+  "W24_24h_train": {
+   "ic_z": 0.0031,
+   "t_ic_z": 0.58,
+   "fm_rank_z_ctl": 0.0021,
+   "t_fm_z_ctl_nw": 0.38,
+   "t_fm_z_ctl_nonoverlap_mean": 0.29,
+   "periods": 5596
+  },
+  "W24_24h_test": {
+   "ic_z": -0.0128,
+   "t_ic_z": -1.55,
+   "fm_rank_z_ctl": -0.0169,
+   "t_fm_z_ctl_nw": -1.91,
+   "t_fm_z_ctl_nonoverlap_mean": -1.4,
+   "periods": 2181
+  },
+  "W24_72h_train": {
+   "ic_z": 0.0073,
+   "t_ic_z": 0.97,
+   "fm_rank_z_ctl": 0.0071,
+   "t_fm_z_ctl_nw": 0.92,
+   "t_fm_z_ctl_nonoverlap_mean": 0.57,
+   "periods": 5588
+  },
+  "W24_72h_test": {
+   "ic_z": 0.0004,
+   "t_ic_z": 0.04,
+   "fm_rank_z_ctl": -0.0025,
+   "t_fm_z_ctl_nw": -0.22,
+   "t_fm_z_ctl_nonoverlap_mean": -0.1,
+   "periods": 2173
+  }
+ },
+ "result": "fails: test-half controlled FM t between -1.91 and +0.14 in every W/horizon cell; sign flips vs train in 5 of 6 cells.",
+ "note": "The CONTROL regression (raw rank imbalance next to rank(r_W), rank(r7d)) did pass and was built as micro_flowxs (flagged post-hoc).",
+ "verdict": "fails",
+ "caveats": [
+  "Delisted coins' forward returns are dropped when the price series ends (mild survivorship in the IC)."
+ ],
+ "oos_sharpe": null
+}

@@ -1,0 +1,149 @@
+{
+ "name": "micro_flowts_eth",
+ "description": "ETH time-series residualised taker-flow z (signal a), W in {4h,24h}, horizons 6h/24h/72h.",
+ "mechanism": "as micro_flowts",
+ "universe": [
+  "ETHUSDT"
+ ],
+ "timeframe": "6h decisions",
+ "n_trials": 6,
+ "stage": "screen only (Step 1)",
+ "ic_table": {
+  "W4_6h_train": {
+   "n": 5664,
+   "ic_spearman": 0.0076,
+   "b_z_uni": 5.4,
+   "t_z_uni": 1.9,
+   "b_z_ctl_bp": 6.22,
+   "t_z_ctl_nw": 2.18,
+   "t_z_ctl_nonoverlap_mean": 2.17,
+   "t_rawimb_ctl": 2.06,
+   "t_rW_alone": -1.73
+  },
+  "W4_6h_test": {
+   "n": 2184,
+   "ic_spearman": -0.0125,
+   "b_z_uni": -1.02,
+   "t_z_uni": -0.28,
+   "b_z_ctl_bp": -0.98,
+   "t_z_ctl_nw": -0.27,
+   "t_z_ctl_nonoverlap_mean": -0.28,
+   "t_rawimb_ctl": -0.16,
+   "t_rW_alone": 0.91
+  },
+  "W4_24h_train": {
+   "n": 5661,
+   "ic_spearman": 0.0165,
+   "b_z_uni": 8.59,
+   "t_z_uni": 1.33,
+   "b_z_ctl_bp": 9.87,
+   "t_z_ctl_nw": 1.59,
+   "t_z_ctl_nonoverlap_mean": 0.89,
+   "t_rawimb_ctl": 1.01,
+   "t_rW_alone": -1.13
+  },
+  "W4_24h_test": {
+   "n": 2181,
+   "ic_spearman": -0.011,
+   "b_z_uni": -1.67,
+   "t_z_uni": -0.23,
+   "b_z_ctl_bp": -2.04,
+   "t_z_ctl_nw": -0.28,
+   "t_z_ctl_nonoverlap_mean": -0.04,
+   "t_rawimb_ctl": 0.28,
+   "t_rW_alone": -0.6
+  },
+  "W4_72h_train": {
+   "n": 5653,
+   "ic_spearman": 0.0135,
+   "b_z_uni": 8.29,
+   "t_z_uni": 0.61,
+   "b_z_ctl_bp": 9.13,
+   "t_z_ctl_nw": 0.72,
+   "t_z_ctl_nonoverlap_mean": 0.3,
+   "t_rawimb_ctl": 0.37,
+   "t_rW_alone": 0.27
+  },
+  "W4_72h_test": {
+   "n": 2173,
+   "ic_spearman": -0.0111,
+   "b_z_uni": -14.73,
+   "t_z_uni": -1.08,
+   "b_z_ctl_bp": -15.45,
+   "t_z_ctl_nw": -1.15,
+   "t_z_ctl_nonoverlap_mean": -0.33,
+   "t_rawimb_ctl": -0.53,
+   "t_rW_alone": 0.38
+  },
+  "W24_6h_train": {
+   "n": 5660,
+   "ic_spearman": 0.0104,
+   "b_z_uni": 3.34,
+   "t_z_uni": 1.09,
+   "b_z_ctl_bp": 5.37,
+   "t_z_ctl_nw": 1.85,
+   "t_z_ctl_nonoverlap_mean": 1.8,
+   "t_rawimb_ctl": 2.04,
+   "t_rW_alone": -0.9
+  },
+  "W24_6h_test": {
+   "n": 2184,
+   "ic_spearman": 0.0146,
+   "b_z_uni": 5.01,
+   "t_z_uni": 1.38,
+   "b_z_ctl_bp": 5.14,
+   "t_z_ctl_nw": 1.46,
+   "t_z_ctl_nonoverlap_mean": 1.46,
+   "t_rawimb_ctl": 2.06,
+   "t_rW_alone": -1.13
+  },
+  "W24_24h_train": {
+   "n": 5657,
+   "ic_spearman": 0.0294,
+   "b_z_uni": 10.98,
+   "t_z_uni": 1.25,
+   "b_z_ctl_bp": 15.75,
+   "t_z_ctl_nw": 1.86,
+   "t_z_ctl_nonoverlap_mean": 1.4,
+   "t_rawimb_ctl": 2.04,
+   "t_rW_alone": -1.36
+  },
+  "W24_24h_test": {
+   "n": 2181,
+   "ic_spearman": 0.0339,
+   "b_z_uni": 14.94,
+   "t_z_uni": 1.31,
+   "b_z_ctl_bp": 14.83,
+   "t_z_ctl_nw": 1.29,
+   "t_z_ctl_nonoverlap_mean": 0.97,
+   "t_rawimb_ctl": 1.94,
+   "t_rW_alone": -0.83
+  },
+  "W24_72h_train": {
+   "n": 5649,
+   "ic_spearman": 0.0361,
+   "b_z_uni": 23.8,
+   "t_z_uni": 1.1,
+   "b_z_ctl_bp": 26.98,
+   "t_z_ctl_nw": 1.33,
+   "t_z_ctl_nonoverlap_mean": 0.8,
+   "t_rawimb_ctl": 1.28,
+   "t_rW_alone": 0.35
+  },
+  "W24_72h_test": {
+   "n": 2173,
+   "ic_spearman": -0.0319,
+   "b_z_uni": -20.67,
+   "t_z_uni": -0.81,
+   "b_z_ctl_bp": -23.69,
+   "t_z_ctl_nw": -0.91,
+   "t_z_ctl_nonoverlap_mean": -0.51,
+   "t_rawimb_ctl": -0.01,
+   "t_rW_alone": -0.06
+  }
+ },
+ "result": "fails: controlled NW t in the test half <= 1.46 in every cell (same sign as train in only 2 of 6).",
+ "verdict": "fails",
+ "caveats": [],
+ "oos_sharpe": null
+}

@@ -1,0 +1,81 @@
+{
+ "name": "micro_crowd_extreme",
+ "description": "Phase-1 rule: short when zG >= 2 and D <= -1, long when zG <= -2 and D >= 1 (12 metrics majors).",
+ "mechanism": "Retail crowded one way while top accounts lean the other.",
+ "universe": "12 Binance-metrics majors",
+ "timeframe": "6h decisions",
+ "n_trials": 3,
+ "stage": "screen only (Step 1)",
+ "ic_table": {
+  "6h_train": {
+   "ts_t_uni": 1.69,
+   "ts_t_partial_nw": 2.33,
+   "ts_b_partial_bp": 17.05,
+   "ts_t_partial_nonoverlap": 2.33,
+   "n": 18984,
+   "extreme_count": 1362,
+   "xs_ic": null,
+   "xs_t_ic": null,
+   "xs_fm_t_partial": null
+  },
+  "6h_test": {
+   "ts_t_uni": 0.91,
+   "ts_t_partial_nw": 1.66,
+   "ts_b_partial_bp": 12.42,
+   "ts_t_partial_nonoverlap": 1.66,
+   "n": 26184,
+   "extreme_count": 1651,
+   "xs_ic": null,
+   "xs_t_ic": null,
+   "xs_fm_t_partial": null
+  },
+  "24h_train": {
+   "ts_t_uni": 1.26,
+   "ts_t_partial_nw": 1.33,
+   "ts_b_partial_bp": 28.12,
+   "ts_t_partial_nonoverlap": 0.99,
+   "n": 18948,
+   "extreme_count": 1361,
+   "xs_ic": null,
+   "xs_t_ic": null,
+   "xs_fm_t_partial": null
+  },
+  "24h_test": {
+   "ts_t_uni": 0.42,
+   "ts_t_partial_nw": 1.25,
+   "ts_b_partial_bp": 23.8,
+   "ts_t_partial_nonoverlap": 0.8,
+   "n": 26148,
+   "extreme_count": 1651,
+   "xs_ic": null,
+   "xs_t_ic": null,
+   "xs_fm_t_partial": null
+  },
+  "72h_train": {
+   "ts_t_uni": 1.46,
+   "ts_t_partial_nw": 1.53,
+   "ts_b_partial_bp": 81.25,
+   "ts_t_partial_nonoverlap": 0.98,
+   "n": 18852,
+   "extreme_count": 1344,
+   "xs_ic": null,
+   "xs_t_ic": null,
+   "xs_fm_t_partial": null
+  },
+  "72h_test": {
+   "ts_t_uni": 0.17,
+   "ts_t_partial_nw": 0.72,
+   "ts_b_partial_bp": 32.53,
+   "ts_t_partial_nonoverlap": 0.35,
+   "n": 26052,
+   "extreme_count": 1651,
+   "xs_ic": null,
+   "xs_t_ic": null,
+   "xs_fm_t_partial": null
+  }
+ },
+ "result": "fails: pooled Driscoll-Kraay partial t in the test half 1.66 (6h), 1.25 (24h), 0.72 (72h). The continuous -zG / D signals passed and are in micro_crowd.",
+ "verdict": "fails",
+ "caveats": [],
+ "oos_sharpe": null
+}
