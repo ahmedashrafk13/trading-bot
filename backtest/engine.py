@@ -368,7 +368,12 @@ class Universe:
         # spacing, so the same rule means 30 days on hourly AND on daily bars.
         _bars_day = max(1, int(round(86400 / max(1, int(np.median(np.diff(self.t)))))))
         self.bars_per_day = _bars_day
-        self.ts_ret = _pct_change(c, 30 * _bars_day)     # own 30d trend
+        # The trend window was HARDCODED at 30 days here while Params.ts_lookback
+        # sat unused — so every sweep of that parameter would silently have done
+        # nothing. Universe is built before Params is applied, so the override
+        # comes through the environment.
+        self.ts_days = int(os.environ.get("BACKTEST_TS_DAYS", "30"))
+        self.ts_ret = _pct_change(c, self.ts_days * _bars_day)   # own N-day trend
         _r1 = _pct_change(c, 1)
         self.ts_vol = _roll_std(_r1, 56 * _bars_day)     # own 8-week realised vol
 

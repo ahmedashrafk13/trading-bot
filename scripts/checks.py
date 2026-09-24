@@ -169,7 +169,11 @@ def check_order(body, fetch):
                 _reject("opposing_position",
                         f"already {p.get('side')} {sym}; taking the other side "
                         "is a fee-paying no-op, not a hedge")
-            _reject("duplicate_position", f"already holding {sym}")
+            # v9 (2026-09-24) resizes each position every 6h, so it must be able
+            # to GROW a same-side position. Only scripts/v9.py sets this marker,
+            # and only for strategy rebalances; every check above still applied.
+            if not body.get("_allow_add"):
+                _reject("duplicate_position", f"already holding {sym}")
 
     return "passed"
 

@@ -111,6 +111,21 @@ r, d = rejects(dict(GOOD_SHORT), fetch(positions=[pos("BTCUSDT", "Sell", 1)]),
                "duplicate_position")
 check("blocks a duplicate position in the same symbol", r, d)
 
+try:
+    checks.check_order(dict(GOOD_SHORT, _allow_add=True), fetch(positions=[pos("BTCUSDT", "Sell", 1)]))
+    ok, d = True, ""
+except checks.GateReject as e:
+    ok, d = False, str(e)[:90]
+check("v9 rebalance (_allow_add) may grow a same-side position", ok, d)
+
+r, d = rejects(dict(GOOD_SHORT, _allow_add=True),
+               fetch(positions=[pos("BTCUSDT", "Sell", 1, im=90)]), "margin_cap")
+check("...but a v9 add still cannot breach the margin cap", r, d)
+
+r, d = rejects(dict(GOOD_LONG, _allow_add=True), fetch(positions=[pos("BTCUSDT", "Sell", 1)]),
+               "opposing_position")
+check("...and _allow_add never permits the opposite side", r, d)
+
 r, d = rejects(dict(GOOD_SHORT), fetch(positions=[pos("BTCUSDT", "Buy", 1)]),
                "opposing_position")
 check("blocks taking the opposite side of a symbol already held", r, d)

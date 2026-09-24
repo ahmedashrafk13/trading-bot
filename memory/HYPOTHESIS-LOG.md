@@ -388,3 +388,24 @@ WHAT SURVIVES: carry is real and pays +37.62% over the full period, but it is a
 REGIME trade, not an all-weather income stream. It earns when leverage is
 crowded long and bleeds when it is not. Ethena's public 10-15% APY is a
 multi-year average across both regimes, which is the honest expectation.
+
+## 2026-09-24 — v9: honest re-measurement + 20+ strategies through a new lab (backtest/lab/)
+
+New independent harness (52 tests, adversarially verified), survivorship-aware Binance
+USDT-M data 2020-01..2026-09 incl. delisted coins, LOCKBOX 2025-07-01..2026-09 used once per
+frozen candidate (every look logged in backtest/lab/lockbox.log).
+
+- The v7/v8 numbers were inflated: engine.py:783 annualised daily Sharpe with sqrt(24*365)
+  (4.9x too high); long perp funding never charged; carry levered spot it could not fund.
+  Old v8 as shipped over 2025-07..2026-09: +7.7%/yr, DD -18% (funding still uncharged).
+- REJECTED out of sample (net of Bybit costs): multi-speed trend ensembles, Larry-Williams
+  volatility breakout (gross edge eaten by taker fees), cointegration pairs, cross-sectional
+  momentum and reversal, OI flush, liquidation-wick limits, crowd composites on 53 coins,
+  LightGBM ranker, new-listing / pump / squeeze event trades, the equal-weight feature ranker
+  (lockbox -36%), carry (idle in the current funding regime).
+- CONFIRMED (the only survivor): micro_crowd — fade Binance's global L/S account ratio z-score
+  on 12 majors, 6h hold. Lockbox: +14.5%/yr at 20% vol with taker fees; +23.6% with 70% maker
+  fills; at vol 0.55 + 2.5x gross cap +54.5%/yr, DD -40.8%, 0 liquidations.
+- Using BYBIT's account ratio instead of Binance's: lockbox -5.6%. Signal source matters.
+- Fees matter more than signals: every family that failed had a gross edge; maker execution
+  (0.02% vs 0.055%) is worth ~+9%/yr at 20% vol. Measure the live maker-fill share.
