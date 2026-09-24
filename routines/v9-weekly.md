@@ -49,6 +49,13 @@ Append the week's entry to `memory/V9-REVIEW.md` (date, P&L, drawdown, paper
 
     git add memory/V9-REVIEW.md memory/V9-LESSONS.md
     git commit -m "v9 weekly review <date>"
+    git push origin main
+
+Push straight to `main` (never a `claude/*` branch or a PR). If the push is
+rejected because the remote moved, run `git pull --rebase origin main` and push
+again. If it still fails (network), say so in the reply and move on - the commit
+is safe locally and the next run pushes it. Never let a push problem delay or
+change trading.
 
 Reply with a 5-line summary for the owner: P&L, how it compares with the tested
 range, whether Claude's decisions are helping, any alert, any proposal.
