@@ -18,3 +18,9 @@
 - Decided: approve both. WebSearch: ADA still on Mastercard/x402/IndiaChain news, DOT on the TDOT ETF and Polkadot 2.0; no hack, delisting, unlock or outage. 12:30 UTC macro prints (GDP, durables, claims) and the quarterly options expiry are already past; August PCE is tomorrow, outside this hold.
 - Fills: none needed (gap to target below min order); 0 blocked, 0 stop problems. SL ADA 0.2653 / DOT 1.0642 in place. Maker share to date 100% (2 fills).
 - P&L since v9 start: $-1.45 (-0.7% of budget); uPnL ADA -2.06, DOT +0.67.
+
+## 2026-09-25 18:12 UTC (18:00 bar) - on time
+- Strategy: NEW LONG SOL $82.87 (z -2.01); keep SHORT ADA $67.24 (z +1.99) and LONG DOT $49.27 (z -1.55); other 9 flat.
+- Decided: approve all three. WebSearch: SOL near $120 (8-month high) on ETF inflows and a record in daily users; Alpenglow upgrade is Sep 28, after this hold. Bitget hot-wallet hack (Sep 24 18:31 UTC) is exchange-specific and does not touch our coins. No delisting, unlock or macro print on a Friday evening.
+- Fills: SOL Buy 0.6 @ 122.00, maker (qty rounded down to $73 vs $83 target), fee $0.01; SL 112.34. ADA/DOT unchanged. 0 blocked, 0 stop problems. Maker share 100% (3 fills).
+- P&L since v9 start: $-1.69 (-0.8% of budget); uPnL SOL +0.02, ADA -2.74, DOT +1.07.

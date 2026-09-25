@@ -1,8 +1,9 @@
 {
-  "run_id": "2026-09-25 13:46",
+  "run_id": "2026-09-25 18:12",
   "decisions": [
-    {"symbol": "ADAUSDT", "action": "approve", "reason": "crowd long-heavy (z +2.10); rally on Mastercard/x402 news, no hack/delisting/unlock; 12:30 UTC macro prints and quarterly options expiry already past"},
-    {"symbol": "DOTUSDT", "action": "approve", "reason": "crowd short-heavy (z -1.54); ETF/Polkadot 2.0 momentum only, no event risk found inside the 6h hold"}
+    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd short-heavy (z -2.01); rally on ETF inflows/user ATH, Alpenglow upgrade Sep 28 is outside the 6h hold; no hack, delisting or macro print found"},
+    {"symbol": "ADAUSDT", "action": "approve", "reason": "crowd still long-heavy (z +1.99); no event risk found"},
+    {"symbol": "DOTUSDT", "action": "approve", "reason": "crowd still short-heavy (z -1.55); no event risk found"}
   ],
   "claude_trades": [],
   "keep": []
