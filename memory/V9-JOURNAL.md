@@ -6,3 +6,9 @@
 - Fills: ADA Sell 274 @ 0.2457, DOT Buy 42.5 @ 1.1584, both maker (100%), fees $0.02. SL ADA 0.2653 / DOT 1.0642. 0 blocked, 0 stop problems.
 - P&L since v9 start: status shows $-7.62, but the positions account for only about $-0.08 (uPnL plus fees). The rest is stablecoin peg drift: P&L = USD totalEquity of the whole demo wallet ($129k USDT + $50k USDC). A 0.05% peg wobble moves it about $90, near the -$100 auto-halt. Owner should switch the P&L to a USDT/position basis.
 - 2026-09-24 18:42 UTC owner-side fix: P&L now measured on the USDT coin's equity (not the wallet's USD total incl. USDC), re-baselined; P&L since start -$0.22. Auto-halt can no longer trip on stablecoin peg noise.
+
+## 2026-09-25 07:15 UTC (06:00 bar) - ran ~1h late; no 00:00-bar run on record
+- Strategy: SHORT ADA $67.24 (z +2.15), LONG DOT $49.27 (z -1.70); other 10 flat. Book already held both from the 18:00 bar.
+- Decided: approve both. WebSearch (perplexity key not set): ADA still riding Mastercard/x402 news, DOT on the ETF and Polkadot 2.0; no hack, delisting, unlock or outage. Next macro print is Durable Goods at 12:30 UTC, after this hold.
+- Fills: none needed (gap to target below min order); 0 blocked, 0 stop problems. SL ADA 0.2653 / DOT 1.0642 in place. Maker share to date 100% (2 fills).
+- P&L since v9 start: $-0.66 (-0.3% of budget); uPnL ADA -0.47, DOT -0.17.
