@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-25 18:12",
+  "run_id": "2026-09-25 23:18",
   "decisions": [
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd short-heavy (z -2.01); rally on ETF inflows/user ATH, Alpenglow upgrade Sep 28 is outside the 6h hold; no hack, delisting or macro print found"},
+    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd still short-heavy (z -2.01); off-schedule re-run on the 18:00 bar, no new event risk (no hack/delisting/outage for SOL; PCE Sep 26 12:30 UTC is outside the hold)"},
     {"symbol": "ADAUSDT", "action": "approve", "reason": "crowd still long-heavy (z +1.99); no event risk found"},
     {"symbol": "DOTUSDT", "action": "approve", "reason": "crowd still short-heavy (z -1.55); no event risk found"}
   ],
