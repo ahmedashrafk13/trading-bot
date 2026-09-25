@@ -12,3 +12,9 @@
 - Decided: approve both. WebSearch (perplexity key not set): ADA still riding Mastercard/x402 news, DOT on the ETF and Polkadot 2.0; no hack, delisting, unlock or outage. Next macro print is Durable Goods at 12:30 UTC, after this hold.
 - Fills: none needed (gap to target below min order); 0 blocked, 0 stop problems. SL ADA 0.2653 / DOT 1.0642 in place. Maker share to date 100% (2 fills).
 - P&L since v9 start: $-0.66 (-0.3% of budget); uPnL ADA -0.47, DOT -0.17.
+
+## 2026-09-25 13:46 UTC (12:00 bar) - ran ~1h40m late
+- Strategy: SHORT ADA $67.24 (z +2.10), LONG DOT $49.27 (z -1.54); other 10 flat (SOL z -1.42, LINK +1.35 just under the line). Book already held both.
+- Decided: approve both. WebSearch: ADA still on Mastercard/x402/IndiaChain news, DOT on the TDOT ETF and Polkadot 2.0; no hack, delisting, unlock or outage. 12:30 UTC macro prints (GDP, durables, claims) and the quarterly options expiry are already past; August PCE is tomorrow, outside this hold.
+- Fills: none needed (gap to target below min order); 0 blocked, 0 stop problems. SL ADA 0.2653 / DOT 1.0642 in place. Maker share to date 100% (2 fills).
+- P&L since v9 start: $-1.45 (-0.7% of budget); uPnL ADA -2.06, DOT +0.67.

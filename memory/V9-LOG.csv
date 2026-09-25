@@ -23,3 +23,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-09-25 07:15,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-25 07:15,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-25 07:15,DOTUSDT,49.27,49.27,approve,crowd short-heavy (z -1.7); ETF/Polkadot 2.0 tailwinds agree with the long; no event risk found in the 6h hold,0,0,,0.00000
+2026-09-25 13:46,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-25 13:46,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-25 13:46,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-25 13:46,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-25 13:46,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-25 13:46,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-25 13:46,ADAUSDT,-67.24,-67.24,approve,crowd long-heavy (z +2.10); rally on Mastercard/x402 news; no hack/delisting/unlock; 12:30 UTC macro prints and quarterly options expiry already past,0,0,,0.00000
+2026-09-25 13:46,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-25 13:46,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-25 13:46,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-25 13:46,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-25 13:46,DOTUSDT,49.27,49.27,approve,crowd short-heavy (z -1.54); ETF/Polkadot 2.0 momentum only; no event risk found inside the 6h hold,0,0,,0.00000
