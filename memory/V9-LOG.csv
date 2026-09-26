@@ -83,3 +83,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-09-26 12:12,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-26 12:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-26 12:12,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 18:39,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 18:39,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 18:39,SOLUSDT,86.99,86.99,approve,crowd short-heavy (z -2.02); SOL ~121 near 120-122 resistance; no hack/delisting/unlock/outage; Saturday; no macro print,0,0,,0.00000
+2026-09-26 18:39,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 18:39,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 18:39,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 18:39,ADAUSDT,-67.24,-67.24,approve,crowd long-heavy (z +1.82) after ~20% weekly rally; AI-payments headline is not event risk,0,0,,0.00000
+2026-09-26 18:39,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 18:39,LINKUSDT,0.00,0.00,approve,,5.1,14.18,0.0,0.03977
+2026-09-26 18:39,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 18:39,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 18:39,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000

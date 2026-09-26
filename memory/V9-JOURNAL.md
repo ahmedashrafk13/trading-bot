@@ -42,3 +42,9 @@
 - Decided: approve all. WebSearch: SOL ~$120 at $120-122 resistance (Schwab opened SOL/AVAX/LINK trading), ADA below $0.23 resistance, LINK dipped after the Infosys deal. The Bitget hack is exchange-specific. No delisting, unlock, outage or macro print (Saturday).
 - Fills: SOL Buy 0.1 @ 121.16 maker (top-up to 0.7, SL now 111.52). ADA/LINK unchanged. 0 blocked, 0 stop problems. Maker share 83% (6 fills).
 - P&L since v9 start: $-2.05 (-1.0% of budget); uPnL SOL -0.46, LINK -1.01, ADA -3.18. Scorecard: 6 runs, Claude value-add $0.00.
+
+## 2026-09-26 18:39 UTC (18:00 bar) - ran ~32 min late
+- Strategy: keep LONG SOL $86.99 (z -2.02) and SHORT ADA $67.24 (z +1.82); close LINK (z 0.76, crowd back to normal); other 9 flat.
+- Decided: approve all. WebSearch: SOL ~$121 at $120-122 resistance (slot time cut to 250ms), ADA ~$0.255 after ~20% weekly rally (Cardano AI-payments news). No hack, delisting, unlock, outage or macro print (Saturday).
+- Fills: LINK Buy 5.1 @ 14.18 taker, reduce-only, closed (sold 14.032, about -$0.75 gross). SOL/ADA gap below min order. 0 blocked, 0 stop problems. SL SOL 111.52 / ADA 0.2653 in place. Maker share 71% (7 fills).
+- P&L since v9 start: $-1.22 (-0.6% of budget); uPnL SOL -0.50, ADA -2.52. Scorecard: 7 runs, Claude value-add $0.00.

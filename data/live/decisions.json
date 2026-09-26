@@ -1,9 +1,8 @@
 {
-  "run_id": "2026-09-26 12:12",
+  "run_id": "2026-09-26 18:39",
   "decisions": [
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd short-heavy (z -1.84); SOL ~$120 at resistance, no hack/delisting/unlock; Alpenglow Sep 28 is outside this hold"},
-    {"symbol": "ADAUSDT", "action": "approve", "reason": "crowd long-heavy (z +1.92); no event risk found, Saturday so no macro print"},
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy (z +1.74); Infosys/Arc news already priced, no event risk found"}
+    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd short-heavy (z -2.02); SOL ~121 near 120-122 resistance, no hack/delisting/unlock/outage; Saturday, no macro print"},
+    {"symbol": "ADAUSDT", "action": "approve", "reason": "crowd long-heavy (z +1.82) after ~20% weekly rally; AI-payments headline is not event risk"}
   ],
   "claude_trades": [],
   "keep": []
