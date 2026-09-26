@@ -71,3 +71,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-09-26 08:09,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-26 08:09,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-26 08:09,DOTUSDT,0.00,0.00,approve,,42.5,1.2215,0.0,0.02855
+2026-09-26 12:12,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 12:12,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 12:12,SOLUSDT,86.99,86.99,approve,crowd short-heavy (z -1.84); SOL ~$120 at resistance; no hack/delisting/unlock; Alpenglow Sep 28 is outside this hold,0.1,121.16,1.0,0.00242
+2026-09-26 12:12,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 12:12,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 12:12,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 12:12,ADAUSDT,-67.24,-67.24,approve,crowd long-heavy (z +1.92); no event risk found; Saturday so no macro print,0,0,,0.00000
+2026-09-26 12:12,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 12:12,LINKUSDT,-72.19,-72.19,approve,crowd long-heavy (z +1.74); Infosys/Arc news already priced; no event risk found,0,0,,0.00000
+2026-09-26 12:12,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 12:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 12:12,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000

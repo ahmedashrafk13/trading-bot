@@ -36,3 +36,9 @@
 - Decided: approve all. WebSearch: SOL ~$120 on ETF inflows, ADA up on Mastercard/Fireblocks news, LINK +4-5% on Infosys/Arc news and range-bound 13.7-14.2. No hack, delisting, unlock or outage. Saturday, so no macro print (the "PCE Sep 26" in earlier entries was wrong: Sep 26 is a Saturday).
 - Fills: LINK Sell 5.1 @ 14.032 maker (SL 15.153); DOT Sell 42.5 @ 1.2215 taker, closed (bought 1.1584, about +$2.68 gross). 0 blocked, 0 stop problems. Maker share 80% (5 fills).
 - P&L since v9 start: $-0.59 (-0.3% of budget); uPnL LINK +0.03, ADA -2.30, SOL -0.90. Scorecard: 5 runs, Claude value-add $0.00.
+
+## 2026-09-26 12:12 UTC (12:00 bar) - on time
+- Strategy: keep LONG SOL $86.99 (z -1.84), SHORT ADA $67.24 (z +1.92), SHORT LINK $72.19 (z +1.74); other 9 flat.
+- Decided: approve all. WebSearch: SOL ~$120 at $120-122 resistance (Schwab opened SOL/AVAX/LINK trading), ADA below $0.23 resistance, LINK dipped after the Infosys deal. The Bitget hack is exchange-specific. No delisting, unlock, outage or macro print (Saturday).
+- Fills: SOL Buy 0.1 @ 121.16 maker (top-up to 0.7, SL now 111.52). ADA/LINK unchanged. 0 blocked, 0 stop problems. Maker share 83% (6 fills).
+- P&L since v9 start: $-2.05 (-1.0% of budget); uPnL SOL -0.46, LINK -1.01, ADA -3.18. Scorecard: 6 runs, Claude value-add $0.00.
