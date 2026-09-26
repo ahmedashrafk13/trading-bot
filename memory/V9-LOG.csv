@@ -59,3 +59,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-09-25 23:18,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-25 23:18,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-25 23:18,DOTUSDT,49.27,49.27,approve,crowd still short-heavy (z -1.55); no event risk found,0,0,,0.00000
+2026-09-26 08:09,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 08:09,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 08:09,SOLUSDT,82.87,82.87,approve,crowd short-heavy (z -1.97); SOL ~$120 on ETF inflows; Alpenglow Sep 28 after hold; no hack/delisting/outage; Saturday; no macro print,0,0,,0.00000
+2026-09-26 08:09,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 08:09,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 08:09,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 08:09,ADAUSDT,-67.24,-67.24,approve,crowd long-heavy (z +2.45); rally on Mastercard/Fireblocks news; no event risk in 6h; fading the crowd is the tested edge,0,0,,0.00000
+2026-09-26 08:09,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 08:09,LINKUSDT,-72.19,-72.19,approve,crowd long-heavy (z +1.83); +4% on Infosys/Arc news; range 13.7-14.2; no hack; delisting; unlock or macro print in the hold,5.1,14.032,1.0,0.01431
+2026-09-26 08:09,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 08:09,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-26 08:09,DOTUSDT,0.00,0.00,approve,,42.5,1.2215,0.0,0.02855

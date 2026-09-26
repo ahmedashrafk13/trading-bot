@@ -30,3 +30,9 @@
 - Decided: approve all three. WebSearch: nothing new since 18:12 (SOL ~$117-118 on ETF inflows, ADA ~$0.25 after its weekly rally, DOT ~$1.18 on ETF inflows and Polkadot 2.0). Bitget hack does not touch our coins. August PCE (Sep 26 12:30 UTC) is outside this hold.
 - Fills: none needed (gap to target below min order); 0 blocked, 0 stop problems. SL SOL 112.34 / ADA 0.2653 / DOT 1.0642 in place. Maker share 100% (3 fills).
 - P&L since v9 start: $-0.95 (-0.5% of budget); uPnL SOL +0.03, ADA -3.53, DOT +2.58. Scorecard: 3 runs, Claude value-add $0.00.
+
+## 2026-09-26 08:09 UTC (06:00 bar) - ran ~2h late; the 00:00-bar run (00:11) wrote decisions but never executed or committed
+- Strategy: keep LONG SOL $82.87 (z -1.97) and SHORT ADA $67.24 (z +2.45); NEW SHORT LINK $72.19 (z +1.83); close DOT (z -0.89); other 8 flat.
+- Decided: approve all. WebSearch: SOL ~$120 on ETF inflows, ADA up on Mastercard/Fireblocks news, LINK +4-5% on Infosys/Arc news and range-bound 13.7-14.2. No hack, delisting, unlock or outage. Saturday, so no macro print (the "PCE Sep 26" in earlier entries was wrong: Sep 26 is a Saturday).
+- Fills: LINK Sell 5.1 @ 14.032 maker (SL 15.153); DOT Sell 42.5 @ 1.2215 taker, closed (bought 1.1584, about +$2.68 gross). 0 blocked, 0 stop problems. Maker share 80% (5 fills).
+- P&L since v9 start: $-0.59 (-0.3% of budget); uPnL LINK +0.03, ADA -2.30, SOL -0.90. Scorecard: 5 runs, Claude value-add $0.00.

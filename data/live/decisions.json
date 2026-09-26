@@ -1,9 +1,9 @@
 {
-  "run_id": "2026-09-25 23:18",
+  "run_id": "2026-09-26 08:09",
   "decisions": [
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd still short-heavy (z -2.01); off-schedule re-run on the 18:00 bar, no new event risk (no hack/delisting/outage for SOL; PCE Sep 26 12:30 UTC is outside the hold)"},
-    {"symbol": "ADAUSDT", "action": "approve", "reason": "crowd still long-heavy (z +1.99); no event risk found"},
-    {"symbol": "DOTUSDT", "action": "approve", "reason": "crowd still short-heavy (z -1.55); no event risk found"}
+    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd short-heavy (z -1.97); SOL ~$120 on ETF inflows, Alpenglow Sep 28 after hold; no hack/delisting/outage; Saturday, no macro print"},
+    {"symbol": "ADAUSDT", "action": "approve", "reason": "crowd long-heavy (z +2.45); rally on Mastercard/Fireblocks news, no event risk in 6h; fading the crowd is the tested edge"},
+    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy (z +1.83); +4% on Infosys/Arc news, range 13.7-14.2; no hack, delisting, unlock or macro print in the hold"}
   ],
   "claude_trades": [],
   "keep": []
