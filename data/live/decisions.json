@@ -1,8 +1,8 @@
 {
-  "run_id": "2026-09-26 18:39",
+  "run_id": "2026-09-27 07:25",
   "decisions": [
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd short-heavy (z -2.02); SOL ~121 near 120-122 resistance, no hack/delisting/unlock/outage; Saturday, no macro print"},
-    {"symbol": "ADAUSDT", "action": "approve", "reason": "crowd long-heavy (z +1.82) after ~20% weekly rally; AI-payments headline is not event risk"}
+    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd short-heavy (z -1.72); SOL ~$120.7 flat 24h; no hack, delisting, unlock or outage; Sunday, no macro print"},
+    {"symbol": "ADAUSDT", "action": "approve", "reason": "strategy closes ADA short (z 1.16 back inside band); no reason to hold against the signal"}
   ],
   "claude_trades": [],
   "keep": []

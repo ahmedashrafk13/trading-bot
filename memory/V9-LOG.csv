@@ -95,3 +95,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-09-26 18:39,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-26 18:39,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-26 18:39,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 07:25,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 07:25,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 07:25,SOLUSDT,91.18,91.18,approve,crowd short-heavy (z -1.72); SOL ~$120.7 flat 24h; no hack; delisting; unlock or outage; Sunday; no macro print,0,0,,0.00000
+2026-09-27 07:25,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 07:25,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 07:25,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 07:25,ADAUSDT,0.00,0.00,approve,strategy closes ADA short (z 1.16 back inside band); no reason to hold against the signal,274,0.2569,1.0,0.01408
+2026-09-27 07:25,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 07:25,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 07:25,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 07:25,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 07:25,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
