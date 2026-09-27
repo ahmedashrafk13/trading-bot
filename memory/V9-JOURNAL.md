@@ -54,3 +54,9 @@
 - Decided: approve all. WebSearch: SOL ~$120.7, flat 24h, range 119.9-122.0 (ZetaChain vote, Alpenglow testnet). Bitget hack (Sep 24) is exchange-specific and old news. GRASS unlock does not touch our coins. No delisting, outage or macro print (Sunday).
 - Fills: ADA Buy 274 @ 0.2569 maker, reduce-only, closed (sold 0.2457, about -$3.07 gross). SOL gap below min order. 0 blocked, 0 stop problems. SL SOL 111.52 in place. Maker share 75% (8 fills).
 - P&L since v9 start: $-1.56 (-0.8% of budget); uPnL SOL -0.26. Scorecard: 8 runs, Claude value-add $0.00.
+
+## 2026-09-27 17:20 UTC (12:00 bar) - ran ~5h13m late; the 12:07 run never happened, next bar closes in ~40 min
+- Strategy: keep LONG SOL $91.18 (z -2.05), SHORT LINK $73.08 (z +1.68, crowd long after ~40% 10-day rally); other 10 flat.
+- Decided: approve all. WebSearch: SOL ~$122 near $120-127 resistance (RSI ~70); LINK ~$14.1 (14 integrations, Chainlink Reserve at 6.04M LINK). No hack, delisting, unlock, outage or macro print (Sunday). Late entry kept: churn cost tiny, lessons say keep approving.
+- Fills: LINK Sell 5.1 @ 14.114 maker (SL 15.238). SOL gap below min order. 0 blocked, 0 stop problems. SL SOL 111.52 in place. Maker share 78% (9 fills).
+- P&L since v9 start: $-1.21 (-0.6% of budget); uPnL LINK +0.04, SOL +0.08. Scorecard: 9 runs, Claude value-add $0.00.

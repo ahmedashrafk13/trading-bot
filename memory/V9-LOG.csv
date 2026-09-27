@@ -107,3 +107,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-09-27 07:25,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-27 07:25,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-27 07:25,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 17:20,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 17:20,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 17:20,SOLUSDT,91.18,91.18,approve,crowd short-heavy (z -2.05); SOL ~$122 near $120-127 resistance; RSI overbought but no hack; delisting; unlock or outage; Sunday; no macro print,0,0,,0.00000
+2026-09-27 17:20,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 17:20,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 17:20,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 17:20,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 17:20,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 17:20,LINKUSDT,-73.08,-73.08,approve,crowd long-heavy (z +1.68) after ~40% 10-day rally; LINK ~$14.1; only integration/reserve news; no event risk; run is ~5h late but churn cost is tiny and the lessons say keep approving,5.1,14.114,1.0,0.01440
+2026-09-27 17:20,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 17:20,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-27 17:20,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
