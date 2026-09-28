@@ -1,8 +1,7 @@
 {
-  "run_id": "2026-09-27 17:20",
+  "run_id": "2026-09-28 15:47",
   "decisions": [
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd short-heavy (z -2.05); SOL ~$122 near $120-127 resistance, RSI overbought but no hack, delisting, unlock or outage; Sunday, no macro print"},
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy (z +1.68) after ~40% 10-day rally; LINK ~$14.1; only integration/reserve news, no event risk; run is ~5h late but churn cost is tiny and the lessons say keep approving"}
+    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy (z +1.84) after LINK's highest weekly close since Nov 2025 (~$14.0-14.4, choppy 14.06-14.87 today); news is whale accumulation / treasury only, no hack, delisting, unlock or outage; Monday, no US macro print before the 18:00 bar (GDP Wed); Iran headlines are background risk, not a scheduled event"}
   ],
   "claude_trades": [],
   "keep": []

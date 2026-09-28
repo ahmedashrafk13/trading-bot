@@ -60,3 +60,9 @@
 - Decided: approve all. WebSearch: SOL ~$122 near $120-127 resistance (RSI ~70); LINK ~$14.1 (14 integrations, Chainlink Reserve at 6.04M LINK). No hack, delisting, unlock, outage or macro print (Sunday). Late entry kept: churn cost tiny, lessons say keep approving.
 - Fills: LINK Sell 5.1 @ 14.114 maker (SL 15.238). SOL gap below min order. 0 blocked, 0 stop problems. SL SOL 111.52 in place. Maker share 78% (9 fills).
 - P&L since v9 start: $-1.21 (-0.6% of budget); uPnL LINK +0.04, SOL +0.08. Scorecard: 9 runs, Claude value-add $0.00.
+
+## 2026-09-28 15:47 UTC (12:00 bar) - ran ~3h40m late; the 18:00 (09-27), 00:00 and 06:00 bar runs never happened (last run 09-27 17:20)
+- Strategy: close LONG SOL (z -0.42, back inside band); keep SHORT LINK $73.43 (z +1.84); other 10 flat.
+- Decided: approve all. WebSearch: LINK ~$14.3 after its highest weekly close since Nov 2025 (whale accumulation, treasury news), choppy 14.06-14.87 today. Market risk-off on Iran headlines (BTC ~$83k, -2%). No hack, delisting, unlock or outage; Monday, no US macro print before the 18:00 bar (GDP Wed 09-30).
+- Fills: SOL Sell 0.7 @ 118.51 maker, reduce-only, closed (about -$2.4 gross). LINK gap below min order. 0 blocked, 0 stop problems. SL LINK 15.238 in place. Maker share 80% (10 fills).
+- P&L since v9 start: $-4.87 (-2.4% of budget); uPnL LINK -1.16. Scorecard: 10 runs, Claude value-add $0.00.

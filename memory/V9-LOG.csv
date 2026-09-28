@@ -119,3 +119,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-09-27 17:20,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-27 17:20,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-27 17:20,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-28 15:47,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-28 15:47,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-28 15:47,SOLUSDT,0.00,0.00,approve,,0.7,118.51,1.0,0.01659
+2026-09-28 15:47,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-28 15:47,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-28 15:47,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-28 15:47,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-28 15:47,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-28 15:47,LINKUSDT,-73.43,-73.43,approve,crowd long-heavy (z +1.84) after LINK's highest weekly close since Nov 2025 (~$14.0-14.4; choppy 14.06-14.87 today); news is whale accumulation / treasury only; no hack; delisting; unlock or outage; M,0,0,,0.00000
+2026-09-28 15:47,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-28 15:47,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-28 15:47,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
