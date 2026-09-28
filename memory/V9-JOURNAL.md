@@ -66,3 +66,9 @@
 - Decided: approve all. WebSearch: LINK ~$14.3 after its highest weekly close since Nov 2025 (whale accumulation, treasury news), choppy 14.06-14.87 today. Market risk-off on Iran headlines (BTC ~$83k, -2%). No hack, delisting, unlock or outage; Monday, no US macro print before the 18:00 bar (GDP Wed 09-30).
 - Fills: SOL Sell 0.7 @ 118.51 maker, reduce-only, closed (about -$2.4 gross). LINK gap below min order. 0 blocked, 0 stop problems. SL LINK 15.238 in place. Maker share 80% (10 fills).
 - P&L since v9 start: $-4.87 (-2.4% of budget); uPnL LINK -1.16. Scorecard: 10 runs, Claude value-add $0.00.
+
+## 2026-09-28 18:13 UTC (18:00 bar) - on time
+- Strategy: SHORT LINK $67.89 (z +2.00, L/S 2.0, +7.3% 24h); other 11 flat. Prior LINK short (SL 15.238) was stopped out in the ~16:00 UTC squeeze to 15.48.
+- Decided: approve. WebSearch: LINK jump was a short squeeze (~$350k short liqs) on treasury/whale-accumulation news; resistance $16 / $17.70. No hack, delisting, unlock or outage; no US macro print before 00:00 UTC. Lessons: don't override on "price already moved".
+- Fills: LINK Sell 4.4 @ 15.318 maker (SL 16.558). 0 blocked, 0 stop problems. Maker share 82% (11 fills).
+- P&L since v9 start: $-9.50 (-4.8% of budget); uPnL LINK -0.08. Scorecard: 11 runs, Claude value-add $0.00.

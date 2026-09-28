@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-28 15:47",
+  "run_id": "2026-09-28 18:13",
   "decisions": [
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy (z +1.84) after LINK's highest weekly close since Nov 2025 (~$14.0-14.4, choppy 14.06-14.87 today); news is whale accumulation / treasury only, no hack, delisting, unlock or outage; Monday, no US macro print before the 18:00 bar (GDP Wed); Iran headlines are background risk, not a scheduled event"}
+    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z +2.0 after +7% short-squeeze (prior short stopped at 15.238); no hack/delisting/unlock/outage, no macro print before 00:00 UTC; lessons: don't override on 'price already moved'"}
   ],
   "claude_trades": [],
   "keep": []
