@@ -179,3 +179,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-09-29 12:12,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-29 12:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-29 12:12,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 18:12,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 18:12,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 18:12,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 18:12,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 18:12,XRPUSDT,-72.11,-72.11,approve,crowd long-heavy z+1.51; no hack/delisting on XRP itself; Bitget-hacker XRP stash is sell overhang; consistent with short,48.4,1.4891,1.0,0.01441
+2026-09-29 18:12,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 18:12,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 18:12,AVAXUSDT,-53.26,-53.26,approve,z+1.76 after +5.5% pump on institutional/tokenization headlines - narrative; not event risk; fade as designed,4.7,11.194,1.0,0.01052
+2026-09-29 18:12,LINKUSDT,-64.45,-64.45,approve,z+1.74; CCIP 2.0 news already priced (09-28); no hack/delisting/unlock; no US macro print before 00:00 UTC,4.4,14.625,1.0,0.01287
+2026-09-29 18:12,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 18:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 18:12,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000

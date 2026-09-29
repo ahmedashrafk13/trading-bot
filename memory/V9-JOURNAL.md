@@ -90,3 +90,9 @@
 - Decided: approve (exit LINK). No claude trades, nothing kept; book flat, so no event research needed (Conf. Board / JOLTS 14:00 UTC irrelevant with no exposure).
 - Fills: LINK Buy 4.4 @ 15.331 maker, reduce-only (entry 15.318 -> ~-$0.06 gross). 0 blocked, 0 stop problems. Maker share 83% (12 fills).
 - P&L since v9 start: $-9.49 (-4.7% of budget), book flat. Scorecard: 14 runs, Claude value-add $0.00.
+
+## 2026-09-29 18:12 UTC (18:00 bar) - on time
+- Strategy: 3 new SHORTs - XRP $72.11 (z +1.51), LINK $64.45 (z +1.74), AVAX $53.26 (z +1.76, +5.5% 24h); other 9 flat.
+- Decided: approve all. WebSearch: AVAX pump = institutional/tokenization headlines (narrative, not event risk); LINK CCIP 2.0 already priced; XRP faces Bitget-hacker stash overhang (favours short). No hack/delisting/unlock on these coins, no US macro print before 00:00 UTC.
+- Fills: XRP Sell 48.4 @ 1.4891, AVAX Sell 4.7 @ 11.194, LINK Sell 4.4 @ 14.625 - all maker. 0 blocked, 0 stop problems (SL XRP 1.609 / AVAX 12.082 / LINK 15.793). Maker share 87% (15 fills).
+- P&L since v9 start: $-9.53 (-4.8% of budget). Scorecard: 15 runs, Claude value-add $0.00.
