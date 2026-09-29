@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-29 06:13",
+  "run_id": "2026-09-29 12:12",
   "decisions": [
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd still long-heavy (z +1.74); CCIP 2.0 launch (09-28) already priced, LINK faded 15.78->14.94; no hack/delisting/unlock/outage, no US macro print before 12:00 UTC"}
+    {"symbol": "LINKUSDT", "action": "approve", "reason": "z fell to +1.25 (<1.5), strategy exits the short after 6h hold; no reason to override"}
   ],
   "claude_trades": [],
   "keep": []

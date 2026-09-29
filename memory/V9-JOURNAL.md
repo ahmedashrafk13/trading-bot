@@ -84,3 +84,9 @@
 - Decided: approve. WebSearch: the pump was the CCIP 2.0 launch (09-28) plus treasury >$87M LINK; already priced, LINK has faded 15.78 -> 14.94 since the 00:00 bar. No hack, delisting, unlock or outage; no US macro print before 12:00 UTC (Conf. Board / JOLTS 14:00 UTC).
 - Fills: none (gap to target below min order). 0 blocked, 0 stop problems. SL LINK 16.558 in place. Maker share 82% (11 fills).
 - P&L since v9 start: $-7.85 (-3.9% of budget); uPnL LINK +1.58. Scorecard: 13 runs, Claude value-add $0.00.
+
+## 2026-09-29 12:12 UTC (12:00 bar) - on time
+- Strategy: all 12 flat; close SHORT LINK $67.37 (z fell +1.74 -> +1.25, below 1.5). No new entries (closest: DOT z -1.27, LINK +1.25, ETH -1.1).
+- Decided: approve (exit LINK). No claude trades, nothing kept; book flat, so no event research needed (Conf. Board / JOLTS 14:00 UTC irrelevant with no exposure).
+- Fills: LINK Buy 4.4 @ 15.331 maker, reduce-only (entry 15.318 -> ~-$0.06 gross). 0 blocked, 0 stop problems. Maker share 83% (12 fills).
+- P&L since v9 start: $-9.49 (-4.7% of budget), book flat. Scorecard: 14 runs, Claude value-add $0.00.
