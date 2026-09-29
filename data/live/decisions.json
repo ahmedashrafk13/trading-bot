@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-28 18:13",
+  "run_id": "2026-09-29 00:22",
   "decisions": [
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z +2.0 after +7% short-squeeze (prior short stopped at 15.238); no hack/delisting/unlock/outage, no macro print before 00:00 UTC; lessons: don't override on 'price already moved'"}
+    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd still long-heavy (z +1.55) after +10% squeeze into $15.3-16 resistance; no hack, delisting, unlock, outage or US macro print before 06:00 UTC"}
   ],
   "claude_trades": [],
   "keep": []

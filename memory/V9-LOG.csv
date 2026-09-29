@@ -143,3 +143,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-09-28 18:13,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-28 18:13,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-28 18:13,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 00:22,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 00:22,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 00:22,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 00:22,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 00:22,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 00:22,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 00:22,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 00:22,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 00:22,LINKUSDT,-67.89,-67.89,approve,crowd still long-heavy (z +1.55) after +10% squeeze into $15.3-16 resistance; no hack; delisting; unlock; outage or US macro print before 06:00 UTC,0,0,,0.00000
+2026-09-29 00:22,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 00:22,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 00:22,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000

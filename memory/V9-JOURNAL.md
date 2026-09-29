@@ -72,3 +72,9 @@
 - Decided: approve. WebSearch: LINK jump was a short squeeze (~$350k short liqs) on treasury/whale-accumulation news; resistance $16 / $17.70. No hack, delisting, unlock or outage; no US macro print before 00:00 UTC. Lessons: don't override on "price already moved".
 - Fills: LINK Sell 4.4 @ 15.318 maker (SL 16.558). 0 blocked, 0 stop problems. Maker share 82% (11 fills).
 - P&L since v9 start: $-9.50 (-4.8% of budget); uPnL LINK -0.08. Scorecard: 11 runs, Claude value-add $0.00.
+
+## 2026-09-29 00:22 UTC (00:00 bar) - ~15 min late
+- Strategy: keep SHORT LINK $67.89 (z +1.55, L/S 1.91, +10.2% 24h); other 11 flat.
+- Decided: approve. WebSearch: LINK ~$15.3-15.5 testing $15.32/$16 resistance after the squeeze (treasury >$87M LINK, whale buying). No hack, delisting, unlock or outage; no US macro print before 06:00 UTC.
+- Fills: none (gap to target below min order). 0 blocked, 0 stop problems. SL LINK 16.558 in place. Maker share 82% (11 fills).
+- P&L since v9 start: $-10.11 (-5.1% of budget); uPnL LINK -0.69. Scorecard: 12 runs, Claude value-add $0.00.
