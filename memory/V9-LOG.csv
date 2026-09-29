@@ -155,3 +155,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-09-29 00:22,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-29 00:22,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-29 00:22,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 06:13,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 06:13,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 06:13,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 06:13,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 06:13,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 06:13,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 06:13,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 06:13,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 06:13,LINKUSDT,-67.89,-67.89,approve,crowd still long-heavy (z +1.74); CCIP 2.0 launch (09-28) already priced; LINK faded 15.78->14.94; no hack/delisting/unlock/outage; no US macro print before 12:00 UTC,0,0,,0.00000
+2026-09-29 06:13,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 06:13,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-29 06:13,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000

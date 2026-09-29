@@ -78,3 +78,9 @@
 - Decided: approve. WebSearch: LINK ~$15.3-15.5 testing $15.32/$16 resistance after the squeeze (treasury >$87M LINK, whale buying). No hack, delisting, unlock or outage; no US macro print before 06:00 UTC.
 - Fills: none (gap to target below min order). 0 blocked, 0 stop problems. SL LINK 16.558 in place. Maker share 82% (11 fills).
 - P&L since v9 start: $-10.11 (-5.1% of budget); uPnL LINK -0.69. Scorecard: 12 runs, Claude value-add $0.00.
+
+## 2026-09-29 06:14 UTC (06:00 bar) - on time
+- Strategy: keep SHORT LINK $67.89 (z +1.74, L/S 1.96, +7.2% 24h); other 11 flat.
+- Decided: approve. WebSearch: the pump was the CCIP 2.0 launch (09-28) plus treasury >$87M LINK; already priced, LINK has faded 15.78 -> 14.94 since the 00:00 bar. No hack, delisting, unlock or outage; no US macro print before 12:00 UTC (Conf. Board / JOLTS 14:00 UTC).
+- Fills: none (gap to target below min order). 0 blocked, 0 stop problems. SL LINK 16.558 in place. Maker share 82% (11 fills).
+- P&L since v9 start: $-7.85 (-3.9% of budget); uPnL LINK +1.58. Scorecard: 13 runs, Claude value-add $0.00.
