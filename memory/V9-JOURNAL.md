@@ -108,3 +108,9 @@
 - Decided: approve both. WebSearch: AVAX = Goldman/Lynq + tokenized-stock narrative, cooling off an RSI-82 week; no hack/delisting/unlock/outage on either coin; no US macro print before 12:00 UTC (ADP 12:15).
 - Fills: none. Both positions within min-order size of target. 0 blocked, 0 stop problems (SL AVAX 12.082 / LINK 15.793). Maker share 88% (16 fills).
 - P&L since v9 start: $-7.75 (-3.9% of budget); uPnL LINK +1.37, AVAX +0.21. Scorecard: 17 runs, Claude value-add $0.00.
+
+## 2026-09-30 12:12 UTC (12:00 bar) - on time
+- Strategy: hold SHORT AVAX $53.26 (z +1.75, -5.9% 24h) and SHORT LINK $64.45 (z +2.27, -6.0% 24h); other 9 flat (XRP z +1.24).
+- Decided: approve both. WebSearch: AVAX pulling back from RSI-82 week (Goldman/Lynq + tokenized-stock narrative); nothing new on LINK. No hack/delisting/unlock/outage; ADP 12:15 UTC is the only macro print in the hold (minor).
+- Fills: none. Both positions within min-order size of target. 0 blocked, 0 stop problems (SL AVAX 12.082 / LINK 15.793, set under the old 8% rule). Maker share 88% (16 fills).
+- P&L since v9 start: $-8.19 (-4.1% of budget); uPnL LINK +0.92, AVAX +0.24. Scorecard: 18 runs, Claude value-add $0.00.
