@@ -191,3 +191,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-09-29 18:12,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-29 18:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-09-29 18:12,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-30 00:22,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-30 00:22,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-30 00:22,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-30 00:22,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-30 00:22,XRPUSDT,0.00,0.00,approve,z fell to +1.44; below 1.5 - exit per strategy,48.4,1.485,1.0,0.01437
+2026-09-30 00:22,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-30 00:22,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-30 00:22,AVAXUSDT,-53.26,-53.26,approve,crowd long-heavy z +1.73; pump is tokenization/Goldman-Lynq narrative; no hack/delisting/unlock/macro in the 6h hold,0,0,,0.00000
+2026-09-30 00:22,LINKUSDT,-64.45,-64.45,approve,crowd long-heavy z +1.93; Swift/CCIP news already priced; no event risk before 06:00 UTC,0,0,,0.00000
+2026-09-30 00:22,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-30 00:22,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-09-30 00:22,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000

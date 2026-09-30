@@ -1,9 +1,9 @@
 {
-  "run_id": "2026-09-29 18:12",
+  "run_id": "2026-09-30 00:22",
   "decisions": [
-    {"symbol": "XRPUSDT", "action": "approve", "reason": "crowd long-heavy z+1.51; no hack/delisting on XRP itself; Bitget-hacker XRP stash is sell overhang, consistent with short"},
-    {"symbol": "AVAXUSDT", "action": "approve", "reason": "z+1.76 after +5.5% pump on institutional/tokenization headlines - narrative, not event risk; fade as designed"},
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "z+1.74, CCIP 2.0 news already priced (09-28); no hack/delisting/unlock; no US macro print before 00:00 UTC"}
+    {"symbol": "XRPUSDT", "action": "approve", "reason": "z fell to +1.44, below 1.5 - exit per strategy"},
+    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd long-heavy z +1.73; pump is tokenization/Goldman-Lynq narrative, no hack/delisting/unlock/macro in the 6h hold"},
+    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z +1.93; Swift/CCIP news already priced, no event risk before 06:00 UTC"}
   ],
   "claude_trades": [],
   "keep": []
