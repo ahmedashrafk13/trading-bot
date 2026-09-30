@@ -1,8 +1,7 @@
 {
-  "run_id": "2026-09-30 12:12",
+  "run_id": "2026-09-30 18:12",
   "decisions": [
-    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd long-heavy (z +1.75); rally is tokenization narrative cooling from RSI-82, no hack/delisting/unlock/outage found"},
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy (z +2.27); no event risk found; ADP 12:15 UTC is a minor print"}
+    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd still long-heavy (z +1.71); news = post-CCIP-rally profit-taking + Sibos partnerships, no hack/delisting/unlock/outage; no macro print before 00:00 UTC"}
   ],
   "claude_trades": [],
   "keep": []
