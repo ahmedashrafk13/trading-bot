@@ -1,9 +1,8 @@
 {
-  "run_id": "2026-09-30 00:22",
+  "run_id": "2026-09-30 06:26",
   "decisions": [
-    {"symbol": "XRPUSDT", "action": "approve", "reason": "z fell to +1.44, below 1.5 - exit per strategy"},
-    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd long-heavy z +1.73; pump is tokenization/Goldman-Lynq narrative, no hack/delisting/unlock/macro in the 6h hold"},
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z +1.93; Swift/CCIP news already priced, no event risk before 06:00 UTC"}
+    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd long-heavy after +55% week, RSI extreme; news is tokenization narrative, no hack/delisting/unlock"},
+    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z +2.07; no event risk found, no US macro print before 12:00 UTC"}
   ],
   "claude_trades": [],
   "keep": []
