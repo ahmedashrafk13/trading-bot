@@ -126,3 +126,9 @@
 - Decided: approve. news_check 0 RED / 0 AMBER (XRP INFO only); binance_delist feed down -> WebSearch found no XRP/LINK delisting (Oct 2 Binance margin delistings are other tokens).
 - Fills: LINK Buy 4.4 @ 14.379 taker, reduce-only (closed); XRP Sell 49.5 @ 1.4883 taker. Both went to market fallback. 0 blocked, 0 stop problems (SL XRP 1.6669). Maker share 79% (19 fills).
 - P&L since v9 start: $-7.52 (-3.8% of budget). Scorecard: 20 runs, Claude value-add $0.00.
+
+## 2026-10-01 06:12 UTC (06:00 bar) - on time
+- Strategy: hold SHORT XRP $73.79 (z +2.22), open SHORT LINK $66.02 (z +1.56); other 10 flat.
+- Decided: approve both. news_check 0 RED / 0 AMBER (NFP Fri 12:30 UTC, +30h, outside hold); binance_delist feed down -> WebSearch found no XRP/LINK delisting (Oct 5 Binance perp delistings are PROMPT/PUMPBTC/1000000BOB).
+- Fills: LINK Sell 4.5 @ 14.491 maker; XRP already at target. 0 blocked, 0 stop problems (SL LINK 16.223, XRP 1.6669). Maker share 80% (20 fills).
+- P&L since v9 start: $-8.41 (-4.2% of budget). Scorecard: 21 runs, Claude value-add $0.00.

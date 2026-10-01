@@ -1,3 +1,9 @@
-{"run_id": "2026-10-01 00:22", "decisions": [
- {"symbol": "XRPUSDT", "action": "approve", "reason": "crowd long-heavy z=1.57, no RED/AMBER; binance_delist feed down, WebSearch shows no XRP delisting"}
-], "claude_trades": [], "keep": []}
+{
+  "run_id": "2026-10-01 06:12",
+  "decisions": [
+    {"symbol": "XRPUSDT", "action": "approve", "reason": "crowd long-heavy z=2.22, 0 RED/AMBER, no Binance delisting found by WebSearch"},
+    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z=1.56, 0 RED/AMBER, no Binance delisting found by WebSearch; NFP is +30h, outside hold"}
+  ],
+  "claude_trades": [],
+  "keep": []
+}
