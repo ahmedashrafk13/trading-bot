@@ -1,8 +1,3 @@
-{
-  "run_id": "2026-09-30 18:12",
-  "decisions": [
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd still long-heavy (z +1.71); news = post-CCIP-rally profit-taking + Sibos partnerships, no hack/delisting/unlock/outage; no macro print before 00:00 UTC"}
-  ],
-  "claude_trades": [],
-  "keep": []
-}
+{"run_id": "2026-10-01 00:22", "decisions": [
+ {"symbol": "XRPUSDT", "action": "approve", "reason": "crowd long-heavy z=1.57, no RED/AMBER; binance_delist feed down, WebSearch shows no XRP delisting"}
+], "claude_trades": [], "keep": []}

@@ -120,3 +120,9 @@
 - Decided: approve. WebSearch: LINK -6% = profit-taking after the CCIP 2.0 rally (+96% for the quarter); Sibos news (Bottomline partnership, Fulcrum launch). No hack/delisting/unlock/outage; no macro print before 00:00 UTC.
 - Fills: AVAX Buy 4.7 @ 11.017 maker, reduce-only (closed). LINK within min-order size of target. 0 blocked, 0 stop problems (SL LINK 15.793). Maker share 88% (17 fills).
 - P&L since v9 start: $-7.39 (-3.7% of budget); uPnL LINK +1.14. Scorecard: 19 runs, Claude value-add $0.00.
+
+## 2026-10-01 00:22 UTC (00:00 bar) - on time
+- Strategy: close SHORT LINK (z fell to +1.45), open SHORT XRP $73.79 (z +1.57); other 10 flat.
+- Decided: approve. news_check 0 RED / 0 AMBER (XRP INFO only); binance_delist feed down -> WebSearch found no XRP/LINK delisting (Oct 2 Binance margin delistings are other tokens).
+- Fills: LINK Buy 4.4 @ 14.379 taker, reduce-only (closed); XRP Sell 49.5 @ 1.4883 taker. Both went to market fallback. 0 blocked, 0 stop problems (SL XRP 1.6669). Maker share 79% (19 fills).
+- P&L since v9 start: $-7.52 (-3.8% of budget). Scorecard: 20 runs, Claude value-add $0.00.
