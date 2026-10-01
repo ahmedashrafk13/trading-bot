@@ -132,3 +132,9 @@
 - Decided: approve both. news_check 0 RED / 0 AMBER (NFP Fri 12:30 UTC, +30h, outside hold); binance_delist feed down -> WebSearch found no XRP/LINK delisting (Oct 5 Binance perp delistings are PROMPT/PUMPBTC/1000000BOB).
 - Fills: LINK Sell 4.5 @ 14.491 maker; XRP already at target. 0 blocked, 0 stop problems (SL LINK 16.223, XRP 1.6669). Maker share 80% (20 fills).
 - P&L since v9 start: $-8.41 (-4.2% of budget). Scorecard: 21 runs, Claude value-add $0.00.
+
+## 2026-10-01 12:12 UTC (12:00 bar) - on time
+- Strategy: hold SHORT XRP $73.79 (z +2.10), open SHORT DOGE $65.91 (z +1.87), close LINK (z +1.41); other 9 flat.
+- Decided: approve all. news_check 0 RED / 0 AMBER (NFP Fri 12:30 UTC, +24h, outside hold; DOGE INFO = DogeOS testnet only); binance_delist feed down -> WebSearch found no XRP/DOGE/LINK perp delisting.
+- Fills: LINK Buy 4.5 @ 14.406 maker (closed, entry 14.491); DOGE Sell 693 @ 0.09489 maker. 0 blocked, 0 stop problems (SL DOGE 0.10625, XRP 1.6669). Maker share 82% (22 fills).
+- P&L since v9 start: $-7.35 (-3.7% of budget). Scorecard: 22 runs, Claude value-add $0.00.
