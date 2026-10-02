@@ -1,6 +1,8 @@
 {
-  "run_id": "2026-10-01 18:12",
+  "run_id": "2026-10-02 00:21",
   "decisions": [
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z+1.65; 0 RED/AMBER, CCIP/Swift news is days old, NFP is outside the 6h hold"}
-  ]
+    {"symbol": "DOGEUSDT", "action": "approve", "reason": "crowd long-heavy z=1.73, no RED/AMBER; WebSearch found no Binance DOGE delisting (feed down); NFP 12:30 UTC is outside the 6h hold"}
+  ],
+  "claude_trades": [],
+  "keep": []
 }

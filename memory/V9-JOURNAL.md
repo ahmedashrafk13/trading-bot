@@ -144,3 +144,9 @@
 - Decided: approve. news_check 0 RED / 0 AMBER (NFP Fri 12:30 UTC, +18h, outside hold); cointelegraph down -> WebSearch: LINK CCIP 2.0 / Swift news is days old, no event risk.
 - Fills: XRP Buy 49.5 @ 1.5018 maker, DOGE Buy 693 @ 0.09502 maker (both closed); LINK Sell 4.8 @ 14.35 taker (market fallback), SL 16.074. 0 blocked, 0 stop problems. Maker share 80% (25 fills).
 - P&L since v9 start: $-7.99 (-4.0% of budget). Scorecard: 23 runs, Claude value-add $0.00.
+
+## 2026-10-02 00:21 UTC (00:00 bar) - on time
+- Strategy: close LINK short (z +1.48), open SHORT DOGE $68.89 (z +1.73); other 10 flat.
+- Decided: approve. news_check 0 RED / 0 AMBER (NFP Fri 12:30 UTC, +12h, outside hold); binance_delist feed down -> WebSearch: no DOGE/LINK delisting.
+- Fills: LINK Buy 4.8 @ 14.302 maker (closed, entry 14.35); DOGE Sell 729 @ 0.09439 maker, SL 0.1057. 0 blocked, 0 stop problems. Maker share 81% (27 fills).
+- P&L since v9 start: $-7.77 (-3.9% of budget). Scorecard: 24 runs, Claude value-add $0.00.

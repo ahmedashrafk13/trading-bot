@@ -287,3 +287,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-01 18:12,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-01 18:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-01 18:12,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 00:21,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 00:21,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 00:21,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 00:21,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 00:21,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 00:21,DOGEUSDT,-68.89,-68.89,approve,crowd long-heavy z=1.73; no RED/AMBER; WebSearch found no Binance DOGE delisting (feed down); NFP 12:30 UTC is outside the 6h hold,729,0.09439,1.0,0.01376
+2026-10-02 00:21,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 00:21,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 00:21,LINKUSDT,0.00,0.00,approve,,4.8,14.302,1.0,0.01373
+2026-10-02 00:21,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 00:21,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 00:21,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
