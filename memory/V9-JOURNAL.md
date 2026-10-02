@@ -150,3 +150,9 @@
 - Decided: approve. news_check 0 RED / 0 AMBER (NFP Fri 12:30 UTC, +12h, outside hold); binance_delist feed down -> WebSearch: no DOGE/LINK delisting.
 - Fills: LINK Buy 4.8 @ 14.302 maker (closed, entry 14.35); DOGE Sell 729 @ 0.09439 maker, SL 0.1057. 0 blocked, 0 stop problems. Maker share 81% (27 fills).
 - P&L since v9 start: $-7.77 (-3.9% of budget). Scorecard: 24 runs, Claude value-add $0.00.
+
+## 2026-10-02 07:42 UTC (06:00 bar) - LATE (~1h42m after bar)
+- Strategy: close DOGE short (z +0.75), open LONG BTC $154.72 (z -1.51), SHORT LINK $69.55 (z +1.88); other 9 flat.
+- Decided: approve both. news_check 0 RED / 3 AMBER (NFP/AHE/UR Fri 12:30 UTC, +4.8h, inside hold - scheduled print only, per routine not a skip reason); binance_delist feed down -> WebSearch: only PROMPT/PUMPBTC/BOB delistings (Oct 5), none of ours.
+- Fills: DOGE Buy 729 @ 0.0962 taker (closed, entry 0.09439 -> loss); BTC Buy 0.001 @ 85906.1 maker, SL 75529.4 (target 0.0018 BTC floored to 0.001 qtyStep -> ~$86 vs $155 wanted); LINK Sell 4.8 @ 14.354 maker, SL 16.061. 0 blocked, 0 stop problems. Maker share 80% (30 fills).
+- P&L since v9 start: $-9.18 (-4.6% of budget). Scorecard: 25 runs, Claude value-add $0.00.

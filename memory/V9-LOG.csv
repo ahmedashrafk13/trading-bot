@@ -299,3 +299,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-02 00:21,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-02 00:21,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-02 00:21,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 07:42,BTCUSDT,154.72,154.72,approve,crowd short-heavy z-1.51; NFP 12:30 UTC is a scheduled print only (AMBER); no delisting/hack found,0.001,85906.1,1.0,0.01718
+2026-10-02 07:42,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 07:42,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 07:42,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 07:42,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 07:42,DOGEUSDT,0.00,0.00,approve,,729,0.0962,0.0,0.03857
+2026-10-02 07:42,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 07:42,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 07:42,LINKUSDT,-69.55,-69.55,approve,crowd long-heavy z+1.88; no coin-specific event risk; Binance delist feed down -> WebSearch shows only PROMPT/PUMPBTC/BOB delistings,4.8,14.354,1.0,0.01378
+2026-10-02 07:42,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 07:42,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-02 07:42,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
