@@ -162,3 +162,9 @@
 - Decided: approve. news_check 0 RED / 0 AMBER, 10/10 sources ok; NFP (weak, BTC tapped $87K) already printed 12:30 UTC, outside hold.
 - Fills: BTC Sell 0.001 @ 85397.0 maker (closed, entry 85906.1 -> loss); LINK short unchanged 4.8, SL 16.061. 0 blocked, 0 stop problems. Maker share 81% (31 fills).
 - P&L since v9 start: $-9.03 (-4.5% of budget). Scorecard: 26 runs, Claude value-add $0.00.
+
+## 2026-10-02 18:13 UTC (18:00 bar) - on time (~13m after bar)
+- Strategy: hold/grow SHORT LINK to $101.16 (z +1.73; was $67.79 held); other 11 flat. First run at vol target 0.80 - brief prints gross 2.4x / lev 5x / stop 10% (CLAUDE.md says 2.0x / 4x / 12%; config mismatch flagged for owner, not changed).
+- Decided: approve. news_check 0 RED / 0 AMBER, 10/10 sources ok; no event risk found.
+- Fills: LINK Sell 2.3 @ 14.13 maker; position now 7.1 short ($100.36), SL 15.478. 0 blocked, 0 stop problems. Maker share 81% (32 fills).
+- P&L since v9 start: $-8.67 (-4.3% of budget). Scorecard: 27 runs, Claude value-add $0.00.

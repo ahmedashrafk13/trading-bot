@@ -1,3 +1,8 @@
-{"run_id": "2026-10-02 15:47", "decisions": [
-  {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z +1.70, 0 RED/0 AMBER, NFP already printed"}
-], "claude_trades": [], "keep": []}
+{
+  "run_id": "2026-10-02 18:12",
+  "decisions": [
+    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z=1.73, 0 RED/0 AMBER news, no event risk found"}
+  ],
+  "claude_trades": [],
+  "keep": []
+}
