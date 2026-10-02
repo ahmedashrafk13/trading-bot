@@ -1,9 +1,3 @@
-{
-  "run_id": "2026-10-02 07:42",
-  "decisions": [
-    {"symbol": "BTCUSDT", "action": "approve", "reason": "crowd short-heavy z-1.51; NFP 12:30 UTC is a scheduled print only (AMBER), no delisting/hack found"},
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z+1.88; no coin-specific event risk, Binance delist feed down -> WebSearch shows only PROMPT/PUMPBTC/BOB delistings"}
-  ],
-  "claude_trades": [],
-  "keep": []
-}
+{"run_id": "2026-10-02 15:47", "decisions": [
+  {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z +1.70, 0 RED/0 AMBER, NFP already printed"}
+], "claude_trades": [], "keep": []}
