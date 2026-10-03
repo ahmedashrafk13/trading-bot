@@ -174,3 +174,9 @@
 - Decided: approve both. news_check 0 RED / 0 AMBER, 9/10 sources (binance_delist down - WebSearch found no XRP/DOT/LINK delisting).
 - Fills: LINK Buy 7.1 @ 13.829 maker (closed short, profit vs 14.13 add); DOT Buy 61.4 @ 1.1843 maker, SL 1.0727; XRP Sell 75.9 @ 1.4828 maker, SL 1.6244. 3/3 maker, 0 blocked, 0 stop problems. Maker share 83% (35 fills).
 - P&L since v9 start: $-6.51 (-3.3% of budget). Scorecard: 28 runs, Claude value-add $0.00.
+
+## 2026-10-03 18:13 UTC (18:00 bar) - on time
+- Strategy: hold SHORT XRP, top up to $133.41 (z +1.52); close LONG DOT (z -1.32, back inside the band); other 10 flat. Brief still prints gross 2.4x / lev 5x / stop 10%, not CLAUDE.md's 2.0x / 4x / 12% (still open for the owner).
+- Decided: approve. news_check 0 RED / 0 AMBER, 9/10 sources (binance_delist down - WebSearch found no XRP/DOT delisting).
+- Fills: DOT Sell 61.4 @ 1.197 taker (closed long, small profit vs 1.1843 entry); XRP Sell 13.5 @ 1.4909 maker (now 89.4 short, SL 1.6318). 1/2 maker, 0 blocked, 0 stop problems. Maker share 81% (37 fills).
+- P&L since v9 start: $-6.38 (-3.2% of budget). Scorecard: 29 runs, Claude value-add $0.00.
