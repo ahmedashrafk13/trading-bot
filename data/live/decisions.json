@@ -1,7 +1,8 @@
 {
-  "run_id": "2026-10-02 18:12",
+  "run_id": "2026-10-03 12:45",
   "decisions": [
-    {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z=1.73, 0 RED/0 AMBER news, no event risk found"}
+    {"symbol": "XRPUSDT", "action": "approve", "reason": "crowd long-heavy z+1.89, 0 RED/AMBER, no Binance delisting found (source down, covered by WebSearch)"},
+    {"symbol": "DOTUSDT", "action": "approve", "reason": "crowd short-heavy z-1.61, 0 RED/AMBER, no event risk found"}
   ],
   "claude_trades": [],
   "keep": []
