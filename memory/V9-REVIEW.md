@@ -73,3 +73,97 @@ evidence and the owner's OK. Scheduled runs never enact them.
   would print the paper return over the live window next to live P&L, so the
   weekly live-vs-paper gap is reproducible without a scratch script. Test: it
   should reproduce -$1.61 for the 11 bars ending at the 09-27 06:00 close.
+
+## 2026-10-04 — week 2 (v9 live since 2026-09-24 15:54 UTC, ~9.7 days)
+
+**P&L**
+- Since v9 start: **-$7.26 (-3.6% of budget)** at review time (08:4x UTC). That
+  includes the open XRP short's uPnL of -$1.46.
+- This week: **-$7.64**. The 09-27 review stood at +$0.38.
+- Drawdown: **-$7.65 from the peak** (-3.8%). The worst logged run was -$9.18
+  (-4.6%) at 10-02 07:42.
+- Fees: $0.66 in total since start. Risk level was raised to vol 0.80 on 10-02.
+  The first run at the new level was 10-02 18:13.
+
+**Edge re-check (`revalidate`, frozen strategy, vol 0.80, 2.4x cap, 70% maker)**
+- 30d -4.0% (DD -14.3%) | 60d -9.3% (DD -18.6%) | 90d **-15.5%** (DD -22.5%).
+- Last week (vol 0.55): 30d +0.4% | 60d -13.1% | 90d -18.9%. The 90d figure
+  improved even at the higher vol. The 30d figure turned negative.
+- **No EDGE ALERT.** The line is 90d below about -25%, so it is 9.5 pts inside the range.
+
+**Live vs paper** (scratch: `v9.build_panel` + `lab.sim.run_weights`, vol 0.55
+until the 10-02 12:00 close and 0.80 after; it reproduces last week's -$1.61 at
+the 09-27 06:00 close)
+- Paper from the 09-24 18:00 close to the 10-04 06:00 close: **-2.07% = -$4.13**
+  (DD -4.6%). This week alone: -$2.52.
+- Live: **-$7.26**. The gap is about **-$3.1**. Claude made 0 overrides, so
+  overrides did not cause it. Likely sources:
+  - Missed and late runs (below). Paper changed position on bars that live
+    skipped. Examples: LINK close and XRP open at 10-03 00:00/06:00, which live
+    did at 12:45.
+  - BTC qty floor: the 10-02 target of 0.0018 BTC was floored to 0.001.
+  - Market-fallback fills.
+- The pre-committed live-vs-paper alert needs 4+ weeks, so this is not an alert
+  yet. Watch item.
+
+**Claude's decisions (`scorecard`)**
+- 360 decisions over 30 runs: **360/360 approve, value-add $0.00**. No action types
+  to break down. news-driven line: 0 overrides, $0.00.
+- 30 runs is below the 60-run minimum, so there is still no verdict on skill.
+
+**Maker fills**
+- **81% over 37 order groups** (assumed 70%; alert below 40%). Market fallback
+  mostly happens on exits (10-01 00:00 run 0/2 maker, 10-03 18:13 run 1/2).
+
+**Alerts**
+- No EDGE ALERT, no maker alert, no live-vs-paper alert (needs 4+ weeks).
+- **OPS ALERT (worse than week 1): schedule adherence.**
+  - 39 bars since start (09-24 18:00 → 10-04 06:00). **10 had no run**:
+    - 00:00 on 09-25, 09-26, 09-27, 09-28, 10-03, 10-04
+    - 18:00 on 09-27
+    - 06:00 on 09-28, 10-03, 10-04
+  - Of the 29 bars that did get a run, **10 started more than 30 min late**:
+    +75, +106, +129, +39, +85, +320, +227, +102, +227 and +45 min.
+  - The 00:00-UTC slot (05:07 PKT) fails most often: 6 of 10 since start.
+- **OPS ALERT: position off strategy right now.**
+  - The frozen strategy's target has been **flat since the 10-04 00:00 close**,
+    and it is still flat at 06:00.
+  - Live still holds an **XRP short of 89.4 (~$134, SL 1.6318)** because neither
+    run happened.
+  - This review places no orders. The 12:07 UTC run should close it. If that run
+    is missed too, the owner may want to close it by hand.
+- **CONFIG NOTE: uncommitted live config.**
+  - Several files have uncommitted working-tree edits: `scripts/v9.py`,
+    `scripts/checks.py`, `CLAUDE.md` and both routines.
+  - The live code runs vol 0.80, **gross cap 2.4x, leverage 5x, stop 9.5%**.
+    `checks.py` MARGIN_CAP was changed 0.50 → **0.60**.
+  - CLAUDE.md says gross ≤ 2.0x, 4x leverage, 12% stop, margin ≤ 50%.
+  - The STOP_PCT comment cites "25% liquidation distance at 4x", but LEVERAGE = 5.
+  - 9.5% at 5x passes the gate (half of 20% = 10%), but the lab's stop study
+    tested 8% and 12%, not 9.5%.
+  - This review did not touch these files. The owner should decide the intended
+    setup and commit it.
+
+**Proposals (owner decides; none enacted)**
+- Strategy (signal, threshold, vol target, universe): **no change proposed.**
+  - 9.7 live days is noise.
+  - The paper 90d is inside the tested range.
+  - The pre-committed EDGE ALERT rule stands.
+- P3 (config, owner): make the documented and the running config the same.
+  - Either restore the lab-tested 4x / 12% / 2.0x setup (2.0x at 4x = 50%
+    margin, so MARGIN_CAP can go back to 0.50), or document 5x / 9.5% / 2.4x /
+    0.60.
+  - If keeping 9.5%, confirm it in the lab: rerun
+    `backtest/lab/strategies/_stop_study.py` with a 9.5% stop at 5x / 2.4x on
+    dev (walk-forward), then make one lockbox look.
+  - Then commit `scripts/v9.py` and `scripts/checks.py`, and run
+    `python scripts/test_checks.py`.
+- P1 (still open): `scorecard`/`status` should report missed and late bars.
+  - Test: on the current log it should report 10 missed bars of 39.
+- P2 (still open): `revalidate --since-start`, so the live-vs-paper figure is
+  reproducible. Test: it should print -$4.13 to the 10-04 06:00 close, with
+  vol switching to 0.80 at 10-02 18:00.
+- Ops (owner): fix the scheduler, the most urgent item this week. Find out why
+  the 00:07 UTC run fails and why runs start late: PC sleep, the app being
+  closed, or task queueing. Missed bars are now the largest measurable cost
+  (~-$3 vs paper).
