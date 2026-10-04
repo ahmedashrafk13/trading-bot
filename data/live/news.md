@@ -1,6 +1,6 @@
-# v9 news check - 2026-10-03 18:13 UTC
+# v9 news check - 2026-10-04 10:20 UTC
 
-Coins: XRPUSDT, DOTUSDT | hold window 8h | sources ok: 9/10
+Coins: XRPUSDT | hold window 8h | sources ok: 9/10
 SOURCES DOWN (check by WebSearch): binance_delist (URLError)
 
 Summary: 0 RED, 0 AMBER - nothing found that argues against the strategy's trades.

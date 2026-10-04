@@ -180,3 +180,9 @@
 - Decided: approve. news_check 0 RED / 0 AMBER, 9/10 sources (binance_delist down - WebSearch found no XRP/DOT delisting).
 - Fills: DOT Sell 61.4 @ 1.197 taker (closed long, small profit vs 1.1843 entry); XRP Sell 13.5 @ 1.4909 maker (now 89.4 short, SL 1.6318). 1/2 maker, 0 blocked, 0 stop problems. Maker share 81% (37 fills).
 - P&L since v9 start: $-6.38 (-3.2% of budget). Scorecard: 29 runs, Claude value-add $0.00.
+
+## 2026-10-04 10:20 UTC (06:00 bar) - LATE (~4h20m after the bar; no 00:00 or 06:07 run journaled since 10-03 18:13)
+- Strategy: all 12 flat (XRP z -0.42, back inside the band); close the -$134 XRP short that was carried through the missed runs.
+- Decided: approve (empty decisions). news_check 0 RED / 0 AMBER, 9/10 sources (binance_delist down; flat book, nothing to cover).
+- Fills: XRP Buy 89.4 @ 1.4996 reduce-only, taker (fee $0.07). 0/1 maker, 0 blocked, 0 stop problems. Book now flat. Maker share 79% (38 fills).
+- P&L since v9 start: $-7.28 (-3.6% of budget). Scorecard: 30 runs, Claude value-add $0.00.
