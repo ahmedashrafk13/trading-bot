@@ -192,3 +192,9 @@
 - Decided: approve (empty decisions), no own trades. news_check 0 RED / 0 AMBER, 9/10 sources (binance_delist down; flat book, nothing to cover).
 - Fills: none (0 orders, 0 blocked, 0 stop problems). Book flat. Maker share 79% (38 fills).
 - P&L since v9 start: $-7.28 (-3.6% of budget). Scorecard: 31 runs, Claude value-add $0.00.
+
+## 2026-10-04 18:12 UTC (18:00 bar, run 5 min late)
+- Strategy: flat on all 12 (max |z| LTC -1.19, SOL -1.15); nothing held before the run.
+- Decision: approve (no trades), no own trades; news 0 RED / 0 AMBER (binance_delist feed down, irrelevant with no positions).
+- Fills: none. Maker share 79% over 38 groups. P&L since v9 start $-7.28 (-3.6%).
+- Note: brief header shows 5x / 10% stop / 2.4x gross cap while CLAUDE.md says 4x / 12% / 2.0x - owner should reconcile.

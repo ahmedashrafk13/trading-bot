@@ -1,4 +1,4 @@
-# v9 news check - 2026-10-04 12:12 UTC
+# v9 news check - 2026-10-04 18:12 UTC
 
 Coins: (none targeted or held) | hold window 8h | sources ok: 9/10
 SOURCES DOWN (check by WebSearch): binance_delist (URLError)
