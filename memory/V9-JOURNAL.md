@@ -210,3 +210,9 @@
 - Decision: approve (no trades), no own trades; news 0 RED / 0 AMBER, 10/10 sources ok.
 - Fills: none (0 orders, 0 blocked, 0 stop problems). Maker share 79% over 38 groups. P&L since v9 start $-7.28 (-3.6%).
 - Brief still shows 5x / 10% stop / 2.4x cap vs CLAUDE.md 4x / 12% / 2.0x - owner to reconcile.
+
+## 2026-10-05 15:38 UTC (12:00 bar, ~3.6h LATE; 18:00 bar not affected)
+- Strategy: LONG LTC $131.8 (z -1.65, crowd short-heavy); other 11 flat (XRP -1.37 closest).
+- Decision: approve, no own trades; news 0 RED / 0 AMBER, coindesk down -> WebSearch found only routine LTC news (~$70 range).
+- Fills: LTC Buy 1.8 @ 70.43, maker (1/1), SL 63.54, 0 blocked, 0 stop problems. Maker share 79% over 39 groups. P&L since v9 start $-7.72 (-3.9%).
+- Brief still shows 5x / 10% stop / 2.4x cap vs CLAUDE.md 4x / 12% / 2.0x - owner to reconcile.
