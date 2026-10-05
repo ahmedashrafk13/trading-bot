@@ -1,4 +1,4 @@
-# v9 news check - 2026-10-05 05:20 UTC
+# v9 news check - 2026-10-05 06:12 UTC
 
 Coins: (none targeted or held) | hold window 8h | sources ok: 10/10
 
