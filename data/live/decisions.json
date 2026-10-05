@@ -1,8 +1,1 @@
-{
-  "run_id": "2026-10-05 15:38",
-  "decisions": [
-    {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z=-1.65; 0 RED/AMBER; coindesk down, websearch found only routine LTC news (consolidating ~$70); late run (12:00 bar, 3.6h late) - trade straight to plan per lessons"}
-  ],
-  "claude_trades": [],
-  "keep": []
-}
+{"run_id": "2026-10-05 18:12", "decisions": [], "claude_trades": [], "keep": []}

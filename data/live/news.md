@@ -1,7 +1,7 @@
-# v9 news check - 2026-10-05 15:38 UTC
+# v9 news check - 2026-10-05 18:12 UTC
 
 Coins: LTCUSDT | hold window 8h | sources ok: 9/10
-SOURCES DOWN (check by WebSearch): coindesk (TimeoutError)
+SOURCES DOWN (check by WebSearch): cointelegraph (TimeoutError)
 
 Summary: 0 RED, 0 AMBER - nothing found that argues against the strategy's trades.
 
