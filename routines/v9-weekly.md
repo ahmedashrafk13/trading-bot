@@ -18,7 +18,7 @@ and live-vs-paper gap (execution cost + Claude's overrides).
 
 ## 2. Judge against pre-committed ranges
 
-- Paper 90d return below about −25% at vol 0.55 = outside the tested range →
+- Paper 90d return below about −25% at vol 0.80 = outside the tested range (scaled up from 0.55 on 2026-10-02, so expect ~1.2-1.5x bigger swings than older notes) →
   write `EDGE ALERT` in the review and recommend the owner lower the risk level
   or pause. Do not change VOL_TARGET yourself.
 - Maker-fill share below 40% → the fee assumption is wrong; note it (at 0% maker
@@ -27,6 +27,9 @@ and live-vs-paper gap (execution cost + Claude's overrides).
   money; say which, with the scorecard numbers.
 - Claude's value-add negative over 60+ scored runs → the lesson is to override
   less; say so in the lessons file.
+- `news-driven` line (overrides whose reason starts `NEWS:`, from
+  `scripts/news_check.py` flags): report its count and $ value-add. If it is
+  negative after 15+ such overrides, the lesson is to act on RED flags only.
 
 ## 3. Update `memory/V9-LESSONS.md`
 

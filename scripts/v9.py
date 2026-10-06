@@ -10,7 +10,7 @@ WHAT IT TRADES (validated 2026-09-24, backtest/lab, lockbox 2025-07..2026-09)
   micro_crowd: time-series CONTRARIAN to the 30d z-score of Binance's GLOBAL
   long/short ACCOUNT ratio on 12 major USDT perps. |z| >= 1.5 -> take the other
   side of the crowd for the next 6h bar, inverse-vol sized, book vol-targeted.
-  Owner picked VOL_TARGET 0.55 ("very high"). Lockbox at that level with the
+  Owner picked VOL_TARGET 0.55 ("very high"), raised to 0.80 on 2026-10-02. Lockbox at 0.55 with the
   live 2.5x gross cap: +54.5% CAGR, max DD -40.8%, 0 liquidations (70% maker
   fills assumed - this script measures the real rate).
 
@@ -73,10 +73,13 @@ LOG = os.path.join(ROOT, "memory", "V9-LOG.csv")
 
 SYMS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT", "DOGEUSDT",
         "ADAUSDT", "AVAXUSDT", "LINKUSDT", "LTCUSDT", "TRXUSDT", "DOTUSDT"]
-VOL_TARGET = 0.55        # owner choice 2026-09-24
-GROSS_CAP = 2.4          # x budget; 2.4x at 5x leverage = 48% margin, under the 50% gate
-LEVERAGE = 5
-STOP_PCT = 0.08          # attached stop; must stay inside half the 20% liquidation distance at 5x
+VOL_TARGET = 0.80        # owner 2026-10-02 "bigger, more risk"; was 0.55. lockbox look #15 (_size_menu.py)
+GROSS_CAP = 2.0          # x budget; 2.0x at 4x leverage = 50% margin (execute scales the book to 96% of that)
+LEVERAGE = 4
+STOP_PCT = 0.12          # attached stop; must stay inside half the 25% liquidation distance at 4x (12.5%)
+# Was 5x / 8% stop / 2.4x cap until 2026-09-30. backtest/lab/strategies/_stop_study.py: the
+# 8% stop cut winners with no drawdown benefit (lockbox #14: 8% +39%/yr, 12% +49%/yr, same
+# DD); dev with this 2.0x cap: 12% stop 111%/yr Sharpe 1.66 vs old setup 105% / 1.55.
 CLAUDE_MAX_MULT = 1.5    # Claude may resize a strategy trade up to this multiple
 MIN_TRADE_USD = 5.0      # Bybit minNotionalValue floor for USDT perps
 POST_ONLY_ROUNDS = 3     # re-quote a resting maker order this many times ...
@@ -360,7 +363,7 @@ def _leverage_now(sym):
 def set_leverage(sym):
     """Set LEVERAGE on sym. B.request raises SystemExit(1) on ANY retCode, so the old
     `"110043" in str(e)` test never matched ("1") and an already-5x symbol crashed the
-    run. Read first; after a failed POST accept only if the venue now reports 5x."""
+    run. Read first; after a failed POST accept only if the venue now reports LEVERAGE."""
     if _leverage_now(sym) == {float(LEVERAGE)}:
         return
     try:
@@ -762,7 +765,7 @@ def cmd_execute(args):
             if keep:
                 kept.add(s)
     # Hard book cap BEFORE any order: resize (<=1.5x) + claude_trades can ask for more than the
-    # gate allows (margin 50% of budget = 2.5x notional at 5x). Without this, orders placed in
+    # gate allows (margin 50% of budget = 2.0x notional at 4x). Without this, orders placed in
     # the same round each passed the gate alone and could jointly breach it; with it, the
     # book is scaled down in proportion instead of the last symbols being blocked at random.
     cap_usd = min(checks.NOTIONAL_CAP, checks.MARGIN_CAP * LEVERAGE) * BUDGET * 0.96
@@ -989,6 +992,10 @@ def cmd_scorecard(args):
     for act, a in sorted(by_act.items()):
         if a["n"]:
             print(f"  {act:13s} {a['n']:3d} changed decisions, value-add ${a['edge']:+.2f}, helped {a['wins']}/{a['n']}")
+    news = [d for d in scored if d["why"].strip().upper().startswith("NEWS") and abs(d["final"] - d["strat"]) > 1e-9]
+    if news:
+        print(f"  news-driven   {len(news):3d} changed decisions (reason starts NEWS:), value-add "
+              f"${sum(d['edge'] for d in news):+.2f}, helped {sum(d['edge'] > 0 for d in news)}/{len(news)}")
     mk = [r["maker"] for r in rows if r["maker"] is not None]
     if mk:
         print(f"  maker-fill share {100 * sum(mk) / len(mk):.0f}% over {len(mk)} filled order groups (backtest assumed 70%)")
@@ -1022,7 +1029,7 @@ def cmd_revalidate(_args):
         x = r.metrics()
         print(f"  last {days:2d}d: return {x['total_return']:+.1%}  maxDD {x['max_drawdown']:.1%}  "
               f"trades/wk {x['trades_per_week']:.1f}")
-    print("  lab reference (lockbox 2025-07..2026-09, this risk level): +54.5%/yr at the tested timing, "
+    print("  lab reference (lockbox 2025-07..2026-09, vol 0.8 @ 2.0x): +54%/yr at the tested timing, "
           "~+22%/yr averaged over candle timings; a 90d paper return below about -25% is outside that range.")
 
 

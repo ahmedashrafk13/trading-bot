@@ -15,7 +15,8 @@ measured, v8 earned ~+7.7%/yr over the last 15 months.
 
 `routines/v9.md` is the only run procedure (every 6h, 00:07/06:07/12:07/18:07 UTC):
 1. `python scripts/v9.py plan` — the tested strategy's targets + a brief.
-2. Claude researches and decides: approve / skip / resize (0–1.5x) / flip, plus
+2. `python scripts/news_check.py` (event-risk flags), then Claude researches and
+   decides: approve / skip / resize (0–1.5x) / flip, plus
    its own trades → `data/live/decisions.json`.
 3. `python scripts/v9.py execute` — maker-first limit orders, market fallback,
    attached stopLoss, every opening order through `scripts/checks.py`.
@@ -25,14 +26,15 @@ measured, v8 earned ~+7.7%/yr over the last 15 months.
 
 `micro_crowd`: fade the retail crowd on 12 major perps. Signal = 30d z-score of
 Binance's GLOBAL long/short ACCOUNT ratio (5-minute feed); |z| ≥ 1.5 → take the
-other side for 6h; inverse-vol sizing; book vol target 0.55 (owner choice);
-gross ≤ 2.4x budget.
+other side for 6h; inverse-vol sizing; book vol target 0.80 (owner 2026-10-02, was 0.55);
+gross ≤ 2.0x budget, 4x leverage, 12% attached stop (was 2.4x / 5x / 8% until 2026-09-30;
+see backtest/lab/strategies/_stop_study.py - the 8% stop cut winners, no DD benefit).
 
 Measured in `backtest/lab/` (independent, adversarially verified harness,
 survivorship-aware data, Bybit fees + slippage + funding + liquidation):
 - walk-forward out-of-sample 2022-12..2025-06: Sharpe 1.25 at 20% vol
 - LOCKBOX 2025-07..2026-09 (never used for tuning; BTC −16%): at vol 0.55 with
-  a 2.5x gross cap (live uses 2.4x) and 70% maker fills **+54.5%/yr, max DD −40.8%,
+  a 2.5x gross cap (live uses 2.0x) and 70% maker fills **+54.5%/yr, max DD −40.8%,
   0 liquidations**; with all-taker fills roughly half that.
 - TIMING LUCK (measured 2026-09-24): the same strategy on the six possible 6h
   candle alignments made -21%..+66%/yr over the lockbox (avg ~+22%/yr); every
@@ -52,8 +54,8 @@ survivorship-aware data, Bybit fees + slippage + funding + liquidation):
 ## Safety rails — enforced in code (`scripts/checks.py`), not by this file
 
 - $200 budget cap; every % is of the budget, never the $179k demo balance.
-- Every opening perp order carries an attached stopLoss (v9 uses 8%), stop
-  inside half the liquidation distance (10% at 5x); leverage ≤ 5x.
+- Every opening perp order carries an attached stopLoss (v9: 12% at 4x since 2026-09-30), stop
+  inside half the liquidation distance (12.5% at 4x, 10% at 5x); leverage ≤ 5x.
 - Margin ≤ 50% and gross notional ≤ 300% of budget; daily realized loss ≥ 5% of
   budget stops new entries until 00:00 UTC.
 - `touch HALT_TRADING` = kill switch for new entries; exits always work.
@@ -63,7 +65,7 @@ survivorship-aware data, Bybit fees + slippage + funding + liquidation):
 ## Owner directives in force
 
 - Perps, shorts and leverage are enabled (2026-09-22); risk level "very high"
-  = vol target 0.55 (2026-09-24). Only the owner changes the budget or risk level.
+  = vol target 0.80 (2026-10-02; 0.55 from 2026-09-24). Size menu: backtest/lab/results/_size_menu_{dev,lockbox}.json - lockbox vol 0.8 @ 2.5x +65%/yr DD -39% (live 2.4x), dev +189%/yr DD -49%. Only the owner changes the budget or risk level.
 - Claude stays in the decision loop with full discretion inside the rails; its
   decisions are logged against the strategy's (`memory/V9-LOG.csv`).
 
@@ -77,6 +79,9 @@ survivorship-aware data, Bybit fees + slippage + funding + liquidation):
 - Loss guard: `plan` flags REVIEW at -35% of budget and creates HALT_TRADING at
   -50% (only the owner resumes).
 - `scripts/bybit.py` (positions linear, tickers, kline, fills, funding, …)
+- `python scripts/news_check.py` - event-risk flags (RED/AMBER/INFO) from free feeds
+  every run; flags justify only skip / resize <= 1, reasons tagged `NEWS:` are
+  scored separately. Tests: `python scripts/test_news_check.py`.
 - `bash scripts/perplexity.sh "<q>"` or WebSearch for news.
 - Research lab: `backtest/lab/README.md`; data in `data/hist/` (gitignored).
 

@@ -33,3 +33,5 @@ dashboard.html
 
 # v9 live cache (rebuilt automatically)
 /data/live/ls5m/
+/data/live/macro_cache.json
+/data/live/news.json
