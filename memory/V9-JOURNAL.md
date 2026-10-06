@@ -234,3 +234,9 @@
 - Decision: approve both, no own trades; news 0 RED / 0 AMBER, binance_delist feed down -> WebSearch found no Binance delisting for XRP/LTC.
 - Fills: 2/2 maker (XRP 92.8 @ 1.5084, LTC 1.9 @ 69.85), stops attached (SL 1.3273 / 61.45); 0 blocked, 0 stop problems. Maker share 81% over 42.
 - P&L since v9 start $-7.52 (-3.8%).
+
+## 2026-10-06 18:12 UTC (run 2026-10-06 18:12)
+- Strategy: short ADA (z +1.50, -$124), hold LTC long (z -1.87, +$137), close XRP long.
+- Decided: approve all. News: 0 RED/0 AMBER (FOMC minutes +24h, outside hold).
+- Fills: XRP close maker, ADA short market fallback (1/2 maker). No blocks, no stop problems.
+- P&L since v9 start $-8.98 (-4.5% of budget).

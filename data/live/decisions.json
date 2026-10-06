@@ -1,9 +1,1 @@
-{
-  "run_id": "2026-10-06 13:11",
-  "decisions": [
-    {"symbol": "XRPUSDT", "action": "approve", "reason": "crowd short-heavy z=-1.88; no RED/AMBER; WebSearch found no Binance delisting (feed down)"},
-    {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z=-1.71; no RED/AMBER; WebSearch found no Binance delisting (feed down)"}
-  ],
-  "claude_trades": [],
-  "keep": []
-}
+{"run_id": "2026-10-06 18:12", "decisions": [{"symbol":"ADAUSDT","action":"approve","reason":"crowd long-heavy z=1.5, no event risk"},{"symbol":"LTCUSDT","action":"approve","reason":"crowd short-heavy z=-1.87, no event risk"}], "claude_trades": [], "keep": []}
