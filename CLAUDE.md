@@ -65,7 +65,7 @@ survivorship-aware data, Bybit fees + slippage + funding + liquidation):
 ## Owner directives in force
 
 - Perps, shorts and leverage are enabled (2026-09-22); risk level "very high"
-  = vol target 0.80 (2026-10-02; 0.55 from 2026-09-24). Size menu: backtest/lab/results/_size_menu_{dev,lockbox}.json - lockbox vol 0.8 @ 2.5x +65%/yr DD -39% (live 2.4x), dev +189%/yr DD -49%. Only the owner changes the budget or risk level.
+  = vol target 0.80 (2026-10-02; 0.55 from 2026-09-24). Size menu: backtest/lab/results/_size_menu_{dev,lockbox}.json - lockbox vol 0.8 @ 2.0x (live) +54%/yr DD -33%, dev +165%/yr DD -50% (2.5x cap: lockbox +65% / -39%). Only the owner changes the budget or risk level.
 - Claude stays in the decision loop with full discretion inside the rails; its
   decisions are logged against the strategy's (`memory/V9-LOG.csv`).
 
