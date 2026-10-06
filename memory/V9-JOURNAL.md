@@ -228,3 +228,9 @@
 - Decision: approve (no trades), no own trades; news 0 RED / 0 AMBER, binance_delist feed down (nothing targeted, no WebSearch needed).
 - Fills: none; 0 blocked, 0 stop problems; book flat. Maker share 80% over 40 groups. P&L since v9 start $-7.42 (-3.7%).
 - Brief now shows 4x / 12% stop / 2.0x cap, matching CLAUDE.md (the mismatch noted 10-05 is resolved).
+
+## 2026-10-06 13:11 UTC (12:00 bar, 71 min late; 06:00 bar run missed - book was flat, so no stale position)
+- Strategy: LONG XRP $140 (z -1.88), LONG LTC $137 (z -1.71); other 10 flat.
+- Decision: approve both, no own trades; news 0 RED / 0 AMBER, binance_delist feed down -> WebSearch found no Binance delisting for XRP/LTC.
+- Fills: 2/2 maker (XRP 92.8 @ 1.5084, LTC 1.9 @ 69.85), stops attached (SL 1.3273 / 61.45); 0 blocked, 0 stop problems. Maker share 81% over 42.
+- P&L since v9 start $-7.52 (-3.8%).
