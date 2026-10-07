@@ -240,3 +240,5 @@
 - Decided: approve all. News: 0 RED/0 AMBER (FOMC minutes +24h, outside hold).
 - Fills: XRP close maker, ADA short market fallback (1/2 maker). No blocks, no stop problems.
 - P&L since v9 start $-8.98 (-4.5% of budget).
+
+- 2026-10-07 00:29 UTC (run 2026-10-07 00:29, ~22 min after bar): strategy held ADA short -$124 (z +1.52) and LTC long +$137 (z -2.06), already in place. News 0 RED/0 AMBER (binance_delist feed down; FOMC minutes outside hold). Approved both. Execute: 0 orders (within tolerance), no BLOCKED, no STOP PROBLEM, both stops in place. P&L since v9 start -$7.29 (-3.6%); maker share 80%/44.
