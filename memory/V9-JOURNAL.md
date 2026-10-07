@@ -242,3 +242,5 @@
 - P&L since v9 start $-8.98 (-4.5% of budget).
 
 - 2026-10-07 00:29 UTC (run 2026-10-07 00:29, ~22 min after bar): strategy held ADA short -$124 (z +1.52) and LTC long +$137 (z -2.06), already in place. News 0 RED/0 AMBER (binance_delist feed down; FOMC minutes outside hold). Approved both. Execute: 0 orders (within tolerance), no BLOCKED, no STOP PROBLEM, both stops in place. P&L since v9 start -$7.29 (-3.6%); maker share 80%/44.
+
+- 2026-10-07 11:27 UTC (06:00 bar, run ~5h late): strategy wanted shorts ETH -117, BNB -146, XRP -73, ADA -64 (from -116), close LTC long. Approved unchanged: AMBER FOMC minutes at 18:00 is outside the hold, ADA freeze-feature headline not event risk; binance_delist source down (not re-checked). XRP short BLOCKED by margin_cap ($127.90 > $100). Fills: ETH maker, BNB taker; overall maker share 79%/48. No STOP PROBLEMs. P&L since v9 start $-5.51.
