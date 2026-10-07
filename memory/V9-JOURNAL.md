@@ -250,3 +250,8 @@
 - Decided: approve all. AMBER flags were the FOMC minutes at +5.8h (scheduled, near the end of the hold) and an ADA headline (ADA is being closed anyway). Binance delist feed down; no LTC/ETH issue seen.
 - Fills: BNB/ADA closed, LTC long filled as maker, ETH add filled at market; 0 blocked, 0 stop problems; maker share 79% over 52 fills.
 - P&L since v9 start: -$6.14 (-3.1% of budget).
+
+## 2026-10-07 18:12 UTC (run 2026-10-07 18:12, 18:00 bar)
+- Strategy: ETH short -$244 (z +2.33); LTC flat (was long $132). AMBER: FOMC minutes at 18:00, already released → approved unchanged.
+- Fills: LTC closed (taker), ETH short topped up 0.01 (maker). No BLOCKED, no STOP PROBLEM; ETH SL 2864.67.
+- P&L since v9 start $-6.71 (-3.4%). Maker share 78% over 54 fills.
