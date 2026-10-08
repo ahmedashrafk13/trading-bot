@@ -267,3 +267,9 @@
   Decision: approve all unchanged. News 0 RED / 2 AMBER (US gov seized-BTC transfers to Coinbase - routine, no override); binance_delist feed down.
   Fills: trims on BTC/ETH/LTC maker, DOT entry taker; BTC held at 0.001 ($82, min-qty step vs $152 target). 0 blocked, 0 stop problems; all 4 positions have SL.
   Maker share 79% over 63 fills. P&L since v9 start $-4.19 (-2.1%).
+
+## 2026-10-08 18:50 UTC (18:00 bar; run ~43 min late)
+- Strategy: short BTC/ETH/SOL/XRP (crowd long z 1.5-2.1), long DOT (z -1.52), close LTC.
+- Decided: approve all. AMBER = US gov moving seized BTC (sell pressure, aligns with short) -> no resize.
+- Fills: 4 groups, 3 maker (SOL entry went market); BTC stays 0.001 (lot size, $81 vs $124 target). 0 BLOCKED, 0 STOP PROBLEM.
+- P&L since v9 start $-4.64 (-2.3%).
