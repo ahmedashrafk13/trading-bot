@@ -262,3 +262,8 @@
 - P&L since v9 start $-8.07 (-4.0%). Maker share 79% over 57 fills.
 
 - 2026-10-08 06:13 UTC (run 2026-10-08 06:13): strategy short BTC $174 / ETH $139, long LTC $87 (z -2.14), close XRP short. Approved unchanged (2 AMBER = stale BTC headlines, no event inside hold); gate scaled new targets x0.96. Fills: XRP close + LTC open, 2/2 maker. No BLOCKED, no STOP PROBLEM. P&L since v9 start $-6.28 (-3.1%).
+
+- 2026-10-08 12:12 UTC (run 2026-10-08 12:12): strategy short BTC -$152 / ETH -$121, long LTC +$76, new long DOT +$50 (z -1.59).
+  Decision: approve all unchanged. News 0 RED / 2 AMBER (US gov seized-BTC transfers to Coinbase - routine, no override); binance_delist feed down.
+  Fills: trims on BTC/ETH/LTC maker, DOT entry taker; BTC held at 0.001 ($82, min-qty step vs $152 target). 0 blocked, 0 stop problems; all 4 positions have SL.
+  Maker share 79% over 63 fills. P&L since v9 start $-4.19 (-2.1%).
