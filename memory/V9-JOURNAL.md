@@ -255,3 +255,8 @@
 - Strategy: ETH short -$244 (z +2.33); LTC flat (was long $132). AMBER: FOMC minutes at 18:00, already released → approved unchanged.
 - Fills: LTC closed (taker), ETH short topped up 0.01 (maker). No BLOCKED, no STOP PROBLEM; ETH SL 2864.67.
 - P&L since v9 start $-6.71 (-3.4%). Maker share 78% over 54 fills.
+
+## 2026-10-08 00:31 UTC (run 2026-10-08 00:31, 00:00 bar; ~31 min late)
+- Strategy: shorts BTC -$174 (z +1.51), ETH -$139 (z +2.24, was -$232), XRP -$87 (z +2.32). AMBER: 3 generic BTC headlines (DOJ/Bitcoin.de/seized-coin move), no coin event risk → approved unchanged. binance_delist feed down; majors only.
+- Fills: ETH reduced 0.04, BTC + XRP shorts opened — all maker. No BLOCKED, no STOP PROBLEM; all 3 have SL.
+- P&L since v9 start $-8.07 (-4.0%). Maker share 79% over 57 fills.
