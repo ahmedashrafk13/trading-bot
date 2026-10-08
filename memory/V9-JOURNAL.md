@@ -260,3 +260,5 @@
 - Strategy: shorts BTC -$174 (z +1.51), ETH -$139 (z +2.24, was -$232), XRP -$87 (z +2.32). AMBER: 3 generic BTC headlines (DOJ/Bitcoin.de/seized-coin move), no coin event risk → approved unchanged. binance_delist feed down; majors only.
 - Fills: ETH reduced 0.04, BTC + XRP shorts opened — all maker. No BLOCKED, no STOP PROBLEM; all 3 have SL.
 - P&L since v9 start $-8.07 (-4.0%). Maker share 79% over 57 fills.
+
+- 2026-10-08 06:13 UTC (run 2026-10-08 06:13): strategy short BTC $174 / ETH $139, long LTC $87 (z -2.14), close XRP short. Approved unchanged (2 AMBER = stale BTC headlines, no event inside hold); gate scaled new targets x0.96. Fills: XRP close + LTC open, 2/2 maker. No BLOCKED, no STOP PROBLEM. P&L since v9 start $-6.28 (-3.1%).
