@@ -273,3 +273,7 @@
 - Decided: approve all. AMBER = US gov moving seized BTC (sell pressure, aligns with short) -> no resize.
 - Fills: 4 groups, 3 maker (SOL entry went market); BTC stays 0.001 (lot size, $81 vs $124 target). 0 BLOCKED, 0 STOP PROBLEM.
 - P&L since v9 start $-4.64 (-2.3%).
+
+- 2026-10-09 00:21 UTC: strategy short BTC/ETH/SOL/BNB/XRP (z 1.6-2.0, crowd long into a -2..-6% day), long DOT (z -1.75). News 0 RED / 3 AMBER (US gov moving seized BTC, aligned with the short); binance_delist feed down (majors only, low risk).
+  Decision: approved unchanged. Opened BNB short (maker), trimmed XRP/DOT. All fills maker this run, 81% maker over 72 fills; no BLOCKED, no STOP PROBLEM. ETH held at $49 vs $74 target (0.01 lot step).
+  P&L since v9 start $-3.97.
