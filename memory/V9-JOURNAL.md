@@ -283,3 +283,5 @@
 - 2026-10-09 12:12 UTC (12:00 bar) run 2026-10-09 12:12: strategy short SOL (z 1.68, $-163), long DOT (z -1.82, $+99), BTC/BNB/XRP to flat. Approved unchanged; RED = BTC network deposit/withdraw suspension on Oct 12 (wallet maintenance, outside hold, BTC target 0 anyway); AMBER = old US-gov BTC transfers. Closed BTC/BNB/XRP shorts, added SOL short + DOT long (entries maker). No BLOCKED, no STOP PROBLEM; maker share 78% over 82 fills. P&L since v9 start -$7.10.
 
 - 2026-10-09 18:12 UTC: strategy wanted SOL short -$163 (z +1.66), everything else flat. Approved (0 RED/AMBER news). Closed DOT long (maker); SOL short already ~-$154, within tolerance, no new opens. Maker 1/1, no BLOCKED, no STOP PROBLEM. P&L since v9 start -$2.79 (-1.4%).
+
+- 2026-10-10 08:42 UTC (06:00 bar, ~2.6h late; 00:00 bar run missed): strategy wanted SOL short -$163 (z +1.80), DOT short -$99 (z +1.77 after +9% day). Approved both (0 RED/AMBER). Opened DOT short 79 @1.2523 (maker); SOL short held. No BLOCKED, no STOP PROBLEM; maker share 79% over 84 fills. P&L since v9 start -$3.02.
