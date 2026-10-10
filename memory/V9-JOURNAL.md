@@ -285,3 +285,5 @@
 - 2026-10-09 18:12 UTC: strategy wanted SOL short -$163 (z +1.66), everything else flat. Approved (0 RED/AMBER news). Closed DOT long (maker); SOL short already ~-$154, within tolerance, no new opens. Maker 1/1, no BLOCKED, no STOP PROBLEM. P&L since v9 start -$2.79 (-1.4%).
 
 - 2026-10-10 08:42 UTC (06:00 bar, ~2.6h late; 00:00 bar run missed): strategy wanted SOL short -$163 (z +1.80), DOT short -$99 (z +1.77 after +9% day). Approved both (0 RED/AMBER). Opened DOT short 79 @1.2523 (maker); SOL short held. No BLOCKED, no STOP PROBLEM; maker share 79% over 84 fills. P&L since v9 start -$3.02.
+
+- 2026-10-10 14:36 UTC (12:00 bar, run ~2.5h late): strategy SOL short -$163 (z 1.83), DOT to flat (z 1.43). News 0 RED/0 AMBER (binance_delist feed down). Approved unchanged. Closed DOT short 79 @1.254 (maker); SOL held at -$155 (gap below min order). Maker share 79%. P&L since v9 start -$4.03.

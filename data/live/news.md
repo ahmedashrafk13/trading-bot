@@ -1,6 +1,7 @@
-# v9 news check - 2026-10-10 08:42 UTC
+# v9 news check - 2026-10-10 14:36 UTC
 
-Coins: SOLUSDT, DOTUSDT | hold window 8h | sources ok: 10/10
+Coins: SOLUSDT, DOTUSDT | hold window 8h | sources ok: 9/10
+SOURCES DOWN (check by WebSearch): binance_delist (URLError)
 
 Summary: 0 RED, 0 AMBER - nothing found that argues against the strategy's trades.
 
