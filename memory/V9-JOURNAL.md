@@ -296,3 +296,6 @@
 
 - 2026-10-11 12:12 UTC (run 2026-10-11 12:12): strategy wanted SOL -132, DOT -82 (new), AVAX +74, LTC +112. News 0 RED/0 AMBER (binance_delist source down, no other flags) -> approved all; gate scaled x0.96 (book $400 > $384 cap).
   Fills: LTC trim 0.1 maker, DOT short 63.3 taker (market fallback). No BLOCKED, no STOP PROBLEM; all 4 positions have SL. P&L since v9 start $-3.01.
+
+- 2026-10-11 19:12 UTC (run 2026-10-11 19:12, ~1h late vs 18:07 slot): strategy wanted SOL flat (close -123 short), AVAX +94, LTC +142, DOT -103. News 0 RED/0 AMBER (binance_delist source down) -> approved all unchanged.
+  Fills: SOL closed, DOT add + LTC add maker, AVAX add taker fallback. No BLOCKED, no STOP PROBLEM; all 3 positions have SL. P&L since v9 start $-2.06; maker share 77% over 94 fills.
