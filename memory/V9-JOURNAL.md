@@ -287,3 +287,9 @@
 - 2026-10-10 08:42 UTC (06:00 bar, ~2.6h late; 00:00 bar run missed): strategy wanted SOL short -$163 (z +1.80), DOT short -$99 (z +1.77 after +9% day). Approved both (0 RED/AMBER). Opened DOT short 79 @1.2523 (maker); SOL short held. No BLOCKED, no STOP PROBLEM; maker share 79% over 84 fills. P&L since v9 start -$3.02.
 
 - 2026-10-10 14:36 UTC (12:00 bar, run ~2.5h late): strategy SOL short -$163 (z 1.83), DOT to flat (z 1.43). News 0 RED/0 AMBER (binance_delist feed down). Approved unchanged. Closed DOT short 79 @1.254 (maker); SOL held at -$155 (gap below min order). Maker share 79%. P&L since v9 start -$4.03.
+
+## 2026-10-11 07:14 UTC (run 2026-10-11 07:14, 06:00 bar, ~67 min late)
+- Strategy: SOL short -131, AVAX long +75, LTC long +114, DOT short -80. News: 0 RED/AMBER (binance_delist feed down).
+- Decision: approve all unchanged — no event risk; scorecard value-add of overrides ~$0.
+- Fills: SOL reduced, AVAX maker, LTC taker fallback. DOT short BLOCKED by margin_cap ($112.67 > $100). Stops on all 3 positions, no STOP PROBLEM.
+- P&L since v9 start -$2.92; maker share 78% over 88 fills.
