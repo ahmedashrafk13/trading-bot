@@ -167,3 +167,29 @@ the 09-27 06:00 close)
   the 00:07 UTC run fails and why runs start late: PC sleep, the app being
   closed, or task queueing. Missed bars are now the largest measurable cost
   (~-$3 vs paper).
+
+## 2026-10-11 — week 3 (v9 live since 2026-09-24 15:54 UTC, ~16.7 days)
+
+**Measure**
+- P&L since v9 start: **-$3.14 (-1.6% of budget)**; this week **+$4.12** (from -$7.26 at the 10-04 review). From peak: -$3.53.
+- Open: AVAX long $72, LTC long $108, SOL short $120, all with stops.
+- Scorecard: 54 runs / 648 decisions. Strategy alone +$8.80 gross, with Claude +$8.66, **value-add -$0.14**.
+  - All 30 "changed" decisions are `approve*0.96` = execute's margin scaling of the book (2.0x gross at 4x = 50% margin, scaled to 96%), not Claude's judgement. 16/30 helped. Real discretionary overrides: 0. NEWS: overrides: 0.
+- Maker-fill share **78% over 88 groups** (assumed 70%).
+- Paper (frozen, vol 0.80, 2.0x): 30d **+0.5%** (DD -12.5%), 60d **+3.2%** (DD -14.2%), 90d **-5.9%** (DD -18.6%). All improved vs 10-04 (-4.0 / -9.3 / -15.5).
+- Live vs paper: scorecard strategy-alone is +$8.80 gross over scored runs vs live -$3.14 net; the gap is fees + bars with no/late run (24 runs this week vs 28 bars; several 2-5h late), not overrides.
+
+**Judge**
+- 90d paper -5.9% > -25% → inside tested range. **No EDGE ALERT.**
+- Maker share 78% ≥ 40% → fee assumption holds.
+- Claude value-add: -$0.14 over 54 runs, below the 60-run minimum and caused by margin scaling only → no lesson yet.
+- NEWS-driven line: 0 overrides, $0.
+- Config: the 10-04 CONFIG NOTE is resolved — code now matches CLAUDE.md (vol 0.80, gross 2.0x, 4x, 12% stop, MARGIN_CAP 0.50) and is committed. P3 closed.
+- Ops: missed/late runs continue (e.g. 10-10 00:00 missed, 06:00/12:00 runs ~2.5h late). Still the largest measurable cost.
+
+**Proposals (owner decides; none enacted)**
+- Strategy: **no change proposed** (16.7 live days; paper inside range and recovering).
+- P1 (open): scorecard/status should report missed and late bars.
+- P2 (open): `revalidate --since-start` for a reproducible live-vs-paper figure.
+- P4 (new, tooling): scorecard should not count the gate's uniform `*0.96` scaling as a Claude override (it inflates "changed decisions" with non-judgement noise). Test: on the current log, changed decisions → 0, value-add → $0.00.
+- Ops (owner): fix the scheduler (late/missed 00:07 and 06:07 UTC runs).

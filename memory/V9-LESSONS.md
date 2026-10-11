@@ -32,3 +32,11 @@ file, and only from scorecard numbers, never from a single trade.
   The 09-27 figures at vol 0.55 were 90d -18.9% / 60d -13.1% / 30d +0.4%.
   Still inside the tested range (alert below -25% on 90d). The 30d figure turned
   negative. Watch it, don't panic.
+- 2026-10-11 (week 3, 54 scored runs / 648 decisions): 0 discretionary overrides,
+  0 NEWS: overrides. Scorecard value-add -$0.14 comes only from the gate's
+  uniform x0.96 margin scaling (16/30 helped) - not a judgement signal. Keep
+  approving unless there is real event risk; still below the 60-run minimum.
+- 2026-10-11: maker share 78% over 88 groups; paper 90d -5.9% / 60d +3.2% /
+  30d +0.5% (vol 0.80), all better than 10-04. Live -$3.14 since start. Missed
+  and late runs remain the main cost: on a late run trade straight to the
+  current plan, no catch-up trades.
