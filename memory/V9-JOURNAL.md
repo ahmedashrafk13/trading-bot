@@ -293,3 +293,6 @@
 - Decision: approve all unchanged — no event risk; scorecard value-add of overrides ~$0.
 - Fills: SOL reduced, AVAX maker, LTC taker fallback. DOT short BLOCKED by margin_cap ($112.67 > $100). Stops on all 3 positions, no STOP PROBLEM.
 - P&L since v9 start -$2.92; maker share 78% over 88 fills.
+
+- 2026-10-11 12:12 UTC (run 2026-10-11 12:12): strategy wanted SOL -132, DOT -82 (new), AVAX +74, LTC +112. News 0 RED/0 AMBER (binance_delist source down, no other flags) -> approved all; gate scaled x0.96 (book $400 > $384 cap).
+  Fills: LTC trim 0.1 maker, DOT short 63.3 taker (market fallback). No BLOCKED, no STOP PROBLEM; all 4 positions have SL. P&L since v9 start $-3.01.
