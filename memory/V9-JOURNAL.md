@@ -308,3 +308,9 @@
 - Decision: approve all unchanged. news_check 0 RED / 0 AMBER (binance_delist feed down; LTC/DOT are majors, no delisting risk). Not overriding per lessons.
 - Fills: LTC buy 2.2 @ 64.72 maker (1/1). No BLOCKED, no STOP PROBLEM; both positions carry stops.
 - P&L since v9 start: $-2.55 (-1.3% of budget).
+
+## 2026-10-12 18:12 UTC (run 2026-10-12 18:12)
+- Strategy: DOT short -$103 (z +1.86); LTC long closed (z -0.54); all else flat. News 0 RED/0 AMBER.
+- Decided: approve all - no event risk.
+- Fills: LTC 2.2 closed by market (taker); DOT held at -$99 (gap below min order). Stop on DOT OK, no BLOCKED.
+- P&L since v9 start $-3.05.
