@@ -301,3 +301,4 @@
   Fills: SOL closed, DOT add + LTC add maker, AVAX add taker fallback. No BLOCKED, no STOP PROBLEM; all 3 positions have SL. P&L since v9 start $-2.06; maker share 77% over 94 fills.
 
 - 2026-10-12 00:12 UTC: strategy wanted SOL short -$168 (z +1.57), keep AVAX long +$94 (z -1.94), DOT short -$103 (z +2.08), close LTC long. News 0 RED/0 AMBER (binance_delist feed down; no delisting indications). Approved all unchanged. Fills: LTC close + SOL short, 2/2 maker; AVAX/DOT already at target. No BLOCKED, no STOP PROBLEM. P&L since v9 start -$0.12.
+- 2026-10-12 06:13 UTC (run 2026-10-12 06:13): strategy flat SOL/AVAX, hold DOT short -$103 (z 1.7). Approved; news 0 RED/AMBER. Closed AVAX (maker) + SOL (taker); DOT kept, SL 1.4112. 0 blocked, 0 stop problems. Maker share 77%. P&L since v9 start -$2.42.
