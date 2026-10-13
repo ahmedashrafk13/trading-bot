@@ -1,1 +1,1 @@
-{"run_id": "2026-10-12 18:12", "decisions": [{"symbol": "DOTUSDT", "action": "approve", "reason": "crowd long-heavy z 1.86, 0 RED/AMBER"}]}
+{"run_id": "2026-10-13 05:14", "decisions": [{"symbol":"SOLUSDT","action":"approve","reason":"crowd long-heavy, no event risk"},{"symbol":"DOTUSDT","action":"approve","reason":"crowd long-heavy, no event risk"}]}

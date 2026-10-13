@@ -314,3 +314,5 @@
 - Decided: approve all - no event risk.
 - Fills: LTC 2.2 closed by market (taker); DOT held at -$99 (gap below min order). Stop on DOT OK, no BLOCKED.
 - P&L since v9 start $-3.05.
+
+- 2026-10-13 05:14 UTC (00:00 bar, run ~5h late): strategy wanted SOL short -$164 (z 1.52) and hold DOT short -$103 (z 2.07). News 0 RED/0 AMBER (CPI Wed, outside hold) -> approved both. SOL filled 1.5 @108.35 via market fallback (taker); DOT unchanged. Stops on both. Maker share 75%/101. P&L since v9 start -$3.08.

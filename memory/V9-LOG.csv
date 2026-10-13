@@ -731,3 +731,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-12 18:12,LTCUSDT,0.00,0.00,approve,,2.2,62.34,0.0,0.07543
 2026-10-12 18:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-12 18:12,DOTUSDT,-103.43,-103.43,approve,crowd long-heavy z 1.86; 0 RED/AMBER,0,0,,0.00000
+2026-10-13 05:14,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-13 05:14,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-13 05:14,SOLUSDT,-164.39,-164.39,approve,crowd long-heavy; no event risk,1.5,108.35,0.0,0.08939
+2026-10-13 05:14,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-13 05:14,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-13 05:14,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-13 05:14,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-13 05:14,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-13 05:14,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-13 05:14,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-13 05:14,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-13 05:14,DOTUSDT,-103.43,-103.43,approve,crowd long-heavy; no event risk,0,0,,0.00000
