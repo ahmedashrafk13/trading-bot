@@ -316,3 +316,9 @@
 - P&L since v9 start $-3.05.
 
 - 2026-10-13 05:14 UTC (00:00 bar, run ~5h late): strategy wanted SOL short -$164 (z 1.52) and hold DOT short -$103 (z 2.07). News 0 RED/0 AMBER (CPI Wed, outside hold) -> approved both. SOL filled 1.5 @108.35 via market fallback (taker); DOT unchanged. Stops on both. Maker share 75%/101. P&L since v9 start -$3.08.
+
+## 2026-10-13 06:13 UTC run
+- Strategy: short SOL -159, XRP -138, DOT -103 (crowd z 1.78/1.70/1.75); rest flat.
+- Decided: approve all (news 0 RED/0 AMBER; CPI is Wed 12:30, outside hold). Gate scaled new targets x0.96.
+- Fills: SOL trimmed 0.1 (maker), XRP short 96.6 opened (maker); 2/2 maker, overall 76%. No BLOCKED, no STOP PROBLEM.
+- P&L since v9 start $-3.52 (-1.8% of budget).
