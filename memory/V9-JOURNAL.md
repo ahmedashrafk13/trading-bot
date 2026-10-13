@@ -322,3 +322,5 @@
 - Decided: approve all (news 0 RED/0 AMBER; CPI is Wed 12:30, outside hold). Gate scaled new targets x0.96.
 - Fills: SOL trimmed 0.1 (maker), XRP short 96.6 opened (maker); 2/2 maker, overall 76%. No BLOCKED, no STOP PROBLEM.
 - P&L since v9 start $-3.52 (-1.8% of budget).
+
+- 2026-10-13 12:12 UTC run: strategy wanted SOL short $160, DOT short $99, AVAX long $89, XRP closed. News 0 RED/0 AMBER (binance_delist feed down; majors, CPI is +24h outside hold) -> approved all unchanged. Fills: XRP close taker, SOL add + AVAX open maker (2/3 groups maker; cumulative 75%). No BLOCKED, no STOP PROBLEM. P&L since v9 start $+4.85.
