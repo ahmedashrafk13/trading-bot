@@ -344,3 +344,5 @@
   Decision: approve all unchanged. AMBER = scheduled US PPI/Retail Sales 12:30 UTC inside hold; per lessons scheduled prints alone are not a skip reason. binance_delist feed down; no delisting news for these majors.
   Execute: ETH short closed, adds filled (SOL/XRP maker, AVAX taker), 0 BLOCKED, 0 STOP PROBLEM; all 5 positions carry SL. BTC stays 0.001 (lot step). Maker share 77% cumulative.
   P&L since v9 start $+2.98.
+
+- 2026-10-15 12:18 UTC (12:00 bar): strategy short BTC/SOL/BNB, long AVAX, flatten XRP. Approved all (4 AMBER = scheduled PPI/retail sales prints at 12:30, normal vol; binance_delist feed down, no coin RED). Filled: XRP closed, SOL/BNB shorts and AVAX long added; BTC stays 0.001 (qty-step rounding). No BLOCKED, no STOP PROBLEM. Maker share 77%/127. P&L since v9 start +$3.96.
