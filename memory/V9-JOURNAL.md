@@ -346,3 +346,5 @@
   P&L since v9 start $+2.98.
 
 - 2026-10-15 12:18 UTC (12:00 bar): strategy short BTC/SOL/BNB, long AVAX, flatten XRP. Approved all (4 AMBER = scheduled PPI/retail sales prints at 12:30, normal vol; binance_delist feed down, no coin RED). Filled: XRP closed, SOL/BNB shorts and AVAX long added; BTC stays 0.001 (qty-step rounding). No BLOCKED, no STOP PROBLEM. Maker share 77%/127. P&L since v9 start +$3.96.
+
+- 2026-10-15 18:12 UTC (18:00 bar): strategy wanted short SOL/BNB/XRP, long ADA/AVAX, close BTC short. News: 0 RED/0 AMBER (Warsh speech +9.3h, outside hold) -> approved all unchanged. Fills: BTC close, XRP short, ADA long, all 3 maker; 0 blocked, 0 stop problems. P&L since v9 start $+0.02.
