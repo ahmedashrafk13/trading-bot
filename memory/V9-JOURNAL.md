@@ -339,3 +339,8 @@
 
 - 2026-10-15 00:26 UTC run (00:00 bar): strategy short BTC/ETH/SOL/BNB/XRP, long AVAX (gate x0.96). Approved all: 0 RED/AMBER (9/10 news sources DOWN from DNS; PPI/retail sales 12:30 is outside the hold).
   Intermittent DNS failures: plan needed 2 tries, execute needed 3 (first passes reduced BNB/XRP/AVAX, third opened BTC short, trimmed ETH; all maker). Every position has a stopLoss, 0 BLOCKED. Maker share 77% over 118 fills. P&L since v9 start -$0.07.
+
+- 2026-10-15 10:12 UTC (06:00 bar, run ~4h late): strategy short BTC/SOL/BNB/XRP (crowd long-heavy, z 1.56-2.65), long AVAX (z -2.26), ETH to flat (z 1.38).
+  Decision: approve all unchanged. AMBER = scheduled US PPI/Retail Sales 12:30 UTC inside hold; per lessons scheduled prints alone are not a skip reason. binance_delist feed down; no delisting news for these majors.
+  Execute: ETH short closed, adds filled (SOL/XRP maker, AVAX taker), 0 BLOCKED, 0 STOP PROBLEM; all 5 positions carry SL. BTC stays 0.001 (lot step). Maker share 77% cumulative.
+  P&L since v9 start $+2.98.
