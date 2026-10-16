@@ -352,3 +352,6 @@
 - 2026-10-16 00:26 UTC run 2026-10-16 00:26: strategy wanted BNB short $224, ADA long $98, AVAX long $78; close SOL/XRP shorts. Approved all (only AMBER = scheduled Warsh speech; binance_delist feed down, majors only). SOL/XRP closed, BNB filled to $212 (maker); ADA/AVAX top-ups BLOCKED by margin_cap ($109.8/$107.8 > $100) - held at $57/$45. All stops in place, 0 STOP PROBLEM. Maker share 78%. P&L since v9 start $+0.73.
 
 - 2026-10-16 06:10 UTC run: strategy SHORT BNB $100 (cut from $212), SHORT TRX $221 (new, z 1.55), LONG ADA $44 / AVAX $35 (trimmed). News 0 RED/0 AMBER (TRX ATM offering = INFO). Approved all unchanged. Fills: TRX entry + BNB/ADA trims maker, AVAX trim market; 0 blocked, 0 stop problems; all 4 positions have SL. P&L since v9 start $+0.75.
+
+- 2026-10-16 12:12 UTC: strategy wanted AVAX long $54, TRX short $346, flat BNB/ADA. News 0 RED/AMBER (binance_delist feed down; majors only). Approved unchanged.
+  Fills 3/3 maker (ADA, BNB closed; AVAX topped up). TRX top-up BLOCKED by margin_cap ($100.29 > $100) - existing TRX short held. No STOP PROBLEM. P&L since v9 start +$0.25.
