@@ -74,9 +74,9 @@ LOG = os.path.join(ROOT, "memory", "V9-LOG.csv")
 SYMS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT", "DOGEUSDT",
         "ADAUSDT", "AVAXUSDT", "LINKUSDT", "LTCUSDT", "TRXUSDT", "DOTUSDT"]
 VOL_TARGET = 0.80        # owner 2026-10-02 "bigger, more risk"; was 0.55. lockbox look #15 (_size_menu.py)
-GROSS_CAP = 2.0          # x budget; 2.0x at 4x leverage = 50% margin (execute scales the book to 96% of that)
-LEVERAGE = 4
-STOP_PCT = 0.12          # attached stop; must stay inside half the 25% liquidation distance at 4x (12.5%)
+GROSS_CAP = 2.4          # x budget; 2.4x at 5x leverage = 48% margin (execute scales the book to 96% of that); owner 2026-10-16
+LEVERAGE = 5
+STOP_PCT = 0.095         # attached stop; must stay inside half the 20% liquidation distance at 5x (10%)
 # Was 5x / 8% stop / 2.4x cap until 2026-09-30. backtest/lab/strategies/_stop_study.py: the
 # 8% stop cut winners with no drawdown benefit (lockbox #14: 8% +39%/yr, 12% +49%/yr, same
 # DD); dev with this 2.0x cap: 12% stop 111%/yr Sharpe 1.66 vs old setup 105% / 1.55.
