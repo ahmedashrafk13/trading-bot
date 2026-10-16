@@ -355,3 +355,9 @@
 
 - 2026-10-16 12:12 UTC: strategy wanted AVAX long $54, TRX short $346, flat BNB/ADA. News 0 RED/AMBER (binance_delist feed down; majors only). Approved unchanged.
   Fills 3/3 maker (ADA, BNB closed; AVAX topped up). TRX top-up BLOCKED by margin_cap ($100.29 > $100) - existing TRX short held. No STOP PROBLEM. P&L since v9 start +$0.25.
+
+## 2026-10-16 18:14 UTC (run 2026-10-16 18:14)
+- Strategy: short BTC/SOL/BNB/XRP/TRX (z 1.55-2.24), long AVAX (z -1.51); trim TRX/AVAX.
+- Decision: approve all unchanged - news_check 0 RED / 0 AMBER, INFO only.
+- Fills: BTC/SOL/BNB entries all maker; XRP short BLOCKED by margin_cap ($102.94 > $100). No STOP PROBLEM; all 5 positions carry SL.
+- P&L since v9 start $+0.08; maker share 79% over 145 fills.
