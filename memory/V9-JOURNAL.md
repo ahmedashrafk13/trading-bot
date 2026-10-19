@@ -364,3 +364,9 @@
 
 - 2026-10-17 00:20 UTC run (bar 00:00): strategy short BTC/SOL/BNB/XRP/TRX (z +1.56..+2.83), AVAX flat. News 0 RED/0 AMBER (binance_delist feed down; majors, not checked further). Approved all unchanged.
   Filled: XRP short opened, BNB/SOL adds (2/3 maker), AVAX long closed; TRX add BLOCKED by margin_cap (50%), existing TRX short kept; BTC unchanged (min qty). No STOP PROBLEM, all stops attached. Maker share 79%/149. P&L since v9 start -$1.07.
+
+## 2026-10-19 10:50 UTC (06:00 bar, LATE run ~4.7h)
+- Strategy: short BNB $117, XRP $72, TRX $251; long AVAX $40; flatten BTC/SOL shorts.
+- Decided: approve all (news 0 RED / 0 AMBER; late run → traded straight to current plan, no catch-up).
+- Fills: BNB/AVAX entries maker, XRP/TRX adds + SOL close market; 0 BLOCKED, 0 STOP PROBLEM; maker share 78% cumulative.
+- P&L since v9 start $-0.35.
