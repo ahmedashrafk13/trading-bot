@@ -40,3 +40,13 @@ file, and only from scorecard numbers, never from a single trade.
   30d +0.5% (vol 0.80), all better than 10-04. Live -$3.14 since start. Missed
   and late runs remain the main cost: on a late run trade straight to the
   current plan, no catch-up trades.
+- 2026-10-19 (week 4, 77 scored runs / 948 decisions): past the 60-run mark.
+  Value-add -$1.07 (38/87 helped), but all 87 "changes" are the gate's x0.96
+  margin scaling - 0 discretionary overrides, 0 NEWS:. No evidence of skill
+  either way; the default stays: approve unless there is real event risk.
+- 2026-10-19: no run since 10-17 00:20 UTC (~9 bars missed, positions held
+  stale ~2.4 days with stops on). Missed runs remain the largest cost. On the
+  next run trade straight to the current plan; no catch-up trades. With 5x /
+  2.4x since 10-16, margin_cap blocks top-ups often - that is expected, not a fault.
+- 2026-10-19: paper (vol 0.80, 2.4x): 30d +3.9% / 60d -3.8% / 90d -10.4%
+  (DD -20.8%). Inside the tested range. Maker share 79% over 149 groups.

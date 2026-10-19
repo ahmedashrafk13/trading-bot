@@ -193,3 +193,29 @@ the 09-27 06:00 close)
 - P2 (open): `revalidate --since-start` for a reproducible live-vs-paper figure.
 - P4 (new, tooling): scorecard should not count the gate's uniform `*0.96` scaling as a Claude override (it inflates "changed decisions" with non-judgement noise). Test: on the current log, changed decisions → 0, value-add → $0.00.
 - Ops (owner): fix the scheduler (late/missed 00:07 and 06:07 UTC runs).
+
+## 2026-10-19 — week 4 (v9 live since 2026-09-24 15:54 UTC, ~24.8 days; review ran Mon, a day late)
+
+**Measure**
+- P&L since v9 start: **-$0.09 (-0.0% of budget)**; this week **+$3.05** (from -$3.14 at 10-11). From peak: -$4.08.
+- Open: shorts TRX $180, BNB $87, BTC $82, XRP $53, SOL $52, all with SL (uPnL ~+$0.04).
+- Scorecard: 77 runs / 948 decisions. Strategy alone +$22.47 gross, with Claude +$21.40, **value-add -$1.07** (87 changed, 38 helped) - all `approve*0.96` margin scaling, 0 discretionary, 0 NEWS:.
+- Maker-fill share **79% over 149 groups** (assumed 70%).
+- Paper (frozen, vol 0.80, 2.4x): 30d **+3.9%** (DD -8.4%), 60d **-3.8%** (DD -14.3%), 90d **-10.4%** (DD -20.8%).
+- Live vs paper: scored strategy-alone +$22.47 gross vs live -$0.09 net. Gap ~$22 = fees/funding + missed/late bars, not overrides (none).
+
+**Judge**
+- 90d paper -10.4% > -25% → inside tested range. **No EDGE ALERT.**
+- Maker share 79% ≥ 40% → fee assumption holds.
+- Claude value-add negative over 77 runs, but entirely margin-scaling noise (see P4) → no "override less" lesson; there are no overrides.
+- NEWS-driven line: 0 overrides, $0.
+- **OPS ALERT:** last run 2026-10-17 00:20 UTC; no runs for ~2.4 days (~9 bars). Positions held stale with stops. Scheduler/PC problem is worse than before.
+- Config 10-16 (5x / 9.5% / 2.4x) is committed and matches CLAUDE.md; margin_cap blocked top-ups 4 times this week (expected at 2.4x/5x vs 50% cap).
+
+**Proposals (owner decides; none enacted)**
+- Strategy: **no change proposed.**
+- Ops (owner, URGENT): restore the 6h runs - check whether the PC/app was off or asleep since 10-17.
+- P1 (open): scorecard/status report missed and late bars.
+- P2 (open): `revalidate --since-start` for a reproducible live-vs-paper figure.
+- P4 (open): scorecard must not count the gate's uniform x0.96 scaling as a Claude override.
+- P5 (new, lab): explain the ~$22 live-vs-scored gap - split into fees, funding, and missed bars. Test: reconstruct from `fills` + funding history for 09-24..10-19.
