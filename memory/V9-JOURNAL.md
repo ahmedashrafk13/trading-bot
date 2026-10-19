@@ -370,3 +370,7 @@
 - Decided: approve all (news 0 RED / 0 AMBER; late run → traded straight to current plan, no catch-up).
 - Fills: BNB/AVAX entries maker, XRP/TRX adds + SOL close market; 0 BLOCKED, 0 STOP PROBLEM; maker share 78% cumulative.
 - P&L since v9 start $-0.35.
+
+- 2026-10-19 15:42 UTC (late run, 12:00 bar): strategy wanted BNB short $224, AVAX long $81, flat XRP/TRX. News 0 RED/0 AMBER (INFO only on XRP).
+  Approved unchanged - no event risk. Fills: closed XRP (maker) + TRX (market), added BNB short + AVAX long (maker); 3/4 maker. No BLOCKED, no STOP PROBLEM.
+  P&L since v9 start $-1.18.
