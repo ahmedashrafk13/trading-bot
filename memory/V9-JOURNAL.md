@@ -392,3 +392,9 @@
 - Decided: approve all (AMBER immaterial; default per lessons).
 - Fills: BNB Buy 0.05 @ 732.43 (reduce), AVAX Sell 1.5 @ 9.561 (reduce), BTC Sell 0.002 @ 82514.2 (open; $165 vs $215 target - 0.001 BTC lot rounding) - 3/3 maker. No BLOCKED, no STOP PROBLEM; SL BTC 90349.1, BNB 797.98, AVAX 8.646.
 - P&L since v9 start $-4.31 (-2.2% of budget); from peak ~-$8.3.
+
+## 2026-10-20 18:13 UTC (18:00 bar, on time)
+- Strategy: BTC to flat (z 0.80), short BNB -$256 (z +1.78), long AVAX +$101 (z -1.88), short DOT -$97 (z +1.54, new). News 0 RED / 0 AMBER, sources 10/10.
+- Decided: approve all (no event risk; default per lessons).
+- Fills: BTC Buy 0.002 @ 82656.3 close (maker), AVAX Buy 2.9 @ 9.661 (maker), BNB Sell 0.08 @ 738.12 (taker) - 2/3 maker. DOT short BLOCKED by margin_cap ($101.78 > $100). No STOP PROBLEM; SL BNB 808.31, AVAX 8.739.
+- P&L since v9 start $-5.52 (-2.8% of budget).

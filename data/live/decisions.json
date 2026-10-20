@@ -1,10 +1,8 @@
 {
-  "run_id": "2026-10-20 15:51",
+  "run_id": "2026-10-20 18:13",
   "decisions": [
-    {"symbol": "BTCUSDT", "action": "approve", "reason": "crowd long-heavy z+1.55; only AMBER is a 23h-old $33M dormant-wallet story, immaterial to BTC"},
-    {"symbol": "BNBUSDT", "action": "approve", "reason": "crowd long-heavy z+2.10, no event risk"},
-    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z-1.96, no event risk"}
-  ],
-  "claude_trades": [],
-  "keep": []
+    {"symbol": "BNBUSDT", "action": "approve", "reason": "z +1.78 crowd long-heavy, no event risk (0 RED/AMBER)"},
+    {"symbol": "AVAXUSDT", "action": "approve", "reason": "z -1.88 crowd short-heavy, no event risk"},
+    {"symbol": "DOTUSDT", "action": "approve", "reason": "z +1.54 crowd long-heavy, no event risk"}
+  ]
 }
