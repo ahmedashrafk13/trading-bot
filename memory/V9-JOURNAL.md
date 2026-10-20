@@ -380,3 +380,9 @@
 - Decided: approve all (no event risk; default per lessons).
 - Fills: LTC Buy 1.9 @ 59.82 maker (1/1 maker); BNB/AVAX already at target. No BLOCKED, no STOP PROBLEM; all 3 positions have stops.
 - P&L since v9 start $-1.74 (-0.9% of budget).
+
+## 2026-10-20 06:18 UTC
+- Strategy: short BNB -$233 (z +2.08), long AVAX +$86 (z -1.90), LTC to flat (z -1.17). News 0 RED / 0 AMBER, sources 10/10. No journal entry for the 10-20 00:00 bar (run apparently missed); traded straight to current plan.
+- Decided: approve all (no event risk; default per lessons).
+- Fills: LTC Sell 1.9 @ 59.35 close, BNB Sell 0.01 @ 728.55, AVAX Buy 0.6 @ 9.542 - 3/3 maker. No BLOCKED, no STOP PROBLEM; BNB SL 797.98, AVAX SL 8.646.
+- P&L since v9 start $-3.25 (-1.6% of budget); from peak ~-$7.3.

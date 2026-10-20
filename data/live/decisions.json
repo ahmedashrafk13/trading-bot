@@ -1,1 +1,17 @@
-{"run_id": "2026-10-19 18:12", "decisions": []}
+{
+  "run_id": "2026-10-20 06:18",
+  "decisions": [
+    {
+      "symbol": "BNBUSDT",
+      "action": "approve",
+      "reason": "crowd long-heavy z+2.08, 0 RED/AMBER, sources 10/10"
+    },
+    {
+      "symbol": "AVAXUSDT",
+      "action": "approve",
+      "reason": "crowd short-heavy z-1.90, no event risk found"
+    }
+  ],
+  "claude_trades": [],
+  "keep": []
+}

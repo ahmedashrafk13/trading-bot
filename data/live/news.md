@@ -1,4 +1,4 @@
-# v9 news check - 2026-10-19 18:12 UTC
+# v9 news check - 2026-10-20 06:18 UTC
 
 Coins: BNBUSDT, AVAXUSDT, LTCUSDT | hold window 8h | sources ok: 10/10
 
