@@ -386,3 +386,9 @@
 - Decided: approve all (no event risk; default per lessons).
 - Fills: LTC Sell 1.9 @ 59.35 close, BNB Sell 0.01 @ 728.55, AVAX Buy 0.6 @ 9.542 - 3/3 maker. No BLOCKED, no STOP PROBLEM; BNB SL 797.98, AVAX SL 8.646.
 - P&L since v9 start $-3.25 (-1.6% of budget); from peak ~-$7.3.
+
+## 2026-10-20 15:51 UTC (late run, 12:00 bar)
+- Strategy: short BTC -$215 (z +1.55, new), short BNB -$194 (z +2.10), long AVAX +$72 (z -1.96). News 0 RED / 1 AMBER (BTC: 23h-old $33M dormant-wallet story), sources 10/10. Run ~3h50m late; first plan attempt failed (fapi.binance.com connection resets ~15:44-15:50 UTC), retry succeeded.
+- Decided: approve all (AMBER immaterial; default per lessons).
+- Fills: BNB Buy 0.05 @ 732.43 (reduce), AVAX Sell 1.5 @ 9.561 (reduce), BTC Sell 0.002 @ 82514.2 (open; $165 vs $215 target - 0.001 BTC lot rounding) - 3/3 maker. No BLOCKED, no STOP PROBLEM; SL BTC 90349.1, BNB 797.98, AVAX 8.646.
+- P&L since v9 start $-4.31 (-2.2% of budget); from peak ~-$8.3.

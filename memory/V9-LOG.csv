@@ -995,3 +995,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-20 06:18,LTCUSDT,0.00,0.00,approve,,1.9,59.35,1.0,0.02255
 2026-10-20 06:18,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-20 06:18,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-20 15:51,BTCUSDT,-214.54,-214.54,approve,crowd long-heavy z+1.55; only AMBER is a 23h-old $33M dormant-wallet story; immaterial to BTC,0.002,82514.2,1.0,0.03301
+2026-10-20 15:51,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-20 15:51,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-20 15:51,BNBUSDT,-193.55,-193.55,approve,crowd long-heavy z+2.10; no event risk,0.05,732.43,1.0,0.00732
+2026-10-20 15:51,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-20 15:51,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-20 15:51,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-20 15:51,AVAXUSDT,71.91,71.91,approve,crowd short-heavy z-1.96; no event risk,1.5,9.561,1.0,0.00287
+2026-10-20 15:51,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-20 15:51,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-20 15:51,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-20 15:51,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
