@@ -410,3 +410,9 @@
 - Decided: approve both (no event risk; default per lessons).
 - Fills: LTC Buy 2.1 @ 61.06 (maker), $128 after qty rounding - 1/1 maker, 78% overall. AVAX held. No BLOCKED, no STOP PROBLEM; SL LTC 55.26, AVAX 8.739.
 - P&L since v9 start $-7.45 (-3.7% of budget).
+
+## 2026-10-21 15:10 UTC (12:00 bar, ~3h late - 12:07 run missed)
+- Strategy: hold AVAX long +$101 (z -1.71), hold LTC long +$132 (z -2.01); rest flat. News 0 RED / 0 AMBER, sources 10/10.
+- Decided: approve both (no event risk; late run traded straight to plan, no catch-up).
+- Fills: none needed - both already within rounding of target (0 orders). No BLOCKED, no STOP PROBLEM; SL LTC 55.26, AVAX 8.739. Maker 78% overall (171 groups).
+- P&L since v9 start $-2.57 (-1.3% of budget); uPnL LTC +$2.00, AVAX +$2.71.

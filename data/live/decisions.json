@@ -1,4 +1,9 @@
-{"run_id": "2026-10-21 06:12", "decisions": [
-  {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z-1.89, 0 RED/AMBER, no Binance delisting found by WebSearch"},
-  {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z-2.22, 0 RED/AMBER, no Binance delisting found by WebSearch"}
-], "claude_trades": [], "keep": []}
+{
+  "run_id": "2026-10-21 15:10",
+  "decisions": [
+    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z=-1.71, 0 RED/AMBER; late run (3h after bar) - trade straight to plan per lessons"},
+    {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z=-2.01, 0 RED/AMBER; late run - trade straight to plan"}
+  ],
+  "claude_trades": [],
+  "keep": []
+}
