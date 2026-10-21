@@ -1,1 +1,4 @@
-{"run_id": "2026-10-21 00:24", "decisions": [{"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z -1.94, 0 RED/AMBER; binance_delist feed down, WebSearch shows only old AVAX pair removals, no perp delisting"}]}
+{"run_id": "2026-10-21 06:12", "decisions": [
+  {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z-1.89, 0 RED/AMBER, no Binance delisting found by WebSearch"},
+  {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z-2.22, 0 RED/AMBER, no Binance delisting found by WebSearch"}
+], "claude_trades": [], "keep": []}

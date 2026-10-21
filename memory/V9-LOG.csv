@@ -1031,3 +1031,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-21 00:24,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-21 00:24,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-21 00:24,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 06:12,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 06:12,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 06:12,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 06:12,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 06:12,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 06:12,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 06:12,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 06:12,AVAXUSDT,101.10,101.10,approve,crowd short-heavy z-1.89; 0 RED/AMBER; no Binance delisting found by WebSearch,0,0,,0.00000
+2026-10-21 06:12,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 06:12,LTCUSDT,132.46,132.46,approve,crowd short-heavy z-2.22; 0 RED/AMBER; no Binance delisting found by WebSearch,2.1,61.06,1.0,0.02565
+2026-10-21 06:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 06:12,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000

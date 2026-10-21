@@ -404,3 +404,9 @@
 - Decided: approve (no event risk; default per lessons).
 - Fills: BNB Buy 0.34 @ 742.11 close (taker) - 0/1 maker this run, 78% overall. AVAX held unchanged. No BLOCKED, no STOP PROBLEM; SL AVAX 8.739.
 - P&L since v9 start $-5.83 (-2.9% of budget).
+
+## 2026-10-21 06:12 UTC (06:00 bar, ~12 min late)
+- Strategy: open LTC long +$132 (z -2.22), hold AVAX long +$101 (z -1.89); rest flat. News 0 RED / 0 AMBER, sources 9/10 (binance_delist down; WebSearch found no AVAX/LTC delisting).
+- Decided: approve both (no event risk; default per lessons).
+- Fills: LTC Buy 2.1 @ 61.06 (maker), $128 after qty rounding - 1/1 maker, 78% overall. AVAX held. No BLOCKED, no STOP PROBLEM; SL LTC 55.26, AVAX 8.739.
+- P&L since v9 start $-7.45 (-3.7% of budget).
