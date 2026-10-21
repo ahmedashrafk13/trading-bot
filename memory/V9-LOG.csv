@@ -1019,3 +1019,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-20 18:13,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-20 18:13,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-20 18:13,DOTUSDT,-97.48,-97.48,approve,z +1.54 crowd long-heavy; no event risk,0,0,,0.00000
+2026-10-21 00:24,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 00:24,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 00:24,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 00:24,BNBUSDT,0.00,0.00,approve,,0.34,742.11,0.0,0.13877
+2026-10-21 00:24,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 00:24,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 00:24,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 00:24,AVAXUSDT,101.10,101.10,approve,crowd short-heavy z -1.94; 0 RED/AMBER; binance_delist feed down; WebSearch shows only old AVAX pair removals; no perp delisting,0,0,,0.00000
+2026-10-21 00:24,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 00:24,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 00:24,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-21 00:24,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
