@@ -1,9 +1,8 @@
 {
-  "run_id": "2026-10-21 15:10",
+  "run_id": "2026-10-21 18:12",
   "decisions": [
-    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z=-1.71, 0 RED/AMBER; late run (3h after bar) - trade straight to plan per lessons"},
-    {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z=-2.01, 0 RED/AMBER; late run - trade straight to plan"}
-  ],
-  "claude_trades": [],
-  "keep": []
+    {"symbol": "ETHUSDT", "action": "approve", "reason": "crowd short-heavy z=-2.36; AMBER Drift-exploiter ETH->Tornado laundering is small vs ETH liquidity, not ETH-specific risk"},
+    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z=-1.71, no event risk"},
+    {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z=-1.77, no event risk"}
+  ]
 }

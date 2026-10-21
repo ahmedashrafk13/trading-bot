@@ -416,3 +416,9 @@
 - Decided: approve both (no event risk; late run traded straight to plan, no catch-up).
 - Fills: none needed - both already within rounding of target (0 orders). No BLOCKED, no STOP PROBLEM; SL LTC 55.26, AVAX 8.739. Maker 78% overall (171 groups).
 - P&L since v9 start $-2.57 (-1.3% of budget); uPnL LTC +$2.00, AVAX +$2.71.
+
+## 2026-10-21 18:12 UTC (18:00 bar, on time)
+- Strategy: new ETH long +$205 (z -2.36); hold AVAX long +$101 (z -1.71), LTC long +$132 (z -1.77); rest flat. News 0 RED / 1 AMBER (Drift exploiter ETH->Tornado), sources 10/10.
+- Decided: approve all 3 (AMBER is laundering of an old hack, small vs ETH liquidity; no macro print in hold).
+- Fills: ETH Buy 0.08 @ 2514.7 (maker) - 1/1 maker, 78% overall (172 groups). AVAX/LTC held. No BLOCKED, no STOP PROBLEM; SL ETH 2275.89, LTC 55.26, AVAX 8.739.
+- P&L since v9 start $-1.78 (-0.9% of budget); uPnL LTC +$1.81, AVAX +$3.75.
