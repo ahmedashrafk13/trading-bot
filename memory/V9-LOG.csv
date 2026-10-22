@@ -1067,3 +1067,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-21 18:12,LTCUSDT,132.46,132.46,approve,crowd short-heavy z=-1.77; no event risk,0,0,,0.00000
 2026-10-21 18:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-21 18:12,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 00:21,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 00:21,ETHUSDT,204.88,204.88,approve,crowd short-heavy z-1.74; 0 RED/AMBER; Drift exploit/ETF outflow headlines are INFO only,0,0,,0.00000
+2026-10-22 00:21,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 00:21,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 00:21,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 00:21,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 00:21,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 00:21,AVAXUSDT,101.10,101.10,approve,crowd short-heavy z-1.52; no event risk found,0,0,,0.00000
+2026-10-22 00:21,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 00:21,LTCUSDT,132.46,132.46,approve,crowd short-heavy z-1.88; no event risk found; binance_delist feed down; WebSearch shows no major-perp delisting,0,0,,0.00000
+2026-10-22 00:21,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 00:21,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
