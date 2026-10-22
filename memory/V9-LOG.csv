@@ -1103,3 +1103,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-22 12:13,LTCUSDT,0.00,0.00,approve,,2.1,59.33,0.0,0.06853
 2026-10-22 12:13,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-22 12:13,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 18:14,BTCUSDT,-110.01,-110.01,approve*1.00,AMBER is China/UK court seizure-claim headline; no sale inside the 6h hold; not event risk,0,0,,0.00000
+2026-10-22 18:14,ETHUSDT,-73.03,-73.03,approve*1.00,crowd long-heavy; no event risk,0,0,,0.00000
+2026-10-22 18:14,SOLUSDT,-62.53,-62.53,approve*1.00,crowd long-heavy; upgrade news is INFO only,0,0,,0.00000
+2026-10-22 18:14,BNBUSDT,-95.39,-95.39,approve*1.00,crowd long-heavy; no event risk,0,0,,0.00000
+2026-10-22 18:14,XRPUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
+2026-10-22 18:14,DOGEUSDT,-52.68,-52.68,approve*1.00,crowd long-heavy; no event risk,0,0,,0.00000
+2026-10-22 18:14,ADAUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
+2026-10-22 18:14,AVAXUSDT,37.49,37.49,approve*1.00,crowd short-heavy; no event risk,2.2,9.109,1.0,0.00401
+2026-10-22 18:14,LINKUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
+2026-10-22 18:14,LTCUSDT,48.87,48.87,approve*1.00,crowd short-heavy; no event risk,0,0,,0.00000
+2026-10-22 18:14,TRXUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
+2026-10-22 18:14,DOTUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000

@@ -1,10 +1,13 @@
 {
-  "run_id": "2026-10-22 12:13",
+  "run_id": "2026-10-22 18:14",
   "decisions": [
-    {"symbol": "BTCUSDT", "action": "approve", "reason": "crowd long-heavy z+1.58; AMBER China/UK seized-BTC confiscation case is legal, no supply hits market inside 6h hold"},
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z+1.56, 0 RED/AMBER (Alpenglow INFO only)"},
-    {"symbol": "BNBUSDT", "action": "approve", "reason": "crowd long-heavy z+1.66, 0 RED/AMBER"},
-    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z-1.69, 0 RED/AMBER"}
+    {"symbol": "BTCUSDT", "action": "approve", "reason": "AMBER is China/UK court seizure-claim headline, no sale inside the 6h hold; not event risk"},
+    {"symbol": "ETHUSDT", "action": "approve", "reason": "crowd long-heavy, no event risk"},
+    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy, upgrade news is INFO only"},
+    {"symbol": "BNBUSDT", "action": "approve", "reason": "crowd long-heavy, no event risk"},
+    {"symbol": "DOGEUSDT", "action": "approve", "reason": "crowd long-heavy, no event risk"},
+    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy, no event risk"},
+    {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy, no event risk"}
   ],
   "claude_trades": [],
   "keep": []
