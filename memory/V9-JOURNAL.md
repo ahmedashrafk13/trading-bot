@@ -432,3 +432,8 @@
 - Decided: approve all (only INFO headlines: Drift exploiter ETH->Tornado, ETH ETF outflows, Solana Alpenglow).
 - Fills: ETH Sell 0.08 @ 2438.63 (maker, reduce-only; realized ~-$6.09 vs 2514.7 entry) - 1/1 maker, 79% overall (173 groups). AVAX/LTC held (gaps below min order). No BLOCKED, no STOP PROBLEM; SL LTC 55.26, AVAX 8.739.
 - P&L since v9 start $-17.31 (-8.7% of budget; -$21.3 from peak); uPnL AVAX -$2.53, LTC -$1.30. Scorecard value-add -$1.07 (gate scaling only).
+## 2026-10-22 12:13 UTC (12:00 bar, ~13 min late)
+- Strategy: new shorts BTC -$173 (z +1.58), SOL -$98 (z +1.56), BNB -$150 (z +1.66); trim AVAX long to +$59 (z -1.69); close LTC long (z 0.33). News 0 RED / 2 AMBER (China/UK seized-BTC confiscation case), sources 9/10 (binance_delist down; WebSearch found no major-perp delisting).
+- Decided: approve all (AMBER is a legal story with no supply hitting the market inside the hold, so no NEWS: override).
+- Fills: LTC Sell 2.1 @ 59.33 (close), AVAX Sell 4.1 @ 9.241 (reduce). Both went taker, 0/2 maker, 78% overall (175 groups). BLOCKED: BTC/SOL/BNB shorts by circuit_breaker (realized today -$11.56, at least 5% of budget) - no new entries until 00:00 UTC. No STOP PROBLEM; AVAX 6.3 held, SL 8.739.
+- P&L since v9 start $-21.27 (-10.6% of budget; -$25.3 from peak). Scorecard value-add -$1.07 (gate scaling only).

@@ -1091,3 +1091,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-22 06:13,LTCUSDT,132.46,132.46,approve,crowd short-heavy z-1.63; 0 RED/AMBER; no event risk found,0,0,,0.00000
 2026-10-22 06:13,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-22 06:13,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 12:13,BTCUSDT,-172.76,-172.76,approve,crowd long-heavy z+1.58; AMBER China/UK seized-BTC confiscation case is legal; no supply hits market inside 6h hold,0,0,,0.00000
+2026-10-22 12:13,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 12:13,SOLUSDT,-98.30,-98.30,approve,crowd long-heavy z+1.56; 0 RED/AMBER (Alpenglow INFO only),0,0,,0.00000
+2026-10-22 12:13,BNBUSDT,-150.09,-150.09,approve,crowd long-heavy z+1.66; 0 RED/AMBER,0,0,,0.00000
+2026-10-22 12:13,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 12:13,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 12:13,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 12:13,AVAXUSDT,58.85,58.85,approve,crowd short-heavy z-1.69; 0 RED/AMBER,4.1,9.241,0.0,0.02084
+2026-10-22 12:13,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 12:13,LTCUSDT,0.00,0.00,approve,,2.1,59.33,0.0,0.06853
+2026-10-22 12:13,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-22 12:13,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000

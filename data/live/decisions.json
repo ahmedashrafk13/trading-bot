@@ -1,8 +1,10 @@
 {
-  "run_id": "2026-10-22 06:13",
+  "run_id": "2026-10-22 12:13",
   "decisions": [
-    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z-1.65, 0 RED/AMBER, no event risk found"},
-    {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z-1.63, 0 RED/AMBER, no event risk found"}
+    {"symbol": "BTCUSDT", "action": "approve", "reason": "crowd long-heavy z+1.58; AMBER China/UK seized-BTC confiscation case is legal, no supply hits market inside 6h hold"},
+    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z+1.56, 0 RED/AMBER (Alpenglow INFO only)"},
+    {"symbol": "BNBUSDT", "action": "approve", "reason": "crowd long-heavy z+1.66, 0 RED/AMBER"},
+    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z-1.69, 0 RED/AMBER"}
   ],
   "claude_trades": [],
   "keep": []
