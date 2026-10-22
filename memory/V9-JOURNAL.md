@@ -427,3 +427,8 @@
 - Decided: approve all 3 (only INFO headlines: Drift exploiter ETH->Tornado, ETH ETF outflows).
 - Fills: none needed - gaps to target below min order size; positions held. No BLOCKED, no STOP PROBLEM; SL ETH 2275.89, LTC 55.26, AVAX 8.739. Maker 78% overall (172 groups).
 - P&L since v9 start $-8.98 (-4.5% of budget); uPnL ETH -$3.23, LTC +$1.09, AVAX +$0.51.
+## 2026-10-22 06:13 UTC (06:00 bar, ~13 min late)
+- Strategy: close ETH long (z -1.74 -> 0.17); hold AVAX long +$101 (z -1.65), LTC long +$132 (z -1.63); rest flat. News 0 RED / 0 AMBER, sources 10/10.
+- Decided: approve all (only INFO headlines: Drift exploiter ETH->Tornado, ETH ETF outflows, Solana Alpenglow).
+- Fills: ETH Sell 0.08 @ 2438.63 (maker, reduce-only; realized ~-$6.09 vs 2514.7 entry) - 1/1 maker, 79% overall (173 groups). AVAX/LTC held (gaps below min order). No BLOCKED, no STOP PROBLEM; SL LTC 55.26, AVAX 8.739.
+- P&L since v9 start $-17.31 (-8.7% of budget; -$21.3 from peak); uPnL AVAX -$2.53, LTC -$1.30. Scorecard value-add -$1.07 (gate scaling only).

@@ -1,9 +1,8 @@
 {
-  "run_id": "2026-10-22 00:21",
+  "run_id": "2026-10-22 06:13",
   "decisions": [
-    {"symbol": "ETHUSDT", "action": "approve", "reason": "crowd short-heavy z-1.74, 0 RED/AMBER; Drift exploit/ETF outflow headlines are INFO only"},
-    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z-1.52, no event risk found"},
-    {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z-1.88, no event risk found; binance_delist feed down, WebSearch shows no major-perp delisting"}
+    {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd short-heavy z-1.65, 0 RED/AMBER, no event risk found"},
+    {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z-1.63, 0 RED/AMBER, no event risk found"}
   ],
   "claude_trades": [],
   "keep": []
