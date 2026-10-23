@@ -442,3 +442,8 @@
 - Decided: approve all (AMBER is a court story, no coins sold inside the hold; no NEWS: override).
 - Fills: AVAX Sell 2.2 @ 9.109 (reduce), maker; 78% overall (176 groups). BLOCKED: all 6 new entries (BTC/ETH/SOL/BNB/DOGE short, LTC long) by circuit_breaker (realized today -$12.73, at least 5% of budget) until 00:00 UTC. No STOP PROBLEM; AVAX 4.1 held, SL 8.739.
 - P&L since v9 start $-22.07 (-11.0% of budget; -$26.0 from peak). Scorecard value-add -$1.07 (gate scaling only).
+## 2026-10-23 00:18 UTC (00:00 bar, ~18 min late)
+- Strategy: shorts BTC -$132 (z +2.28), ETH -$88 (z +2.43), SOL -$75 (z +1.92), BNB -$114 (z +2.32), XRP -$71 (z +1.81); close AVAX long (z -1.40). News 0 RED / 2 AMBER (same China/UK seized-BTC case), binance_delist feed down -> WebSearch found no delisting for our coins.
+- Decided: approve all (AMBER is a 14-18h-old court story, no supply inside the hold; no NEWS: override). Circuit breaker reset at 00:00, entries allowed again.
+- Fills: AVAX close + 5 short entries, 6/6 maker; 79% overall (182 fills). BTC filled 0.001 (~$81 vs $132 target, lot-step rounding). No BLOCKED, no STOP PROBLEM; all 5 shorts carry SL.
+- P&L since v9 start $-22.13 (-11.1% of budget; ~-$26 from peak). Scorecard value-add -$1.07 (gate scaling only).
