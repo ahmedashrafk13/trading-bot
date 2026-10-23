@@ -452,3 +452,7 @@
 - Decided: approve all (no event risk; late run -> traded straight to current plan, no catch-up trades). Gate scaling x1.000 (book at $480 cap).
 - Fills: BNB close + ETH/SOL/XRP adds maker, LTC long entry taker; 4/5 maker, 79% overall (187 fills). BTC stays 0.001 (~$82 vs $149 target, lot-step/cap rounding). No BLOCKED, no STOP PROBLEM; all 5 positions carry SL.
 - P&L since v9 start $-26.55 (-13.3% of budget; ~-$30 from peak). Scorecard value-add -$1.07 (gate scaling only).
+
+- 2026-10-23 18:12 UTC (18:00 bar): strategy wanted BTC -$298, SOL -$168, flat ETH/XRP/LTC. News 0 RED/0 AMBER; approved unchanged.
+  Closed ETH/XRP/LTC; BTC short now $245 (BTC add filled as taker); SOL add BLOCKED by margin_cap (margin would be $115 > $100), SOL stays -$84. No stop problems.
+  Maker share 79% over 191 fills. P&L since v9 start -$26.53 (-13.3%).
