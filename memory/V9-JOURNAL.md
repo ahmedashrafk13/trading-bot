@@ -447,3 +447,8 @@
 - Decided: approve all (AMBER is a 14-18h-old court story, no supply inside the hold; no NEWS: override). Circuit breaker reset at 00:00, entries allowed again.
 - Fills: AVAX close + 5 short entries, 6/6 maker; 79% overall (182 fills). BTC filled 0.001 (~$81 vs $132 target, lot-step rounding). No BLOCKED, no STOP PROBLEM; all 5 shorts carry SL.
 - P&L since v9 start $-22.13 (-11.1% of budget; ~-$26 from peak). Scorecard value-add -$1.07 (gate scaling only).
+## 2026-10-23 15:21 UTC (12:00 bar, ~3h21m late; 06:00 bar run missed)
+- Strategy: shorts BTC -$149 (z +2.41), ETH -$99 (z +1.92), SOL -$85 (z +1.75), XRP -$81 (z +2.85); long LTC +$67 (z -1.91); close BNB short (z +0.77). News 0 RED / 0 AMBER, sources 10/10.
+- Decided: approve all (no event risk; late run -> traded straight to current plan, no catch-up trades). Gate scaling x1.000 (book at $480 cap).
+- Fills: BNB close + ETH/SOL/XRP adds maker, LTC long entry taker; 4/5 maker, 79% overall (187 fills). BTC stays 0.001 (~$82 vs $149 target, lot-step/cap rounding). No BLOCKED, no STOP PROBLEM; all 5 positions carry SL.
+- P&L since v9 start $-26.55 (-13.3% of budget; ~-$30 from peak). Scorecard value-add -$1.07 (gate scaling only).
