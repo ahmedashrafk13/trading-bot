@@ -456,3 +456,9 @@
 - 2026-10-23 18:12 UTC (18:00 bar): strategy wanted BTC -$298, SOL -$168, flat ETH/XRP/LTC. News 0 RED/0 AMBER; approved unchanged.
   Closed ETH/XRP/LTC; BTC short now $245 (BTC add filled as taker); SOL add BLOCKED by margin_cap (margin would be $115 > $100), SOL stays -$84. No stop problems.
   Maker share 79% over 191 fills. P&L since v9 start -$26.53 (-13.3%).
+
+## 2026-10-24 10:37 UTC (06:00 bar; run ~4.5h late)
+- Strategy: short BTC/SOL/XRP (crowd long z 1.8-2.4), long ADA/AVAX (z -1.6). news_check 0 RED/0 AMBER (binance_delist feed down; no flags).
+- Decision: approve all unchanged; late run traded straight to current plan, no catch-up.
+- Fills: 4 entries all maker (BTC add, XRP, ADA, AVAX); 0 blocked, 0 STOP PROBLEM; all 5 positions carry SL. Maker share 79% overall.
+- P&L since v9 start $-22.15 (-11.1% of budget).
