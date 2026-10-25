@@ -474,3 +474,6 @@
 - Decision: approve all unchanged - news 0 RED / 0 AMBER (binance_delist feed down, no flags elsewhere).
 - Fills: XRP/DOGE closed; SOL short + LTC add maker, DOT long market fallback; BTC held ~$161. 0 BLOCKED, 0 STOP PROBLEM, all positions stopped.
 - P&L since v9 start $-24.22 (-12.1%); maker share 79% cumulative.
+
+- 2026-10-25 18:37 UTC (run 2026-10-25 18:37, ~30 min late): strategy short BTC -190 / SOL -114 / XRP -114, long DOT +62, flat LTC. News 0 RED/0 AMBER (binance_delist feed down, INFO only) -> approved unchanged.
+  Fills: LTC close (taker), XRP short opened (maker); BTC/SOL/DOT already near target. All 4 positions have stops; 0 blocked. P&L since v9 start $-23.68.
