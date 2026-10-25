@@ -468,3 +468,9 @@
 - Decision: approve all unchanged; late run traded straight to current plan.
 - Fills: SOL/ADA/AVAX closed, DOGE short + LTC long maker; DOT long BLOCKED by margin_cap ($112 > $100). 0 STOP PROBLEM; all 4 positions carry SL. Maker share 79% overall.
 - P&L since v9 start $-24.08 (-12.0% of budget).
+
+## 2026-10-25 12:12 UTC (12:00 bar)
+- Strategy: short BTC $196 / SOL $115, long LTC $107 / DOT $63; close XRP + DOGE shorts.
+- Decision: approve all unchanged - news 0 RED / 0 AMBER (binance_delist feed down, no flags elsewhere).
+- Fills: XRP/DOGE closed; SOL short + LTC add maker, DOT long market fallback; BTC held ~$161. 0 BLOCKED, 0 STOP PROBLEM, all positions stopped.
+- P&L since v9 start $-24.22 (-12.1%); maker share 79% cumulative.
