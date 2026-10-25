@@ -219,3 +219,26 @@ the 09-27 06:00 close)
 - P2 (open): `revalidate --since-start` for a reproducible live-vs-paper figure.
 - P4 (open): scorecard must not count the gate's uniform x0.96 scaling as a Claude override.
 - P5 (new, lab): explain the ~$22 live-vs-scored gap - split into fees, funding, and missed bars. Test: reconstruct from `fills` + funding history for 09-24..10-19.
+
+## 2026-10-25 — week 5 (v9 live since 2026-09-24 15:54 UTC, ~30.7 days)
+
+**Measure**
+- P&L since v9 start: **-$23.99 (-12.0% of budget)**; this week **-$23.90** (from -$0.09 at 10-19). From peak: -$27.98.
+- Open: shorts XRP $95, SOL $91, BTC $161; longs ADA $62, AVAX $56; all with SL (uPnL ~+$0.69).
+- Scorecard: 95 runs / 1164 decisions. Strategy alone **+$3.31** gross (was +$22.47), with Claude +$2.25, **value-add -$1.07** (87 changed, 38 helped) - unchanged; all `approve*0.96` margin scaling, 0 discretionary, 0 NEWS:.
+- Maker-fill share **79% over 196 groups** (assumed 70%).
+- Paper (frozen, vol 0.80, 2.4x): 30d **-14.5%** (DD -20.5%), 60d **-12.8%** (DD -20.5%), 90d **-20.5%** (DD -26.0%).
+- Live vs paper: live -12.0% over ~31d vs paper 30d -14.5% → live is not lagging paper this month; the week's loss is the strategy's (scored strategy-alone -$19 gross), not execution or overrides.
+
+**Judge**
+- 90d paper -20.5% > -25% → still inside tested range, **no EDGE ALERT**, but within ~4.5 pts of the line (was -10.4% a week ago). WATCH: if next week's 90d falls below -25%, the routine requires an EDGE ALERT and a recommendation to lower risk or pause.
+- Maker share 79% ≥ 40% → fee assumption holds.
+- Claude value-add negative over 95 runs, but entirely margin-scaling noise (P4) → no "override less" lesson; there are no overrides.
+- NEWS-driven line: 0 overrides, $0.
+- Ops: 18 scored runs this week vs ~28 bars; several 3-4.7h late, 06:00/12:00 bars missed repeatedly; last run 10-24 10:37 UTC (~4 bars missed before this review). Better than week 4's 2.4-day outage, still the main ops cost.
+
+**Proposals (owner decides; none enacted)**
+- Strategy: **no change proposed** - a 1-month -12% is within the stated -40..-50% DD expectation; no lab evidence for a change.
+- Owner FYI (not a proposal to act now): paper 90d is approaching the pre-committed alert line at the "very high" risk level (vol 0.80). Size menu (`backtest/lab/results/_size_menu_*.json`) shows vol 0.55 as the tested lower-risk option if the owner prefers to de-risk pre-emptively.
+- Ops (owner): restore reliable 6h runs (06:07 / 12:07 UTC most often missed).
+- P1, P2, P4, P5 (open, unchanged).

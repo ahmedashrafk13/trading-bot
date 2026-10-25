@@ -50,3 +50,12 @@ file, and only from scorecard numbers, never from a single trade.
   2.4x since 10-16, margin_cap blocks top-ups often - that is expected, not a fault.
 - 2026-10-19: paper (vol 0.80, 2.4x): 30d +3.9% / 60d -3.8% / 90d -10.4%
   (DD -20.8%). Inside the tested range. Maker share 79% over 149 groups.
+- 2026-10-25 (week 5, 95 scored runs / 1164 decisions): still 0 discretionary
+  and 0 NEWS: overrides; value-add -$1.07 unchanged (all x0.96 gate scaling).
+  This week's -$23.9 loss is the strategy's own (scored strategy-alone fell
+  from +$22.47 to +$3.31 gross), not Claude's choices. Do NOT start overriding
+  to "fix" a losing week - there is no evidence discretion helps.
+- 2026-10-25: paper 90d -20.5% (DD -26.0%), 30d -14.5% - near the -25% alert
+  line. Live -12.0% since start, slightly better than paper 30d. Stops at 9.5%
+  stay as-is; keep sizing to plan. Runs were still late/missed (last run
+  10-24 10:37 UTC); trade straight to the current plan, no catch-up trades.
