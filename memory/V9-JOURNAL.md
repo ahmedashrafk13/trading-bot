@@ -480,3 +480,9 @@
 
 - 2026-10-26 15:29 UTC (run 2026-10-26 15:29, ~3.4h late on the 12:00 bar; traded straight to current plan, no catch-up): strategy short BTC -243 / ETH -159, long DOT +78, flat SOL/XRP. News 0 RED/0 AMBER (FOMC this week, INFO only) -> approved unchanged.
   Fills: SOL & XRP shorts closed, ETH short opened (maker), DOT add (maker), BTC add (taker). 3 positions all stopped; 0 BLOCKED, 0 STOP PROBLEM. P&L since v9 start $-24.98 (-12.5%); maker share 78% cumulative.
+
+## 2026-10-26 18:12 UTC (run 2026-10-26 18:12)
+- Strategy: short BTC $106 (reduce from $241), SOL $62, XRP $63, TRX $215; close ETH short; DOT long reduce to $34.
+- Decision: approve all unchanged - news check 0 RED / 0 AMBER (INFO only; FOMC later in week, outside hold).
+- Fills: all entries maker per execute log; 0 BLOCKED, 0 STOP PROBLEM; BTC held $80 (0.001 qty step). Cum maker share 79%.
+- P&L since v9 start $-23.74 (-11.9% of budget).
