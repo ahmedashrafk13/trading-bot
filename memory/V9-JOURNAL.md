@@ -477,3 +477,6 @@
 
 - 2026-10-25 18:37 UTC (run 2026-10-25 18:37, ~30 min late): strategy short BTC -190 / SOL -114 / XRP -114, long DOT +62, flat LTC. News 0 RED/0 AMBER (binance_delist feed down, INFO only) -> approved unchanged.
   Fills: LTC close (taker), XRP short opened (maker); BTC/SOL/DOT already near target. All 4 positions have stops; 0 blocked. P&L since v9 start $-23.68.
+
+- 2026-10-26 15:29 UTC (run 2026-10-26 15:29, ~3.4h late on the 12:00 bar; traded straight to current plan, no catch-up): strategy short BTC -243 / ETH -159, long DOT +78, flat SOL/XRP. News 0 RED/0 AMBER (FOMC this week, INFO only) -> approved unchanged.
+  Fills: SOL & XRP shorts closed, ETH short opened (maker), DOT add (maker), BTC add (taker). 3 positions all stopped; 0 BLOCKED, 0 STOP PROBLEM. P&L since v9 start $-24.98 (-12.5%); maker share 78% cumulative.
