@@ -492,3 +492,6 @@
 - Decided: approve all unchanged (news 0 RED / 0 AMBER; FOMC Wed 18:00 is outside the hold).
 - Filled: ETH/SOL/XRP/BTC entries all maker; TRX/DOT closed; 0 BLOCKED, 0 STOP PROBLEM. Maker share 79% (225 fills).
 - P&L since v9 start $-23.02 (-11.5% of budget).
+
+- 2026-10-27 06:11 UTC: strategy short BTC/ETH/SOL/XRP (z 1.5-2.0), rest flat. 0 RED/AMBER (FOMC Wed +36h, outside hold). Approved unchanged.
+  Book already at the $480 gross cap; gaps below min size -> 0 orders, all 4 shorts carry SL. Maker share 79% (225 groups). P&L since v9 start $-22.98.
