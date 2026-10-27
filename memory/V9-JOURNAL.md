@@ -495,3 +495,9 @@
 
 - 2026-10-27 06:11 UTC: strategy short BTC/ETH/SOL/XRP (z 1.5-2.0), rest flat. 0 RED/AMBER (FOMC Wed +36h, outside hold). Approved unchanged.
   Book already at the $480 gross cap; gaps below min size -> 0 orders, all 4 shorts carry SL. Maker share 79% (225 groups). P&L since v9 start $-22.98.
+
+## 2026-10-27 12:12 UTC
+- Strategy: short BTC -169, ETH -110, SOL -99, XRP -101 (z 1.52-1.89); rest flat.
+- Decided: approve all unchanged - news 0 RED / 0 AMBER (FOMC Wed 18:00 +29.8h, outside hold); Binance delist feed down, WebSearch found no notice for these 4.
+- Fills: none needed - book already at the $480 cap, gaps below one lot step -> 0 orders; 0 BLOCKED, 0 STOP PROBLEM, all 4 shorts carry SL. Maker share 79% (225 groups).
+- P&L since v9 start $-22.68 (-11.3% of budget).
