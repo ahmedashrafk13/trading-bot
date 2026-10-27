@@ -1,10 +1,8 @@
 {
-  "run_id": "2026-10-27 12:12",
+  "run_id": "2026-10-27 18:13",
   "decisions": [
-    {"symbol": "BTCUSDT", "action": "approve", "reason": "crowd long-heavy z=1.89; 0 RED/AMBER, FOMC +29.8h outside hold"},
-    {"symbol": "ETHUSDT", "action": "approve", "reason": "crowd long-heavy z=1.52; no event risk found"},
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z=1.59; no event risk found"},
-    {"symbol": "XRPUSDT", "action": "approve", "reason": "crowd long-heavy z=1.70; Ripple OCC news is INFO only, no delisting (Binance feed down, WebSearch clean)"}
+    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z=1.51, 0 RED/AMBER, FOMC +23.8h outside the hold"},
+    {"symbol": "DOGEUSDT", "action": "approve", "reason": "crowd long-heavy z=1.76, 0 RED/AMBER, no Binance delist notice found (feed down, checked by WebSearch)"}
   ],
   "claude_trades": [],
   "keep": []

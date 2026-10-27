@@ -1259,3 +1259,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-27 12:12,LTCUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
 2026-10-27 12:12,TRXUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
 2026-10-27 12:12,DOTUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
+2026-10-27 18:13,BTCUSDT,0.00,0.00,approve,,0.002,80604.5,1.0,0.03224
+2026-10-27 18:13,ETHUSDT,0.00,0.00,approve,,0.04,2345.42,1.0,0.01876
+2026-10-27 18:13,SOLUSDT,-165.50,-165.50,approve,crowd long-heavy z=1.51; 0 RED/AMBER; FOMC +23.8h outside the hold,0.7,100.82,0.0,0.03882
+2026-10-27 18:13,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-27 18:13,XRPUSDT,0.00,0.00,approve,,77.9,1.3186,1.0,0.02054
+2026-10-27 18:13,DOGEUSDT,-147.57,-147.57,approve,crowd long-heavy z=1.76; 0 RED/AMBER; no Binance delist notice found (feed down; checked by WebSearch),1890,0.07815,1.0,0.02954
+2026-10-27 18:13,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-27 18:13,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-27 18:13,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-27 18:13,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-27 18:13,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-27 18:13,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
