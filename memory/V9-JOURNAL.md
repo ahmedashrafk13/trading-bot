@@ -513,3 +513,9 @@
 - Decided: approve unchanged, no own trades - news 0 RED / 3 AMBER (FOMC rate + statement 18:00, presser 18:30, inside hold) only supports being flat. No catch-up trades.
 - Fills: closed SOL 1.6 @100.97 and DOGE 1890 @0.07926, both maker (2/2); 0 BLOCKED, 0 STOP PROBLEM; book now flat. Maker share 79% (232 fills).
 - P&L since v9 start $-30.02 (-15.0% of budget); from peak ~$-34.
+
+## 2026-10-28 18:13 UTC (on time; signal from 18:00 bar)
+- Strategy: short SOL -170 (z 1.53), long LTC +161 (z -2.21); rest flat.
+- Decided: approve both unchanged, no own trades - news 0 RED / 3 AMBER (FOMC statement 18:00 already out, muted: BTC 15m range <0.7%; presser 18:30 inside hold). Scheduled print alone is not event risk per lessons.
+- Fills: LTC Buy 2.7 @58.14 maker, SOL Sell 1.6 @101.28 taker fallback -> 1/2 maker; 0 BLOCKED, 0 STOP PROBLEM; SL LTC 52.61, SOL 110.91. Maker share 79% (234 fills).
+- P&L since v9 start $-30.17 (-15.1% of budget); from peak ~$-34.

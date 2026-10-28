@@ -1283,3 +1283,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-28 15:10,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-28 15:10,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-10-28 15:10,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-28 18:13,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-28 18:13,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-28 18:13,SOLUSDT,-169.76,-169.76,approve,crowd long-heavy z=1.53; FOMC statement out at 18:00 with muted reaction (BTC 15m range <0.7%); presser 18:30 is a scheduled print - lessons: approve absent real event risk,1.6,101.28,0.0,0.08913
+2026-10-28 18:13,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-28 18:13,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-28 18:13,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-28 18:13,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-28 18:13,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-28 18:13,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-28 18:13,LTCUSDT,161.36,161.36,approve,crowd short-heavy z=-2.21; no RED flags; only scheduled FOMC AMBER - approve per lessons,2.7,58.14,1.0,0.03140
+2026-10-28 18:13,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-28 18:13,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
