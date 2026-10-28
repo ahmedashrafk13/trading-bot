@@ -1,9 +1,1 @@
-{
-  "run_id": "2026-10-27 18:13",
-  "decisions": [
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z=1.51, 0 RED/AMBER, FOMC +23.8h outside the hold"},
-    {"symbol": "DOGEUSDT", "action": "approve", "reason": "crowd long-heavy z=1.76, 0 RED/AMBER, no Binance delist notice found (feed down, checked by WebSearch)"}
-  ],
-  "claude_trades": [],
-  "keep": []
-}
+{"run_id": "2026-10-28 15:10", "decisions": [], "claude_trades": [], "keep": []}

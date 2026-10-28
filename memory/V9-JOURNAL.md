@@ -507,3 +507,9 @@
 - Decided: approve all unchanged - news 0 RED / 0 AMBER (FOMC Wed 18:00 +23.8h, outside hold); Binance delist feed down, WebSearch found no notice for SOL/DOGE.
 - Fills: closed BTC/ETH/XRP shorts (maker), DOGE short opened (maker), SOL short topped up to 1.6 (taker fallback) -> 4/5 maker; 0 BLOCKED, 0 STOP PROBLEM, SL on both (DOGE 0.08552, SOL 110.4). Maker share 79% (230 fills).
 - P&L since v9 start $-27.62 (-13.8% of budget); from peak ~$-31.3.
+
+## 2026-10-28 15:10 UTC (late: 10-28 00/06/12 runs missed; signal from 12:00 bar)
+- Strategy: all 12 flat (|z| < 1.5; SOL 1.25, DOT -1.44); held SOL -161 / DOGE -150 shorts stale since 10-27 18:13.
+- Decided: approve unchanged, no own trades - news 0 RED / 3 AMBER (FOMC rate + statement 18:00, presser 18:30, inside hold) only supports being flat. No catch-up trades.
+- Fills: closed SOL 1.6 @100.97 and DOGE 1890 @0.07926, both maker (2/2); 0 BLOCKED, 0 STOP PROBLEM; book now flat. Maker share 79% (232 fills).
+- P&L since v9 start $-30.02 (-15.0% of budget); from peak ~$-34.
