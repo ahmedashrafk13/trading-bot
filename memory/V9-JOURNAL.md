@@ -519,3 +519,5 @@
 - Decided: approve both unchanged, no own trades - news 0 RED / 3 AMBER (FOMC statement 18:00 already out, muted: BTC 15m range <0.7%; presser 18:30 inside hold). Scheduled print alone is not event risk per lessons.
 - Fills: LTC Buy 2.7 @58.14 maker, SOL Sell 1.6 @101.28 taker fallback -> 1/2 maker; 0 BLOCKED, 0 STOP PROBLEM; SL LTC 52.61, SOL 110.91. Maker share 79% (234 fills).
 - P&L since v9 start $-30.17 (-15.1% of budget); from peak ~$-34.
+
+- 2026-10-29 13:09 UTC (12:00 bar, ~1h late): strategy short ETH -$172, hold short SOL, flip LTC long→short -$150. News 0 RED / 1 AMBER (irrelevant CFTC headline on ETH), binance_delist feed down. Approved unchanged. All 3 fills maker (LTC close + LTC/ETH opens); stops on all 3; 0 blocked. P&L since v9 start $-29.13 (-14.6%).

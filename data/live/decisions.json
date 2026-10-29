@@ -1,9 +1,1 @@
-{
-  "run_id": "2026-10-28 18:13",
-  "decisions": [
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z=1.53; FOMC statement out at 18:00 with muted reaction (BTC 15m range <0.7%), presser 18:30 is a scheduled print - lessons: approve absent real event risk"},
-    {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z=-2.21; no RED flags, only scheduled FOMC AMBER - approve per lessons"}
-  ],
-  "claude_trades": [],
-  "keep": []
-}
+{"run_id": "2026-10-29 13:09", "decisions": []}
