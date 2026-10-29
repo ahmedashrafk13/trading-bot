@@ -521,3 +521,8 @@
 - P&L since v9 start $-30.17 (-15.1% of budget); from peak ~$-34.
 
 - 2026-10-29 13:09 UTC (12:00 bar, ~1h late): strategy short ETH -$172, hold short SOL, flip LTC long→short -$150. News 0 RED / 1 AMBER (irrelevant CFTC headline on ETH), binance_delist feed down. Approved unchanged. All 3 fills maker (LTC close + LTC/ETH opens); stops on all 3; 0 blocked. P&L since v9 start $-29.13 (-14.6%).
+
+- 2026-10-29 18:12 UTC run: strategy closed ETH/SOL shorts, held LTC short (-$161, z +2.3), opened DOT long (+$95, z -1.53).
+  Approved unchanged; news 0 RED / 1 AMBER (ETH, non-event CFTC headline, ETH flat target anyway).
+  All fills maker (ETH/SOL closes, LTC top-up, DOT entry); no BLOCKED, no STOP PROBLEM. Maker share 80% overall.
+  P&L since v9 start -$30.37 (-15.2% of budget).
