@@ -526,3 +526,9 @@
   Approved unchanged; news 0 RED / 1 AMBER (ETH, non-event CFTC headline, ETH flat target anyway).
   All fills maker (ETH/SOL closes, LTC top-up, DOT entry); no BLOCKED, no STOP PROBLEM. Maker share 80% overall.
   P&L since v9 start -$30.37 (-15.2% of budget).
+
+## 2026-10-30 16:25 UTC (12:00 bar, run ~4h late)
+- Strategy: short BTC -$203 (z 1.78), short TRX -$209 (z 2.22), long DOT +$69 (z -1.79); close LTC short.
+- Decided: approve all. News: 6 AMBER all tied to the 40h-old Binance $6.4B hack; no RED, no coin-specific event in the hold -> no override (lessons: approve unless real event risk).
+- Fills: BTC/TRX/DOT entries all maker; BTC sized 0.002 (~$155, qty step). No BLOCKED, no STOP PROBLEM. Maker share 80% over 245.
+- P&L since v9 start $-34.74 (-17.4% of budget).
