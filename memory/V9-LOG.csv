@@ -1331,3 +1331,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-10-30 16:25,LTCUSDT,0.00,0.00,approve,,2.7,55.77,1.0,0.03012
 2026-10-30 16:25,TRXUSDT,-208.67,-208.67,approve,,620,0.3364,1.0,0.04171
 2026-10-30 16:25,DOTUSDT,68.57,68.57,approve,,71.5,0.959,1.0,0.01371
+2026-10-30 18:12,BTCUSDT,-202.76,-202.76,approve,z 2.02 crowd long; Binance hack 42h old already priced (AMBER); short not hurt by further hack downside,0,0,,0.00000
+2026-10-30 18:12,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-30 18:12,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-30 18:12,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-30 18:12,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-30 18:12,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-30 18:12,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-30 18:12,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-30 18:12,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-30 18:12,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-10-30 18:12,TRXUSDT,-208.67,-208.67,approve,z 1.56; no coin-specific event risk,0,0,,0.00000
+2026-10-30 18:12,DOTUSDT,68.57,68.57,approve,z -1.82; no event risk found,0,0,,0.00000

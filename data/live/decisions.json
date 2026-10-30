@@ -1,1 +1,5 @@
-{"run_id": "2026-10-30 16:25", "decisions": []}
+{"run_id": "2026-10-30 18:12", "decisions": [
+ {"symbol": "BTCUSDT", "action": "approve", "reason": "z 2.02 crowd long; Binance hack 42h old already priced (AMBER), short not hurt by further hack downside"},
+ {"symbol": "TRXUSDT", "action": "approve", "reason": "z 1.56, no coin-specific event risk"},
+ {"symbol": "DOTUSDT", "action": "approve", "reason": "z -1.82, no event risk found"}
+], "claude_trades": [], "keep": []}
