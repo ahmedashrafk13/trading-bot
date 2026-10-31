@@ -534,3 +534,5 @@
 - P&L since v9 start $-34.74 (-17.4% of budget).
 
 - 2026-10-30 18:12 UTC (2026-10-30 18:12): strategy BTC -203, TRX -209, DOT +69 (already held). Approved all; Binance $6.4B hack AMBER is 42h old, BTC short not exposed to further hack downside. No orders needed (gaps below lot size), 0 blocked, all stops present. P&L since v9 start -$31.67.
+
+- 2026-10-31 13:32 UTC (12:00 bar, run ~1.5h late): strategy wanted BTC short $253, close TRX short & DOT long. Approved unchanged; news AMBER = Binance $6.4B hack 61h old, already absorbed, no new event in hold. Fills: DOT close + BTC add maker, TRX close market (2/3 maker). Now BTC short $232, SL 84757.8. No blocks / stop problems. P&L since v9 start $-23.51 (-11.8%).
