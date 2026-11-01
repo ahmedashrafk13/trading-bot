@@ -538,3 +538,9 @@
 - 2026-10-31 13:32 UTC (12:00 bar, run ~1.5h late): strategy wanted BTC short $253, close TRX short & DOT long. Approved unchanged; news AMBER = Binance $6.4B hack 61h old, already absorbed, no new event in hold. Fills: DOT close + BTC add maker, TRX close market (2/3 maker). Now BTC short $232, SL 84757.8. No blocks / stop problems. P&L since v9 start $-23.51 (-11.8%).
 
 - 2026-10-31 18:12 UTC run: strategy wanted BTC short $204, DOGE long $115, LINK short $91, DOT long $69. Approved unchanged (Binance hack AMBER is 66h old, market absorbed it; no RED). Filled DOT/DOGE longs maker; BTC short trimmed to $155 (0.001 lot step); LINK short BLOCKED by margin_cap (50%). No STOP PROBLEM. P&L since v9 start $-24.29.
+
+## 2026-11-01 10:48 UTC (06:00 bar, run ~4.7h late)
+- Strategy: BTC short $259, LINK short $114, DOT long $86, close DOGE. News: 2 AMBER (Binance hack follow-ups, BTC holding up) — not inside-hold event risk.
+- Decision: approved all unchanged.
+- Fills: LINK short maker, BTC add taker; DOT top-up BLOCKED by margin_cap (holding $69). All 3 positions have stops; no STOP PROBLEM.
+- P&L since v9 start $-25.50 (-12.8%).
