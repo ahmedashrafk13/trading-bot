@@ -242,3 +242,26 @@ the 09-27 06:00 close)
 - Owner FYI (not a proposal to act now): paper 90d is approaching the pre-committed alert line at the "very high" risk level (vol 0.80). Size menu (`backtest/lab/results/_size_menu_*.json`) shows vol 0.55 as the tested lower-risk option if the owner prefers to de-risk pre-emptively.
 - Ops (owner): restore reliable 6h runs (06:07 / 12:07 UTC most often missed).
 - P1, P2, P4, P5 (open, unchanged).
+
+## 2026-11-01 — week 6 (v9 live since 2026-09-24 15:54 UTC, ~37.7 days)
+
+**Measure**
+- P&L since v9 start: **-$25.54 (-12.8% of budget)**; this week **-$1.55** (from -$23.99 at 10-25). From peak: -$29.53.
+- Open: longs DOGE $115, DOT $69; short BTC $156; all with SL (uPnL ~-$1.76).
+- Scorecard: 112 runs / 1368 decisions. Strategy alone **+$7.66** gross (was +$3.31), with Claude +$6.59, **value-add -$1.07** (87 changed, 38 helped) - unchanged; all `approve*0.96` margin scaling, 0 discretionary, 0 NEWS:.
+- Maker-fill share **80% over 251 groups** (assumed 70%).
+- Paper (frozen, vol 0.80, 2.4x): 30d **-15.4%** (DD -26.2%), 60d **-13.7%** (DD -26.2%), 90d **-23.1%** (DD -29.6%).
+- Live vs paper: live -12.8% over ~38d vs paper 30d -15.4% → live not lagging paper; strategy-alone gross +$7.66 vs live net -$25.54 gap still unexplained in detail (P5).
+
+**Judge**
+- 90d paper -23.1% > -25% → inside tested range, **no EDGE ALERT**, but only 1.9 pts from the line (was -20.5%). Next week below -25% triggers an EDGE ALERT.
+- Maker share 80% ≥ 40% → fee assumption holds.
+- Value-add negative over 112 runs, entirely margin-scaling noise (P4) → no "override less" lesson; no overrides exist.
+- NEWS-driven line: 0 overrides, $0.
+- Ops: 17 scored runs this week vs ~28 bars; 10-28 00/06/12 missed, 10-29 none logged, last run 10-30 16:25 UTC (~6 bars missed before this review).
+
+**Proposals (owner decides; none enacted)**
+- Strategy: **no change proposed** - no lab evidence for one.
+- Owner FYI: paper 90d is at the edge of the tested range at vol 0.80; vol 0.55 is the tested lower-risk option in `_size_menu_*.json` if the owner wants to de-risk before the alert fires.
+- Ops (owner, URGENT): runs keep missing for 1-2 days; check PC sleep / app uptime.
+- P1, P2, P4, P5 (open, unchanged).
