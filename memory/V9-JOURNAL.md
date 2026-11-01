@@ -544,3 +544,14 @@
 - Decision: approved all unchanged.
 - Fills: LINK short maker, BTC add taker; DOT top-up BLOCKED by margin_cap (holding $69). All 3 positions have stops; no STOP PROBLEM.
 - P&L since v9 start $-25.50 (-12.8%).
+
+## 2026-11-01 12:12 (12:12 UTC run)
+- Strategy: close BTC short, hold LINK short (-$113), top up DOT long to $86.
+- Approved all; AMBER Binance-hack headlines were 11-21h old, BTC target 0 anyway.
+- Fills: BTC close maker, DOT +18.3 taker (1/2 maker). No BLOCKED, no STOP PROBLEM.
+- P&L since v9 start -$25.18 (-12.6
+## 2026-11-01 12:12 (12:12 UTC run)
+- Strategy: close BTC short, hold LINK short (-$113), top up DOT long to $86.
+- Approved all; AMBER Binance-hack headlines were 11-21h old, BTC target 0 anyway.
+- Fills: BTC close maker, DOT +18.3 taker (1/2 maker). No BLOCKED, no STOP PROBLEM.
+- P&L since v9 start -$25.04 (-12.5 pct).

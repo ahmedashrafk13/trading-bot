@@ -1,1 +1,4 @@
-{"run_id": "2026-11-01 10:48", "decisions": []}
+{"run_id": "2026-11-01 12:12", "decisions": [
+ {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z 2.3, no event risk on LINK"},
+ {"symbol": "DOTUSDT", "action": "approve", "reason": "crowd short-heavy z -1.57, no event risk on DOT"}
+], "claude_trades": [], "keep": []}
