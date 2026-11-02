@@ -555,3 +555,5 @@
 - Approved all; AMBER Binance-hack headlines were 11-21h old, BTC target 0 anyway.
 - Fills: BTC close maker, DOT +18.3 taker (1/2 maker). No BLOCKED, no STOP PROBLEM.
 - P&L since v9 start -$25.04 (-12.5 pct).
+
+- 2026-11-02 17:14 UTC (late run, 12:00 bar): strategy LONG ETH $178 (z -2.16), SHORT LINK $114 (z 2.68), flat DOT. Approved both; AMBER ETH headlines were bullish Bitmine buys / muted Binance-hack reaction. DOT closed by taker; ETH open + LINK top-up maker. No BLOCKED, no STOP PROBLEM. P&L since v9 start -$20.30 (-10.1%).

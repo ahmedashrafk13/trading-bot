@@ -1391,3 +1391,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-11-01 12:12,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-01 12:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-01 12:12,DOTUSDT,85.89,85.89,approve,crowd short-heavy z -1.57; no event risk on DOT,18.3,0.9411,0.0,0.00947
+2026-11-02 17:14,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-02 17:14,ETHUSDT,177.96,177.96,approve,AMBER headlines are bullish-accumulation stories; Binance hack reaction muted; no event in hold,0.07,2267.84,1.0,0.03175
+2026-11-02 17:14,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-02 17:14,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-02 17:14,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-02 17:14,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-02 17:14,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-02 17:14,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-02 17:14,LINKUSDT,-113.50,-113.50,approve,crowd long-heavy z 2.68; no event risk,0.5,11.158,1.0,0.00112
+2026-11-02 17:14,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-02 17:14,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-02 17:14,DOTUSDT,0.00,0.00,approve,,90.8,0.9393,0.0,0.04691

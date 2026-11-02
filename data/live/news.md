@@ -1,14 +1,11 @@
-# v9 news check - 2026-11-01 12:13 UTC
+# v9 news check - 2026-11-02 17:14 UTC
 
-Coins: BTCUSDT, LINKUSDT, DOTUSDT | hold window 8h | sources ok: 9/10
-SOURCES DOWN (check by WebSearch): binance_delist (URLError)
+Coins: ETHUSDT, LINKUSDT, DOTUSDT | hold window 8h | sources ok: 10/10
 
 Summary: 0 RED, 2 AMBER
-- AMBER BTCUSDT   [cointelegraph] Bitcoin held up better than expected after Binance hack, Strive CEO says (-20.8h) <https://cointelegraph.com/markets/bitcoin-binance-hack-strive-ceo?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound>
-- AMBER BTCUSDT   [coindesk] FBI confirms North Korea's role in $6 billion Binance hack, asks DeFi community to block BTC, ETH, SOL addresses (-11.0h) <https://www.coindesk.com/policy/2026/10/31/fbi-confirms-north-korea-s-role-in-usd6-billion-binance-hack-asks-defi-community-to-block-btc-eth-sol-addresses>
-- INFO  BTCUSDT   [cointelegraph] Bitcoin turns 18: Has the original rebel grown up? (-21.8h) <https://cointelegraph.com/magazine/bitcoin-turns-18-has-the-original-rebel-grown-up?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound>
-- INFO  BTCUSDT   [coindesk] Bitcoin's white paper turns 18, and small businesses are still paying for the bailouts it answered (-18.2h) <https://www.coindesk.com/opinion/2026/10/31/bitcoin-s-white-paper-turns-18-and-small-businesses-are-still-paying-for-the-bailouts-it-answered>
-- INFO  BTCUSDT   [coindesk] 18 years in, what has Bitcoin truly done? (-23.2h) <https://www.coindesk.com/opinion/2026/10/31/18-years-in-what-has-bitcoin-truly-done>
+- AMBER ETHUSDT   [decrypt] Bitmine Buys More Ethereum as Tom Lee Calls the Binance Hack Bullish (-0.9h) <https://decrypt.co/382340/bitmine-buys-more-ethereum-tom-lee-binance-hack-bullish>
+- AMBER ETHUSDT   [theblock] Bitmine adds 8,573 ETH as Tom Lee flags muted Binance hack reaction (-2.6h) <https://www.theblock.co/news/business/2026-11-02-bitmine-adds-8573-eth-tom-lee-flags-muted-binance-hack-reaction-432307>
+- INFO  *         [macro calendar] USD Congressional Elections Tue 15:16 UTC (+22.0h)
 
 RED = strong case to skip/cut; AMBER = consider resize < 1; INFO = context only.
 Flags never justify a bigger or flipped trade. Prefix the reason with NEWS: when a flag drove it.
