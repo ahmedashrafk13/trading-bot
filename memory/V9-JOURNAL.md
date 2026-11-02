@@ -557,3 +557,6 @@
 - P&L since v9 start -$25.04 (-12.5 pct).
 
 - 2026-11-02 17:14 UTC (late run, 12:00 bar): strategy LONG ETH $178 (z -2.16), SHORT LINK $114 (z 2.68), flat DOT. Approved both; AMBER ETH headlines were bullish Bitmine buys / muted Binance-hack reaction. DOT closed by taker; ETH open + LINK top-up maker. No BLOCKED, no STOP PROBLEM. P&L since v9 start -$20.30 (-10.1%).
+
+- 2026-11-02 18:13 UTC: strategy wanted short SOL -$154, DOGE -$145, LINK -$114 (held), close ETH long (z -1.35). 0 RED / 3 AMBER (Binance-hack headlines; SOL laundering = sell pressure, aligned with short) -> approved unchanged.
+  Fills: ETH close maker, DOGE maker, SOL taker (2/3 maker; 79% lifetime). 0 blocked, 0 stop problems; all 3 positions have SL. P&L since v9 start $-21.47.
