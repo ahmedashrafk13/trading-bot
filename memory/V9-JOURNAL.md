@@ -560,3 +560,8 @@
 
 - 2026-11-02 18:13 UTC: strategy wanted short SOL -$154, DOGE -$145, LINK -$114 (held), close ETH long (z -1.35). 0 RED / 3 AMBER (Binance-hack headlines; SOL laundering = sell pressure, aligned with short) -> approved unchanged.
   Fills: ETH close maker, DOGE maker, SOL taker (2/3 maker; 79% lifetime). 0 blocked, 0 stop problems; all 3 positions have SL. P&L since v9 start $-21.47.
+
+- 2026-11-03 19:57 UTC (run 2026-11-03 19:57, 18:00 bar, ~2h late): strategy wanted ETH long $178 (z -2.33), LINK short $114 (held), flat SOL/DOGE shorts.
+  Approved unchanged; AMBER news (Binance-hack headline for ETH, $106M theft/SOL bot drain) judged stale/not coin-specific event risk; binance_delist feed down.
+  Fills: DOGE close maker, SOL close + ETH open taker; 0 blocked, 0 stop problems. Now ETH long $160 (SL 2070), LINK short $112 (SL 12.226).
+  P&L since v9 start $-24.23 (-12.1%); maker share 79% over 265 groups.
