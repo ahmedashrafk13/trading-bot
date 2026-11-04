@@ -565,3 +565,5 @@
   Approved unchanged; AMBER news (Binance-hack headline for ETH, $106M theft/SOL bot drain) judged stale/not coin-specific event risk; binance_delist feed down.
   Fills: DOGE close maker, SOL close + ETH open taker; 0 blocked, 0 stop problems. Now ETH long $160 (SL 2070), LINK short $112 (SL 12.226).
   P&L since v9 start $-24.23 (-12.1%); maker share 79% over 265 groups.
+
+- 2026-11-04 19:06 UTC (run 2026-11-04 19:06, 18:00 bar; ~1h late): strategy long ETH $170 (z -3.44, held), long LTC $152 (z -2.56), close LINK short. News: 0 RED/0 AMBER (binance_delist feed down, INFO only). Approved unchanged. Fills: LINK close + LTC open, both maker (2/2). No BLOCKED, no STOP PROBLEM. P&L since v9 start $-18.93.
