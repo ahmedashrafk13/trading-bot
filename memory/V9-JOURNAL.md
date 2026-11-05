@@ -567,3 +567,5 @@
   P&L since v9 start $-24.23 (-12.1%); maker share 79% over 265 groups.
 
 - 2026-11-04 19:06 UTC (run 2026-11-04 19:06, 18:00 bar; ~1h late): strategy long ETH $170 (z -3.44, held), long LTC $152 (z -2.56), close LINK short. News: 0 RED/0 AMBER (binance_delist feed down, INFO only). Approved unchanged. Fills: LINK close + LTC open, both maker (2/2). No BLOCKED, no STOP PROBLEM. P&L since v9 start $-18.93.
+
+- 2026-11-05 00:12 UTC (run 2026-11-05 00:12): strategy long ETH $170 (z -3.62) + long LTC $152 (z -2.16), rest flat. Approved unchanged - news 0 RED/0 AMBER (binance_delist feed down; ETH/LTC no delisting risk). Book already at target: 0 orders, 0 blocked, stops on both. P&L since v9 start $-18.50 (-9.3%); maker share 79%.
