@@ -572,3 +572,5 @@
 
 - 2026-11-05 15:54 UTC (run 2026-11-05 15:54, late for 12:00 bar): strategy wanted ETH long +$170 (z -2.86), LINK short -$117 (z +1.94), close LTC. News 0 RED/0 AMBER -> approved all.
   Filled: LTC closed (maker). LINK short BLOCKED by circuit_breaker (realized today -$11.45). ETH held $157 long, SL 2070. No stop problems. P&L since v9 start -$42.68 (-21.3%).
+
+- 2026-11-05 18:12 UTC: strategy wanted shorts BTC/SOL/BNB/DOGE/LINK/LTC (crowd long-heavy after -6% day), close ETH long. Approved unchanged (AMBER flags were stale hack headlines, not BTC-specific). ETH long closed; all 6 new shorts BLOCKED by circuit_breaker (realized today -$14.15 <= -5%), book flat until 00:00 UTC. P&L since v9 start -$42.64 (-21.3%); maker share 79%.
