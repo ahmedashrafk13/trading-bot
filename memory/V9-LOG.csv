@@ -1487,3 +1487,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-11-06 15:20,LTCUSDT,-78.74,-78.74,approve,crowd long-heavy z1.69; no event risk found,0,0,,0.00000
 2026-11-06 15:20,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-06 15:20,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-06 18:12,BTCUSDT,-208.28,-208.28,approve,crowd long-heavy z 2.12; AMBER headlines (KOSPI halt; contained hack) are not events inside the hold,0.001,75731.2,0.0,0.04165
+2026-11-06 18:12,ETHUSDT,-143.44,-143.44,approve,crowd long-heavy z 2.08; no event risk found,0.02,2223.62,1.0,0.00889
+2026-11-06 18:12,SOLUSDT,-128.27,-128.27,approve,crowd long-heavy z 1.94; AMBER Shanghai event halt is not price-relevant event risk,0.6,90.02,1.0,0.01080
+2026-11-06 18:12,BNBUSDT,0.00,0.00,approve,,0.14,694.6,0.0,0.05348
+2026-11-06 18:12,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-06 18:12,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-06 18:12,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-06 18:12,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-06 18:12,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-06 18:12,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-06 18:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-06 18:12,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000

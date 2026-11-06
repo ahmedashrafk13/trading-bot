@@ -577,3 +577,6 @@
 
 - 2026-11-06 15:20 UTC (run 2026-11-06 15:20, 12:00 bar, ~3h late; 11-06 00:00 + 06:00 bars missed, book was flat): strategy wanted shorts BTC -$129 / ETH -$89 / SOL -$80 / BNB -$103 / LTC -$79 (crowd long-heavy, z 1.55-2.23). News 0 RED / 3 AMBER (KOSPI-halt + contained Mercado Bitcoin hack headlines, Solana Shanghai event halted) - headline matches, no event inside hold -> approved all.
   Filled 4/4 maker: ETH $89, SOL $73, BNB $98, BTC $76 (lot step 0.001 rounds BTC below target). LTC short BLOCKED by margin_cap ($114 > $100). 0 STOP PROBLEMs, all 4 carry SL. P&L since v9 start -$42.90 (-21.5%); maker share 79% over 273.
+
+- 2026-11-06 18:12 UTC (run 2026-11-06 18:12, on time): strategy wanted shorts BTC -$208 (z 2.12) / ETH -$143 (z 2.08) / SOL -$128 (z 1.94), close BNB short (z 1.39). News 0 RED / 3 AMBER (same KOSPI-halt, contained-hack and Solana-event headlines as 15:20; no event inside the hold) -> approved all.
+  Filled 4: BNB closed (taker), ETH +0.02 (maker), SOL +0.6 (maker), BTC +0.001 (taker) -> 2/4 maker. Book: BTC $151 / ETH $133 / SOL $126 short, all with SL. 0 BLOCKED, 0 STOP PROBLEMs. P&L since v9 start -$42.23 (-21.1%); maker share 79% over 277.
