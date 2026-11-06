@@ -574,3 +574,6 @@
   Filled: LTC closed (maker). LINK short BLOCKED by circuit_breaker (realized today -$11.45). ETH held $157 long, SL 2070. No stop problems. P&L since v9 start -$42.68 (-21.3%).
 
 - 2026-11-05 18:12 UTC: strategy wanted shorts BTC/SOL/BNB/DOGE/LINK/LTC (crowd long-heavy after -6% day), close ETH long. Approved unchanged (AMBER flags were stale hack headlines, not BTC-specific). ETH long closed; all 6 new shorts BLOCKED by circuit_breaker (realized today -$14.15 <= -5%), book flat until 00:00 UTC. P&L since v9 start -$42.64 (-21.3%); maker share 79%.
+
+- 2026-11-06 15:20 UTC (run 2026-11-06 15:20, 12:00 bar, ~3h late; 11-06 00:00 + 06:00 bars missed, book was flat): strategy wanted shorts BTC -$129 / ETH -$89 / SOL -$80 / BNB -$103 / LTC -$79 (crowd long-heavy, z 1.55-2.23). News 0 RED / 3 AMBER (KOSPI-halt + contained Mercado Bitcoin hack headlines, Solana Shanghai event halted) - headline matches, no event inside hold -> approved all.
+  Filled 4/4 maker: ETH $89, SOL $73, BNB $98, BTC $76 (lot step 0.001 rounds BTC below target). LTC short BLOCKED by margin_cap ($114 > $100). 0 STOP PROBLEMs, all 4 carry SL. P&L since v9 start -$42.90 (-21.5%); maker share 79% over 273.
