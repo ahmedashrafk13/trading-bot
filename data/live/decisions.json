@@ -1,9 +1,8 @@
 {
-  "run_id": "2026-11-06 18:12",
+  "run_id": "2026-11-07 18:10",
   "decisions": [
-    {"symbol": "BTCUSDT", "action": "approve", "reason": "crowd long-heavy z 2.12; AMBER headlines (KOSPI halt, contained hack) are not events inside the hold"},
-    {"symbol": "ETHUSDT", "action": "approve", "reason": "crowd long-heavy z 2.08; no event risk found"},
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z 1.94; AMBER Shanghai event halt is not price-relevant event risk"}
+    {"symbol": "BTCUSDT", "action": "approve", "reason": "crowd long-heavy z=1.87, 0 RED/AMBER, weekend no macro prints"},
+    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z=1.93, no event risk found"}
   ],
   "claude_trades": [],
   "keep": []

@@ -1499,3 +1499,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-11-06 18:12,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-06 18:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-06 18:12,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-07 18:10,BTCUSDT,-235.52,-235.52,approve,crowd long-heavy z=1.87; 0 RED/AMBER; weekend no macro prints,0.001,75865,1.0,0.01517
+2026-11-07 18:10,ETHUSDT,0.00,0.00,approve,,0.06,2236.73,1.0,0.02684
+2026-11-07 18:10,SOLUSDT,-151.89,-151.89,approve,crowd long-heavy z=1.93; no event risk found,0.2,89.88,1.0,0.00360
+2026-11-07 18:10,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-07 18:10,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-07 18:10,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-07 18:10,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-07 18:10,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-07 18:10,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-07 18:10,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-07 18:10,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-07 18:10,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000

@@ -580,3 +580,6 @@
 
 - 2026-11-06 18:12 UTC (run 2026-11-06 18:12, on time): strategy wanted shorts BTC -$208 (z 2.12) / ETH -$143 (z 2.08) / SOL -$128 (z 1.94), close BNB short (z 1.39). News 0 RED / 3 AMBER (same KOSPI-halt, contained-hack and Solana-event headlines as 15:20; no event inside the hold) -> approved all.
   Filled 4: BNB closed (taker), ETH +0.02 (maker), SOL +0.6 (maker), BTC +0.001 (taker) -> 2/4 maker. Book: BTC $151 / ETH $133 / SOL $126 short, all with SL. 0 BLOCKED, 0 STOP PROBLEMs. P&L since v9 start -$42.23 (-21.1%); maker share 79% over 277.
+
+- 2026-11-07 18:10 UTC (run 2026-11-07 18:10, on time; 11-07 00:00/06:00/12:00 bars missed, BTC/ETH/SOL shorts held stale ~24h with SL on): strategy wanted shorts BTC -$236 (z 1.87) / SOL -$152 (z 1.93), close ETH short (z 1.17). News 0 RED / 0 AMBER (INFO only: ETF outflow headlines; Saturday, no macro print) -> approved unchanged, traded straight to plan, no catch-up.
+  Filled 3/3 maker: ETH closed, BTC +0.001, SOL +0.2. Book: BTC $228 / SOL $144 short, both with SL. 0 BLOCKED, 0 STOP PROBLEMs. P&L since v9 start -$42.79 (-21.4%); maker share 79% over 280.
