@@ -586,3 +586,6 @@
 
 - 2026-11-08 17:14 UTC (run 2026-11-08 17:14, 12:00 bar, ~5h late; 11-08 00:00/06:00 bars and 11-07 18:00 follow-up missed, BTC/SOL shorts held ~23h with SL on): strategy wanted shorts BTC -$243 (z 1.75) / SOL -$159 (z 1.79), rest flat. News 0 RED / 0 AMBER (INFO only; Sunday, no macro) -> approved unchanged, traded straight to plan, no catch-up.
   Filled 1/1 maker: SOL +0.1 short; BTC gap $16 below 0.001 lot step, no order. Book: BTC $227 / SOL $151 short, both with SL. 0 BLOCKED, 0 STOP PROBLEMs. P&L since v9 start -$40.79 (-20.4%); maker share 79% over 281.
+
+- 2026-11-08 18:15 UTC (run 2026-11-08 18:15, 18:00 bar, on time): strategy wanted shorts BTC -$243 (z 1.71) / SOL -$159 (z 1.88), rest flat (ETH z 1.30 below threshold). News 0 RED / 0 AMBER, 10/10 sources ok (INFO only; Sunday, no macro) -> approved unchanged.
+  No orders: both gaps (BTC $16, SOL $7) below lot step / min size. Book: BTC $228 / SOL $152 short, both with SL. 0 BLOCKED, 0 STOP PROBLEMs. P&L since v9 start -$42.32 (-21.2%); maker share 79% over 281.
