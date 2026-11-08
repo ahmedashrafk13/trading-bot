@@ -1,8 +1,8 @@
 {
-  "run_id": "2026-11-07 18:10",
+  "run_id": "2026-11-08 17:14",
   "decisions": [
-    {"symbol": "BTCUSDT", "action": "approve", "reason": "crowd long-heavy z=1.87, 0 RED/AMBER, weekend no macro prints"},
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z=1.93, no event risk found"}
+    {"symbol": "BTCUSDT", "action": "approve", "reason": "crowd long-heavy z1.75, news 0 RED/0 AMBER, Sunday no macro"},
+    {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z1.79, news 0 RED/0 AMBER"}
   ],
   "claude_trades": [],
   "keep": []
