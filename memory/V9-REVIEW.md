@@ -265,3 +265,30 @@ the 09-27 06:00 close)
 - Owner FYI: paper 90d is at the edge of the tested range at vol 0.80; vol 0.55 is the tested lower-risk option in `_size_menu_*.json` if the owner wants to de-risk before the alert fires.
 - Ops (owner, URGENT): runs keep missing for 1-2 days; check PC sleep / app uptime.
 - P1, P2, P4, P5 (open, unchanged).
+
+## 2026-11-08 — week 7 (v9 live since 2026-09-24 15:54 UTC, ~44.6 days; review ran 17:15 UTC, ~8.6h late)
+
+**Measure**
+- P&L since v9 start: **-$40.75 (-20.4% of budget)**; this week **-$15.21** (from -$25.54 at 11-01). From peak: -$44.74.
+- Open: shorts BTC $227, SOL $142; both with SL (uPnL ~+$2.36).
+- Scorecard: 124 runs / 1512 decisions. Strategy alone **+$4.75** gross (was +$7.66), with Claude +$3.69, **value-add -$1.07** (87 changed, 38 helped) - unchanged since 10-19; all `approve*0.96` margin scaling, 0 discretionary, 0 NEWS:.
+- Maker-fill share **79% over 280 groups** (assumed 70%).
+- Paper (frozen, vol 0.80, 2.4x): 30d **-22.9%** (DD -27.0%), 60d **-20.3%** (DD -27.0%), 90d **-22.7%** (DD -27.0%).
+- Live vs paper: live -20.4% over ~45d vs paper 60d -20.3% / 30d -22.9% → live tracks paper; execution and overrides are not the cost.
+- The week's loss: 11-05 the signal's ETH long (~2420 → 2252) and LTC long (56.05 → 51.84) lost ~-$23 into a -6% day while held 00:12 → 15:54 through two missed bars; 9.5% stops not hit. Realized -$14.15 tripped the 5% daily circuit breaker; the strategy's 6 shorts at 18:12 were blocked until 00:00 UTC (small cost: ETH fell 2252 → ~2224 by the next run).
+
+**Judge**
+- 90d paper -22.7% > -25% → inside tested range, **no EDGE ALERT**, 2.3 pts from the line (third week within 5 pts: -20.5, -23.1, -22.7). 30d (-22.9%) is now as bad as 90d.
+- Loss guard: -20.4% vs the -35% REVIEW flag → not triggered.
+- Maker share 79% ≥ 40% → fee assumption holds.
+- Value-add negative over 124 runs, entirely margin-scaling noise (P4) → no "override less" lesson; no overrides exist.
+- NEWS-driven line: 0 overrides, $0. AMBER flags were stale hack/KOSPI headlines; `binance_delist` feed down 11-03..11-05.
+- **OPS:** 12 runs this week vs ~28 bars (missed: 11-05 06/12, 11-06 00/06, 11-07 00/06/12, 11-08 00/06/12; 11-02/03/05 runs 2-5h late). Worst week since week 4. Last run 11-07 18:10 UTC.
+- P5 evidence: scored strategy-alone fell only -$2.91 this week while live fell -$15.21. `scorecard` scores each decision over its 6h window only, so losses during stale holds after missed runs (11-05 06:00 → 15:54) are unscored. That, plus fees/funding, explains most of the +$4.75 scored vs -$40.75 live gap.
+
+**Proposals (owner decides; none enacted)**
+- Strategy: **no change proposed** - a -20% 6-week drawdown is inside the stated -40..-50% DD expectation and there is no lab evidence for a change.
+- Owner FYI (repeated): paper 90d has hovered just above the -25% alert line for 3 weeks at vol 0.80. Vol 0.55 is the tested lower-risk option (`backtest/lab/results/_size_menu_*.json`) if the owner wants to de-risk before the alert fires.
+- Ops (owner, URGENT): fix the scheduler / PC uptime - 16 of ~28 bars missed this week, and this review itself ran ~8.6h late.
+- P5 (update, tooling): make `scorecard` also score the stale-hold hours (from the 6h window end to the next run) for both strategy and live, so the scored-vs-live gap closes. Test: on the current log the stale-hold line for 11-05 should show about -$20 for the ETH/LTC longs.
+- P1, P2, P4 (open, unchanged).
