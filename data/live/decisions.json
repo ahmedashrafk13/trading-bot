@@ -1,8 +1,4 @@
-{
-  "run_id": "2026-11-09 15:18",
-  "decisions": [
-    {"symbol": "ETHUSDT", "action": "approve", "reason": "crowd long-heavy z=1.76, no event risk in hold (CPI +22h, outside); late run - trade straight to plan"}
-  ],
-  "claude_trades": [],
-  "keep": []
-}
+{"run_id": "2026-11-09 18:12", "decisions": [
+ {"symbol": "ETHUSDT", "action": "approve", "reason": "crowd long-heavy z 1.59; news INFO only (Vitalik/treasury headlines), CPI Tue 13:30 outside hold"},
+ {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z -1.53; no event risk found, 0 RED/AMBER"}
+], "claude_trades": [], "keep": []}
