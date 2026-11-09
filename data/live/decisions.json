@@ -1,4 +1,8 @@
-{"run_id": "2026-11-08 18:15", "decisions": [
- {"symbol": "BTCUSDT", "action": "approve", "reason": "crowd long-heavy z1.71, news 0 RED/0 AMBER, no event in hold"},
- {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z1.88, news 0 RED/0 AMBER, no event in hold"}
-], "claude_trades": [], "keep": []}
+{
+  "run_id": "2026-11-09 15:18",
+  "decisions": [
+    {"symbol": "ETHUSDT", "action": "approve", "reason": "crowd long-heavy z=1.76, no event risk in hold (CPI +22h, outside); late run - trade straight to plan"}
+  ],
+  "claude_trades": [],
+  "keep": []
+}
