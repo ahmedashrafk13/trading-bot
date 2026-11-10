@@ -595,3 +595,6 @@
 
 - 2026-11-09 18:12 UTC (run 2026-11-09 18:12, 18:00 bar, on time): strategy wanted ETH short -$164 (z 1.59, held) + new LTC long +$149 (z -1.53), rest flat. News 0 RED / 0 AMBER, 10/10 sources ok (INFO: Vitalik "ETH as money" + treasury headlines; CPI Tue 13:30 UTC +19h, outside hold) -> approved unchanged.
   Filled 1: LTC +2.8 @ 51.5 (maker). ETH top-up gap ~$15 below 0.01 lot -> no order. Book: ETH $149 short (SL 2336.11), LTC $144 long (SL 46.57). 0 BLOCKED, 0 STOP PROBLEMs. P&L since v9 start -$36.24 (-18.1%); maker share 79% over 285.
+
+- 2026-11-10 12:12 UTC (run 2026-11-10 12:12, 12:00 bar, on time; 11-10 00:00/06:00 bars missed, ETH short + LTC long held ~18h with SL on): strategy wanted shorts ETH -$143 (z 1.70, held), SOL -$136 (z 1.63), AVAX -$97 (z 2.77), LINK -$104 (z 1.61); close LTC long (z -0.39). News 0 RED / 7 AMBER (CPI 13:30 UTC +1.3h inside hold = scheduled vol; EF lawsuit + stale SOL venue headlines); binance_delist feed down, WebSearch found no delisting for our coins -> approved unchanged, no catch-up.
+  Filled 5/5 maker: LTC closed, ETH trimmed 0.01 (lot rounding -> $126), SOL -1.6, AVAX -11.6, LINK -9.9 opened. Book: ETH/SOL/AVAX/LINK short, all with SL. 0 BLOCKED, 0 STOP PROBLEMs. P&L since v9 start -$34.81 (-17.4%); maker share 79% over 290.

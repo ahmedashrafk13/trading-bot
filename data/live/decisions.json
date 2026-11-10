@@ -1,4 +1,6 @@
-{"run_id": "2026-11-09 18:12", "decisions": [
- {"symbol": "ETHUSDT", "action": "approve", "reason": "crowd long-heavy z 1.59; news INFO only (Vitalik/treasury headlines), CPI Tue 13:30 outside hold"},
- {"symbol": "LTCUSDT", "action": "approve", "reason": "crowd short-heavy z -1.53; no event risk found, 0 RED/AMBER"}
+{"run_id": "2026-11-10 12:12", "decisions": [
+ {"symbol": "ETHUSDT", "action": "approve", "reason": "crowd long-heavy z 1.70 (held); AMBER = EF lawsuit headline, not market-moving; CPI 13:30 is scheduled vol only"},
+ {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z 1.63; AMBER = stale tokenized-stock venue headlines, no event in hold"},
+ {"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd long-heavy z 2.77 after NYSE news pump (INFO); fade is the tested signal"},
+ {"symbol": "LINKUSDT", "action": "approve", "reason": "crowd long-heavy z 1.61; no event risk found, Binance delist feed down but WebSearch shows no notice"}
 ], "claude_trades": [], "keep": []}

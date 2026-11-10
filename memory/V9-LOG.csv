@@ -1559,3 +1559,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-11-09 18:12,LTCUSDT,148.53,148.53,approve,crowd short-heavy z -1.53; no event risk found; 0 RED/AMBER,2.8,51.5,1.0,0.02884
 2026-11-09 18:12,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-09 18:12,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-10 12:12,BTCUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
+2026-11-10 12:12,ETHUSDT,-142.88,-142.88,approve*1.00,crowd long-heavy z 1.70 (held); AMBER = EF lawsuit headline; not market-moving; CPI 13:30 is scheduled vol only,0.01,2091.21,1.0,0.00418
+2026-11-10 12:12,SOLUSDT,-135.81,-135.81,approve*1.00,crowd long-heavy z 1.63; AMBER = stale tokenized-stock venue headlines; no event in hold,1.6,84.75,1.0,0.02712
+2026-11-10 12:12,BNBUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
+2026-11-10 12:12,XRPUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
+2026-11-10 12:12,DOGEUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
+2026-11-10 12:12,ADAUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
+2026-11-10 12:12,AVAXUSDT,-96.92,-96.92,approve*1.00,crowd long-heavy z 2.77 after NYSE news pump (INFO); fade is the tested signal,11.6,8.33,1.0,0.01933
+2026-11-10 12:12,LINKUSDT,-104.40,-104.40,approve*1.00,crowd long-heavy z 1.61; no event risk found; Binance delist feed down but WebSearch shows no notice,9.9,10.461,1.0,0.02071
+2026-11-10 12:12,LTCUSDT,0.00,0.00,approve*1.00,,2.8,51.25,1.0,0.02870
+2026-11-10 12:12,TRXUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
+2026-11-10 12:12,DOTUSDT,0.00,0.00,approve*1.00,,0,0,,0.00000
