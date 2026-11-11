@@ -603,3 +603,8 @@
   Filled 5: LINK closed (maker), ETH closed (taker), SOL +0.1 / AVAX +1.6 top-ups (maker), BTC -0.003 @ 73248 (taker). Book: BTC $220 / SOL $140 / AVAX $109 short, all with SL. 0 BLOCKED, 0 STOP PROBLEMs. P&L since v9 start -$23.99 (-12.0%); maker share 79% over 295.
 
 - 2026-11-11 13:05 UTC (late run, 12:00 bar): strategy wanted AVAX short only (-$111), flat BTC/SOL. Approved; AMBER stale Mercado hack, binance_delist feed down. Closed BTC + SOL shorts (2/2 maker), AVAX held (SL 9.068). P&L since v9 start -$31.54 (-15.8%).
+
+## 2026-11-11 18:12 UTC
+- Strategy: AVAX short ~$111 (z 2.93); already held $114, gap within tolerance.
+- Decided: approve (news INFO only). No orders needed; SL 9.068 in place.
+- Fills: none (maker share 79% lifetime). P&L since v9 start $-32.54 (-16.3%).
