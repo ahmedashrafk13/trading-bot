@@ -1,1 +1,1 @@
-{"run_id": "2026-11-10 18:12", "decisions": [], "claude_trades": [], "keep": []}
+{"run_id": "2026-11-11 13:05", "decisions": [{"symbol": "AVAXUSDT", "action": "approve", "reason": "crowd long-heavy z 2.87; AMBER is stale Mercado hack, no event in hold"}]}

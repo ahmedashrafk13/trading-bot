@@ -601,3 +601,5 @@
 
 - 2026-11-10 18:12 UTC (run 2026-11-10 18:12, 18:00 bar, on time): strategy wanted shorts BTC -$225 (z 1.55, new), SOL -$146 (z 1.59, held), AVAX -$110 (z 3.08, held); close ETH short (z 1.14) and LINK short (z 1.48). News 0 RED / 3 AMBER (Mercado Bitcoin hack -24h, EF ex-employee lawsuit, SOL stock-venue headline - none an event inside the hold; CPI already printed 13:30), 10/10 sources ok -> approved unchanged.
   Filled 5: LINK closed (maker), ETH closed (taker), SOL +0.1 / AVAX +1.6 top-ups (maker), BTC -0.003 @ 73248 (taker). Book: BTC $220 / SOL $140 / AVAX $109 short, all with SL. 0 BLOCKED, 0 STOP PROBLEMs. P&L since v9 start -$23.99 (-12.0%); maker share 79% over 295.
+
+- 2026-11-11 13:05 UTC (late run, 12:00 bar): strategy wanted AVAX short only (-$111), flat BTC/SOL. Approved; AMBER stale Mercado hack, binance_delist feed down. Closed BTC + SOL shorts (2/2 maker), AVAX held (SL 9.068). P&L since v9 start -$31.54 (-15.8%).
