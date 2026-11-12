@@ -608,3 +608,5 @@
 - Strategy: AVAX short ~$111 (z 2.93); already held $114, gap within tolerance.
 - Decided: approve (news INFO only). No orders needed; SL 9.068 in place.
 - Fills: none (maker share 79% lifetime). P&L since v9 start $-32.54 (-16.3%).
+
+- 2026-11-12 08:30 UTC (06:00 bar, late ~2.5h): strategy SHORT ADA -$125 (z 2.55), hold AVAX short -$115 (z 2.54). Approved both; 0 RED/AMBER (binance_delist feed down, majors, no delist risk). ADA short filled 722 @0.1728 taker (0/1 maker this run; 79% overall). Stops: ADA 0.1894, AVAX 9.068. P&L since v9 start $-32.48.
