@@ -1655,3 +1655,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-11-13 15:13,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-13 15:13,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-13 15:13,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-13 22:49,BTCUSDT,0.00,0.00,approve,,0.002,68344.3,1.0,0.02734
+2026-11-13 22:49,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-13 22:49,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-13 22:49,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-13 22:49,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-13 22:49,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-13 22:49,ADAUSDT,-125.04,-125.04,approve,z 2.6 crowd long; no event risk,0,0,,0.00000
+2026-11-13 22:49,AVAXUSDT,-110.15,-110.15,approve,z 2.34 crowd long; no event risk,0,0,,0.00000
+2026-11-13 22:49,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-13 22:49,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-13 22:49,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-13 22:49,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
