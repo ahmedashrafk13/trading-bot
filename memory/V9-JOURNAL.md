@@ -614,3 +614,9 @@
 - 2026-11-12 12:12 UTC: strategy held shorts ADA (z 2.86, -$130) / AVAX (z 2.64, -$115); all else flat. News 0 RED/0 AMBER (binance_delist feed down; majors, no delist risk). Approved unchanged. Fill: ADA top-up 33 @0.1724 maker (100%); AVAX already near target. Stops in place, none blocked. P&L since v9 start $-30.43.
 
 - 2026-11-12 18:14 UTC: strategy short ADA -$130 (z1.71), AVAX -$115 (z3.07); both already held near target. Approved both (0 RED/AMBER; bybit_announcements feed down, PPI Fri outside hold). No orders needed (gap under min). Stops in place. P&L since v9 start -$27.71.
+
+## 2026-11-13 15:13 UTC (run 2026-11-13 15:13, 12:00 bar - late ~3h)
+- Strategy: short BTC -$205 (z 1.7), hold ADA -$125 / AVAX -$110 shorts.
+- Decided: approve all - news 0 RED / 0 AMBER, INFO only (BTC <$70K, ETF outflows); no event in hold.
+- Fills: BTC Sell 0.002 @ 68701.1 maker (100%); BTC below target (~$138, margin/lot cap). No BLOCKED, no STOP PROBLEM.
+- P&L since v9 start $-30.16 (-15.1%).
