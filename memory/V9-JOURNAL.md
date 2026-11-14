@@ -626,3 +626,9 @@
 - Decision: approve all unchanged (no event risk).
 - Fills: BTC short closed maker; ADA/AVAX already at target, no opens. 0 blocked, 0 stop problems.
 - P&L since v9 start $-22.39 (-11.2%).
+
+## 2026-11-14 17:58 UTC (run 2026-11-14 17:58, signal 12:00 bar - run fired late vs 12:07 slot)
+- Strategy: SHORT SOL $153, SHORT AVAX $122 (top-up), close ADA short.
+- Decision: approve all - news 0 RED/0 AMBER (binance_delist, theblock feeds down), no event risk.
+- Fills: ADA closed (maker), AVAX +3.1 (maker), SOL 2.1 (taker). 0 blocked, 0 stop problems. Maker share 79%.
+- P&L since v9 start $-3.59.
