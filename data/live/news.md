@@ -1,7 +1,7 @@
-# v9 news check - 2026-11-14 17:58 UTC
+# v9 news check - 2026-11-14 18:13 UTC
 
-Coins: SOLUSDT, ADAUSDT, AVAXUSDT | hold window 8h | sources ok: 8/10
-SOURCES DOWN (check by WebSearch): binance_delist (URLError), theblock (TimeoutError)
+Coins: SOLUSDT, AVAXUSDT | hold window 8h | sources ok: 9/10
+SOURCES DOWN (check by WebSearch): binance_delist (URLError)
 
 Summary: 0 RED, 0 AMBER - nothing found that argues against the strategy's trades.
 
