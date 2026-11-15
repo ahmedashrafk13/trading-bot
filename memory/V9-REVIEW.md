@@ -292,3 +292,29 @@ the 09-27 06:00 close)
 - Ops (owner, URGENT): fix the scheduler / PC uptime - 16 of ~28 bars missed this week, and this review itself ran ~8.6h late.
 - P5 (update, tooling): make `scorecard` also score the stale-hold hours (from the 6h window end to the next run) for both strategy and live, so the scored-vs-live gap closes. Test: on the current log the stale-hold line for 11-05 should show about -$20 for the ETH/LTC longs.
 - P1, P2, P4 (open, unchanged).
+
+## 2026-11-15 — week 8 (v9 live since 2026-09-24 15:54 UTC, ~51.7d; review ran ~08:40 UTC, on time)
+
+**Measure**
+- P&L since v9 start: **-$2.59 (-1.3% of budget)**; this week **+$38.16** (from -$40.75 at 11-08). From peak: -$6.58.
+- Open: DOGE long $104, BNB long $124, ADA short $92; all with SL (uPnL ~+$0.84).
+- Scorecard: 140 runs / 1704 decisions (+16 runs). Strategy alone **+$42.64** gross (was +$4.75), with Claude +$41.58, **value-add -$1.07** (87 changed, 38 helped) - unchanged since 10-19; all `approve*0.96` margin scaling, 0 discretionary, 0 NEWS:.
+- Maker-fill share **79% over 309 groups** (assumed 70%).
+- Paper (frozen, vol 0.80, 2.4x): 30d **-2.7%** (DD -23.4%), 60d **+0.4%** (DD -27.0%), 90d **+1.3%** (DD -27.0%).
+- Live vs paper: live -1.3% over ~52d vs paper 60d +0.4% → gap ~1.7 pts (fees/funding + stale holds); execution and overrides are not the cost.
+
+**Judge**
+- 90d paper +1.3% > -25% → inside tested range, **no EDGE ALERT** (was 2.3 pts from the line last week; now 26 pts clear).
+- Loss guard: -1.3% vs -35% REVIEW → not triggered.
+- Maker share 79% ≥ 40% → fee assumption holds.
+- Value-add negative over 140 runs, entirely margin-scaling noise (P4) → no "override less" lesson.
+- NEWS-driven line: 0 overrides, $0. `binance_delist` feed down most runs this week.
+- **OPS:** ~16 runs vs ~28 bars; 00:00/06:00 bars missed most days (11-08/09/10/11), several late runs (1-5h). Improved vs week 7 (12) but still ~40% missed.
+- Note: still below +22%/yr pace (~+3%/yr would need ~+$6.4 over 52d); one good week does not change the expectation of -40..-50% DDs.
+
+**Proposals (owner decides; none enacted)**
+- Strategy: **no change proposed** - no lab evidence.
+- Owner FYI: de-risk prompt from weeks 6-7 is no longer pressing (paper 90d +1.3%).
+- Ops (owner, URGENT, repeated): fix scheduler / PC uptime - early-UTC bars keep missing.
+- Ops: `binance_delist` feed down since ~11-03; worth a look at `scripts/news_check.py` source URL (owner/dev task, not a scheduled-run edit).
+- P1, P2, P4, P5 (open, unchanged).
