@@ -644,3 +644,9 @@
 - Decided: approve all. News 0 RED/0 AMBER; binance_delist feed down (majors only, no delisting risk).
 - Fills: ADA short, BNB long (maker), DOGE long (taker). TRX BLOCKED by margin_cap ($113.63 > $100). No STOP PROBLEM; all stops attached.
 - P&L since v9 start $-3.39 (-1.7%); cumulative maker share 79%.
+
+## 2026-11-15 08:51 UTC (late run, 06:00 bar)
+- Strategy: top up BNB long +$175, DOGE long +$146, ADA short -$127 (held from prior run, partial size).
+- Decided: approve all. News 0 RED/0 AMBER; binance_delist feed down (majors, no delist risk).
+- Fills: BNB top-up maker, DOGE + ADA top-ups market; 0 blocked, 0 stop problems. Maker share 79% (312 groups).
+- P&L since v9 start $-2.56 (-1.3%).
