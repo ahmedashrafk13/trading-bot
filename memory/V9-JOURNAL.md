@@ -650,3 +650,5 @@
 - Decided: approve all. News 0 RED/0 AMBER; binance_delist feed down (majors, no delist risk).
 - Fills: BNB top-up maker, DOGE + ADA top-ups market; 0 blocked, 0 stop problems. Maker share 79% (312 groups).
 - P&L since v9 start $-2.56 (-1.3%).
+
+- 2026-11-15 12:12 (2026-11-15 12:12 UTC): strategy long BNB $175 / long DOGE $146 / short ADA $127 - same as held. Approved all (news 0 RED/AMBER; binance_delist feed down, majors only). No orders needed (within tolerance), 0 blocked, all stops in place. P&L since v9 start -$2.52.
