@@ -638,3 +638,9 @@
 - Decision: approve unchanged. News 0 RED/0 AMBER; binance_delist feed down (no delisting concern for majors).
 - Fills: 2 closes (AVAX, SOL), both maker; 0 opens, 0 blocked, 0 stop problems. Book flat.
 - P&L since v9 start $-3.31 (-1.7%); maker share 79%.
+
+## 2026-11-15 00:12 UTC
+- Strategy: long BNB $126 (z -2.25), DOGE $103 (z -2.0), TRX $160 (z -1.5); short ADA $91 (z +1.79). Market -6..-14% 24h.
+- Decided: approve all. News 0 RED/0 AMBER; binance_delist feed down (majors only, no delisting risk).
+- Fills: ADA short, BNB long (maker), DOGE long (taker). TRX BLOCKED by margin_cap ($113.63 > $100). No STOP PROBLEM; all stops attached.
+- P&L since v9 start $-3.39 (-1.7%); cumulative maker share 79%.

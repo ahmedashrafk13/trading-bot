@@ -1,6 +1,6 @@
-# v9 news check - 2026-11-14 18:13 UTC
+# v9 news check - 2026-11-15 00:12 UTC
 
-Coins: SOLUSDT, AVAXUSDT | hold window 8h | sources ok: 9/10
+Coins: BNBUSDT, DOGEUSDT, ADAUSDT, TRXUSDT | hold window 8h | sources ok: 9/10
 SOURCES DOWN (check by WebSearch): binance_delist (URLError)
 
 Summary: 0 RED, 0 AMBER - nothing found that argues against the strategy's trades.
