@@ -652,3 +652,9 @@
 - P&L since v9 start $-2.56 (-1.3%).
 
 - 2026-11-15 12:12 (2026-11-15 12:12 UTC): strategy long BNB $175 / long DOGE $146 / short ADA $127 - same as held. Approved all (news 0 RED/AMBER; binance_delist feed down, majors only). No orders needed (within tolerance), 0 blocked, all stops in place. P&L since v9 start -$2.52.
+
+## 2026-11-16 18:13 UTC (run 2026-11-16 18:13)
+- Strategy: close BNB long (z -1.03); keep DOGE long $148 (z -1.87), ADA short $127 (z +2.43).
+- Decision: approve unchanged - news 0 RED/0 AMBER (retail sales Tue 13:30 is outside hold).
+- Fills: BNB 0.29 closed maker @588.8; DOGE/ADA already at target; 0 blocked, 0 stop problems. Maker share 79%.
+- P&L since v9 start $-1.89.
