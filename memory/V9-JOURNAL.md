@@ -658,3 +658,7 @@
 - Decision: approve unchanged - news 0 RED/0 AMBER (retail sales Tue 13:30 is outside hold).
 - Fills: BNB 0.29 closed maker @588.8; DOGE/ADA already at target; 0 blocked, 0 stop problems. Maker share 79%.
 - P&L since v9 start $-1.89.
+
+- 2026-11-17 17:30 UTC (late run, 12:00 bar): strategy wants DOGE long $148 (z -1.69), ADA short $127 (z +2.11); both already held at target.
+  news_check 0 RED/0 AMBER (INFO: FOMC minutes +25h, Cardano treasury headline) -> approved unchanged.
+  No orders needed (0 fills); stops present on both. P&L since v9 start $-3.09.
