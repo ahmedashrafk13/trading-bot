@@ -662,3 +662,5 @@
 - 2026-11-17 17:30 UTC (late run, 12:00 bar): strategy wants DOGE long $148 (z -1.69), ADA short $127 (z +2.11); both already held at target.
   news_check 0 RED/0 AMBER (INFO: FOMC minutes +25h, Cardano treasury headline) -> approved unchanged.
   No orders needed (0 fills); stops present on both. P&L since v9 start $-3.09.
+
+- 2026-11-17 18:12 UTC: strategy held DOGE long $148 (z -1.69) / ADA short $127 (z +2.42); approved both (news 0 RED/AMBER, ADA treasury headline INFO only). Already at target, 0 orders. Stops on both. P&L since v9 start -$2.84.
