@@ -666,3 +666,5 @@
 - 2026-11-17 18:12 UTC: strategy held DOGE long $148 (z -1.69) / ADA short $127 (z +2.42); approved both (news 0 RED/AMBER, ADA treasury headline INFO only). Already at target, 0 orders. Stops on both. P&L since v9 start -$2.84.
 
 - 2026-11-18 16:21 UTC (late run, 12:00 bar): strategy closed DOGE long, short ADA -$139 (z +2.47). Approved; FOMC minutes AMBER treated as scheduled-print only. Fills: DOGE close taker, ADA add maker. P&L since v9 start $-2.49.
+
+- 2026-11-18 18:12 UTC: strategy holds ADA short -$139 (z +2.3), all else flat. Approved; FOMC minutes AMBER (+0.8h) is a scheduled print, not a skip. No orders needed (already at target, SL 0.1648). P&L since v9 start -$3.89.
