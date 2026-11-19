@@ -676,3 +676,9 @@
 - Decided: approve all. AMBER ETH = $3.4M vault hack, immaterial. binance_delist feed down (majors only, n/a).
 - Fills: ADA close taker, ETH open maker (1/2 maker); 0 blocked, 0 stop problems; both positions have SL.
 - P&L since v9 start $-2.35 (-1.2% of budget).
+
+## 2026-11-19 18:12 UTC
+- Strategy: close ETH long; short ADA (z +1.72, -$143); hold TRX short (z +1.77, -$244).
+- Decision: approve unchanged. AMBER (small $3.4M ETH vault hack headline) irrelevant - ETH target was flat.
+- Fills: ETH close maker; ADA open taker (fallback). 0 blocked, 0 stop problems. Lifetime maker share 78%.
+- P&L since v9 start $-3.81 (-1.9% of budget).
