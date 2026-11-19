@@ -1799,3 +1799,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-11-19 07:58,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-19 07:58,TRXUSDT,-244.18,-244.18,approve,,780,0.3128,1.0,0.05368
 2026-11-19 07:58,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-19 16:33,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-19 16:33,ETHUSDT,164.81,164.81,approve,AMBER is a small $3.4M vault hack; not ETH-protocol risk; no macro print in hold,0.09,1781.65,1.0,0.03528
+2026-11-19 16:33,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-19 16:33,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-19 16:33,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-19 16:33,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-19 16:33,ADAUSDT,0.00,0.00,approve,,927,0.1528,0.0,0.08570
+2026-11-19 16:33,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-19 16:33,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-19 16:33,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-19 16:33,TRXUSDT,-244.18,-244.18,approve,crowd long-heavy z 1.94; no event risk,0,0,,0.00000
+2026-11-19 16:33,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000

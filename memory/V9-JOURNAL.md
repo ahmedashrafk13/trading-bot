@@ -670,3 +670,9 @@
 - 2026-11-18 18:12 UTC: strategy holds ADA short -$139 (z +2.3), all else flat. Approved; FOMC minutes AMBER (+0.8h) is a scheduled print, not a skip. No orders needed (already at target, SL 0.1648). P&L since v9 start -$3.89.
 
 - 2026-11-19 07:58 UTC (run 2026-11-19 07:58, 06:00 bar; ~2h late): strategy short ADA -$139 (held -$143) and short TRX -$244. News 0 RED/0 AMBER, 10/10 sources ok -> approved unchanged. TRX short filled maker (780 @ 0.3128), no blocks, no stop problems; both stops attached. Maker share 78%. P&L since v9 start $-5.71.
+
+## 2026-11-19 16:33 UTC (late run for 12:00 bar; first plan attempt failed on Binance fetch, retry ok)
+- Strategy: LONG ETH $165 (z -1.72), hold SHORT TRX $244 (z 1.94), close ADA short.
+- Decided: approve all. AMBER ETH = $3.4M vault hack, immaterial. binance_delist feed down (majors only, n/a).
+- Fills: ADA close taker, ETH open maker (1/2 maker); 0 blocked, 0 stop problems; both positions have SL.
+- P&L since v9 start $-2.35 (-1.2% of budget).

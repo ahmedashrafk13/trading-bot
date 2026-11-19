@@ -1,1 +1,4 @@
-{"run_id": "2026-11-19 07:58", "decisions": []}
+{"run_id": "2026-11-19 16:33", "decisions": [
+ {"symbol": "ETHUSDT", "action": "approve", "reason": "AMBER is a small $3.4M vault hack, not ETH-protocol risk; no macro print in hold"},
+ {"symbol": "TRXUSDT", "action": "approve", "reason": "crowd long-heavy z 1.94, no event risk"}
+], "claude_trades": [], "keep": []}
