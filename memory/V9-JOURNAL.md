@@ -668,3 +668,5 @@
 - 2026-11-18 16:21 UTC (late run, 12:00 bar): strategy closed DOGE long, short ADA -$139 (z +2.47). Approved; FOMC minutes AMBER treated as scheduled-print only. Fills: DOGE close taker, ADA add maker. P&L since v9 start $-2.49.
 
 - 2026-11-18 18:12 UTC: strategy holds ADA short -$139 (z +2.3), all else flat. Approved; FOMC minutes AMBER (+0.8h) is a scheduled print, not a skip. No orders needed (already at target, SL 0.1648). P&L since v9 start -$3.89.
+
+- 2026-11-19 07:58 UTC (run 2026-11-19 07:58, 06:00 bar; ~2h late): strategy short ADA -$139 (held -$143) and short TRX -$244. News 0 RED/0 AMBER, 10/10 sources ok -> approved unchanged. TRX short filled maker (780 @ 0.3128), no blocks, no stop problems; both stops attached. Maker share 78%. P&L since v9 start $-5.71.
