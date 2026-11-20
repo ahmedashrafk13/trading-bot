@@ -684,3 +684,5 @@
 - P&L since v9 start $-3.81 (-1.9% of budget).
 
 - 2026-11-20 16:00 UTC (late run, ~4h after 12:00 bar): strategy short ADA $143 (z 3.12), close TRX. Approved unchanged (0 RED/AMBER). Fills: TRX close + ADA add both maker (100%). No blocks/stop problems. P&L since v9 start $+15.52.
+
+- 2026-11-20 18:13 UTC (run 2026-11-20 18:13): strategy SHORT SOL -$155 (z+1.75), ADA -$138 (z+2.24, held, trimmed). Approved both (0 RED/AMBER, 10/10 sources). Fills: SOL short maker, ADA trim taker; no BLOCKED, no STOP PROBLEM. P&L since v9 start $+13.04.

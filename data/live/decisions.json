@@ -1,1 +1,1 @@
-{"run_id": "2026-11-20 16:00", "decisions": [{"symbol": "ADAUSDT", "action": "approve", "reason": "z 3.12 crowd long-heavy, 0 RED/AMBER"}]}
+{"run_id": "2026-11-20 18:13", "decisions": [{"symbol":"SOLUSDT","action":"approve","reason":"crowd long-heavy z1.75, 0 RED/AMBER"},{"symbol":"ADAUSDT","action":"approve","reason":"crowd long-heavy z2.24, no event risk"}]}
