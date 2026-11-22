@@ -692,3 +692,5 @@
 - Decision: approve all. ETH AMBER (BTCS $54M Aave loan headline, ~1 day old) not a hold-window event. binance_delist feed down; majors only.
 - Fills: SOL/ADA/ETH maker, DOGE market fallback (3/4 maker). No BLOCKED, no STOP PROBLEM. Maker share 78% cumulative.
 - P&L since v9 start: +$5.34.
+
+- 2026-11-22 12:11 UTC: strategy wanted ETH +$126 / DOGE +$127 long, ADA -$112 short (all already held from prior bar). Approved unchanged; AMBER (BTCS Aave-loan headline) judged not event risk inside hold; binance_delist feed down, majors only. No orders needed (gap below lot step); all 3 positions carry stops. Maker share 78% cumulative. P&L since v9 start +$5.30.
