@@ -318,3 +318,27 @@ the 09-27 06:00 close)
 - Ops (owner, URGENT, repeated): fix scheduler / PC uptime - early-UTC bars keep missing.
 - Ops: `binance_delist` feed down since ~11-03; worth a look at `scripts/news_check.py` source URL (owner/dev task, not a scheduled-run edit).
 - P1, P2, P4, P5 (open, unchanged).
+
+## 2026-11-22 — week 9 (v9 live since 2026-09-24 15:54 UTC, ~58.7d; review ran ~08:40 UTC, on time)
+
+**Measure**
+- P&L since v9 start: **+$4.95 (+2.5% of budget)**; this week **+$7.54** (from -$2.59 at 11-15). From peak: -$9.15.
+- Open: ADA short $144 (uPnL +$5.49, SL 0.1523), SOL short $156 (uPnL -$2.97, SL 75.89).
+- Scorecard: 152 runs / 1848 decisions (+12 runs). Strategy alone **+$45.49** gross (was +$42.64), with Claude +$44.43, **value-add -$1.07** (87 changed, 38 helped) - unchanged since 10-19; all `approve*0.96` margin scaling, 0 discretionary, 0 NEWS:.
+- Maker-fill share **78% over 324 groups** (assumed 70%).
+- Paper (frozen, vol 0.80, 2.4x): 30d **+40.9%** (DD -11.5%), 60d **+22.0%** (DD -27.0%), 90d **+18.7%** (DD -27.0%).
+- Live vs paper: live +2.5% over ~59d vs paper 60d +22.0% → gap **~19.5 pts**, up from ~1.7 last week.
+
+**Judge**
+- 90d paper +18.7% > -25% → inside tested range, **no EDGE ALERT**.
+- Loss guard: not triggered.
+- Maker share 78% ≥ 40% → fee assumption holds.
+- **Live far below paper (4+ weeks: -1.3 vs +0.4 last week, now +2.5 vs +22.0).** Not overrides (value-add only -$1.07, no discretionary overrides) and not maker fills (78%). The cost is **missed runs**: paper trades every 6h bar; live missed ~16 of ~28 bars this week (only 12 scored runs; e.g. 11-16..17 partial, 11-18 00/06, 11-19 12/18 several late, and **nothing since 11-20 18:13** - ~7 bars missed before this review). The 30d paper +40.9% mostly came from trades live never placed. Scored strategy-alone (+$45.49 gross, only scored windows) vs live net +$4.95 = ~$40 of fees/funding + stale holds (P5).
+- Value-add negative over 152 runs, entirely margin-scaling noise (P4) → no "override less" lesson.
+- NEWS-driven line: 0 overrides, $0. Feeds 10/10 ok on recent runs.
+
+**Proposals (owner decides; none enacted)**
+- Strategy: **no change proposed** - paper is well inside (above) the tested range; no lab evidence for a change.
+- Ops (owner, URGENT, repeated 4 weeks): the scheduler / PC uptime is now the measurable cost - ~19 pts of return vs paper over 60d. No runs since 11-20 18:13 UTC. Options: keep the PC awake, or move the 6h routine to an always-on host / cloud schedule.
+- P5 (tooling, open): score stale-hold hours and missed bars in `scorecard` so the live-vs-paper gap is attributed in $.
+- P1, P2, P4 (open, unchanged).
