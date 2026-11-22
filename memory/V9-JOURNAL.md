@@ -686,3 +686,9 @@
 - 2026-11-20 16:00 UTC (late run, ~4h after 12:00 bar): strategy short ADA $143 (z 3.12), close TRX. Approved unchanged (0 RED/AMBER). Fills: TRX close + ADA add both maker (100%). No blocks/stop problems. P&L since v9 start $+15.52.
 
 - 2026-11-20 18:13 UTC (run 2026-11-20 18:13): strategy SHORT SOL -$155 (z+1.75), ADA -$138 (z+2.24, held, trimmed). Approved both (0 RED/AMBER, 10/10 sources). Fills: SOL short maker, ADA trim taker; no BLOCKED, no STOP PROBLEM. P&L since v9 start $+13.04.
+
+## 2026-11-22 12:06 UTC
+- Strategy: close SOL short; trim ADA short to -$112; long ETH +$126 (z -2.12), long DOGE +$127 (z -1.63).
+- Decision: approve all. ETH AMBER (BTCS $54M Aave loan headline, ~1 day old) not a hold-window event. binance_delist feed down; majors only.
+- Fills: SOL/ADA/ETH maker, DOGE market fallback (3/4 maker). No BLOCKED, no STOP PROBLEM. Maker share 78% cumulative.
+- P&L since v9 start: +$5.34.

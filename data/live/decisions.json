@@ -1,1 +1,3 @@
-{"run_id": "2026-11-20 18:13", "decisions": [{"symbol":"SOLUSDT","action":"approve","reason":"crowd long-heavy z1.75, 0 RED/AMBER"},{"symbol":"ADAUSDT","action":"approve","reason":"crowd long-heavy z2.24, no event risk"}]}
+{"run_id": "2026-11-22 12:06", "decisions": [
+ {"symbol": "ETHUSDT", "action": "approve", "reason": "AMBER BTCS $54M Aave loan headline is small/day-old, not a hold-window event; crowd short-heavy"}
+], "claude_trades": [], "keep": []}
