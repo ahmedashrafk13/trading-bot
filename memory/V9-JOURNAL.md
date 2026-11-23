@@ -707,3 +707,9 @@
   Decided: approve both. ETH AMBER = speculative "future quantum attack" article, not event risk in hold; binance_delist feed down, ETH/DOGE majors.
   Fills: 1 reduce (DOGE trim 110, taker); ETH already at target. Stops in place on both; 0 blocked.
   P&L since v9 start: +$18.20.
+
+## 2026-11-23 18:14 UTC (run 2026-11-23 18:14)
+- Strategy: close ETH/DOGE longs, short ADA $111 (z +1.71). News 0 RED / 1 AMBER (ETH quantum-threat headline, ETH being closed anyway).
+- Decided: approve unchanged - no event risk in the hold.
+- Fills: ETH/DOGE closes maker, ADA short market fallback; 0 blocked, 0 stop problems; ADA SL 0.1654.
+- P&L since v9 start $+12.04 (+6.0%).
