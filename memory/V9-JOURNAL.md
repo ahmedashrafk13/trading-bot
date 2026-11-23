@@ -696,3 +696,9 @@
 - 2026-11-22 12:11 UTC: strategy wanted ETH +$126 / DOGE +$127 long, ADA -$112 short (all already held from prior bar). Approved unchanged; AMBER (BTCS Aave-loan headline) judged not event risk inside hold; binance_delist feed down, majors only. No orders needed (gap below lot step); all 3 positions carry stops. Maker share 78% cumulative. P&L since v9 start +$5.30.
 
 - 2026-11-23 05:22 UTC (run 2026-11-23 05:22, late vs 00:07 bar): strategy long ETH $126 / long DOGE $127 / short ADA $112 - same as held. Approved unchanged; news 0 RED/0 AMBER (10/10 sources). No orders needed (book within lot step of target). All 3 positions carry stops. P&L since v9 start +$7.51 (+3.8%).
+
+## 2026-11-23 06:13 UTC (scheduled)
+- Strategy: long ETH $126, long DOGE $127, close ADA short (z 1.44 < 1.5).
+- Decided: approve unchanged — news 0 RED / 0 AMBER; value-add to date -$1.07, no reason to override.
+- Fills: ADA close 765 @ 0.146 maker (100%); ETH/DOGE already at target. No BLOCKED, no STOP PROBLEM.
+- P&L since v9 start $+7.13.
