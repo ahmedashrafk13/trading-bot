@@ -1,1 +1,4 @@
-{"run_id": "2026-11-23 06:13", "decisions": []}
+{"run_id": "2026-11-23 14:09", "decisions": [
+ {"symbol": "ETHUSDT", "action": "approve", "reason": "crowd short z-1.95; AMBER is speculative long-horizon quantum story, no event in hold"},
+ {"symbol": "DOGEUSDT", "action": "approve", "reason": "crowd short z-2.03, no event risk found"}
+], "claude_trades": [], "keep": []}

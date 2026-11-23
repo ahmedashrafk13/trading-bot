@@ -702,3 +702,8 @@
 - Decided: approve unchanged — news 0 RED / 0 AMBER; value-add to date -$1.07, no reason to override.
 - Fills: ADA close 765 @ 0.146 maker (100%); ETH/DOGE already at target. No BLOCKED, no STOP PROBLEM.
 - P&L since v9 start $+7.13.
+
+- 2026-11-23 14:09 UTC (run 2026-11-23 14:09, late: 12:00 bar, ran ~2h after close; no catch-up). Strategy: long ETH +$126, long DOGE +$127 (crowd short z -1.95/-2.03), rest flat.
+  Decided: approve both. ETH AMBER = speculative "future quantum attack" article, not event risk in hold; binance_delist feed down, ETH/DOGE majors.
+  Fills: 1 reduce (DOGE trim 110, taker); ETH already at target. Stops in place on both; 0 blocked.
+  P&L since v9 start: +$18.20.

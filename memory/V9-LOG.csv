@@ -1895,3 +1895,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-11-23 06:13,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-23 06:13,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-23 06:13,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-23 14:09,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-23 14:09,ETHUSDT,126.22,126.22,approve,crowd short z-1.95; AMBER is speculative long-horizon quantum story; no event in hold,0,0,,0.00000
+2026-11-23 14:09,SOLUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-23 14:09,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-23 14:09,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-23 14:09,DOGEUSDT,127.06,127.06,approve,crowd short z-2.03; no event risk found,110,0.05855,0.0,0.00390
+2026-11-23 14:09,ADAUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-23 14:09,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-23 14:09,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-23 14:09,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-23 14:09,TRXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-23 14:09,DOTUSDT,0.00,0.00,approve,,0,0,,0.00000
