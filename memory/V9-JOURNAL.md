@@ -713,3 +713,9 @@
 - Decided: approve unchanged - no event risk in the hold.
 - Fills: ETH/DOGE closes maker, ADA short market fallback; 0 blocked, 0 stop problems; ADA SL 0.1654.
 - P&L since v9 start $+12.04 (+6.0%).
+
+## 2026-11-24 15:17 UTC (run 2026-11-24 15:17, late: 12:00 bar, ~3h17m after close; no catch-up; 11-24 00:00 and 06:00 bars missed - no runs logged)
+- Strategy: shorts SOL $106 (z +1.85), ADA $97 (z +2.79, held), TRX $178 (z +1.61), DOT $99 (z +1.88). News 1 RED (Bybit SOL-network deposit/withdrawal maintenance notice), 10/10 sources ok.
+- Decided: approve all - SOL RED is wallet maintenance, not perp trading or a price event inside the hold (WebSearch found no outage; Perplexity key not set).
+- Fills: ADA trim maker, TRX short maker, SOL short taker fallback; DOT BLOCKED by margin_cap ($116 > $100, expected at 5x/2.4x). 0 stop problems; SL SOL 75.31 / TRX 0.336 / ADA 0.1654.
+- P&L since v9 start $+17.92 (+9.0%).
