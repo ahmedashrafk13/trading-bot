@@ -1,10 +1,10 @@
 {
-  "run_id": "2026-11-24 15:17",
+  "run_id": "2026-11-24 18:15",
   "decisions": [
-    {"symbol": "SOLUSDT", "action": "approve", "reason": "RED flag is Bybit SOL-network wallet deposit/withdrawal maintenance (published ~30h ago), not perp trading or a price event; crowd z +1.85 long-heavy"},
-    {"symbol": "ADAUSDT", "action": "approve", "reason": "z +2.79, already short, no event risk"},
-    {"symbol": "TRXUSDT", "action": "approve", "reason": "z +1.61, no event risk"},
-    {"symbol": "DOTUSDT", "action": "approve", "reason": "z +1.88, no event risk"}
+    {"symbol": "SOLUSDT", "action": "approve", "reason": "RED is Bybit SOL-network deposit/withdrawal wallet maintenance, not perp trading or a price event in the hold; same notice assessed last run"},
+    {"symbol": "ADAUSDT", "action": "approve", "reason": "crowd long-heavy z +2.72, no event risk"},
+    {"symbol": "TRXUSDT", "action": "approve", "reason": "crowd long-heavy z +1.60, no event risk"},
+    {"symbol": "DOTUSDT", "action": "approve", "reason": "crowd long-heavy z +2.27, no event risk"}
   ],
   "claude_trades": [],
   "keep": []

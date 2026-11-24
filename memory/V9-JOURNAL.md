@@ -719,3 +719,9 @@
 - Decided: approve all - SOL RED is wallet maintenance, not perp trading or a price event inside the hold (WebSearch found no outage; Perplexity key not set).
 - Fills: ADA trim maker, TRX short maker, SOL short taker fallback; DOT BLOCKED by margin_cap ($116 > $100, expected at 5x/2.4x). 0 stop problems; SL SOL 75.31 / TRX 0.336 / ADA 0.1654.
 - P&L since v9 start $+17.92 (+9.0%).
+
+## 2026-11-24 18:15 UTC (run 2026-11-24 18:15, on time: 18:00 bar)
+- Strategy: shorts SOL $106 (z +1.65, held), ADA $97 (z +2.72, held), TRX $178 (z +1.60, held), DOT $99 (z +2.27, new). News 1 RED (same Bybit SOL-network deposit/withdrawal maintenance notice), 10/10 sources ok; INFO PCE/GDP Wed 13:30 UTC, outside the hold.
+- Decided: approve all - SOL RED is wallet maintenance, not perp trading or a price event in the hold.
+- Fills: DOT short 149.6 maker (not blocked this time); others already at target. 0 blocked, 0 stop problems; SL DOT 0.7236 / TRX 0.336 / ADA 0.1654 / SOL 75.31.
+- P&L since v9 start $+13.59 (+6.8%); maker share 78% over 337 fills.
