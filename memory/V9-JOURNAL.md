@@ -727,3 +727,7 @@
 - P&L since v9 start $+13.59 (+6.8%); maker share 78% over 337 fills.
 
 - 2026-11-25 04:56 UTC (late run, 00:00 bar): strategy short SOL/ADA/TRX/DOT (~$480 gross), already held from prior run. Approved all; SOL RED = past network deposit/withdrawal pause, irrelevant to perps. PCE/GDP 13:30 UTC is outside hold. Execute: 0 orders (book already at target), all 4 stops present. P&L since v9 start +$18.37.
+
+- 2026-11-25 07:23 UTC (late, ~1h16 after 06:00 bar; traded straight to plan, no catch-up). Strategy: short ADA (z 2.55) $118, short DOT (z 1.79) $120; close SOL & TRX shorts.
+  Decided: approve all. RED SOL Bybit deposit/withdraw suspension irrelevant (SOL target 0); PCE/GDP 13:30 UTC after next run; binance_delist feed down, ADA/DOT majors.
+  Fills: SOL/TRX closed, ADA/DOT topped up, all maker; no BLOCKED, no STOP PROBLEM. P&L since v9 start $+18.47.
