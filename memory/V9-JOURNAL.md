@@ -736,3 +736,9 @@
 - Strategy: short ADA (z 2.21, held), DOT (z 1.67, held), TRX (z 1.51, new -$215). News 0 RED/0 AMBER, 10/10 sources.
 - Decided: approve all (no event risk; late run -> trade straight to plan, no catch-up).
 - Fills: TRX Sell 711 @0.3029 maker (100%); no BLOCKED, no STOP PROBLEM. P&L since v9 start $+27.15.
+
+## 2026-11-25 18:12 UTC (run 2026-11-25 18:12)
+- Strategy: SHORT SOL $124 (z +1.61); close ADA/TRX/DOT shorts.
+- Decision: approve all. news RED = past SOL wallet deposit/withdrawal maintenance (Nov 24), AMBER = Solana DEX bug; neither is perp event risk.
+- Fills: 4/4 maker (100%); 0 blocked, 0 stop problems. Short SOL 1.7 @ 69.58 with stop.
+- P&L since v9 start ~ +$15.05 (+7.5% of budget), -$11.83 from peak.

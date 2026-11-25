@@ -1,1 +1,3 @@
-{"run_id": "2026-11-25 15:10", "decisions": []}
+{"run_id": "2026-11-25 18:12", "decisions": [
+ {"symbol": "SOLUSDT", "action": "approve", "reason": "crowd long-heavy z=1.61; RED flag is a past (Nov 24) wallet deposit/withdrawal maintenance, not perp trading risk; AMBER DEX bug immaterial"}
+], "claude_trades": [], "keep": []}

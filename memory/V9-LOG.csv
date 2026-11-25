@@ -1979,3 +1979,15 @@ run_utc,symbol,strategy_usd,final_usd,action,reason,filled_qty,avg_price,maker,f
 2026-11-25 15:10,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
 2026-11-25 15:10,TRXUSDT,-215.40,-215.40,approve,,711,0.3029,1.0,0.04738
 2026-11-25 15:10,DOTUSDT,-120.13,-120.13,approve,,0,0,,0.00000
+2026-11-25 18:12,BTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-25 18:12,ETHUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-25 18:12,SOLUSDT,-124.49,-124.49,approve,crowd long-heavy z=1.61; RED flag is a past (Nov 24) wallet deposit/withdrawal maintenance; not perp trading risk; AMBER DEX bug immaterial,1.7,69.58,1.0,0.02602
+2026-11-25 18:12,BNBUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-25 18:12,XRPUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-25 18:12,DOGEUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-25 18:12,ADAUSDT,0.00,0.00,approve,,822,0.1441,1.0,0.02606
+2026-11-25 18:12,AVAXUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-25 18:12,LINKUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-25 18:12,LTCUSDT,0.00,0.00,approve,,0,0,,0.00000
+2026-11-25 18:12,TRXUSDT,0.00,0.00,approve,,711,0.3042,1.0,0.04758
+2026-11-25 18:12,DOTUSDT,0.00,0.00,approve,,184.8,0.6582,1.0,0.02676
