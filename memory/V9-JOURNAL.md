@@ -731,3 +731,8 @@
 - 2026-11-25 07:23 UTC (late, ~1h16 after 06:00 bar; traded straight to plan, no catch-up). Strategy: short ADA (z 2.55) $118, short DOT (z 1.79) $120; close SOL & TRX shorts.
   Decided: approve all. RED SOL Bybit deposit/withdraw suspension irrelevant (SOL target 0); PCE/GDP 13:30 UTC after next run; binance_delist feed down, ADA/DOT majors.
   Fills: SOL/TRX closed, ADA/DOT topped up, all maker; no BLOCKED, no STOP PROBLEM. P&L since v9 start $+18.47.
+
+### 2026-11-25 15:10 UTC (late run, 12:00 bar)
+- Strategy: short ADA (z 2.21, held), DOT (z 1.67, held), TRX (z 1.51, new -$215). News 0 RED/0 AMBER, 10/10 sources.
+- Decided: approve all (no event risk; late run -> trade straight to plan, no catch-up).
+- Fills: TRX Sell 711 @0.3029 maker (100%); no BLOCKED, no STOP PROBLEM. P&L since v9 start $+27.15.
