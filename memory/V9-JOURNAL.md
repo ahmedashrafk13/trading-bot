@@ -725,3 +725,5 @@
 - Decided: approve all - SOL RED is wallet maintenance, not perp trading or a price event in the hold.
 - Fills: DOT short 149.6 maker (not blocked this time); others already at target. 0 blocked, 0 stop problems; SL DOT 0.7236 / TRX 0.336 / ADA 0.1654 / SOL 75.31.
 - P&L since v9 start $+13.59 (+6.8%); maker share 78% over 337 fills.
+
+- 2026-11-25 04:56 UTC (late run, 00:00 bar): strategy short SOL/ADA/TRX/DOT (~$480 gross), already held from prior run. Approved all; SOL RED = past network deposit/withdrawal pause, irrelevant to perps. PCE/GDP 13:30 UTC is outside hold. Execute: 0 orders (book already at target), all 4 stops present. P&L since v9 start +$18.37.
