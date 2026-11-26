@@ -748,3 +748,5 @@
 - Decision: approve unchanged (0 RED/AMBER, sources 10/10).
 - Fills: SOL short closed 1.7 @ 71.11, maker. No opens, no BLOCKED, no STOP PROBLEM.
 - P&L since v9 start $+12.37; book flat.
+
+- 2026-11-26 18:12 UTC run: strategy wanted DOT short -$117.93 (z +1.59), all else flat. Approved (news 0 RED/0 AMBER; binance_delist feed down, DOT a major). Filled 175.4 DOT @0.6713, 100% maker, SL 0.7355. No blocks/stop problems. P&L since v9 start $+12.29.
