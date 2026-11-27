@@ -756,3 +756,9 @@
 - Decided: approve unchanged - late run, traded straight to plan per lessons; no event risk.
 - Fills: DOT closed, 3 shorts opened all maker; all SLs attached; 0 blocked, 0 stop problems. Maker share 79% overall.
 - P&L since v9 start $+10.06.
+
+## 2026-11-27 12:12 UTC
+- Strategy: short ADA (z+1.71) $114, short LINK (z+1.58) $109; close LTC (z fell to 1.27).
+- Decision: approve unchanged - 0 RED/AMBER (binance_delist feed down; no reason to doubt ADA/LINK).
+- Fills: LTC close 1/1 maker; ADA/LINK already at target. No blocks, no stop problems.
+- P&L since v9 start $+9.53.
