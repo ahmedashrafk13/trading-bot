@@ -750,3 +750,9 @@
 - P&L since v9 start $+12.37; book flat.
 
 - 2026-11-26 18:12 UTC run: strategy wanted DOT short -$117.93 (z +1.59), all else flat. Approved (news 0 RED/0 AMBER; binance_delist feed down, DOT a major). Filled 175.4 DOT @0.6713, 100% maker, SL 0.7355. No blocks/stop problems. P&L since v9 start $+12.29.
+
+## 2026-11-27 09:22 UTC (late run; 06:00 bar)
+- Strategy: short ADA/LINK/LTC (~$108-125 each), close DOT short. 0 RED/AMBER; binance_delist feed down (majors only, no concern).
+- Decided: approve unchanged - late run, traded straight to plan per lessons; no event risk.
+- Fills: DOT closed, 3 shorts opened all maker; all SLs attached; 0 blocked, 0 stop problems. Maker share 79% overall.
+- P&L since v9 start $+10.06.
