@@ -1,7 +1,6 @@
-# v9 news check - 2026-11-27 12:12 UTC
+# v9 news check - 2026-11-27 18:19 UTC
 
-Coins: ADAUSDT, LINKUSDT, LTCUSDT | hold window 8h | sources ok: 9/10
-SOURCES DOWN (check by WebSearch): binance_delist (URLError)
+Coins: ADAUSDT, LINKUSDT, DOTUSDT | hold window 8h | sources ok: 10/10
 
 Summary: 0 RED, 0 AMBER - nothing found that argues against the strategy's trades.
 

@@ -762,3 +762,9 @@
 - Decision: approve unchanged - 0 RED/AMBER (binance_delist feed down; no reason to doubt ADA/LINK).
 - Fills: LTC close 1/1 maker; ADA/LINK already at target. No blocks, no stop problems.
 - P&L since v9 start $+9.53.
+
+## 2026-11-27 18:19 UTC (run 2026-11-27 18:19)
+- Strategy: short ADA (z 2.13), LINK (1.75), DOT (1.75); ADA/LINK already held.
+- Decision: approve all - news check 0 RED/0 AMBER (10/10 sources), no event risk.
+- Fills: DOT short 176.9 @ 0.6662, maker (1/1); no blocks, no stop problems.
+- P&L since v9 start $+15.34 (+7.7% of budget).
